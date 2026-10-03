@@ -144,6 +144,16 @@ After a Personal Team profile expires, rebuilding and reinstalling may be necess
 
 Keep real personal news captures in ignored `.local-news/` or another directory outside `Sidequest`, `SidequestTests`, and `SidequestUITests`. Use [NEWS.md](NEWS.md) to prepare a version 1 JSON file, import and validate it through Read news, and replace the saved set. Only fictional samples/schema are bundled. Fictional test fixtures are isolated in their test bundles.
 
+Until #9 connects saved imports to the feed, open the standalone library from a Debug build by adding `-sidequest-news-preview` to Xcode's scheme launch arguments, or relaunch the installed Debug simulator app with:
+
+```sh
+xcrun simctl terminate "$SIDEQUEST_SIMULATOR_ID" dev.devofthings.sidequest
+xcrun simctl launch "$SIDEQUEST_SIMULATOR_ID" dev.devofthings.sidequest \
+  -sidequest-news-preview
+```
+
+Skip termination if the app is already stopped. This route shows **Read news** and its importer. Normal feed launch still uses fictional session news; Release previews ignore this Debug argument.
+
 Generated output belongs in ignored `DerivedData/`, `build/`, or an external build directory, outside synchronized source roots. Keep scoped `AGENTS.md` guidance in its owning folder; all target Markdown is excluded from built resources.
 
 If Xcode reports no destination, check `xcrun simctl list runtimes` and `xcrun simctl list devices available`; unavailable entries with missing runtime profiles cannot run the app. Install the matching runtime rather than claiming a build or test passed. If simulator access is denied in a sandbox, run the approved build/simulator commands with their required local filesystem access.

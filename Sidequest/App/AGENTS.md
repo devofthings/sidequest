@@ -8,4 +8,6 @@ Use iOS 17.0 as the minimum deployment target: the selected SwiftUI foundation a
 
 Issue #3 retains `FeedComposition` in app state. It owns the stored sample deck, feed controller, and one game controller/runtime per stable card ID; render closures only read those retained owners. Provisional game surfaces are explicitly labeled demos until #5–#8/#9 connect actual game rules. They verify start/input/completion/reset without implementing scoring or a new game.
 
+Render fictional session news through the existing `NewsCardView` from #4 so provenance, dates, original links, and accessibility share one owner. Saved-import session composition remains #9; keep the standalone Debug library route until that integration is verified.
+
 Debug-only launch arguments select deterministic feed order (`-sidequest-feed-test`), an empty deck (`-sidequest-feed-empty`), games-only content (`-sidequest-feed-games-only`), or the largest accessibility text size (`-sidequest-large-text`) for running-app tests. `-sidequest-news-preview` preserves the foundation view for the separately owned news tests. Release builds ignore all these test routes. Normal launch uses the once-shuffled sample session and system text size; no user-facing test setting or auto-reshuffle is introduced.

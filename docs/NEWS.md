@@ -22,8 +22,8 @@ Use distinct IDs, JSON booleans, and no comments/trailing commas. Files may be u
 ## Import, validate, and replace
 
 1. Transfer the JSON file to Files on your iPhone, such as through AirDrop. In the simulator, use its Files/iCloud Drive location or Simulator's file-sharing facilities to make the file accessible.
-2. Open Sidequest's **Read news** preview, choose **Import news JSON**, and select the file. Selection validates it before saving; errors keep the previous set. Canceling the picker changes nothing.
+2. Open the standalone Debug **Read news** preview using `-sidequest-news-preview` as described in [INSTALL.md](INSTALL.md), choose **Import news JSON**, and select the file. Selection validates it before saving; errors keep the previous set. Canceling the picker changes nothing.
 3. Read the source, capture date, optional publication date, and sample label on each card. Use **Read original article** to open its original URL. The news cards work offline; opening an external source needs whatever access that publisher requires.
 4. To replace the set, import another file. Valid snapshots are stored in the app's local Application Support directory and restored on relaunch. No accounts, syncing, or backend are involved. With no saved file, the app shows explicitly fictional bundled examples. Corrupt saved input shows an error rather than silently presenting samples as real news.
 
-The preview is an implementation/testing route; the feed integration in #9 will compose this news surface and importer with games. Install/build instructions are in [INSTALL.md](INSTALL.md). Physical-iPhone execution remains unverified until a connected signed device is tested.
+The preview is an implementation/testing route; the feed integration in #9 will compose saved imports and the importer with games. The current feed renders sourced fictional news cards, while Release previews ignore the standalone Debug route. Install/build instructions are in [INSTALL.md](INSTALL.md). Physical-iPhone execution remains unverified until a connected signed device is tested.

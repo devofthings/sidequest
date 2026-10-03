@@ -79,6 +79,23 @@ final class FeedFlowTests: XCTestCase {
   }
 
   @MainActor
+  func testNewsCardsKeepProvenanceWhileNavigatingTheMixedFeed() {
+    let app = launch()
+    for _ in 0..<4 { app.buttons["feed.next"].tap() }
+    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 5 of 6")
+    XCTAssertTrue(app.staticTexts["news.sample"].exists)
+    XCTAssertTrue(app.staticTexts["news.captured"].exists)
+    XCTAssertTrue(app.links["news.source"].exists)
+    XCTAssertFalse(app.buttons["game.start"].exists)
+    app.buttons["feed.next"].tap()
+    XCTAssertTrue(app.staticTexts["news.sample"].exists)
+    XCTAssertTrue(app.links["news.source"].exists)
+    app.buttons["feed.previous"].tap()
+    app.buttons["feed.previous"].tap()
+    XCTAssertTrue(app.buttons["game.start"].exists)
+  }
+
+  @MainActor
   func testEmptyAndGamesOnlySessionsHaveUsableBoundaries() {
     let empty = launch(argument: "-sidequest-feed-empty")
     XCTAssertTrue(empty.staticTexts["No cards yet"].waitForExistence(timeout: 5))

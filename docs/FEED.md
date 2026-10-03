@@ -12,7 +12,7 @@ Each game controller retains its runtime. App composition retains game controlle
 
 `FeedView(controller:gameContent:newsContent:)` receives main-actor closures `(GameCard, GameRuntime) -> AnyView` and `(NewsSnapshot) -> AnyView`. Its preview renders the accessible Tap to play button and consumes the start tap; playing/completed phases render the injected surface. The game closure resolves an already-retained controller; it does not create one. Individual game rules remain outside the host. The concrete runtime avoids adding unused protocols or a dependency-injection framework.
 
-The current composition supplies explicitly provisional game demos and fictional news. Actual games and imported news connect through these closures in their owning feature/integration work. Bubble-shooter replay belongs to #8 and will coordinate its compatible runtime extension; the host adds no replay action to other games.
+The current composition supplies explicitly provisional game demos and sourced fictional news using the existing `NewsCardView`; it retains source/date/sample labels instead of duplicating news presentation. Actual games and imported news connect through these closures in their owning feature/integration work. `-sidequest-news-preview` preserves the standalone Debug library/import surface until #9 connects saved imports to the normal feed. Bubble-shooter replay belongs to #8 and will coordinate its compatible runtime extension; the host adds no replay action to other games.
 
 ## Navigation and eligibility
 
