@@ -16,12 +16,12 @@ def verify_revision(expected, base, event, ref, run):
     if event == "pull_request":
         run("base-ancestry", ["git", "merge-base", "--is-ancestor", f"origin/{base}", head])
         run("whitespace", ["git", "diff", "--check", f"origin/{base}...{head}"])
-    elif event == "push" and ref == "refs/heads/main":
+    elif event in ("push", "workflow_dispatch") and ref == "refs/heads/main":
         # A newer main may exist by the time this queued event gets the runner.
         # Verify this event's own change; PR review already validated its ancestry.
         run("whitespace", ["git", "diff", "--check", f"{head}^", head])
     else:
-        raise RuntimeError("Only same-repository PR or main-push verification is supported.")
+        raise RuntimeError("Only same-repository PR or main push/manual verification is supported.")
 
 
 def main():

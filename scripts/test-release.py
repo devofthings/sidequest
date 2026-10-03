@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exercise private publication, tamper rejection, failure gating, and draft retries offline."""
+"""Test the tracked hold and controlled future-enabled manual publication offline."""
 
 import copy
 import importlib.util
@@ -17,6 +17,30 @@ spec = importlib.util.spec_from_file_location("release", Path(__file__).with_nam
 release = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(release)
 HEAD = "a" * 40
+
+
+class PublicationHoldTests(unittest.TestCase):
+    def test_tracked_hold_blocks_manual_dispatch_without_external_access_or_env_bypass(self):
+        self.assertFalse(release.PUBLICATION_ENABLED)
+        environment = {"GITHUB_EVENT_NAME": "workflow_dispatch", "GITHUB_REF": "refs/heads/main",
+                       "GITHUB_REPOSITORY": release.REPO, "RUNNER_NAME": release.RUNNER,
+                       "PUBLICATION_ENABLED": "true", "SIDEQUEST_PUBLICATION_ENABLED": "true"}
+        github = FakeGitHub()
+        with patch.object(github, "request", side_effect=AssertionError("No network allowed")), \
+             patch.object(subprocess, "check_output", side_effect=AssertionError("No source access allowed")):
+            with self.assertRaisesRegex(RuntimeError, "held until the MVP"):
+                release.publish(github, environment, "")
+
+    def test_push_pr_and_non_main_dispatch_cannot_publish_even_after_future_enablement(self):
+        github = FakeGitHub()
+        for event, ref in [("push", "refs/heads/main"), ("pull_request", "refs/pull/1/merge"),
+                           ("workflow_dispatch", "refs/heads/feature"), ("workflow_dispatch", "refs/tags/2026.10.24")]:
+            with self.subTest(event=event, ref=ref), patch.object(release, "PUBLICATION_ENABLED", True), \
+                 patch.object(github, "request", side_effect=AssertionError("No network allowed")):
+                environment = {"GITHUB_EVENT_NAME": event, "GITHUB_REF": ref,
+                               "GITHUB_REPOSITORY": release.REPO, "RUNNER_NAME": release.RUNNER}
+                with self.assertRaisesRegex(RuntimeError, "explicit main dispatch"):
+                    release.publish(github, environment, "")
 
 
 class FakeGitHub:
@@ -42,7 +66,7 @@ class FakeGitHub:
         if path.startswith("/actions/runs/"):
             run_id = path.split("/")[3]
             if "/attempts/" not in path:
-                return {"id": int(run_id), "head_sha": HEAD, "event": "push", "head_branch": "main", "path": release.WORKFLOW,
+                return {"id": int(run_id), "head_sha": HEAD, "event": "workflow_dispatch", "head_branch": "main", "path": release.WORKFLOW,
                         "run_number": self.run_number, "created_at": self.created_at,
                         "html_url": f"https://github.com/{release.REPO}/actions/runs/{run_id}", **self.run_override}
             return {"jobs": [
@@ -97,7 +121,7 @@ class ReleaseTests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary.name)
-        self.environment = {"GITHUB_EVENT_NAME": "push", "GITHUB_REF": "refs/heads/main",
+        self.environment = {"GITHUB_EVENT_NAME": "workflow_dispatch", "GITHUB_REF": "refs/heads/main",
                             "GITHUB_REPOSITORY": release.REPO, "GITHUB_SHA": HEAD, "GITHUB_RUN_ID": "100",
                             "GITHUB_RUN_ATTEMPT": "1", "GITHUB_RUN_NUMBER": "24", "RUNNER_NAME": release.RUNNER,
                             "RUNNER_TEMP": str(self.root / "_temp")}
@@ -110,7 +134,7 @@ class ReleaseTests(unittest.TestCase):
         (self.app / "Info.plist").write_bytes(plistlib.dumps(info))
         (self.app / "Sidequest").write_bytes(b"fictional executable")
         (self.app / "Sidequest").chmod(0o755)
-        self.manifest = {"schema": 1, "commit": HEAD, "run_id": "100", "attempt": "1", "event": "push",
+        self.manifest = {"schema": 1, "commit": HEAD, "run_id": "100", "attempt": "1", "event": "workflow_dispatch",
                          "ref": "refs/heads/main", "run_number": "24", "runner_name": release.RUNNER, "all_checks_passed": True,
                          "runtime": "iOS 27.0 (24A434)",
                          "xcode": "Xcode 27.0\nBuild version 27A266a", "release_app": str(self.app)}
@@ -127,8 +151,12 @@ class ReleaseTests(unittest.TestCase):
 
         self.process = patch.object(subprocess, "check_output", side_effect=controlled)
         self.process.start()
+        # Future-enabled fixture only; actual tracked publication remains held.
+        self.future_publication = patch.object(release, "PUBLICATION_ENABLED", True)
+        self.future_publication.start()
 
     def tearDown(self):
+        self.future_publication.stop()
         self.process.stop()
         self.temporary.cleanup()
 
@@ -235,13 +263,20 @@ class ReleaseTests(unittest.TestCase):
     def test_pr_event_cannot_publish_or_access_github(self):
         self.environment["GITHUB_EVENT_NAME"] = "pull_request"
         with patch.object(self.github, "request", side_effect=AssertionError("No GitHub access allowed")):
-            with self.assertRaisesRegex(RuntimeError, "restricted"):
+            with self.assertRaisesRegex(RuntimeError, "explicit main dispatch"):
                 self.publish()
 
     def test_wrong_local_directory_or_manifest_prevents_publication(self):
         with self.assertRaisesRegex(RuntimeError, "different-host"):
             release.publish(self.github, self.environment, str(self.root))
         self.manifest["all_checks_passed"] = False
+        self.write_manifest()
+        with self.assertRaisesRegex(RuntimeError, "manifest"):
+            self.publish()
+        self.assertEqual(self.github.writes, [])
+
+    def test_future_enabled_manual_dispatch_rejects_push_manifest(self):
+        self.manifest["event"] = "push"
         self.write_manifest()
         with self.assertRaisesRegex(RuntimeError, "manifest"):
             self.publish()
@@ -334,7 +369,7 @@ class ReleaseTests(unittest.TestCase):
                              ("run_number", -1), ("created_at", "2026-02-30T12:00:00Z"),
                              ("created_at", "2026-10-01T23:59:59Zextra"),
                              ("created_at", "2026-10-01T23:59:59+01:00"), ("created_at", None),
-                             ("id", 200), ("id", True), ("path", ".github/workflows/other.yml")]:
+                             ("id", 200), ("id", True), ("event", "push"), ("head_branch", "feature"), ("path", ".github/workflows/other.yml")]:
             with self.subTest(field=field, value=value):
                 self.github.run_override = {field: value}
                 with self.assertRaises(RuntimeError):
