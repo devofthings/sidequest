@@ -28,7 +28,7 @@ App development is on hold until the user explicitly authorizes starting it. Pre
 - GitHub CLI (`gh`) commands for Sidequest are authorized within these project rules. This authorization preserves the feature-branch, review, publishing, and spending requirements.
 - Use US English for new prose, comments, and identifiers. Preserve existing contracts and quotations.
 - GitHub Issues own task scope and dependencies. The GitHub Project owns workflow status. Repository docs own the product brief, vocabulary, and decisions.
-- Capture unscoped suggestions in the Project's Ideas status; follow [WORKFLOW.md](docs/WORKFLOW.md) when promoting them into scoped work. Ideas are proposals and do not authorize implementation.
+- Agents may create and address bounded bug-fix tickets and necessary subtasks within already-approved scope. New or expanded features must be captured in Ideas and receive explicit user agreement before any work beyond recording the proposal. Follow [ticket authorization](docs/WORKFLOW.md#ticket-authorization) before creating, promoting, or assigning work; existing implementation holds and spending/review rules still apply.
 - Make each issue independently reviewable. Link prerequisites rather than expanding the issue into neighboring work.
 - After resolving an issue or ticket, complete the chat checkpoint below before starting or assigning the next issue.
 - Follow [ADR 0003](docs/adr/0003-hexagonal-architecture.md) when adding core behavior, ports, or adapters. Keep game rules separate from presentation and introduce small interfaces at replaceable boundaries.
@@ -64,5 +64,7 @@ Before any purchase, paid plan activation, billing setup, or action that may inc
 Use only included Codex usage. Never spend or purchase Codex credits, redeem usage resets, or fall back to paid API-key usage. Before starting a new issue or reviewer, check the reported included allowance. When any reported window has 10% or less remaining, a limit is reached, or included allowance cannot be verified, checkpoint and stop autonomous work until ordinary included usage is available on a later authorized run. The reserve reduces overrun risk; it is an agent rule, not an account billing lock. See [docs/AUTONOMY.md](docs/AUTONOMY.md) for the account-control limitation.
 
 ## Verification
+
+Implement features without a TDD or test-first workflow, then add or update meaningful unit tests for game rules and feed lifecycle and deterministic end-to-end tests for critical integrated app flows. Cover news actions, explicit tap-to-play, game interaction, and skip/reset through the running app as those flows become available. Applicable tests must pass before merging under [docs/REVIEW.md](docs/REVIEW.md). This is the user's accepted [testing decision](docs/DECISIONS.md); documentation-only changes still use proportionate documentation checks.
 
 There is currently no application target, app build command, or gameplay test suite. The app foundation issue must establish executable setup and verification instructions in README.md. For hook and installer changes, run the [tooling checks](docs/FORMATTING.md#verify-tooling-changes). Continue validating documentation links and template structure; report app builds as unavailable.
