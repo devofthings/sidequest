@@ -28,6 +28,8 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | Shuffle news and games; reset skipped unfinished games | Accepted | User chose shuffled cards and fresh attempts. |
 | Tap to play before starting each game | Accepted | User requested an explicit tap to start. Game cards show a preview until tapped; gameplay stays inside the card. See [MVP.md](MVP.md) for the start and skip behavior. |
 | Simulator and the user's own iPhone via Xcode | Accepted | User choice; TestFlight is deferred. |
+| Installation and run documentation kept current | Accepted | User requested setup guidance. [INSTALL.md](INSTALL.md) records the workflow; executable commands depend on the app foundation. |
+| Private Release builds after each merged update | Accepted direction | User requested GitHub release history. Follow [RELEASES.md](RELEASES.md); automation depends on the app, CI, and verified free execution or explicit spending approval in issue #31. |
 | Defer accounts, ads, payments, licensed catalogs, and social integrations | Accepted | User confirmed the bounded private prototype scope. |
 
 ## Research context
