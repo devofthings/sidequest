@@ -1,6 +1,6 @@
 # Maintaining project documentation
 
-- Mark decisions as accepted, proposed, or superseded. Record user choices faithfully; recommendations remain proposed until confirmed.
+- Mark decisions as accepted, proposed, declined, deferred, or superseded. Record user choices faithfully; recommendations remain proposed until confirmed. Preserve approval and refusal evidence under the [decision-request workflow](WORKFLOW.md#unanswered-decision-requests).
 - Keep CONTEXT.md limited to domain vocabulary. Put product scope in MVP.md and lightweight decisions in DECISIONS.md.
 - Use docs/adr/ for consequential architecture or scope tradeoffs, with sequential numbers. Link accepted ADRs from DECISIONS.md.
 - Update the authoritative document when a decision changes. Link it from issues instead of copying entire specifications.

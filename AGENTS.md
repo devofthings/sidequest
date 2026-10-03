@@ -32,6 +32,10 @@ At the start of a new Sidequest planning or implementation chat, read [docs/MVP.
 
 After every resolved issue or ticket, review newly delivered user messages and annotations in the active chat, including pending questions, before starting or assigning the next issue. Apply steering to scope and priorities, and update the affected issue and decision guidance before continuing. If required clarification is missing, hold dependent work and ask a focused question. When there is no new input, continue under the existing authorization; this checkpoint adds no mandatory approval or fixed waiting period. In parallel work, the orchestrator performs the checkpoint before assigning further work and passes relevant steering to active agents.
 
+## Unanswered requests
+
+Ask the user in chat first when selected work genuinely needs authorization, an account, access, or input not already provided. If the request remains unanswered after a reasonable opportunity to reply, follow the [assigned decision-request workflow](docs/WORKFLOW.md#unanswered-decision-requests) at the next checkpoint or handoff: create or reuse an issue assigned to `devofthings`, keep dependent actions pending, and continue independent work. Record the user's approval or refusal in the issue and durable decisions; issuing, assigning, or closing a request does not authorize the action.
+
 ## Development decisions and scoped guidance
 
 Record every development decision made by the user or an agent in the closest applicable `AGENTS.md` when the decision is made or changed, before handing off the work. Use the standard `AGENTS.md` filename. Include the actionable rule and a concise rationale, or link the authoritative decision/ADR with its status. Mark proposals as proposed; a research recommendation alone is not an accepted choice. Update stale guidance in the same PR as a change to the decision.
