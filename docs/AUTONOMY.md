@@ -12,7 +12,7 @@ The lead asks for steering when a choice changes confirmed product scope or a ti
 
 ## Readiness checks
 
-Before the first implementation issue, confirm start authorization, the latest MVP and decisions, the issue's prerequisites, the clean feature checkout, and available included Codex usage. Confirm that the personal review skill is available and fresh reviewers can be dispatched. A restricted side conversation that cannot use subagents can prepare documentation but cannot certify its own PR for merging.
+Before the first implementation issue, confirm start authorization, the latest MVP and decisions, the issue's prerequisites, the clean feature checkout, and available included Codex usage. Confirm that the personal review skill is available and a capable lead can receive the [review handoff](REVIEW.md#review-handoff-queue). After start authorization, an implementation chat without subagents may complete a bounded feature and queue its PR; it cannot certify its own change or merge without independent review. Until then, preparation remains limited to documentation.
 
 Build and test commands must come from the executable foundation, not invented placeholders. Verify free CI execution or obtain spending approval before enabling chargeable jobs. Keep the repository private and main protection deferred as accepted; enforce the agent process without claiming a GitHub server lock.
 

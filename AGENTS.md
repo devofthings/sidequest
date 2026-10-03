@@ -6,6 +6,8 @@ Sidequest is a private iPhone MVP mixing news and quick games in one feed. App i
 
 At the start of a new Sidequest planning or implementation chat, read [docs/MVP.md](docs/MVP.md) and [docs/DECISIONS.md](docs/DECISIONS.md) for the confirmed product scope and choices. Use [GitHub Issues](https://github.com/devofthings/sidequest/issues) for task scope and dependencies; consult an issue before starting its work. When the user changes a decision, update the authoritative document so future chats inherit the new context.
 
+At chat startup and after each ticket's chat checkpoint, the active lead checks open PRs before selecting new work. Follow the [review handoff queue](docs/REVIEW.md#review-handoff-queue), including older PRs without its label. An author who cannot dispatch a fresh reviewer leaves a durable handoff and the PR open; a capable lead owns review pickup. This keeps review independent of the author chat's capabilities without requiring the user to review code.
+
 ## Autonomous delivery and current hold
 
 The agent is the technical lead and owns issue selection, implementation, verification, fresh-agent code review, fixes, and gated merging. The user provides product steering through the project documents and does not need to review code. Follow [docs/AUTONOMY.md](docs/AUTONOMY.md) for the prepared delivery plan and escalation boundaries.
