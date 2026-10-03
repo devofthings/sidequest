@@ -42,6 +42,7 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | Installation and run documentation kept current | Accepted | User requested setup guidance. [INSTALL.md](INSTALL.md) records the workflow; executable commands depend on the app foundation. |
 | Private Release builds after each merged update | Accepted direction | User requested GitHub release history. Follow [RELEASES.md](RELEASES.md); automation depends on the app, CI, and verified free execution or explicit spending approval in issue #31. |
 | Defer accounts, ads, payments, licensed catalogs, and social integrations | Accepted | User confirmed the bounded private prototype scope. |
+| Portable agent setup and repository-local review skill | Accepted implementation guidance | User authorized fixing agent setup gaps on October 3, 2026. Follow [AGENT_SETUP.md](AGENT_SETUP.md); hook installation is explicit and preflight is read-only. App implementation and scheduling remain on hold. |
 
 ## Research context
 

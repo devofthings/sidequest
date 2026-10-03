@@ -18,6 +18,8 @@ App development is on hold until the user explicitly authorizes starting it. Pre
 
 ## Start an issue
 
+Before assigning edits in a fresh or handed-off checkout, follow [agent setup](docs/AGENT_SETUP.md): preserve existing work, establish isolated ownership, install hooks explicitly, and pass the read-only preflight. Use the tracked [my-review skill](.agents/skills/my-review/SKILL.md) for Sidequest reviews; host-installed copies are not required. This local tooling preparation does not lift the app development or scheduling hold.
+
 1. Read the assigned GitHub issue, its dependencies, and [docs/MVP.md](docs/MVP.md). Read [docs/WORKFLOW.md](docs/WORKFLOW.md) before starting work or updating its Project status.
 2. Read [CONTEXT.md](CONTEXT.md) when introducing domain names. Read [docs/DECISIONS.md](docs/DECISIONS.md) before choosing technology, content sources, or product behavior.
    Read [docs/CODING.md](docs/CODING.md) before adding or changing Swift application code, tests, shared interfaces, or concurrency behavior. It owns the baseline coding rules; scoped guidance adds local requirements.
