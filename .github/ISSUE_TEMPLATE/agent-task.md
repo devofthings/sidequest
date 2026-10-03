@@ -18,6 +18,10 @@ Link the relevant MVP section, decision, and any existing implementation.
 
 List the bounded changes and any neighboring work assigned to another issue.
 
+## Type and authorization
+
+Identify a bug fix, a necessary subtask of approved work, or a new feature idea. For a bug, record the defect evidence and approved expected behavior. For approved work, link its existing acceptance evidence. New or expanded features stay in the Project's Ideas status with work pending until explicit user agreement is recorded with date, source, and scope. Follow the [ticket authorization rules](https://github.com/devofthings/sidequest/blob/main/docs/WORKFLOW.md#ticket-authorization).
+
 ## Acceptance criteria
 
 - [ ] State observable completion criteria.
