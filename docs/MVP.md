@@ -35,4 +35,6 @@ The selected [source structure](STRUCTURE.md) groups games into independently ow
 
 ## Current repository state
 
-The repository includes a minimal SwiftUI launch screen, unit/UI test targets, and verified local simulator setup. Feed, news, and game behavior are not implemented yet. Physical-device installation is documented but unverified; CI verifies exact PR/main commits on a free foreground self-hosted Mac runner; release automation remains pending.
+The SwiftUI foundation, shared card/lifecycle contract, shuffled fictional session, and manual news snapshot imports are implemented. Sourced news cards display excerpts, provenance, dates, and original links; the native Files picker validates and saves private replacement sets locally. Only fictional samples are bundled. The standalone Read news route provides a preview until integration connects imports to the mixed feed.
+
+Local simulator builds/tests and foreground self-hosted CI are verified on Xcode 27.0/iOS 27.0; the deployment target is iOS 17.0. The mixed feed and playable games remain in their owning implementation tickets. Physical-device installation is documented but unverified; its pending connection/signing prerequisite is tracked in [#79](https://github.com/devofthings/sidequest/issues/79). The private preview workflow verifies and publishes successful main commits while the foreground runner is active; check [release guidance](RELEASES.md) and GitHub for each version’s actual availability.

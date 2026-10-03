@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "snapshots": [
+    {
+      "id": "sample-garden",
+      "headline": "A neighborhood garden opens",
+      "excerpt": "This fictional sample describes volunteers planting a community garden. It is sample content, not a real news report.",
+      "publisher": "Sidequest sample",
+      "sourceURL": "https://example.com/garden",
+      "capturedAt": "2024-01-01T00:00:00Z",
+      "publishedAt": "2023-12-31T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "sample-library",
+      "headline": "A library hosts a puzzle afternoon",
+      "excerpt": "This fictional sample describes a library event with tabletop puzzles. It is sample content, not a real news report.",
+      "publisher": "Sidequest sample",
+      "sourceURL": "https://example.com/library",
+      "capturedAt": "2024-01-01T00:00:00Z",
+      "publishedAt": null,
+      "isSample": true
+    }
+  ]
+}
