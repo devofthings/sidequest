@@ -28,7 +28,7 @@ Build and test commands must come from the executable foundation, not invented p
 | Integration | #9: mixed session and installable personal build | Integrated build/tests, interaction and accessibility evidence, verified installation guide. |
 | Personal test | #10: enjoyment and product steering | The user's actual feedback; keep open until the test occurs. |
 
-Design #13 and logo #14 retain their existing user-choice and implementation prerequisites. Phase-two backend #18 and gamification #19 remain outside MVP implementation. This sequence does not change their acceptance criteria or select a provider.
+The shared design baseline and wireframes in #13 follow the MVP and personal test under the accepted [design timing](MVP.md#deferred-work). Use simple, consistent presentation for the initial MVP; design approval is not a prerequisite for its feature work. Logo #14 retains its existing user-choice and implementation prerequisites. Phase-two backend #18 and gamification #19 remain outside MVP implementation. The design task stays open for the user's later choice; this sequence does not select a design tool, branding, or backend provider.
 
 ## Repeatable issue loop
 
