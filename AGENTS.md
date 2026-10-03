@@ -63,4 +63,6 @@ Use only included Codex usage. Never spend or purchase Codex credits, redeem usa
 
 ## Verification
 
+Implement features without a TDD or test-first workflow, then add or update meaningful unit tests for game rules and feed lifecycle and deterministic end-to-end tests for critical integrated app flows. Cover news actions, explicit tap-to-play, game interaction, and skip/reset through the running app as those flows become available. Applicable tests must pass before merging under [docs/REVIEW.md](docs/REVIEW.md). This is the user's accepted [testing decision](docs/DECISIONS.md); documentation-only changes still use proportionate documentation checks.
+
 There is currently no application target, build command, or test suite. The app foundation issue must establish executable setup and verification instructions in README.md. Until then, validate documentation links and template structure; report app builds as unavailable.

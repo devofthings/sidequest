@@ -2,7 +2,7 @@
 
 Researched October 3, 2026 for [issue #12](https://github.com/devofthings/sidequest/issues/12).
 
-**Status: The delivery loop is accepted; remaining tooling recommendations are proposed.** The user wants agents to implement the app, with fresh-agent review and gated automatic merging. Product choices and personal testing remain user decisions. [REVIEW.md](../REVIEW.md) owns the accepted process. CI belongs in the backlog; a server backend is outside the current MVP. The user has not selected a test-driven development policy.
+**Status: The delivery loop and testing policy are accepted; remaining tooling recommendations are proposed.** The user wants agents to implement the app, with fresh-agent review and gated automatic merging. Product choices and personal testing remain user decisions. [REVIEW.md](../REVIEW.md) owns the accepted process. CI belongs in the backlog; a server backend is outside the current MVP. On October 3, 2026, the user requested unit and end-to-end tests and declined TDD; [AGENTS.md](../../AGENTS.md#verification) owns the testing rule.
 
 **Accepted architectural direction:** The user chose hexagonal architecture to make future behavior changes easier. This workflow must respect the project’s architecture decision; the detailed module boundaries below are a practical application of that choice.
 
@@ -45,7 +45,7 @@ Choose verification from the behavior at risk, rather than enforcing the same pr
 
 Meaningful tests assert domain outcomes through small public interfaces and survive internal refactoring. A test that repeats the algorithm, checks private member values, or mocks every internal call can confirm the code’s own assumptions without protecting behavior. Prefer fixtures with independently known answers, boundary cases, and regression examples. Coverage is a diagnostic; a blanket percentage target is not proposed.
 
-TDD is an optional technique: a failing example can clarify an ambiguous rule or reproduce a bug before a fix. Use it when it improves a particular task; there is no recommendation to mandate test-first implementation or require a separate TDD decision before development starts.
+The user superseded the earlier optional-TDD recommendation: implement behavior first, then add or update unit tests and end-to-end coverage for critical integrated flows. Use deterministic fixtures and run end-to-end tests through the app's public interactions, including news actions, tap-to-play, game interaction, and skip/reset as those flows become available. Applicable tests must pass before merging. Documentation and visual-only changes still receive proportionate verification.
 
 ## CI requirements to implement after the foundation
 
@@ -62,8 +62,8 @@ Simulator CI does not establish device performance, signing, iPhone deployment, 
 ## Proposed practices to record
 
 - Proportionate verification for each issue: repeatable checks for important behavior, simulator evidence for interactions, and device testing for the personal MVP.
-- When automated tests add value, use Swift Testing for Swift unit tests and XCTest/XCUIAutomation for a small integration smoke suite.
+- Unit and end-to-end coverage is accepted. Swift Testing for unit tests and XCTest/XCUIAutomation for end-to-end app flows remain proposed framework choices for the foundation to establish.
 - One implementation agent per scoped issue; fresh-agent review and repeated fixes under the accepted [review loop](../REVIEW.md); automatic merging after its gates pass.
 - GitHub Actions simulator build/test checks after issue #1, with plan/cost/toolchain compatibility verified during CI setup.
 
-The accepted delivery loop is already recorded in DECISIONS.md and REVIEW.md. Remaining tooling recommendations can be adopted as the foundation and CI issues establish executable verification. Development does not depend on choosing a TDD policy. This research does not select a chess engine or package split, establish CI, or authorize distribution.
+The accepted delivery loop and testing decision are recorded in DECISIONS.md, AGENTS.md, and REVIEW.md. Remaining tooling recommendations can be adopted as the foundation and CI issues establish executable verification. The no-TDD decision does not remove the unit or end-to-end test requirements. This research does not select a chess engine or package split, establish CI, or authorize distribution.
