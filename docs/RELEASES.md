@@ -4,7 +4,7 @@
 
 The user authorizes a private GitHub Release build for each update merged into `main`, including documentation updates, once the executable app and release automation exist. Publish successful builds in the private [release history](https://github.com/devofthings/sidequest/releases) so each version can be traced to its source and verification. This authorization covers private GitHub Releases; spending, App Store publication, and TestFlight distribution require separate approval.
 
-The app and automation are not implemented yet. [Issue #31](https://github.com/devofthings/sidequest/issues/31) depends on the [foundation](https://github.com/devofthings/sidequest/issues/1) and [CI](https://github.com/devofthings/sidequest/issues/15). There is currently no build or release to download.
+The app foundation has verified local simulator builds; release automation is not implemented yet. [Issue #31](https://github.com/devofthings/sidequest/issues/31) depends on the [foundation](https://github.com/devofthings/sidequest/issues/1) and [CI](https://github.com/devofthings/sidequest/issues/15). There is currently no published build or release to download.
 
 ## Build and publish
 

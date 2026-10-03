@@ -5,6 +5,10 @@ DerivedData/
 build/
 xcuserdata/
 *.xcuserstate
+Sidequest.xcodeproj/LocalSigning.xcconfig
+
+# Personal content stays outside synchronized source/resource roots.
+.local-news/
 
 # Local credentials
 .env

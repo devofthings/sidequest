@@ -13,7 +13,7 @@ xcrun swift-format lint --strict --configuration .swift-format <changed.swift> [
 
 Replace the angle-bracket arguments with actual file paths; quote paths containing spaces. Include application and test sources. Exclude generated files, dependencies, and build output. Format before committing, inspect the resulting diff, then require strict lint to exit successfully. Strict lint reports formatting and enabled style-rule violations; it does not build the app or verify gameplay.
 
-The repository has no Swift sources yet. The commands above were verified against a temporary SwiftUI-shaped fixture outside Git; they are not a Sidequest app build or test result.
+First-party Swift sources live under `Sidequest`, `SidequestTests`, and `SidequestUITests`. The foundation's actual formatting and app verification commands are documented in [INSTALL.md](INSTALL.md#build-and-test).
 
 ## Install commit checks
 

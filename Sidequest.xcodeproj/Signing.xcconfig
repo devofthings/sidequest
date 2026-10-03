@@ -1,0 +1,3 @@
+// Local overrides never belong in Git. Simulator verification needs no team.
+SIDEQUEST_BUNDLE_IDENTIFIER = dev.devofthings.sidequest
+#include? "LocalSigning.xcconfig"
