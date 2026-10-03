@@ -46,7 +46,7 @@ Verification modes:
 
 - `documentation`: only Markdown changed; report actual documentation checks.
 - `tooling`: Markdown, files under `scripts/` or `.githooks/`, and `.swift-format`; report relevant local integration checks. Application files require a different mode.
-- `application`: local app verification before hosted workflows exist; see the required evidence below.
+- `application`: local app verification before verification workflows exist; see the required evidence below.
 - `ci`: CI owns verification. Include `verification.run_url` matching a successful `Sidequest / verification` check run's details URL. That check run must identify the reviewed head SHA; the receipt binds its run to the reviewed head/base, and the local ancestry check requires the current base inside that tested head. Local agents do not publish or overwrite the CI verification gate. Once workflows exist, the CLI requires this mode; issue #15 must implement the check contract before using these gates for CI-backed changes.
 
 Every listed command must have a real result and numeric zero exit code. Local modes must explain unavailable app/CI checks. The CLI independently checks Git ancestry and whitespace; other command evidence remains the reviewer's and lead's responsibility. App implementation has explicit user authorization; these checks do not authorize potentially chargeable CI.

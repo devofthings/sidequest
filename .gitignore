@@ -14,3 +14,7 @@ Sidequest.xcodeproj/LocalSigning.xcconfig
 .env
 .env.*
 !.env.example
+
+# Private self-hosted runner configuration and diagnostics.
+.local-ci/
+__pycache__/
