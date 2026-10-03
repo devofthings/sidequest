@@ -7,6 +7,7 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 - [MVP brief](docs/MVP.md): confirmed product direction and delivery sequence.
 - [Project decisions](docs/DECISIONS.md): accepted choices, proposals, and source research.
 - [Vocabulary](CONTEXT.md): domain names used by issues and implementation.
+- [Agent setup](docs/AGENT_SETUP.md): isolated checkout ownership, portable review skill, and read-only readiness checks.
 - [Agent guidance](AGENTS.md): how to pick up and complete an issue.
 - [Coding rules](docs/CODING.md): ownership, Swift interfaces, state, concurrency, errors, and verification for agents.
 - [Source structure](docs/STRUCTURE.md): selected folder ownership, game grouping, scoped guidance, and planned source discovery.
