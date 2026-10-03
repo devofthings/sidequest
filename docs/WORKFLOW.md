@@ -10,6 +10,6 @@ The private [Sidequest MVP board](https://github.com/users/devofthings/projects/
 | Review | The acceptance criteria are implemented, validation is recorded, and the result is ready for review. |
 | Done | The work is merged or explicitly accepted, and the issue is closed. |
 
-Before starting an issue, confirm its prerequisites are complete and set its Project status to In progress. Move it to Review when a reviewable result and verification evidence are available. After merge or explicit acceptance, close the issue, set it to Done, and move dependent issues to Ready when all their prerequisites are complete.
+Before starting an issue, confirm its prerequisites are complete and set its Project status to In progress. Move it to Review when a reviewable result and verification evidence are available, then run the [fresh-agent review and merge loop](REVIEW.md). After merge, close completed implementation issues, set them to Done, and move dependent issues to Ready when all their prerequisites are complete. Product-decision issues stay open until the user selects the proposed behavior or provider; merging research does not select it.
 
 Keep unfinished work open. If work pauses or a new prerequisite blocks it, record the reason in the issue and move it to Ready or Backlog as appropriate.
