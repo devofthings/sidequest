@@ -2,13 +2,13 @@
 
 Researched October 3, 2026 for [issue #12](https://github.com/devofthings/sidequest/issues/12).
 
-**Status: Proposed delivery practices, pending user review.** This note does not change AGENTS.md or accepted product scope. The user wants agents to implement the app while they review code and make product decisions. CI belongs in the backlog; a server backend is outside the current MVP. The user has not selected a test-driven development policy.
+**Status: The delivery loop is accepted; remaining tooling recommendations are proposed.** The user wants agents to implement the app, with fresh-agent review and gated automatic merging. Product choices and personal testing remain user decisions. [REVIEW.md](../REVIEW.md) owns the accepted process. CI belongs in the backlog; a server backend is outside the current MVP. The user has not selected a test-driven development policy.
 
 **Accepted architectural direction:** The user chose hexagonal architecture to make future behavior changes easier. This workflow must respect the project’s architecture decision; the detailed module boundaries below are a practical application of that choice.
 
 ## Recommendation
 
-Use a small issue-to-PR loop: an implementation agent owns one bounded change, a separate agent reviews the diff against the issue, risk-based verification provides evidence, and the user reviews the result. Choose checks that could catch a meaningful failure: a build, a focused behavior test, simulator interaction, or visual evidence. Start with GitHub Issues, the existing Project, repository docs, Xcode, and GitHub Actions; add tools only when they solve an observed problem.
+Use the accepted issue-to-PR loop: an implementation agent owns one bounded change, a fresh agent uses the personal review skill, all findings are addressed, and another fresh agent reviews the resulting diff. Repeat until no findings remain and verification passes, then merge under the user's standing authorization. Choose checks that could catch a meaningful failure: a build, a focused behavior test, simulator interaction, or visual evidence. Start with GitHub Issues, the existing Project, repository docs, Xcode, and GitHub Actions; add tools only when they solve an observed problem.
 
 These are Sidequest recommendations informed by current first-party guidance, rather than a universal set of “2026 best practices.” Fully agent-implemented development still requires explicit product choices and review; no source establishes infallible autonomous delivery.
 
@@ -23,14 +23,9 @@ Keep Swift game rules and feed logic in a pure core. Introduce stable ports at e
 - Apple recommends Swift Testing for Swift unit tests and XCTest with XCUIAutomation for UI tests. Swift Testing supports parameterized inputs and Swift concurrency. Framework capabilities do not prescribe when tests must be written. [Apple: testing and performance](https://developer.apple.com/documentation/technologyoverviews/testing-and-performance), [Apple: Swift Testing](https://developer.apple.com/documentation/testing).
 - GitHub provides hosted macOS runners for private repositories; their use consumes the account’s available minutes and can incur charges afterward. A moving `-latest` label need not match the developer’s newest macOS/Xcode setup. [GitHub: hosted runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners).
 
-## Proposed issue-to-PR loop
+## Accepted issue-to-PR loop
 
-1. **Select a Ready issue.** Read its dependencies, acceptance criteria, applicable instructions, and confirmed MVP scope. Resolve prerequisite work before starting. If the issue cannot produce an independently reviewable result, split it and link the prerequisites.
-2. **Prepare a bounded implementation.** Set In progress and use `codex/<issue-number>-<short-description>`. For parallel edits, give each implementation agent a separate worktree. Agree on the shared card/lifecycle contract before parallel game work. Avoid concurrent edits to the Xcode project file; an integration agent can coordinate target membership after modules exist.
-3. **Implement and verify.** Identify likely failures and choose proportionate checks. Add behavior tests where they protect rules, boundaries, or regressions; write them before or after implementation as useful. Run the repository’s verified commands, repair failures, and exercise changed interactions in the simulator. Use deterministic news fixtures, puzzle inputs, random seeds, and controllable time for repeatable checks. Do not retrieve live news during tests.
-4. **Create a reviewable PR.** Explain resulting behavior, link the issue, include `Closes #N` when complete, and record commands, outcomes, toolchain/destination, relevant screenshots, and material limitations. Mark unchecked acceptance criteria honestly. Move to Review only when evidence and a reviewable result exist.
-5. **Request a separate review pass.** Give a reviewer agent the issue, docs, base revision, and diff. Ask it to check specification compliance, boundary cases, lifecycle/cancellation, and whether tests could miss the same mistake as the implementation. Review findings need evidence and severity. The implementer addresses findings; rerun affected checks after changes.
-6. **User reviews and accepts.** The user reviews code and product behavior without writing implementation code. Merging remains a user action or separately authorized action. After merge or explicit acceptance, close completed issues, set Done, and promote dependents whose prerequisites are complete.
+The user subsequently accepted feature branches only and the fresh-agent review, fix, repeat, and automatic merge loop. Follow [REVIEW.md](../REVIEW.md) for the authoritative steps, commit-bound gates, reviewer skill, and GitHub plan limitations. Human code review is available without becoming a prerequisite for each merge. Provider selection, final product decisions, and the personal enjoyment test retain their issue-specific user acceptance criteria.
 
 A separate reviewer has a different task context, not guaranteed independent reasoning. Both agents may share incorrect assumptions. Tests derived from the same mistaken specification can pass together. Known fixtures, negative cases, simulator evidence, and human judgment remain necessary. Do not equate an agent “looks good” message with a passing build or validated acceptance criteria.
 
@@ -68,7 +63,7 @@ Simulator CI does not establish device performance, signing, iPhone deployment, 
 
 - Proportionate verification for each issue: repeatable checks for important behavior, simulator evidence for interactions, and device testing for the personal MVP.
 - When automated tests add value, use Swift Testing for Swift unit tests and XCTest/XCUIAutomation for a small integration smoke suite.
-- One implementation agent per scoped issue; separate review pass for substantive implementation changes; human acceptance before merge.
+- One implementation agent per scoped issue; fresh-agent review and repeated fixes under the accepted [review loop](../REVIEW.md); automatic merging after its gates pass.
 - GitHub Actions simulator build/test checks after issue #1, with plan/cost/toolchain compatibility verified during CI setup.
 
-If accepted, record the delivery practices in DECISIONS.md and update the existing workflow/instructions once. Development does not depend on choosing a TDD policy. This research does not select a chess engine or package split, establish CI, or authorize automatic merging or distribution.
+The accepted delivery loop is already recorded in DECISIONS.md and REVIEW.md. Remaining tooling recommendations can be adopted as the foundation and CI issues establish executable verification. Development does not depend on choosing a TDD policy. This research does not select a chess engine or package split, establish CI, or authorize distribution.
