@@ -312,6 +312,23 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual(self.github.releases[0], old_release)
         self.assertTrue(all(self.github.bytes[key] == value for key, value in old_bytes.items()))
 
+    def test_january_format_and_metadata_bind_full_source_and_run_provenance(self):
+        self.github.created_at = "2027-01-01T00:00:00Z"
+        self.github.run_number = 1
+        self.environment["GITHUB_RUN_NUMBER"] = "1"
+        self.manifest["run_number"] = "1"
+        self.write_manifest()
+        self.publish()
+        item = self.github.releases[0]
+        self.assertEqual(item["tag_name"], "2027.01.1")
+        self.assertEqual(item["name"], "2027.01.1")
+        asset = next(a for a in item["assets"] if a["name"] == "build-metadata.json")
+        metadata = json.loads(self.github.bytes[asset["id"]])
+        self.assertEqual(metadata["commit"], HEAD)
+        self.assertEqual(metadata["run_id"], "100")
+        self.assertEqual(metadata["run_number"], 1)
+        self.assertEqual(metadata["run_created_at"], "2027-01-01T00:00:00Z")
+
     def test_bad_live_run_version_provenance_fails_before_writes(self):
         for field, value in [("run_number", 0), ("run_number", True), ("run_number", "24"),
                              ("run_number", -1), ("created_at", "2026-02-30T12:00:00Z"),
