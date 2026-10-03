@@ -21,7 +21,7 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 
 ## Development status
 
-The repository contains planning documents, coding standards, and Swift formatting configuration. There is no app target or installable build yet.
+The repository contains planning documents, coding standards, the selected source-structure plan, Swift formatting and commit checks, and local agent setup and review-gate tooling. The source folders are planned; there is no app target, gameplay test suite, CI workflow, or installable build yet.
 
 App implementation is on hold until the user explicitly authorizes starting it; see the [autonomous delivery plan](docs/AUTONOMY.md). The [app foundation ticket](https://github.com/devofthings/sidequest/issues/1) will add the iOS target, setup steps, and verified build and test commands.
 
