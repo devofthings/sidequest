@@ -2,7 +2,7 @@
 
 ## Current status
 
-Sidequest currently contains planning documents and [Swift formatting configuration](FORMATTING.md). There is no Xcode app project, executable scheme, simulator build, or iPhone package to install. The [app foundation](https://github.com/devofthings/sidequest/issues/1) will supply verified project paths and commands; [integration](https://github.com/devofthings/sidequest/issues/9) will verify the complete news-and-games experience. The steps below describe the installation workflow and have not yet been verified with a Sidequest app.
+Sidequest currently contains planning documents and [Swift formatting tools and commit checks](FORMATTING.md). There is no Xcode app project, executable scheme, simulator build, or iPhone package to install. The [app foundation](https://github.com/devofthings/sidequest/issues/1) will supply verified project paths and commands; [integration](https://github.com/devofthings/sidequest/issues/9) will verify the complete news-and-games experience. The steps below describe the installation workflow and have not yet been verified with a Sidequest app.
 
 ## Get the source
 
@@ -11,6 +11,8 @@ You need access to the private repository. Use your existing checkout, or clone 
 ```sh
 gh repo clone devofthings/sidequest
 ```
+
+After cloning, follow [FORMATTING.md](FORMATTING.md#install-commit-checks) to enable the tracked commit checks explicitly in that clone. If setup reports existing executable native hooks or another hooks configuration, reconcile them before retrying; setup leaves those hooks and configuration intact.
 
 For a specific published version, open the private [GitHub Releases page](https://github.com/devofthings/sidequest/releases) and use its tagged source. The release notes will identify the full commit, build, required toolchain, and simulator compatibility. Preserve your local signing settings and news imports when switching versions.
 
