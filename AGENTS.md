@@ -33,6 +33,10 @@ Record every development decision made by the user or an agent in the closest ap
 
 Root guidance owns project-wide decisions. Create a scoped `AGENTS.md` when an area gains local decisions; the planned `Games` folder owns common game guidance, and each game folder owns its local guidance once introduced. Keep scoped files focused on their area and link shared rules instead of copying them. The concrete source layout is pending [issue #29](https://github.com/devofthings/sidequest/issues/29); planned folders are not implemented yet.
 
+## Resolve implementation questions
+
+When a ticket has unresolved technical choices, use the project-local [agent-grill skill](.agents/skills/agent-grill/SKILL.md) to resolve facts and delegated choices from evidence before implementation. The agent is the interviewee; human approval, spending requirements, and the fresh-review loop remain with their existing owners. Follow the skill's recording and completion criteria instead of silently assuming answers.
+
 ## Spending approval
 
 Before any purchase, paid plan activation, billing setup, or action that may incur charges, ask the user with the service, expected cost, and proposed limit, and wait for explicit approval. This includes paid CI and usage that could exceed free quotas. Commit, push, and merge authorization does not authorize spending. Prefer local or verified free options; if zero-cost execution cannot be confirmed, keep that action pending and continue independent work.

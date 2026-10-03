@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Grill"
+  short_description: "Resolve technical questions with evidence and docs"
+  default_prompt: "Use $agent-grill to resolve this issue's implementation questions from project docs and evidence, keeping human-owned decisions pending."
