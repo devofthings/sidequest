@@ -92,6 +92,7 @@ def main():
         run("release-build", release + ["ARCHS=arm64", "build"])
         manifest = {
             "schema": 1, "commit": expected, "run_id": run_id, "attempt": attempt,
+            "run_number": os.environ["GITHUB_RUN_NUMBER"],
             "event": os.environ["GITHUB_EVENT_NAME"], "ref": os.environ["GITHUB_REF"],
             "runner_name": os.environ["RUNNER_NAME"], "xcode": xcode.strip(),
             "runtime": f"iOS {installed[0]['version']} ({installed[0]['buildversion']})",
