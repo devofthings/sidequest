@@ -26,6 +26,34 @@ final class SudokuFlowTests: XCTestCase {
   }
 
   @MainActor
+  func testNormalControlsHaveFullTouchAreasAndCellCornersSelect() {
+    let app = launch()
+    app.buttons["game.start"].tap()
+    let cell = app.buttons["sudoku.cell.2"]
+    reveal(cell, in: app, upwards: true)
+    XCTAssertGreaterThanOrEqual(cell.frame.width, 44)
+    XCTAssertGreaterThanOrEqual(cell.frame.height, 44)
+    for point in [(0.1, 0.1), (0.9, 0.1), (0.1, 0.9), (0.9, 0.9)] {
+      app.buttons["sudoku.cell.4"].tap()
+      cell.coordinate(withNormalizedOffset: CGVector(dx: point.0, dy: point.1)).tap()
+      XCTAssertTrue(cell.isSelected)
+      XCTAssertTrue(app.buttons["sudoku.number.3"].isEnabled)
+    }
+    for value in 1...4 {
+      let number = app.buttons["sudoku.number.\(value)"]
+      reveal(number, in: app, upwards: true)
+      XCTAssertGreaterThanOrEqual(number.frame.width, 44)
+      XCTAssertGreaterThanOrEqual(number.frame.height, 44)
+    }
+    let clear = app.buttons["sudoku.clear"]
+    reveal(clear, in: app, upwards: true)
+    XCTAssertGreaterThanOrEqual(clear.frame.width, 44)
+    XCTAssertGreaterThanOrEqual(clear.frame.height, 44)
+    XCTAssertFalse(app.buttons["sudoku.cell.0"].isEnabled)
+    capture(app, name: "normal-full-touch-controls")
+  }
+
+  @MainActor
   func testSolvedBoardRemainsOnCardAndSurvivesRevisit() {
     let app = launch()
     app.buttons["game.start"].tap()
