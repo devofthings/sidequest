@@ -23,18 +23,31 @@ struct SudokuGameView: View {
         }
         HStack(spacing: 8) {
           ForEach(1...4, id: \.self) { value in
-            Button(String(value)) { controller.enter(value) }
-              .frame(maxWidth: .infinity, minHeight: 44)
-              .accessibilityLabel("Enter \(value)")
-              .accessibilityIdentifier("sudoku.number.\(value)")
+            Button {
+              controller.enter(value)
+            } label: {
+              Text(String(value))
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .contentShape(Rectangle())
+            }
+            .accessibilityLabel("Enter \(value)")
+            .accessibilityIdentifier("sudoku.number.\(value)")
           }
         }
         .buttonStyle(.bordered)
         .disabled(controller.selectedCell == nil || board.isComplete)
-        Button("Clear selected cell") { controller.enter(0) }
-          .frame(minHeight: 44)
-          .disabled(controller.selectedCell == nil || board.isComplete)
-          .accessibilityIdentifier("sudoku.clear")
+        Button {
+          controller.enter(0)
+        } label: {
+          Text("Clear selected cell")
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.bordered)
+        .disabled(controller.selectedCell == nil || board.isComplete)
+        .accessibilityIdentifier("sudoku.clear")
         Text(
           board.isComplete
             ? "Sudoku solved!"
@@ -52,23 +65,30 @@ struct SudokuGameView: View {
     let given = controller.puzzle.givens[index] != 0
     let conflict = board.conflicts.contains(index)
     let selected = controller.selectedCell == index
-    return Button(value == 0 ? "·" : String(value)) { controller.selectCell(index) }
-      .font(.title3.monospacedDigit())
-      .fontWeight(given ? .bold : .regular)
-      .minimumScaleFactor(0.6)
-      .frame(maxWidth: .infinity, minHeight: 44)
-      .aspectRatio(1, contentMode: .fit)
-      .background(.quaternary, in: RoundedRectangle(cornerRadius: 8))
-      .overlay(
-        RoundedRectangle(cornerRadius: 8).stroke(
-          selected ? Color.primary : Color.clear, lineWidth: 3)
-      )
-      .foregroundStyle(conflict ? Color.red : Color.primary)
-      .disabled(given || board.isComplete)
-      .accessibilityLabel("Row \(index / 4 + 1), column \(index % 4 + 1)\(given ? ", given" : "")")
-      .accessibilityValue("\(value == 0 ? "Empty" : String(value))\(conflict ? ", conflict" : "")")
-      .accessibilityAddTraits(selected ? .isSelected : [])
-      .accessibilityIdentifier("sudoku.cell.\(index)")
+    return Button {
+      controller.selectCell(index)
+    } label: {
+      Text(value == 0 ? "·" : String(value))
+        .font(.title3.monospacedDigit())
+        .fontWeight(given ? .bold : .regular)
+        .lineLimit(1)
+        .minimumScaleFactor(0.6)
+        .frame(maxWidth: .infinity, minHeight: 44)
+        .aspectRatio(1, contentMode: .fit)
+        .background(.quaternary, in: RoundedRectangle(cornerRadius: 8))
+        .overlay(
+          RoundedRectangle(cornerRadius: 8).stroke(
+            selected ? Color.primary : Color.clear, lineWidth: 3)
+        )
+        .foregroundStyle(conflict ? Color.red : Color.primary)
+        .contentShape(Rectangle())
+    }
+    .buttonStyle(.plain)
+    .disabled(given || board.isComplete)
+    .accessibilityLabel("Row \(index / 4 + 1), column \(index % 4 + 1)\(given ? ", given" : "")")
+    .accessibilityValue("\(value == 0 ? "Empty" : String(value))\(conflict ? ", conflict" : "")")
+    .accessibilityAddTraits(selected ? .isSelected : [])
+    .accessibilityIdentifier("sudoku.cell.\(index)")
   }
 }
 
