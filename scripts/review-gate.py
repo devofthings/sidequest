@@ -43,6 +43,8 @@ def validate_receipt(receipt):
     for name in ("pr", "issue"):
         require(type(receipt.get(name)) is int and receipt[name] > 0,
                 f"Invalid {name} number")
+    require(receipt.get("issue_completion", "complete") in ("complete", "partial"),
+            "Issue completion must be complete or partial")
     for name in ("head", "base"):
         require(isinstance(receipt.get(name), str) and
                 re.fullmatch(r"[0-9a-f]{40}", receipt[name]), f"Invalid {name} SHA")
@@ -94,7 +96,8 @@ def validate_receipt(receipt):
 def audit_body(receipt):
     data = json.dumps(receipt, sort_keys=True, indent=2)
     digest = hashlib.sha256(data.encode()).hexdigest()
-    return f"Sidequest gate receipt SHA-256: {digest}\n\n```json\n{data}\n```"
+    completion = receipt.get("issue_completion", "complete")
+    return f"Sidequest gate receipt SHA-256: {digest}\n\nIssue contribution: {completion}.\n\n```json\n{data}\n```"
 
 
 class GitHub:
@@ -206,7 +209,13 @@ def validate(receipt, github, checkout, *, recorded=False):
     issue = github.issue(receipt["issue"])
     require("pull_request" not in issue and issue["state"] == "open", "Originating issue is not open")
     closing = rf"(?i)\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+(?:https://github\.com/devofthings/sidequest/issues/|#){receipt['issue']}\b"
-    require(re.search(closing, pr.get("body") or ""), "PR must close the originating issue")
+    body = pr.get("body") or ""
+    if receipt.get("issue_completion", "complete") == "partial":
+        reference = rf"(?i)\b(?:refs?|related\s+to|part\s+of)\s+(?:https://github\.com/devofthings/sidequest/issues/|#){receipt['issue']}\b"
+        require(re.search(reference, body), "Partial PR must explicitly reference the originating issue")
+        require(not re.search(closing, body), "Partial PR must not close the originating issue")
+    else:
+        require(re.search(closing, body), "PR must close the originating issue")
     require(not any(not thread["isResolved"] for thread in snapshot["threads"]),
             "GitHub review threads remain unresolved")
     require("CHANGES_REQUESTED" not in snapshot["reviews"].values(),

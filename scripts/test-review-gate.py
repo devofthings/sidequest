@@ -156,6 +156,55 @@ class GateTests(unittest.TestCase):
         self.github.state["pr"]["body"] = "Related #63"
         self.blocked()
 
+    def test_valid_partial_issue_reference_is_read_only(self):
+        self.receipt["issue_completion"] = "partial"
+        for body in ("Refs #63", "Part of #63", "Related to #63",
+                     f"Ref https://github.com/{gate.REPO}/issues/63"):
+            with self.subTest(body=body):
+                self.github.state["pr"]["body"] = body
+                result = gate.deliver(self.receipt, self.github, self.root)
+                self.assertTrue(result["validated"])
+                self.assertEqual(self.github.calls, [])
+
+    def test_partial_issue_merge_records_partial_without_closing_parent(self):
+        self.receipt["issue_completion"] = "partial"
+        self.github.state["pr"]["body"] = "Refs #63; records a decision only."
+        gate.deliver(self.receipt, self.github, self.root, record=True, merge=True)
+        self.assertEqual(self.github.calls, ["record", "merge"])
+        self.assertIn("Issue contribution: partial.", gate.audit_body(self.receipt))
+        self.assertEqual(self.github.issue(63)["state"], "open")
+        self.assertEqual(self.github.state["pr"]["body"], "Refs #63; records a decision only.")
+
+    def test_invalid_partial_references_block_all_actions_before_writes(self):
+        self.receipt["issue_completion"] = "partial"
+        for body in ("", "Refs #64", "Refs #630", "Closes #63", "Refs #63. Closes #63",
+                     f"Refs #63. Resolves https://github.com/{gate.REPO}/issues/63"):
+            for flags in ({}, {"record": True}, {"merge": True}, {"record": True, "merge": True}):
+                with self.subTest(body=body, flags=flags):
+                    self.github.state["pr"]["body"] = body
+                    with self.assertRaises(gate.GateError):
+                        gate.deliver(self.receipt, self.github, self.root, **flags)
+                    self.assertEqual(self.github.calls, [])
+
+    def test_invalid_completion_values_block_before_writes(self):
+        for value in (None, True, 0, "", "Partial", "unknown", [], {}):
+            with self.subTest(value=value):
+                self.receipt["issue_completion"] = value
+                with self.assertRaises(gate.GateError):
+                    gate.deliver(self.receipt, self.github, self.root, record=True, merge=True)
+                self.assertEqual(self.github.calls, [])
+
+    def test_complete_and_legacy_receipts_require_closing_reference(self):
+        for explicit in (False, True):
+            with self.subTest(explicit=explicit):
+                if explicit:
+                    self.receipt["issue_completion"] = "complete"
+                self.github.state["pr"]["body"] = "Refs #63"
+                self.blocked()
+                self.github.state["pr"]["body"] = "Closes #63"
+                self.validate()
+                self.assertIn("Issue contribution: complete.", gate.audit_body(self.receipt))
+
     def test_pending_or_failed_statuses_block(self):
         for state in ("pending", "failure", "error"):
             with self.subTest(state=state):
