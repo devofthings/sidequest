@@ -1,0 +1,12 @@
+.DS_Store
+
+# Xcode
+DerivedData/
+build/
+xcuserdata/
+*.xcuserstate
+
+# Local credentials
+.env
+.env.*
+!.env.example
