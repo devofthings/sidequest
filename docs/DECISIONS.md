@@ -11,6 +11,13 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | GitHub Issues for tasks, Markdown for agent guidance and decisions | Accepted | User requested issues and agent Markdown files. |
 | Private GitHub Project for workflow status | Accepted | User approved Backlog, Ready, In progress, Review, and Done; see [task workflow](WORKFLOW.md). |
 | Native SwiftUI implementation | Accepted | User choice; see [ADR 0002](adr/0002-native-swiftui.md). |
+| Hexagonal architecture from the start | Accepted | User chose replaceable boundaries to accommodate change; see [ADR 0003](adr/0003-hexagonal-architecture.md). |
+| Agent implementation with developer review | Accepted | User wants agents to implement the project and will review code; the detailed workflow remains proposed in issue #12. |
+| TDD as an optional technique | Accepted | User has not chosen TDD and asked to keep it a minor consideration, rather than a project requirement. |
+| CI in the backlog; no server backend for now | Accepted | User clarified the request as CI planning; see issue #15. |
+| Phase-two backend for accounts and synced preferences | Accepted direction | User requested a backend once users join; Firebase and alternatives will be compared in issue #18. Provider selection remains open. |
+| Gamification as an important product direction | Accepted direction | User emphasized gamification. Specific mechanics and scoring rules remain open. |
+| High scores and leaderboards in phase two | Accepted | User confirmed delivery alongside accounts; the private first MVP remains unchanged. |
 | English news for the first test | Accepted | User choice; documentation is also written in US English. |
 | Validate enjoyment of the mixed feed first | Accepted | User chose enjoyment and willingness to reopen as the initial hypothesis. |
 | Sudoku, memory, chess puzzles, and a bubble shooter | Accepted | User selected four game types and clarified the ball game as a bubble shooter. |
