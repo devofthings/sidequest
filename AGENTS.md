@@ -28,6 +28,7 @@ App development is on hold until the user explicitly authorizes starting it. Pre
 - GitHub CLI (`gh`) commands for Sidequest are authorized within these project rules. This authorization preserves the feature-branch, review, publishing, and spending requirements.
 - Use US English for new prose, comments, and identifiers. Preserve existing contracts and quotations.
 - GitHub Issues own task scope and dependencies. The GitHub Project owns workflow status. Repository docs own the product brief, vocabulary, and decisions.
+- Capture unscoped suggestions in the Project's Ideas status; follow [WORKFLOW.md](docs/WORKFLOW.md) when promoting them into scoped work. Ideas are proposals and do not authorize implementation.
 - Make each issue independently reviewable. Link prerequisites rather than expanding the issue into neighboring work.
 - After resolving an issue or ticket, complete the chat checkpoint below before starting or assigning the next issue.
 - Follow [ADR 0003](docs/adr/0003-hexagonal-architecture.md) when adding core behavior, ports, or adapters. Keep game rules separate from presentation and introduce small interfaces at replaceable boundaries.
