@@ -31,6 +31,20 @@ final class GameRuntime {
     deliver(lifecycle.start(makeAttemptID: makeAttemptID))
   }
 
+  /// Bubble-shooter replay replaces this owner's value; controllers never own a second lifecycle.
+  @discardableResult
+  func replay() -> Bool {
+    guard isVisible, case .completed(let old) = phase else { return false }
+    let fresh = makeAttemptID()
+    guard fresh != old else { return false }
+    lifecycle = GameLifecycle()
+    _ = lifecycle.setVisible(true)
+    deliver(.reset(old))
+    // Reset may synchronously make the card ineligible; start still uses the core gate.
+    deliver(lifecycle.start(makeAttemptID: { fresh }))
+    return true
+  }
+
   func acceptsInput(from attempt: GameAttemptID) -> Bool {
     lifecycle.acceptsInput(from: attempt)
   }

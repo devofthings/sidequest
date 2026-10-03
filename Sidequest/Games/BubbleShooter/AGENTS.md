@@ -1,6 +1,6 @@
 # Bubble shooter
 
-Issue #8 owns one original, bounded challenge. Keep its rules/normalized geometry independent of SwiftUI and rendering frameworks. Presentation will consume the shared lifecycle after feed #3 is merged; root owns shared runtime replay and app composition. Never start or fire from visibility/appearance or the tap-to-play action.
+Issue #8 owns one original, bounded challenge. Keep its rules/normalized geometry independent of SwiftUI and rendering frameworks. Presentation consumes the merged #3 retained `GameRuntime`; issue #8 owns its compatible completed-visible replay extension, while root owns app composition. Never start or fire from visibility/appearance or the tap-to-play action.
 
 ## Implementation question record
 
@@ -14,3 +14,12 @@ The implementation agent used the project-local agent-grill as a self-assessment
 | How can delayed shots avoid stale attempts? | Fact and delegated technical choice | Rules return an immutable shot plan tied to the current board revision; commit rejects old plans. Presentation owns a cancellable shot task, checks the runtime token after suspension, and resets on lifecycle effects. Completed-visible replay gets a fresh shared lifecycle/token under #8. | Revision rejection and later adapter reset-during-shot/replay tests; no UI work before feed interfaces merge. |
 
 Angles are radians measured from vertical: negative aims left, positive right. The supported continuous range is ±π/3. Geometry and shot sequences are deterministic; do not use Swift's process-randomized hash as board identity. Rules revision and exact generated plans protect delayed commits; runtime attempt identity remains the presentation boundary.
+
+
+## Presentation ownership
+
+`BubbleShooterController(runtime:game:pause:)` retains rules and one private cancellable shot task. `fire() -> Bool` acknowledges accepted input without exposing task handles. Its injected main-actor pause is the replaceable animation timing boundary; after every pause check cancellation and the same runtime attempt before changing flight or committing a shot. Reset/stop cancel work first. Reset restores board, aim, flight, and feedback; stop retains win/loss rules and feedback. The start action initializes a challenge without firing.
+
+`BubbleShooterView` uses a continuous -60...60 degree slider, an explicit Fire button, and original circles labeled R/B/G beyond color. Gameplay is inside the feed's independently scrollable card; the separate feed rail owns vertical navigation. Completed win/loss offers Replay through the same retained runtime; ordinary revisits retain completion. No scores or campaign are introduced.
+
+Replay replaces the runtime's private lifecycle value only for a visible completed card. Deliver reset with the old token ineligible and phase preview before starting a fresh token. Reject a duplicate injected identity rather than accepting stale callbacks. A reset that hides the card cannot start it. Controllers never own a second lifecycle; root coordinates the common composition and running-app wiring.
