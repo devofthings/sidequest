@@ -22,6 +22,16 @@ final class FeedComposition {
             return false
           }.prefix(1)
           session = .loaded(sudoku + news)
+        } else if arguments.contains("-sidequest-memory-fixtures") {
+          let memory = cards.filter { card in
+            if case .game(let game) = card { return game.kind == .memory }
+            return false
+          }
+          let news = cards.sorted { $0.id.rawValue < $1.id.rawValue }.filter { card in
+            if case .news = card { return true }
+            return false
+          }.prefix(1)
+          session = .loaded(memory + news)
         } else if arguments.contains("-sidequest-feed-empty") {
           session = .loaded([])
         } else if arguments.contains("-sidequest-feed-games-only") {
@@ -73,6 +83,21 @@ final class FeedComposition {
               #endif
               let puzzle = puzzles[index]
               games[game.id] = .sudoku(SudokuController(puzzle: puzzle, runtime: runtime))
+            case .memory where !useDemoGames:
+              #if DEBUG
+                if ProcessInfo.processInfo.arguments.contains("-sidequest-memory-fixtures") {
+                  let board = try MemoryRules(
+                    symbols: MemorySymbol.allCases.flatMap { [$0, $0] })
+                  games[game.id] = .memory(
+                    MemoryController(
+                      runtime: runtime, makeBoard: { board },
+                      delay: { try await Task.sleep(for: .seconds(2)) }))
+                } else {
+                  games[game.id] = .memory(MemoryController(runtime: runtime))
+                }
+              #else
+                games[game.id] = .memory(MemoryController(runtime: runtime))
+              #endif
             default:
               games[game.id] = .placeholder(PlaceholderGameController(runtime: runtime))
             }
