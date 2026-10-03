@@ -49,6 +49,10 @@ The list limit is bounded; paginate through the API if the repository exceeds it
 
 Agents share the user's GitHub credentials. A separate subagent review does not constitute approval from another GitHub account. Use the review status gate rather than configuring a required human approval that the same account cannot supply. These statuses record the orchestrator's evidence; they are not independent GitHub identities or proof of infallible review.
 
+## Repository gate commands
+
+Execute the [tracked review gates](REVIEW_GATES.md) after fresh review and actual verification. `python3 scripts/review-gate.py <receipt.json>` validates without mutation; explicit `--record` publishes evidence and `--merge` rechecks before a pinned squash merge. Use its target-bound receipt, documented CI ownership, and API race limits instead of temporary helpers. A failed command leaves the next action pending.
+
 ## GitHub enforcement
 
 The user chose to proceed without a GitHub plan upgrade or main branch protection, recorded in [issue #23](https://github.com/devofthings/sidequest/issues/23). Keep the repository private and follow the feature-branch, review, verification, and agent-controlled merge process above. These instructions and commit statuses do not provide server enforcement or prevent another client from pushing. Revisit branch protection only when the user requests it.

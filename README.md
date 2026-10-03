@@ -11,6 +11,7 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 - [Agent guidance](AGENTS.md): how to pick up and complete an issue.
 - [Coding rules](docs/CODING.md): ownership, Swift interfaces, state, concurrency, errors, and verification for agents.
 - [Source structure](docs/STRUCTURE.md): selected folder ownership, game grouping, scoped guidance, and planned source discovery.
+- [Review gates](docs/REVIEW_GATES.md): reproducible validation, durable review evidence, and pinned merges.
 - [Swift formatting](docs/FORMATTING.md): shared style, local commit-hook setup, and tooling checks.
 - [Autonomous delivery plan](docs/AUTONOMY.md): technical ownership, the development hold, usage guardrails, and the documentation audit.
 - [Installation and running](docs/INSTALL.md): simulator and personal-iPhone workflow; exact app commands are pending the foundation.

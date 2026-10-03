@@ -5,3 +5,5 @@ Keep hook installation explicit and local to the current clone or worktree. Pres
 Run the tooling integration checks after changing hook or installer behavior. Their temporary repositories must remain outside the project checkout; preserve the author's index, working tree, and Git configuration.
 
 Agent preflight is read-only: report missing tools, checkout ownership prerequisites, repository identity, review skill, formatting setup, and hook wiring without installing dependencies, modifying Git configuration, or checking account billing through an invented CLI. Follow [agent setup](../docs/AGENT_SETUP.md); included usage remains a separate account-tool check. Test preflight with isolated repositories and stub external tools.
+
+For review/verification gate changes, follow [REVIEW_GATES.md](../docs/REVIEW_GATES.md) and run `python3 scripts/test-review-gate.py`. Keep default execution read-only, receipt commands as evidence rather than executable input, and all live mutations explicit. Preserve CI verification ownership and the documented API atomicity limits; fixtures use fake GitHub and isolated temporary Git repositories.
