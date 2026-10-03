@@ -53,6 +53,7 @@ final class ChessFlowTests: XCTestCase {
     XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
     XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
     XCTAssertTrue(app.buttons["chess.square.\(queen)"].label.contains("queen"))
+    capture(app, name: "chess-\(color)-started")
     app.buttons["chess.square.\(opponent)"].tap()
     XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
     reveal(app.staticTexts["chess.feedback"], in: app)
@@ -60,7 +61,9 @@ final class ChessFlowTests: XCTestCase {
     submit(app, queen: queen, destination: wrong)
     reveal(app.staticTexts["chess.feedback"], in: app)
     XCTAssertTrue(app.staticTexts["chess.feedback"].label.contains("not checkmate"))
+    reveal(app.buttons["chess.square.\(queen)"], in: app)
     XCTAssertTrue(app.buttons["chess.square.\(queen)"].label.contains("queen"))
+    reveal(app.buttons["chess.square.\(wrong)"], in: app)
     XCTAssertTrue(app.buttons["chess.square.\(wrong)"].label.contains("Empty square"))
     submit(app, queen: queen, destination: queen)
     reveal(app.staticTexts["chess.feedback"], in: app)
@@ -75,12 +78,16 @@ final class ChessFlowTests: XCTestCase {
     XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
     submit(app, queen: queen, destination: mate)
     XCTAssertTrue(app.staticTexts["chess.completed"].waitForExistence(timeout: 5))
+    reveal(app.buttons["chess.square.\(queen)"], in: app)
     XCTAssertTrue(app.buttons["chess.square.\(queen)"].label.contains("Empty square"))
+    reveal(app.buttons["chess.square.\(mate)"], in: app)
     XCTAssertTrue(app.buttons["chess.square.\(mate)"].label.contains("queen"))
     XCTAssertFalse(app.buttons["chess.square.\(mate)"].isEnabled)
+    capture(app, name: "chess-\(color)-solved")
     app.buttons["feed.next"].tap()
     app.buttons["feed.previous"].tap()
     XCTAssertTrue(app.staticTexts["chess.completed"].exists)
+    reveal(app.buttons["chess.square.\(mate)"], in: app)
     XCTAssertTrue(app.buttons["chess.square.\(mate)"].label.contains("queen"))
     XCTAssertFalse(app.buttons["game.start"].exists)
   }
@@ -105,20 +112,45 @@ final class ChessFlowTests: XCTestCase {
     let submit = app.buttons["chess.submit"]
     reveal(submit, in: app)
     XCTAssertTrue(submit.isEnabled)
+    if app.launchArguments.contains("-sidequest-large-text") {
+      capture(app, name: "chess-largest-coordinate-submit")
+    }
     submit.tap()
   }
 
   @MainActor
   private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
-    for _ in 0..<7 {
-      if element.isHittable { return }
-      app.scrollViews.firstMatch.swipeUp()
-    }
-    for _ in 0..<7 {
-      if element.isHittable { return }
-      app.scrollViews.firstMatch.swipeDown()
+    let scroll = app.scrollViews.firstMatch
+    for fallbackUpwards in [true, false] {
+      for _ in 0..<12 {
+        if element.exists && element.isHittable && scroll.frame.contains(element.frame) { return }
+        let upwards: Bool
+        if element.exists {
+          upwards = element.frame.midY > scroll.frame.midY
+        } else {
+          upwards = fallbackUpwards
+        }
+        let start = scroll.coordinate(
+          withNormalizedOffset: CGVector(dx: 0.5, dy: upwards ? 0.65 : 0.35))
+        let end = scroll.coordinate(
+          withNormalizedOffset: CGVector(dx: 0.5, dy: upwards ? 0.4 : 0.6))
+        start.press(
+          forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
+      }
     }
     XCTAssertTrue(element.isHittable)
+    XCTAssertTrue(
+      scroll.frame.contains(element.frame),
+      "Bring the entire control into view before tapping: \(element.identifier) \(element.frame) in \(scroll.frame)."
+    )
+  }
+
+  @MainActor
+  private func capture(_ app: XCUIApplication, name: String) {
+    let attachment = XCTAttachment(screenshot: app.screenshot())
+    attachment.name = name
+    attachment.lifetime = .keepAlways
+    add(attachment)
   }
 
   @MainActor

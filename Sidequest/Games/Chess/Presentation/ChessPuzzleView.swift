@@ -96,21 +96,23 @@ struct ChessPuzzleView: View {
         Text(
           controller.destinationFile.map {
             "File: \(String("abcdefgh".dropFirst($0).prefix(1)).uppercased())"
-          } ?? "Choose file"
+          } ?? "File: —"
         )
         .frame(maxWidth: .infinity, minHeight: 44)
       }
       .accessibilityIdentifier("chess.file")
+      .accessibilityHint("Choose a destination file from A through H.")
       Menu {
         ForEach(0..<8) { rank in
           Button("Rank \(rank + 1)") { controller.selectRank(rank) }
             .accessibilityIdentifier("chess.rank.\(rank + 1)")
         }
       } label: {
-        Text(controller.destinationRank.map { "Rank: \($0 + 1)" } ?? "Choose rank")
+        Text(controller.destinationRank.map { "Rank: \($0 + 1)" } ?? "Rank: —")
           .frame(maxWidth: .infinity, minHeight: 44)
       }
       .accessibilityIdentifier("chess.rank")
+      .accessibilityHint("Choose a destination rank from 1 through 8.")
       Button("Submit move", action: controller.submitCoordinates)
         .frame(maxWidth: .infinity, minHeight: 44)
         .buttonStyle(.borderedProminent)

@@ -5,7 +5,7 @@ enum SampleSession {
   case loaded([FeedCard])
   case failed(String)
 
-  static func make() -> Self {
+  static func make(includeChessVariants: Bool = true) -> Self {
     do {
       guard let gardenURL = URL(string: "https://example.com/garden"),
         let libraryURL = URL(string: "https://example.com/library")
@@ -28,8 +28,14 @@ enum SampleSession {
             publisher: "Sidequest sample", sourceURL: libraryURL,
             capturedAt: timestamp, isSample: true)),
       ]
-      cards += try GameKind.allCases.map {
-        .game(GameCard(id: try CardID("sample-game-\($0.rawValue)"), kind: $0))
+      for kind in GameKind.allCases {
+        if kind == .chess, includeChessVariants {
+          cards += try ["white", "black"].map { side in
+            .game(GameCard(id: try CardID("sample-game-chess-\(side)"), kind: .chess))
+          }
+        } else {
+          cards.append(.game(GameCard(id: try CardID("sample-game-\(kind.rawValue)"), kind: kind)))
+        }
       }
       var random = SystemRandomNumberGenerator()
       return .loaded(try DeckBuilder.shuffled(cards, using: &random))

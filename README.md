@@ -32,7 +32,7 @@ Current source supports full-card native vertical paging: swipe up/down directly
 | --- | --- | --- |
 | Mini Sudoku | Playable 4×4 puzzle | [Rules, controls, and checks](docs/SUDOKU.md) |
 | Memory pairs | Playable six-pair board | [Rules, controls, and checks](docs/MEMORY.md) |
-| Chess puzzles | Provisional demo | Playable one-move puzzles pending [#7](https://github.com/devofthings/sidequest/issues/7) |
+| Chess puzzles | Playable one-move mates for both colors | [Rules, accessible controls, and exhaustive fixture checks](docs/CHESS.md) |
 | Bubble shooter | Provisional demo | Playable shooting/matching pending [#8](https://github.com/devofthings/sidequest/issues/8) |
 
 The feed currently uses clearly labeled fictional news. Manual English snapshot imports are implemented in a standalone Debug preview; connecting saved imports to the mixed feed is pending [#9](https://github.com/devofthings/sidequest/issues/9). See [news preparation and import](docs/NEWS.md). Accounts, synced preferences, and leaderboards are deferred to phase two; [MVP.md](docs/MVP.md) owns the approved scope.
@@ -77,6 +77,7 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 - [Feed presentation](docs/FEED.md): manual navigation, retained game runtimes, scene handling, and injected card surfaces.
 - [Mini Sudoku](docs/SUDOKU.md): the 4×4 board, controls, fixture validation, and lifecycle behavior.
 - [Memory pairs](docs/MEMORY.md): the six-pair board, delayed mismatches, and attempt reset.
+- [Chess puzzles](docs/CHESS.md): original one-move puzzles, accessible coordinates, and exhaustive fixture validation.
 - [Source structure](docs/STRUCTURE.md): folder ownership, game grouping, scoped guidance, and verified foundation source discovery.
 - [Review gates](docs/REVIEW_GATES.md): reproducible validation, durable review evidence, and pinned merges.
 - [Continuous verification](docs/CI.md): free foreground self-hosted execution, exact-commit checks, and local diagnostics.

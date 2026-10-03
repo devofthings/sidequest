@@ -7,12 +7,32 @@ final class FeedComposition {
   private let games: [CardID: ComposedGame]
 
   init() {
-    let source = SampleSession.make()
+    let useDemoGames: Bool
+    #if DEBUG
+      let arguments = ProcessInfo.processInfo.arguments
+      useDemoGames =
+        arguments.contains("-sidequest-feed-test")
+        || arguments.contains("-sidequest-feed-games-only")
+        || arguments.contains("-sidequest-feed-replacement-test")
+    #else
+      useDemoGames = false
+    #endif
+    let source = SampleSession.make(includeChessVariants: !useDemoGames)
     let session: SampleSession
     #if DEBUG
       if case .loaded(let cards) = source {
         let arguments = ProcessInfo.processInfo.arguments
-        if arguments.contains("-sidequest-sudoku-test") {
+        if arguments.contains("-sidequest-chess-white-fixture")
+          || arguments.contains("-sidequest-chess-black-fixture")
+        {
+          let side = arguments.contains("-sidequest-chess-black-fixture") ? "black" : "white"
+          let chess = cards.filter { $0.id.rawValue == "sample-game-chess-\(side)" }
+          let news = cards.sorted { $0.id.rawValue < $1.id.rawValue }.filter { card in
+            if case .news = card { return true }
+            return false
+          }.prefix(1)
+          session = .loaded(chess + news)
+        } else if arguments.contains("-sidequest-sudoku-test") {
           let sudoku = cards.filter { card in
             if case .game(let game) = card { return game.kind == .sudoku }
             return false
@@ -52,14 +72,6 @@ final class FeedComposition {
       }
     #else
       session = source
-    #endif
-    let useDemoGames: Bool
-    #if DEBUG
-      useDemoGames =
-        ProcessInfo.processInfo.arguments.contains("-sidequest-feed-test")
-        || ProcessInfo.processInfo.arguments.contains("-sidequest-feed-replacement-test")
-    #else
-      useDemoGames = false
     #endif
     var games: [CardID: ComposedGame] = [:]
     var composedSession = session
@@ -102,6 +114,19 @@ final class FeedComposition {
               #else
                 games[game.id] = .memory(MemoryController(runtime: runtime))
               #endif
+            case .chess where !useDemoGames:
+              let fixtureID: String
+              switch game.id.rawValue {
+              case "sample-game-chess-white": fixtureID = "queen-corner-white"
+              case "sample-game-chess-black": fixtureID = "queen-corner-black"
+              default: throw GameCompositionError.missingChessFixture(game.id.rawValue)
+              }
+              guard
+                let puzzle = try ChessPuzzleLoader.bundled().first(where: { $0.id == fixtureID })
+              else {
+                throw GameCompositionError.missingChessFixture(fixtureID)
+              }
+              games[game.id] = .chess(ChessController(puzzle: puzzle, runtime: runtime))
             default:
               games[game.id] = .placeholder(PlaceholderGameController(runtime: runtime))
             }
@@ -132,6 +157,12 @@ final class FeedComposition {
 
 private enum GameCompositionError: Error, LocalizedError {
   case missingSudokuFixture
+  case missingChessFixture(String)
 
-  var errorDescription: String? { "The Sudoku fixture set is empty." }
+  var errorDescription: String? {
+    switch self {
+    case .missingSudokuFixture: "The Sudoku fixture set is empty."
+    case .missingChessFixture(let id): "The chess fixture for \(id) is missing."
+    }
+  }
 }
