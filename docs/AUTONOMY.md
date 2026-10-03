@@ -1,18 +1,18 @@
-# Prepared autonomous delivery plan
+# Autonomous delivery plan
 
-Prepared October 3, 2026 for [issue #33](https://github.com/devofthings/sidequest/issues/33). This is documentation preparation; app development has not started. No scheduled task was created. The current hold and usage rules are authoritative in [AGENTS.md](../AGENTS.md).
+Prepared October 3, 2026 for [issue #33](https://github.com/devofthings/sidequest/issues/33). The user explicitly authorized implementation on October 3, 2026: "Start the actual implementation. Good Luck Have fun!" Execute the confirmed MVP sequence. No scheduled task was created. Start authorization and usage rules are authoritative in [AGENTS.md](../AGENTS.md).
 
 ## Ownership and start condition
 
 The agent acts as technical lead: selects ready work, resolves routine implementation choices within accepted decisions, coordinates implementation and fresh reviews, verifies results, fixes findings, and merges through [REVIEW.md](REVIEW.md). The user provides product direction in repository documents and does not need to review code.
 
-An explicit user instruction to start app development is required before executing the implementation sequence below. Preparing this plan, having ready tickets, or merging documentation does not authorize starting. Scheduling will be decided separately; this plan creates no ongoing background execution.
+The explicit user start lifts the prior app-development hold for the confirmed MVP and its approved tickets. Scheduling will be decided separately; this plan creates no ongoing background execution. Spending and new feature ideas retain their separate approval boundaries.
 
 The lead asks for steering when a choice changes confirmed product scope or a ticket explicitly requires a user decision, such as backend selection, final branding, or the personal enjoyment test. Ask before spending, collecting credentials, or publishing outside authorized scope. Resolve routine code and verification choices autonomously and record development decisions in the applicable AGENTS.md.
 
 ## Readiness checks
 
-Before the first implementation issue, confirm start authorization, the latest MVP and decisions, the issue's prerequisites, the clean feature checkout, and available included Codex usage. Confirm that the personal review skill is available and a capable lead can receive the [review handoff](REVIEW.md#review-handoff-queue). After start authorization, an implementation chat without subagents may complete a bounded feature and queue its PR; it cannot certify its own change or merge without independent review. Until then, preparation may update documentation and the explicitly authorized local agent bootstrap and merge tooling under issues #62 and #63. Follow [agent setup](AGENT_SETUP.md); this bounded tooling authorization adds no app source, targets, CI jobs, or scheduled runs.
+Before the first implementation issue, confirm start authorization, the latest MVP and decisions, the issue's prerequisites, the clean feature checkout, and available included Codex usage. Confirm that the personal review skill is available and a capable lead can receive the [review handoff](REVIEW.md#review-handoff-queue). After start authorization, an implementation chat without subagents may complete a bounded feature and queue its PR; it cannot certify its own change or merge without independent review. Follow [agent setup](AGENT_SETUP.md) for implementation ownership and verification. Local application receipts are available before CI under [REVIEW_GATES.md](REVIEW_GATES.md); hosted execution remains subject to the zero-cost/spending check.
 
 Build and test commands must come from the executable foundation, not invented placeholders. Verify free CI execution or obtain spending approval before enabling chargeable jobs. Keep the repository private and main protection deferred as accepted; enforce the agent process without claiming a GitHub server lock.
 

@@ -8,17 +8,17 @@ At the start of a new Sidequest planning or implementation chat, read [docs/MVP.
 
 At chat startup and after each ticket's chat checkpoint, the active lead checks open PRs before selecting new work. Follow the [review handoff queue](docs/REVIEW.md#review-handoff-queue), including older PRs without its label. An author who cannot dispatch a fresh reviewer leaves a durable handoff and the PR open; a capable lead owns review pickup. This keeps review independent of the author chat's capabilities without requiring the user to review code.
 
-## Autonomous delivery and current hold
+## Autonomous delivery and start authorization
 
 The agent is the technical lead and owns issue selection, implementation, verification, fresh-agent code review, fixes, and gated merging. The user provides product steering through the project documents and does not need to review code. Follow [docs/AUTONOMY.md](docs/AUTONOMY.md) for the prepared delivery plan and escalation boundaries.
 
 Delegate ticket-readiness/spec reviews and PR code reviews to fresh subagents when delegation is available. The lead coordinates findings, fixes, actual verification, and merge gates rather than duplicating the full review. Follow the [delegated review responsibilities](docs/REVIEW.md#delegated-review-responsibilities); use the handoff queue when a fresh reviewer cannot be dispatched.
 
-App development is on hold until the user explicitly authorizes starting it. Preparation may audit and update documentation, establish the approved source-structure plan, and implement/run the explicitly authorized local agent setup and review-gate tooling in issues #62 and #63. It may not create app code or targets, start app implementation or CI jobs, or activate release automation. Scheduling remains undecided: create no recurring runs under this plan. Repository readiness, a Ready issue, or merging this guidance does not lift the hold.
+The user explicitly authorized app implementation on October 3, 2026: "Start the actual implementation. Good Luck Have fun!" Execute the confirmed MVP and approved issue sequence under [AUTONOMY.md](docs/AUTONOMY.md). The prior app-development hold is lifted. Scheduling remains undecided: create no recurring runs. Verify zero-cost CI/release execution or obtain explicit spending approval before activating hosted jobs; the start instruction does not authorize spending, new feature ideas, or external publication.
 
 ## Start an issue
 
-Before assigning edits in a fresh or handed-off checkout, follow [agent setup](docs/AGENT_SETUP.md): preserve existing work, establish isolated ownership, install hooks explicitly, and pass the read-only preflight. Use the tracked [my-review skill](.agents/skills/my-review/SKILL.md) for Sidequest reviews; host-installed copies are not required. This local tooling preparation does not lift the app development or scheduling hold.
+Before assigning edits in a fresh or handed-off checkout, follow [agent setup](docs/AGENT_SETUP.md): preserve existing work, establish isolated ownership, install hooks explicitly, and pass the read-only preflight. Use the tracked [my-review skill](.agents/skills/my-review/SKILL.md) for Sidequest reviews; host-installed copies are not required. The explicit user start authorizes app work; setup checks neither authorize spending nor create scheduled work.
 
 1. Read the assigned GitHub issue, its dependencies, and [docs/MVP.md](docs/MVP.md). Read [docs/WORKFLOW.md](docs/WORKFLOW.md) before starting work or updating its Project status.
 2. Read [CONTEXT.md](CONTEXT.md) when introducing domain names. Read [docs/DECISIONS.md](docs/DECISIONS.md) before choosing technology, content sources, or product behavior.
@@ -33,7 +33,7 @@ Before assigning edits in a fresh or handed-off checkout, follow [agent setup](d
 - GitHub CLI (`gh`) commands for Sidequest are authorized within these project rules. This authorization preserves the feature-branch, review, publishing, and spending requirements.
 - Use US English for new prose, comments, and identifiers. Preserve existing contracts and quotations.
 - GitHub Issues own task scope and dependencies. The GitHub Project owns workflow status. Repository docs own the product brief, vocabulary, and decisions.
-- Agents may create and address bounded bug-fix tickets and necessary subtasks within already-approved scope. New or expanded features must be captured in Ideas and receive explicit user agreement before any work beyond recording the proposal. Follow [ticket authorization](docs/WORKFLOW.md#ticket-authorization) before creating, promoting, or assigning work; existing implementation holds and spending/review rules still apply.
+- Agents may create and address bounded bug-fix tickets and necessary subtasks within already-approved scope. New or expanded features must be captured in Ideas and receive explicit user agreement before any work beyond recording the proposal. Follow [ticket authorization](docs/WORKFLOW.md#ticket-authorization) before creating, promoting, or assigning work; spending/review rules still apply.
 - Submit every repository change, including documentation, through a PR before reporting it as delivered. Make each issue independently reviewable; link prerequisites rather than expanding the issue into neighboring work.
 - Schedule the shared design baseline and wireframes after the MVP and personal test; follow the accepted [design timing](docs/MVP.md#deferred-work) when planning UI work or dependencies for issue #13.
 - After resolving an issue or ticket, complete the chat checkpoint below before starting or assigning the next issue.
@@ -62,7 +62,7 @@ Ask the user in chat first when selected work genuinely needs authorization, an 
 
 Record every development decision made by the user or an agent in the closest applicable `AGENTS.md` when the decision is made or changed, before handing off the work. Use the standard `AGENTS.md` filename. Include the actionable rule and a concise rationale, or link the authoritative decision/ADR with its status. Mark proposals as proposed; a research recommendation alone is not an accepted choice. Update stale guidance in the same PR as a change to the decision.
 
-Root guidance owns project-wide decisions. Create a scoped `AGENTS.md` when an area gains local decisions; the planned `Games` folder owns common game guidance, and each game folder owns its local guidance once introduced. Keep scoped files focused on their area and link shared rules instead of copying them. [STRUCTURE.md](docs/STRUCTURE.md) selects source ownership and filesystem-synchronized discovery for the foundation; its planned folders are not implemented or build-verified yet.
+Root guidance owns project-wide decisions. Create a scoped `AGENTS.md` when an area gains local decisions; the planned `Games` folder owns common game guidance, and each game folder owns its local guidance once introduced. Keep scoped files focused on their area and link shared rules instead of copying them. [STRUCTURE.md](docs/STRUCTURE.md) selects source ownership and filesystem-synchronized discovery for the foundation; its foundation #1 establishes executable folders and records their actual verification.
 
 ## Resolve implementation questions
 

@@ -67,6 +67,17 @@ class PreflightTests(unittest.TestCase):
         self.assertEqual(before, after)
         self.assertIn("App build, gameplay tests, and releases unavailable", result.stdout)
 
+    def test_app_presence_reports_commands_without_claiming_execution(self):
+        (self.root / "Sidequest.xcodeproj").mkdir()
+        (self.root / "Sidequest.xcodeproj/project.pbxproj").write_text("fixture")
+        self.git("add", ".")
+        self.git("-c", "core.hooksPath=/dev/null", "commit", "-qm", "fixture target")
+        result = self.run_preflight()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("App target present", result.stdout)
+        self.assertIn("Preflight does not build or verify the app", result.stdout)
+        self.assertNotIn("App implementation and scheduling remain on hold", result.stdout)
+
     def test_wrong_remote(self):
         self.git("remote", "set-url", "origin", "https://github.com/other/project.git")
         self.reject("FAIL repository origin")

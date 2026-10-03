@@ -75,7 +75,7 @@ def validate_receipt(receipt):
     require(isinstance(verification, dict), "Missing verification")
     require(verification.get("head") == receipt["head"] and
             verification.get("base") == receipt["base"], "Verification target differs")
-    require(verification.get("mode") in ("documentation", "tooling", "ci"),
+    require(verification.get("mode") in ("documentation", "tooling", "application", "ci"),
             "Invalid verification mode")
     commands = verification.get("commands")
     require(isinstance(commands, list) and commands, "Missing actual command results")
@@ -89,6 +89,14 @@ def validate_receipt(receipt):
             "List unavailable checks explicitly")
     for unavailable in verification["unavailable_checks"]:
         text_field(unavailable, "unavailable check and reason")
+    if verification["mode"] == "application":
+        environment = verification.get("environment")
+        require(isinstance(environment, dict), "Missing local app verification environment")
+        for name in ("xcode", "destination", "project", "scheme"):
+            text_field(environment.get(name), f"verification.environment.{name}")
+        require({"build", "tests", "format"}.issubset(
+            {command.get("check") for command in commands if isinstance(command.get("check"), str)}),
+            "Local app verification requires successful build, tests, and strict format evidence")
     if verification["mode"] == "ci":
         text_field(verification.get("run_url"), "CI run URL")
 
@@ -275,6 +283,11 @@ def validate(receipt, github, checkout, *, recorded=False):
         require(all(path.endswith(".md") or path.startswith(("scripts/", ".githooks/")) or
                     path == ".swift-format" for path in changed),
                 "Tooling verification cannot cover application changes")
+    elif mode == "application":
+        require(all(path.endswith(".md") or path.startswith(("Sidequest/", "SidequestTests/",
+                    "SidequestUITests/", "Sidequest.xcodeproj/")) or
+                    path in (".gitignore", ".swift-format") for path in changed),
+                "Local app verification cannot cover unrelated tooling or workflow changes")
     files = git("ls-tree", "-r", "--name-only", receipt["head"]).splitlines()
     if any(path.startswith(".github/workflows/") for path in files):
         require(mode == "ci", "CI owns verification when workflows exist")

@@ -25,7 +25,7 @@ Keep Swift game rules and feed logic in a pure core. Introduce stable ports at e
 
 ## Accepted issue-to-PR loop
 
-The user subsequently accepted feature branches only and the fresh-agent review, fix, repeat, and automatic merge loop. Follow [REVIEW.md](../REVIEW.md) for the authoritative steps, commit-bound gates, reviewer skill, and GitHub plan limitations. Agents own code review; the user steers product direction through documents. Provider selection, final product decisions, and the personal enjoyment test retain their issue-specific user acceptance criteria. The current implementation hold and included-usage-only guardrails are recorded in [AGENTS.md](../../AGENTS.md) and the [autonomous plan](../AUTONOMY.md).
+The user subsequently accepted feature branches only and the fresh-agent review, fix, repeat, and automatic merge loop. Follow [REVIEW.md](../REVIEW.md) for the authoritative steps, commit-bound gates, reviewer skill, and GitHub plan limitations. Agents own code review; the user steers product direction through documents. Provider selection, final product decisions, and the personal enjoyment test retain their issue-specific user acceptance criteria. Current implementation authorization and included-usage-only guardrails are recorded in [AGENTS.md](../../AGENTS.md) and the [autonomous plan](../AUTONOMY.md).
 
 A separate reviewer has a different task context, not guaranteed independent reasoning. Both agents may share incorrect assumptions. Tests derived from the same mistaken specification can pass together. Known fixtures, negative cases, simulator evidence, and human judgment remain necessary. Do not equate an agent “looks good” message with a passing build or validated acceptance criteria.
 

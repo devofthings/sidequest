@@ -322,6 +322,76 @@ class GateTests(unittest.TestCase):
         self.receipt["authorization"]["changed_paths"].append("tool.py")
         self.blocked()
 
+    def application_fixture(self, path="Sidequest/App/Foundation.swift"):
+        target = self.root / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("struct Foundation {}\n")
+        self.git("add", ".")
+        self.git("commit", "-qm", "app")
+        head = self.git("rev-parse", "HEAD")
+        self.receipt["head"] = self.receipt["verification"]["head"] = head
+        self.github.state["pr"]["head"]["sha"] = self.github.state["refs"]["head"] = head
+        self.receipt["authorization"]["changed_paths"].append(path)
+        self.receipt["verification"].update(mode="application", environment={
+            "xcode": "Xcode fixture", "project": "Sidequest.xcodeproj",
+            "scheme": "Sidequest", "destination": "fixture simulator"})
+        self.receipt["verification"]["commands"] = [
+            {"check": check, "command": f"fixture {check}", "exit_code": 0, "result": "Observed pass"}
+            for check in ("build", "tests", "format")]
+
+    def test_local_application_records_and_merges_before_ci(self):
+        self.application_fixture()
+        result = gate.deliver(self.receipt, self.github, self.root, record=True, merge=True)
+        self.assertEqual(self.github.calls, ["record", "merge"])
+        self.assertEqual(result["merged_commit"], "e" * 40)
+
+    def test_local_application_missing_or_failed_checks_do_not_write(self):
+        self.application_fixture()
+        original = copy.deepcopy(self.receipt["verification"]["commands"])
+        for check in ("build", "tests", "format"):
+            for failure in ("missing", "failed", "bad_exit"):
+                with self.subTest(check=check, failure=failure):
+                    commands = copy.deepcopy(original)
+                    if failure == "missing":
+                        commands = [item for item in commands if item["check"] != check]
+                    else:
+                        next(item for item in commands if item["check"] == check)["exit_code"] = 1 if failure == "failed" else False
+                    self.receipt["verification"]["commands"] = commands
+                    with self.assertRaises(gate.GateError):
+                        gate.deliver(self.receipt, self.github, self.root, record=True, merge=True)
+                    self.assertEqual(self.github.calls, [])
+
+    def test_local_application_requires_environment_evidence(self):
+        self.application_fixture()
+        original = copy.deepcopy(self.receipt["verification"]["environment"])
+        for field in ("xcode", "destination", "project", "scheme"):
+            self.receipt["verification"]["environment"] = {k: v for k, v in original.items() if k != field}
+            self.blocked()
+        self.receipt["verification"]["environment"] = "invented"
+        self.blocked()
+
+    def test_local_application_rejects_unrelated_tooling(self):
+        self.application_fixture("scripts/unrelated.py")
+        with self.assertRaises(gate.GateError):
+            gate.deliver(self.receipt, self.github, self.root, record=True, merge=True)
+        self.assertEqual(self.github.calls, [])
+
+    def test_local_application_cannot_bypass_workflow_verification(self):
+        self.application_fixture(".github/workflows/ci.yml")
+        with self.assertRaises(gate.GateError):
+            gate.deliver(self.receipt, self.github, self.root, record=True, merge=True)
+        self.assertEqual(self.github.calls, [])
+        # Existing workflows also block application mode when the diff is ordinary app code.
+        self.git("checkout", "--", ".github/workflows/ci.yml")
+        base = self.receipt["head"]
+        self.receipt["base"] = self.receipt["verification"]["base"] = base
+        self.github.state["pr"]["base"]["sha"] = self.github.state["refs"]["base"] = base
+        self.receipt["authorization"]["changed_paths"] = []
+        self.application_fixture()
+        with self.assertRaisesRegex(gate.GateError, "CI owns"):
+            gate.deliver(self.receipt, self.github, self.root, record=True, merge=True)
+        self.assertEqual(self.github.calls, [])
+
     def test_workflows_require_ci_mode(self):
         directory = self.root / ".github/workflows"
         directory.mkdir(parents=True)

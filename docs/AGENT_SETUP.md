@@ -1,6 +1,6 @@
 # Agent checkout setup
 
-Use this procedure at chat startup and before handing a checkout to another agent. This is local preparation authorized by the user on October 3, 2026; app implementation and scheduling remain on hold.
+Use this procedure at chat startup and before handing a checkout to another agent. Local setup was authorized on October 3, 2026; the user subsequently authorized app implementation that day. Follow the approved issue sequence; scheduling remains undecided and spending approval still applies.
 
 ## Isolate and synchronize
 
