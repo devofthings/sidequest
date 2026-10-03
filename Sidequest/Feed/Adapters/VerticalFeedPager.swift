@@ -4,6 +4,12 @@ import UIKit
 struct FeedPageRequest: Equatable {
   let id = UUID()
   let step: Int
+  let owner: ObjectIdentifier
+
+  init(controller: FeedController, step: Int) {
+    owner = ObjectIdentifier(controller)
+    self.step = step
+  }
 }
 
 /// The platform owns drag physics; the feed commits only a settled page.
@@ -89,7 +95,8 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
       lastRequestID = request?.id
       centerOnCommittedPage()
     }
-    guard controller.canNavigate, let request, request.id != lastRequestID,
+    guard controller.canNavigate, let request, request.owner == ObjectIdentifier(controller),
+      request.id != lastRequestID,
       let selected = controller.selectedIndex,
       let slot = window.firstIndex(of: selected + request.step), pageHeight > 0
     else { return }

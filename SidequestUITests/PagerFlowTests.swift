@@ -129,6 +129,26 @@ final class PagerFlowTests: XCTestCase {
     XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 5 of 6")
   }
 
+  func testReplacingSessionInSameViewRejectsOldRequestAndActivatesNewPreview() {
+    continueAfterFailure = false
+    let app = XCUIApplication()
+    app.launchArguments = ["-sidequest-feed-replacement-test"]
+    app.launch()
+    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    app.nextFeedCard()
+    waitForPosition("Card 2 of 6", in: app)
+    app.buttons["game.start"].tap()
+    app.buttons["game.interact"].tap()
+    app.buttons["feed.replaceFixture"].tap()
+    waitForPosition("Card 1 of 6", in: app)
+    XCTAssertTrue(app.buttons["game.start"].isEnabled)
+    app.buttons["game.start"].tap()
+    XCTAssertEqual(app.staticTexts["game.interactions"].label, "Interactions: 0")
+    app.buttons["game.interact"].tap()
+    XCTAssertEqual(app.staticTexts["game.interactions"].label, "Interactions: 1")
+    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 6")
+  }
+
   private func waitForPosition(_ position: String, in app: XCUIApplication) {
     let target = app.staticTexts["feed.position"]
     let expected = expectation(

@@ -40,7 +40,9 @@ final class FeedComposition {
               if case .game = $0 { return true }
               return false
             })
-        } else if arguments.contains("-sidequest-feed-test") {
+        } else if arguments.contains("-sidequest-feed-test")
+          || arguments.contains("-sidequest-feed-replacement-test")
+        {
           session = .loaded(cards.sorted { $0.id.rawValue < $1.id.rawValue })
         } else {
           session = source
@@ -53,7 +55,9 @@ final class FeedComposition {
     #endif
     let useDemoGames: Bool
     #if DEBUG
-      useDemoGames = ProcessInfo.processInfo.arguments.contains("-sidequest-feed-test")
+      useDemoGames =
+        ProcessInfo.processInfo.arguments.contains("-sidequest-feed-test")
+        || ProcessInfo.processInfo.arguments.contains("-sidequest-feed-replacement-test")
     #else
       useDemoGames = false
     #endif

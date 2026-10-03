@@ -66,7 +66,11 @@ struct FeedView: View {
       }
     }
     .padding(.vertical, 8)
-    .onChange(of: scenePhase, initial: true) { _, phase in
+    .onChange(of: ObjectIdentifier(controller), initial: true) { _, _ in
+      pageRequest = nil
+      controller.setSceneActive(scenePhase == .active)
+    }
+    .onChange(of: scenePhase) { _, phase in
       controller.setSceneActive(phase == .active)
     }
     .onDisappear { controller.setSceneActive(false) }
@@ -76,7 +80,7 @@ struct FeedView: View {
     guard controller.canNavigate,
       step > 0 ? controller.canGoForward : controller.canGoBack
     else { return }
-    pageRequest = FeedPageRequest(step: step)
+    pageRequest = FeedPageRequest(controller: controller, step: step)
   }
 
   @ViewBuilder

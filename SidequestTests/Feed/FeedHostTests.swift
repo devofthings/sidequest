@@ -1,4 +1,6 @@
 import Foundation
+import SwiftUI
+import UIKit
 import XCTest
 
 @testable import Sidequest
@@ -179,6 +181,42 @@ final class FeedHostTests: XCTestCase {
     XCTAssertFalse(game.runtime.isVisible)
     XCTAssertEqual(game.moves, 0)
     XCTAssertEqual(game.resetCount, 1)
+  }
+
+  @MainActor
+  func testReplacementPagerRejectsOldRequestsAndStoppedCallbacks() throws {
+    let ids = try [CardID("first"), CardID("second")]
+    let cards = ids.map { FeedCard.game(GameCard(id: $0, kind: .memory)) }
+    let old = FeedController(
+      cards: cards, runtimes: Dictionary(uniqueKeysWithValues: ids.map { ($0, GameRuntime()) }))
+    let obsolete = FeedPageRequest(controller: old, step: 1)
+    old.retire()
+    let first = RuntimeProbe()
+    let second = RuntimeProbe()
+    let replacement = FeedController(
+      cards: cards, runtimes: [ids[0]: first.runtime, ids[1]: second.runtime])
+    replacement.setSceneActive(true)
+    first.runtime.start()
+    let render: (FeedCard) -> AnyView = { _ in AnyView(Text("Fixture card")) }
+    let pager = FeedPagerController(controller: replacement, content: render)
+    pager.loadViewIfNeeded()
+    pager.view.frame = CGRect(x: 0, y: 0, width: 390, height: 600)
+    pager.view.setNeedsLayout()
+    pager.view.layoutIfNeeded()
+    pager.update(content: render, request: obsolete, reduceMotion: true)
+    XCTAssertEqual(replacement.selectedIndex, 0)
+    XCTAssertEqual(first.resetCount, 0)
+    pager.update(
+      content: render, request: FeedPageRequest(controller: replacement, step: 1),
+      reduceMotion: true)
+    XCTAssertEqual(replacement.selectedIndex, 1)
+    XCTAssertEqual(first.resetCount, 1)
+    pager.stop()
+    pager.update(
+      content: render, request: FeedPageRequest(controller: replacement, step: -1),
+      reduceMotion: true)
+    pager.scrollViewDidEndScrollingAnimation(UIScrollView())
+    XCTAssertEqual(replacement.selectedIndex, 1)
   }
 
   @MainActor

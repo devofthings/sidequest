@@ -10,6 +10,16 @@ struct SidequestApp: App {
       #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("-sidequest-news-preview") {
           FoundationView(session: composition.session)
+        } else if ProcessInfo.processInfo.arguments.contains("-sidequest-feed-replacement-test") {
+          VStack(spacing: 0) {
+            feed
+            Button("Replace fixture session") {
+              composition.controller?.retire()
+              composition = FeedComposition()
+            }
+            .frame(minHeight: 44)
+            .accessibilityIdentifier("feed.replaceFixture")
+          }
         } else if ProcessInfo.processInfo.arguments.contains("-sidequest-large-text") {
           feed.dynamicTypeSize(.accessibility5)
         } else {
