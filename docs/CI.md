@@ -26,7 +26,7 @@ Leave the foreground process running during build/review/merge work, and give th
 
 ## Verification contract
 
-PR verification runs for same-repository PRs; the main-only [release workflow](RELEASES.md) runs the same verification job for every push to main before publishing. The repository is private and its agents use trusted feature branches. Fork PRs cannot execute; same-repository contributors can execute code on this Mac, so repository write access must stay trusted. `pull_request_target` is not used. The workflow has only `contents: read`, and checkout is pinned to the reviewed official revision with credentials not persisted.
+PR verification runs for same-repository PRs; the main-only [release workflow](RELEASES.md) runs the same verification job for every push to main without publishing. Explicit manual main dispatch also verifies its exact event, but publication stays blocked until reviewed MVP readiness enables the tracked source flag. The repository is private and its agents use trusted feature branches. Fork PRs cannot execute; same-repository contributors can execute code on this Mac, so repository write access must stay trusted. `pull_request_target` is not used. The workflow has only `contents: read`, and checkout is pinned to the reviewed official revision with credentials not persisted.
 
 `Sidequest / verification` checks out the explicit PR head rather than the generated merge ref, fetches history, and requires the current base to be its ancestor. A stale feature branch fails and needs rebase/reverification. Main runs verify their exact event commit and its own parent-to-commit change; a newer main tip cannot invalidate an older queued event. Obsolete PR runs may be canceled; main runs have unique SHA groups and are never canceled by a newer main update.
 
@@ -44,7 +44,7 @@ Every failed command fails the job. The Actions log shows its command and final 
 
 Before merging, [review gates](REVIEW_GATES.md) require a successful check run named `Sidequest / verification` whose actual `head_sha` is the reviewed head and whose `details_url` matches the receipt. A successful older run or local assertion cannot substitute. A changed head/base needs fresh independent review and matching CI evidence. Failed, pending, canceled, or skipped checks block merging.
 
-The main-only [release workflow](RELEASES.md) verifies exact merged commits and publishes private simulator previews only after matching native success and a same-runner local handoff. Its initial contribution stays partial until actual first/second release demonstrations complete issue #31. CI does not install on a physical iPhone or verify gameplay that has not been implemented.
+The main-only [release workflow](RELEASES.md) verifies exact merged commits and keeps main pushes verification-only. Once reviewed integration readiness lifts the tracked hold, explicit manual main dispatch publishes only after matching native success and a same-runner local handoff. Issue #31’s historical release proof is complete; #92 supersedes its automatic trigger. CI does not install on a physical iPhone or verify gameplay that has not been implemented.
 
 ## Implementation question record
 

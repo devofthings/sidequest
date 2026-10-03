@@ -2,7 +2,7 @@
 
 ## Verified foundation
 
-`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. The feed uses fictional sample news, playable mini Sudoku and memory pairs, and provisional demos for the other two games. Manual news imports are available in the standalone Debug preview while imported-news feed integration follows #9. Local simulator builds, tests, installation, and launch are verified; [Sudoku verification](SUDOKU.md#verification) records its passed delivery checks; [Memory verification](MEMORY.md#verification) records its passed focused checks and points to live PR gates. Physical-iPhone installation remains unverified and requires your local Apple Account and signing configuration. [CI](CI.md) uses the same verified toolchain on a foreground self-hosted Mac runner. The private [preview workflow](RELEASES.md) has published the merged Sudoku commit as an [ARM64 simulator preview](https://github.com/devofthings/sidequest/releases/tag/preview-fb02ebb45bb20a12308138b6ad39236b6fc11e25). Check the release history for each later version.
+`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. The feed uses fictional sample news, playable mini Sudoku and memory pairs, and provisional demos for the other two games. Manual news imports are available in the standalone Debug preview while imported-news feed integration follows #9. Local simulator builds, tests, installation, and launch are verified; [Sudoku verification](SUDOKU.md#verification) records its passed delivery checks; [Memory verification](MEMORY.md#verification) records its passed focused checks and points to live PR gates. Physical-iPhone installation remains unverified and requires your local Apple Account and signing configuration. [CI](CI.md) uses the same verified toolchain on a foreground self-hosted Mac runner. The retained [2026.10.7 development preview](https://github.com/devofthings/sidequest/releases/tag/2026.10.7) is an ARM64 simulator build, not the finished MVP. Older preview downloads were cleaned up at the user’s request; Git tags/source remain. Next publication is held until actual MVP readiness under [RELEASES.md](RELEASES.md).
 
 | Setting | Verified value |
 | --- | --- |
@@ -98,7 +98,7 @@ Open Simulator to see the window. Normal launch shows Sidequest's shuffled sampl
 
 ## Download a simulator preview
 
-After a successful main release exists, select its exact release tag (`YYYY.MM.build` for new publisher runs, or historical `preview-<full-SHA>`) from the private [release history](https://github.com/devofthings/sidequest/releases). The ARM64 simulator archive requires an Apple-silicon Mac and the verified iOS 27.0 (24A434) runtime above. It cannot be installed directly on an iPhone.
+Publication is currently held until reviewed MVP readiness; local source builds remain available. For an existing download, select its exact release tag (`YYYY.MM.build` for new publisher runs, or historical `preview-<full-SHA>`) from the private [release history](https://github.com/devofthings/sidequest/releases). The ARM64 simulator archive requires an Apple-silicon Mac and the verified iOS 27.0 (24A434) runtime above. It cannot be installed directly on an iPhone.
 
 ```sh
 SIDEQUEST_PREVIEW_TAG='paste-exact-published-release-tag-here'
@@ -158,4 +158,4 @@ Generated output belongs in ignored `DerivedData/`, `build/`, or an external bui
 
 If Xcode reports no destination, check `xcrun simctl list runtimes` and `xcrun simctl list devices available`; unavailable entries with missing runtime profiles cannot run the app. Install the matching runtime rather than claiming a build or test passed. If simulator access is denied in a sandbox, run the approved build/simulator commands with their required local filesystem access.
 
-Published versions appear in the private [GitHub Releases page](https://github.com/devofthings/sidequest/releases) after their successful [release workflow](RELEASES.md). Its initial asset is a simulator archive; source plus local Xcode signing remains the personal-iPhone path.
+Published versions appear in the private [GitHub Releases page](https://github.com/devofthings/sidequest/releases) only after an eligible, explicitly dispatched [release workflow](RELEASES.md). Main verification alone produces no new download. Its initial asset is a simulator archive; source plus local Xcode signing remains the personal-iPhone path.

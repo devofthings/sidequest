@@ -18,6 +18,9 @@ API = f"repos/{REPO}"
 CHECK = "Sidequest / verification"
 WORKFLOW = ".github/workflows/releases.yml"
 RUNNER = "Sidequest-Mac-foreground"
+# Issue #92: integration #9 must establish MVP readiness in a reviewed PR before enabling.
+# No environment override; main pushes never publish even after this flag changes.
+PUBLICATION_ENABLED = False
 
 
 def require(condition, message):
@@ -65,7 +68,7 @@ def verified_job(github, head, run_id, attempt):
             "Invalid verification run identity.")
     run = github.request(f"{API}/actions/runs/{run_id}")
     require(type(run.get("id")) is int and run["id"] == int(run_id) and
-            run["head_sha"] == head and run["event"] == "push" and
+            run["head_sha"] == head and run["event"] == "workflow_dispatch" and
             run["head_branch"] == "main" and run["path"] == WORKFLOW,
             "Verification must belong to this exact main release event.")
     jobs = github.request(f"{API}/actions/runs/{run_id}/attempts/{attempt}/jobs?per_page=100")["jobs"]
@@ -184,10 +187,11 @@ def inspect_assets(github, release, head, tag, run, scratch):
 
 
 def publish(github, environment, verification_directory):
-    require(environment.get("GITHUB_EVENT_NAME") == "push" and
+    require(environment.get("GITHUB_EVENT_NAME") == "workflow_dispatch" and
             environment.get("GITHUB_REF") == "refs/heads/main" and
             environment.get("GITHUB_REPOSITORY") == REPO and
-            environment.get("RUNNER_NAME") == RUNNER, "Publication is restricted to this foreground Mac's main pushes.")
+            environment.get("RUNNER_NAME") == RUNNER, "Publication requires an explicit main dispatch on this foreground Mac.")
+    require(PUBLICATION_ENABLED, "Publication is held until the MVP readiness follow-up is reviewed and merged.")
     head = environment["GITHUB_SHA"]
     require(re.fullmatch(r"[0-9a-f]{40}", head), "Invalid source commit.")
     require(subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip() == head,
@@ -206,7 +210,7 @@ def publish(github, environment, verification_directory):
             "Missing or different-host verification directory; no upload fallback is allowed.")
     manifest = json.loads((directory / "verification.json").read_text())
     require(manifest.get("schema") == 1 and manifest.get("commit") == head and
-            manifest.get("all_checks_passed") is True and manifest.get("event") == "push" and
+            manifest.get("all_checks_passed") is True and manifest.get("event") == "workflow_dispatch" and
             manifest.get("ref") == "refs/heads/main" and manifest.get("runner_name") == RUNNER and
             manifest.get("runtime") == "iOS 27.0 (24A434)" and
             manifest.get("run_id") == environment["GITHUB_RUN_ID"] and
