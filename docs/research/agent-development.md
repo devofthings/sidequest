@@ -25,7 +25,7 @@ Keep Swift game rules and feed logic in a pure core. Introduce stable ports at e
 
 ## Accepted issue-to-PR loop
 
-The user subsequently accepted feature branches only and the fresh-agent review, fix, repeat, and automatic merge loop. Follow [REVIEW.md](../REVIEW.md) for the authoritative steps, commit-bound gates, reviewer skill, and GitHub plan limitations. Human code review is available without becoming a prerequisite for each merge. Provider selection, final product decisions, and the personal enjoyment test retain their issue-specific user acceptance criteria.
+The user subsequently accepted feature branches only and the fresh-agent review, fix, repeat, and automatic merge loop. Follow [REVIEW.md](../REVIEW.md) for the authoritative steps, commit-bound gates, reviewer skill, and GitHub plan limitations. Agents own code review; the user steers product direction through documents. Provider selection, final product decisions, and the personal enjoyment test retain their issue-specific user acceptance criteria. The current implementation hold and included-usage-only guardrails are recorded in [AGENTS.md](../../AGENTS.md) and the [autonomous plan](../AUTONOMY.md).
 
 A separate reviewer has a different task context, not guaranteed independent reasoning. Both agents may share incorrect assumptions. Tests derived from the same mistaken specification can pass together. Known fixtures, negative cases, simulator evidence, and human judgment remain necessary. Do not equate an agent “looks good” message with a passing build or validated acceptance criteria.
 
@@ -39,7 +39,7 @@ Choose verification from the behavior at risk, rather than enforcing the same pr
 | Memory | Match/mismatch and repeated taps; reset during a delay; advance controlled time and confirm stale work cannot mutate the new attempt. | Timing, card transitions, fast swipes during a mismatch. |
 | Chess puzzles | Independently validated fixture answers, wrong moves, reset; relevant legality cases if implementing move validation. Fixture checks do not establish a complete engine’s correctness. | Piece movement and answer feedback. |
 | Bubble shooter | Fixed boards: collision/attachment boundaries, connected groups, reset, win/loss; check exact rules only after agreed. | Aim, wall behavior, touch precision, animation, playability. |
-| Feed lifecycle | Seeded shuffle, committed skip resets the unfinished attempt, fresh return, stale callbacks, rapid transitions. Record unresolved completed-game behavior before treating it as a requirement. | Manual swiping, game gestures versus navigation, news/game transitions. |
+| Feed lifecycle | Seeded shuffle, preview before explicit tap-to-play, start tap does not make a move, committed skip resets an unfinished attempt to preview, stale callbacks, rapid transitions. Record unresolved completed-game behavior before treating it as a requirement. | Manual swiping, accessible start action, game gestures versus navigation, news/game transitions. |
 | News imports | Valid/malformed snapshots and preserved attribution/link/time. | Readability and opening the attributed link. |
 | Visual design | Stable interaction outcomes where worthwhile; avoid assertions for every layout constant or internal view hierarchy. | Screenshots, accessibility, simulator interaction, user design review. |
 
@@ -55,7 +55,7 @@ Propose GitHub Actions on a hosted macOS runner with an explicitly selected inst
 
 Use ordinary PR checks with minimal token permissions and no signing/distribution credentials. Pin third-party actions to reviewed full commit SHAs. These follow GitHub’s documented token and action security guidance. [GitHub: secure use](https://docs.github.com/en/actions/reference/security/secure-use).
 
-Require the successful build/test check before merge where the repository’s plan supports enforcement. Private-repository branch protection requires an eligible paid GitHub plan; verify access before claiming the gate is enforced. Required checks need appropriate configuration for the latest revision, and skipped/neutral checks can satisfy protection, so the workflow itself must actually run its intended validation. [GitHub: protected branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches), [GitHub: required checks](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks).
+Require successful applicable build/test checks before the orchestrator merges, following [REVIEW.md](../REVIEW.md). The user chose to defer server-enforced main protection and a plan upgrade. Report actual check results against the latest revision; do not claim GitHub enforcement. The CI job must run its intended validation rather than treating a skipped check as a successful build.
 
 Simulator CI does not establish device performance, signing, iPhone deployment, or subjective enjoyment. Test on the user’s iPhone separately through Xcode as agreed. CI should not merge, publish, buy services, or change accepted product scope automatically.
 
