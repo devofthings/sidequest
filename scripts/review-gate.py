@@ -142,21 +142,28 @@ class GitHub:
             if review["state"] not in ("COMMENTED", "PENDING"):
                 latest_reviews[review["user"]["login"]] = review["state"]
         threads = []
+        closing_issues = []
         cursor = None
         while True:
             query = """query($number:Int!,$cursor:String){repository(owner:"devofthings",name:"sidequest"){
-              pullRequest(number:$number){reviewThreads(first:100,after:$cursor){
+              pullRequest(number:$number){closingIssuesReferences(first:100){
+                nodes{number repository{nameWithOwner}} pageInfo{hasNextPage}}
+                reviewThreads(first:100,after:$cursor){
                 nodes{isResolved} pageInfo{hasNextPage endCursor}}}}}"""
             response = self.api("graphql", {"query": query, "variables": {
                 "number": number, "cursor": cursor}})
             require(not response.get("errors"), "Review-thread lookup failed")
-            connection = response["data"]["repository"]["pullRequest"]["reviewThreads"]
+            metadata = response["data"]["repository"]["pullRequest"]
+            linked = metadata["closingIssuesReferences"]
+            require(not linked["pageInfo"]["hasNextPage"], "Closing-issue metadata is truncated")
+            closing_issues = linked["nodes"]
+            connection = metadata["reviewThreads"]
             threads.extend(connection["nodes"])
             if not connection["pageInfo"]["hasNextPage"]:
                 break
             cursor = connection["pageInfo"]["endCursor"]
         return {"pr": pr, "refs": refs, "statuses": latest, "checks": checks,
-                "reviews": latest_reviews, "threads": threads}
+                "reviews": latest_reviews, "threads": threads, "closing_issues": closing_issues}
 
     def issue(self, number):
         return self.api(f"repos/{REPO}/issues/{number}")
@@ -182,14 +189,30 @@ class GitHub:
         return self.api(f"repos/{REPO}/issues/comments/{match[1]}")
 
     def merge(self, receipt):
-        run(["gh", "pr", "merge", str(receipt["pr"]), "--repo", REPO,
-             "--squash", "--match-head-commit", receipt["head"]])
+        args = ["gh", "pr", "merge", str(receipt["pr"]), "--repo", REPO,
+                "--squash", "--match-head-commit", receipt["head"]]
+        if receipt.get("issue_completion", "complete") == "partial":
+            pr = self.api(f"repos/{REPO}/pulls/{receipt['pr']}")
+            title = text_field(pr.get("title"), "partial PR title")
+            require(not re.search(closing_pattern(receipt["issue"]), title),
+                    "Partial PR title must not close the originating issue")
+            # Default squash text can copy closing keywords from feature commits.
+            args += ["--subject", title, "--body", ""]
+        run(args)
         pr = self.api(f"repos/{REPO}/pulls/{receipt['pr']}")
         require(pr.get("merged") is True, "Merge command did not produce a verified merge")
         commit = self.api(f"repos/{REPO}/git/commits/{pr['merge_commit_sha']}")
         require([parent["sha"] for parent in commit["parents"]] == [receipt["base"]],
                 "Merged base changed during the API race; checkpoint and audit the merge")
         return pr["merge_commit_sha"]
+
+
+def issue_target(number):
+    return rf"(?:https://github\.com/{re.escape(REPO)}/issues/|(?:{re.escape(REPO)})?#){number}\b"
+
+
+def closing_pattern(number):
+    return rf"(?i)\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)(?:\s*:\s*|\s+){issue_target(number)}"
 
 
 def validate(receipt, github, checkout, *, recorded=False):
@@ -208,12 +231,17 @@ def validate(receipt, github, checkout, *, recorded=False):
     require(pr.get("mergeable") is True, "Mergeability is conflicting or still unknown; retry later")
     issue = github.issue(receipt["issue"])
     require("pull_request" not in issue and issue["state"] == "open", "Originating issue is not open")
-    closing = rf"(?i)\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+(?:https://github\.com/devofthings/sidequest/issues/|#){receipt['issue']}\b"
+    closing = closing_pattern(receipt["issue"])
     body = pr.get("body") or ""
     if receipt.get("issue_completion", "complete") == "partial":
-        reference = rf"(?i)\b(?:refs?|related\s+to|part\s+of)\s+(?:https://github\.com/devofthings/sidequest/issues/|#){receipt['issue']}\b"
+        reference = rf"(?i)\b(?:refs?|related\s+to|part\s+of)\s+{issue_target(receipt['issue'])}"
         require(re.search(reference, body), "Partial PR must explicitly reference the originating issue")
-        require(not re.search(closing, body), "Partial PR must not close the originating issue")
+        require(not re.search(closing, body) and not re.search(closing, pr.get("title") or ""),
+                "Partial PR must not close the originating issue")
+        require(not any(item["number"] == receipt["issue"] and
+                        item["repository"]["nameWithOwner"].casefold() == REPO.casefold()
+                        for item in snapshot["closing_issues"]),
+                "Partial PR must not have a closing link to the originating issue")
     else:
         require(re.search(closing, body), "PR must close the originating issue")
     require(not any(not thread["isResolved"] for thread in snapshot["threads"]),
