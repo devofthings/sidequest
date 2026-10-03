@@ -23,7 +23,9 @@ From the repository root, run the installer once in each clone:
 ./scripts/install-git-hooks.sh
 ```
 
-The installer selects the tracked `.githooks` directory using local `core.hooksPath`. It refuses to replace a different effective hooks path; reconcile existing hooks explicitly before installing. Git local configuration is shared by linked worktrees belonging to the same clone, so enabling it also affects those worktrees. Installing in a separate clone does not change another clone's configuration.
+With no other hooks path configured, the installer selects the tracked `.githooks` directory using local `core.hooksPath`. Git local configuration is shared by linked worktrees belonging to the same clone, so that selection also affects those worktrees. Installing in a separate clone does not change another clone's configuration.
+
+The existing global Tokensave setup forwards pre-commit to a repository-local hook. When the installer recognizes that exact forwarding script, it installs a small dispatcher under the current Git directory instead, preserving `core.hooksPath`, the global files, and other global hooks. Run setup for each linked worktree in this mode. The installer refuses unknown hooks paths, linked/nonregular repository hooks, and existing repository hooks it does not own; reconcile those explicitly before installing.
 
 The hook checks staged whitespace with `git diff --cached --check`. It then strictly lints staged regular `.swift` file blobs using the staged `.swift-format`. It supports partially staged files and unusual filenames, and leaves the index and working tree unchanged. Deletions and symlinks are skipped for Swift lint. Swift lint excludes `.build`, `.swiftpm`, `build`, `DerivedData`, `Pods`, `Vendor`, `vendor`, and `Generated` at the root, plus nested `Generated` directories. All staged files still receive the whitespace check. Review these exclusions when source ownership or generated paths change.
 
@@ -31,7 +33,7 @@ Documentation-only commits do not require the formatter. If staged Swift files f
 
 The hook and installer use the system Bash and Git; Swift lint uses the existing Xcode formatter. There is no Husky/npm dependency. Hooks are local feedback and can be bypassed; successful hook execution does not replace independent review or CI verification.
 
-To remove this clone's Sidequest selection, first confirm that `git config --local --get core.hooksPath` reports `.githooks`, then run `git config --local --unset core.hooksPath`. Any existing global hooks path becomes effective again.
+To remove a direct `.githooks` selection, first confirm that `git config --local --get core.hooksPath` reports `.githooks`, then run `git config --local --unset core.hooksPath`. Any existing global hooks path becomes effective again. In Tokensave-forwarding mode, leave the configuration intact and remove only the managed dispatcher at `$(git rev-parse --absolute-git-dir)/hooks/pre-commit` after confirming it contains the Sidequest delegation marker.
 
 ## Verify tooling changes
 
@@ -42,7 +44,7 @@ bash -n .githooks/pre-commit scripts/install-git-hooks.sh
 python3 scripts/test-git-hooks.py
 ```
 
-The integration checks exercise actual commits and installation in temporary repositories. They cover staged/unstaged differences, unusual paths, renames/deletions, whitespace failures, staged configuration, formatter availability, generated files, symlinks, and preservation of existing hooks configuration. Python is used for these checks only; the commit hook and installer do not require it. These are tooling checks, not app or gameplay tests.
+The integration checks exercise actual commits and installation in temporary repositories. They cover staged/unstaged differences, unusual paths, renames/deletions, whitespace failures, staged configuration, formatter availability, generated files, symlinks, and preservation of existing hooks configuration, repository hooks, and the Tokensave forwarding chain. Python is used for these checks only; the commit hook and installer do not require it. These are tooling checks, not app or gameplay tests.
 
 ## Toolchain and CI
 

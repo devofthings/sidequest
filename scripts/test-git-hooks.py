@@ -144,6 +144,64 @@ class CommitHookTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(self.git("config", "--get", "core.hooksPath").stdout.strip(), "existing-hooks")
 
+    def install_forwarder_fixture(self):
+        self.git("config", "--unset", "core.hooksPath")
+        shutil.copytree(ROOT / ".githooks", self.repo / ".githooks")
+        forwarders = self.repo / "global-hooks"
+        forwarders.mkdir()
+        hook = forwarders / "pre-commit"
+        hook.write_text('''#!/bin/sh
+# tokensave: chain-repo-hook
+repo_hook="$(git rev-parse --git-dir 2>/dev/null)/hooks/pre-commit"
+if [ -x "$repo_hook" ] && [ "$repo_hook" != "$0" ]; then
+\t"$repo_hook" "$@"
+fi
+''')
+        hook.chmod(0o755)
+        self.env["GIT_CONFIG_GLOBAL"] = str(self.repo / "global-config")
+        self.git("config", "--global", "core.hooksPath", str(forwarders))
+        return forwarders
+
+    def test_tokensave_forwarder_preserved_and_hook_runs(self):
+        forwarders = self.install_forwarder_fixture()
+        message_hook = forwarders / "commit-msg"
+        message_hook.write_text("#!/bin/sh\nprintf ran > other-hook-ran\n")
+        message_hook.chmod(0o755)
+        global_before = (self.repo / "global-config").read_bytes()
+        forwarder_before = (forwarders / "pre-commit").read_bytes()
+        for _ in range(2):
+            self.command("bash", str(ROOT / "scripts/install-git-hooks.sh"))
+        self.assertEqual((self.repo / "global-config").read_bytes(), global_before)
+        self.assertEqual((forwarders / "pre-commit").read_bytes(), forwarder_before)
+        self.assertNotEqual(self.git("config", "--local", "--get", "core.hooksPath", check=False).returncode, 0)
+        self.stage("Probe.swift", BAD)
+        self.commit(False)
+        self.stage("Probe.swift", GOOD)
+        self.commit(True)
+        self.assertEqual((self.repo / "other-hook-ran").read_text(), "ran")
+
+    def test_forwarder_does_not_overwrite_repository_hook(self):
+        self.install_forwarder_fixture()
+        existing = self.repo / ".git/hooks/pre-commit"
+        existing.write_text("#!/bin/sh\nexit 0\n")
+        before = existing.read_bytes()
+        result = self.command("bash", str(ROOT / "scripts/install-git-hooks.sh"), check=False)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(existing.read_bytes(), before)
+
+    def test_forwarder_preserves_linked_repository_hook(self):
+        self.install_forwarder_fixture()
+        target = self.repo / "existing-dispatcher"
+        target.write_text('''#!/bin/sh
+# Sidequest: delegate to the tracked pre-commit hook.
+exec "$(git rev-parse --show-toplevel)/.githooks/pre-commit" "$@"
+''')
+        (self.repo / ".git/hooks/pre-commit").symlink_to(target)
+        before = target.read_bytes()
+        result = self.command("bash", str(ROOT / "scripts/install-git-hooks.sh"), check=False)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(target.read_bytes(), before)
+
 
 if __name__ == "__main__":
     unittest.main()
