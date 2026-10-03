@@ -67,6 +67,27 @@ final class NewsImportTests: XCTestCase {
       accuracy: 0.001)
   }
 
+  func testInvalidCalendarDatesSuffixesAndOffsetsAreRejectedForBothDates() throws {
+    for field in ["capturedAt", "publishedAt"] {
+      for raw in [
+        "2024-02-30T00:00:00Z", "2023-02-29T00:00:00Z", "2024-01-01T00:00:00Zgarbage",
+        "2024-01-01T00:00:00+99:00", "2024-01-01T00:00:00+00:99", "2024-01-01T24:00:00Z",
+        "2024-01-01T00:00:00", "2024-01-01T00:00:00Z\n",
+      ] {
+        var document = try sampleObject()
+        var entries = try XCTUnwrap(document["snapshots"] as? [[String: Any]])
+        entries[0][field] = raw
+        document["snapshots"] = entries
+        XCTAssertThrowsError(try decode(document), "\(field) accepted \(raw)")
+      }
+    }
+    var document = try sampleObject()
+    var entries = try XCTUnwrap(document["snapshots"] as? [[String: Any]])
+    entries[0]["capturedAt"] = "2024-02-29T12:34:56-05:30"
+    document["snapshots"] = entries
+    XCTAssertNoThrow(try decode(document))
+  }
+
   @MainActor
   func testAbsentFolderSaveReloadAndRejectedImportPreservesSavedSet() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)

@@ -30,12 +30,9 @@ enum NewsSnapshotImporter {
     decoder.dateDecodingStrategy = .custom { decoder in
       let container = try decoder.singleValueContainer()
       let raw = try container.decode(String.self)
-      let formatter = ISO8601DateFormatter()
-      if let date = formatter.date(from: raw) { return date }
-      formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-      if let date = formatter.date(from: raw) { return date }
+      if let date = try NewsTimestamp.parse(raw) { return date }
       throw DecodingError.dataCorruptedError(
-        in: container, debugDescription: "Expected an ISO 8601 timestamp with a time zone.")
+        in: container, debugDescription: "Expected a valid RFC 3339 timestamp with a time zone.")
     }
     let document: NewsSnapshotDocument
     do {
