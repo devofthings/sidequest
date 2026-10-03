@@ -18,6 +18,7 @@ App development is on hold until the user explicitly authorizes starting it. Pre
 
 1. Read the assigned GitHub issue, its dependencies, and [docs/MVP.md](docs/MVP.md). Read [docs/WORKFLOW.md](docs/WORKFLOW.md) before starting work or updating its Project status.
 2. Read [CONTEXT.md](CONTEXT.md) when introducing domain names. Read [docs/DECISIONS.md](docs/DECISIONS.md) before choosing technology, content sources, or product behavior.
+   Read [docs/CODING.md](docs/CODING.md) before adding or changing Swift application code, tests, shared interfaces, or concurrency behavior. It owns the baseline coding rules; scoped guidance adds local requirements.
 3. Check the working tree and instructions in the directories you will change. Work on `codex/<issue-number>-<short-description>`; use a separate worktree when another agent is editing the same checkout. Make all changes on feature branches and integrate through PRs; never commit or push directly to `main`.
 4. Implement the issue's acceptance criteria. Record unresolved choices instead of treating proposed decisions as approved requirements.
 5. Validate the changed behavior and report the results, remaining limitations, and files changed. Include `Closes #<number>` in the PR when the issue is complete. Before review, fixes, or merging, follow [docs/REVIEW.md](docs/REVIEW.md).
