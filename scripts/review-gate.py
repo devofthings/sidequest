@@ -286,8 +286,12 @@ def validate(receipt, github, checkout, *, recorded=False):
     elif mode == "application":
         require(all(path.endswith(".md") or path.startswith(("Sidequest/", "SidequestTests/",
                     "SidequestUITests/", "Sidequest.xcodeproj/")) or
-                    path in (".gitignore", ".swift-format") for path in changed),
+                    path in (".gitignore", ".swift-format", "scripts/verify-source-discovery.py") for path in changed),
                 "Local app verification cannot cover unrelated tooling or workflow changes")
+        if "scripts/verify-source-discovery.py" in changed:
+            require(any(command.get("check") == "source-discovery"
+                        for command in receipt["verification"]["commands"]),
+                    "Changed discovery verifier requires successful source-discovery evidence")
     files = git("ls-tree", "-r", "--name-only", receipt["head"]).splitlines()
     if any(path.startswith(".github/workflows/") for path in files):
         require(mode == "ci", "CI owns verification when workflows exist")

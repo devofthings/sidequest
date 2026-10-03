@@ -376,6 +376,21 @@ class GateTests(unittest.TestCase):
             gate.deliver(self.receipt, self.github, self.root, record=True, merge=True)
         self.assertEqual(self.github.calls, [])
 
+    def test_foundation_verifier_requires_its_actual_successful_check(self):
+        self.application_fixture("scripts/verify-source-discovery.py")
+        with self.assertRaisesRegex(gate.GateError, "source-discovery evidence"):
+            gate.deliver(self.receipt, self.github, self.root, record=True, merge=True)
+        self.assertEqual(self.github.calls, [])
+        command = {"check": "source-discovery", "command": "fixture discovery", "exit_code": 1,
+                   "result": "Observed failure"}
+        self.receipt["verification"]["commands"].append(command)
+        with self.assertRaises(gate.GateError):
+            gate.deliver(self.receipt, self.github, self.root, record=True, merge=True)
+        self.assertEqual(self.github.calls, [])
+        command.update(exit_code=0, result="Observed pass")
+        gate.deliver(self.receipt, self.github, self.root, record=True, merge=True)
+        self.assertEqual(self.github.calls, ["record", "merge"])
+
     def test_local_application_cannot_bypass_workflow_verification(self):
         self.application_fixture(".github/workflows/ci.yml")
         with self.assertRaises(gate.GateError):
