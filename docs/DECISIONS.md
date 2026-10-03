@@ -9,6 +9,7 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | iPhone MVP before other platforms | Accepted | User chose iOS first; see [ADR 0001](adr/0001-private-ios-mvp.md). |
 | News and games in the same feed | Accepted | User identified the news habit as central to the idea. |
 | GitHub Issues for tasks, Markdown for agent guidance and decisions | Accepted | User requested issues and agent Markdown files. |
+| Development decisions carried in scoped AGENTS.md files | Accepted | User requires agent guidance for decisions made by either the user or agents. See the [recording and ownership rule](../AGENTS.md#development-decisions-and-scoped-guidance). Source layout is pending issue #29. |
 | Private GitHub Project for workflow status | Accepted | User approved Backlog, Ready, In progress, Review, and Done; see [task workflow](WORKFLOW.md). |
 | Native SwiftUI implementation | Accepted | User choice; see [ADR 0002](adr/0002-native-swiftui.md). |
 | Hexagonal architecture from the start | Accepted | User chose replaceable boundaries to accommodate change; see [ADR 0003](adr/0003-hexagonal-architecture.md). |

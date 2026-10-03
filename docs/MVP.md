@@ -29,7 +29,7 @@ See [DECISIONS.md](DECISIONS.md) for the status of each decision.
 
 ## Delivery sequence
 
-The app foundation establishes runnable targets and verification commands. The shared card contract then enables separate work on the feed, news imports, and four games. Integration follows those feature tasks; the personal test follows a working integrated build. GitHub Issues own the detailed acceptance criteria and prerequisite links.
+The [project structure task](https://github.com/devofthings/sidequest/issues/29) first selects source ownership and scoped agent guidance, with games grouped into their own area. The app foundation then establishes runnable targets and verification commands using that layout. The shared card contract enables separate work on the feed, news imports, and four games. Integration follows those feature tasks; the personal test follows a working integrated build. GitHub Issues own the detailed acceptance criteria and prerequisite links.
 
 ## Current repository state
 
