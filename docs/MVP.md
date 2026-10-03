@@ -35,4 +35,4 @@ The selected [source structure](STRUCTURE.md) groups games into independently ow
 
 ## Current repository state
 
-The repository includes a minimal SwiftUI launch screen, unit/UI test targets, and verified local simulator setup. Feed, news, and game behavior are not implemented yet. Physical-device installation is documented but unverified; CI and release automation remain pending.
+The repository includes a minimal SwiftUI launch screen, unit/UI test targets, and verified local simulator setup. Feed, news, and game behavior are not implemented yet. Physical-device installation is documented but unverified; CI verifies exact PR/main commits on a free foreground self-hosted Mac runner; release automation remains pending.

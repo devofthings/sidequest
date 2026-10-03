@@ -2,7 +2,7 @@
 
 ## Verified foundation
 
-`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. The minimal launch screen is implemented; news, games, and their integrated flows follow their owning issues. Local simulator builds, tests, installation, and launch are verified. Physical-iPhone installation remains unverified and requires your local Apple Account and signing configuration. CI and downloadable releases are not available yet.
+`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. The minimal launch screen is implemented; news, games, and their integrated flows follow their owning issues. Local simulator builds, tests, installation, and launch are verified. Physical-iPhone installation remains unverified and requires your local Apple Account and signing configuration. [CI](CI.md) uses the same verified toolchain on a foreground self-hosted Mac runner. Downloadable releases remain pending.
 
 | Setting | Verified value |
 | --- | --- |
