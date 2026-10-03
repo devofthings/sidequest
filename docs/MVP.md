@@ -6,7 +6,7 @@ Build a private iPhone prototype that combines short news stories and simple gam
 
 The first test asks whether switching between reading and playing is enjoyable enough to want to reopen the app. Use English news and build the iPhone app natively with SwiftUI.
 
-Sidequest is the working name. The GitHub repository is private. Use GitHub Issues for small tasks and repository documentation for durable decisions and agent context.
+Sidequest is the working name. The GitHub repository is private. Use GitHub Issues for small tasks, the private GitHub Project for workflow status, and repository documentation for durable decisions and agent context. See [WORKFLOW.md](WORKFLOW.md) when selecting or updating work.
 
 ## First-test experience
 

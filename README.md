@@ -8,7 +8,8 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 - [Project decisions](docs/DECISIONS.md): accepted choices, proposals, and source research.
 - [Vocabulary](CONTEXT.md): domain names used by issues and implementation.
 - [Agent guidance](AGENTS.md): how to pick up and complete an issue.
-- [GitHub Issues](https://github.com/devofthings/sidequest/issues): tasks, dependencies, and progress.
+- [GitHub Issues](https://github.com/devofthings/sidequest/issues): tasks and dependencies.
+- [MVP board](https://github.com/users/devofthings/projects/1): current workflow status; see [task workflow](docs/WORKFLOW.md) for status definitions.
 
 ## Development status
 

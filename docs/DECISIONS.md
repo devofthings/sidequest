@@ -9,6 +9,7 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | iPhone MVP before other platforms | Accepted | User chose iOS first; see [ADR 0001](adr/0001-private-ios-mvp.md). |
 | News and games in the same feed | Accepted | User identified the news habit as central to the idea. |
 | GitHub Issues for tasks, Markdown for agent guidance and decisions | Accepted | User requested issues and agent Markdown files. |
+| Private GitHub Project for workflow status | Accepted | User approved Backlog, Ready, In progress, Review, and Done; see [task workflow](WORKFLOW.md). |
 | Native SwiftUI implementation | Accepted | User choice; see [ADR 0002](adr/0002-native-swiftui.md). |
 | English news for the first test | Accepted | User choice; documentation is also written in US English. |
 | Validate enjoyment of the mixed feed first | Accepted | User chose enjoyment and willingness to reopen as the initial hypothesis. |
