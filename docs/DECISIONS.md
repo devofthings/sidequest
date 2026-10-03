@@ -16,6 +16,8 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | Agent-led delivery with fresh-agent review and gated automatic merging | Accepted | User delegates technical delivery and code review to agents and steers product direction through documents. Follow [REVIEW.md](REVIEW.md) and the prepared [autonomous plan](AUTONOMY.md). |
 | App development on hold; scheduling undecided | Accepted | User requested preparation and a stale-file audit before development. Explicit start authorization is required; see [AGENTS.md](../AGENTS.md#autonomous-delivery-and-current-hold). |
 | Included Codex usage only; no credits or resets | Accepted | User prohibits credit spending and agent redemption of resets. Follow the [usage guardrail](../AGENTS.md#spending-approval), including its reserve and account-control limitation. |
+| Check chat steering after every resolved ticket | Accepted | User requested a checkpoint before continuing to another task. Follow the [after-ticket chat checkpoint](../AGENTS.md#after-ticket-chat-checkpoint). |
+| Assigned issues for unanswered user requests | Accepted | User wants missed chat requests tracked for approval or refusal. Follow the [decision-request workflow](WORKFLOW.md#unanswered-decision-requests); record outcomes and update scoped agent guidance. |
 | Feature branches only; defer GitHub main protection | Accepted | User chose to proceed without a plan upgrade or branch protection. Use the review and verification gates with agent-controlled merging in [REVIEW.md](REVIEW.md); see issue #23. |
 | Explicit user approval before spending | Accepted | User requires approval before any purchase or action that may incur charges; see the spending approval rule in [AGENTS.md](../AGENTS.md). |
 | TDD as an optional technique | Accepted | User has not chosen TDD and asked to keep it a minor consideration, rather than a project requirement. |
@@ -30,6 +32,8 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | Shuffle news and games; reset skipped unfinished games | Accepted | User chose shuffled cards and fresh attempts. |
 | Tap to play before starting each game | Accepted | User requested an explicit tap to start. Game cards show a preview until tapped; gameplay stays inside the card. See [MVP.md](MVP.md) for the start and skip behavior. |
 | Simulator and the user's own iPhone via Xcode | Accepted | User choice; TestFlight is deferred. |
+| Installation and run documentation kept current | Accepted | User requested setup guidance. [INSTALL.md](INSTALL.md) records the workflow; executable commands depend on the app foundation. |
+| Private Release builds after each merged update | Accepted direction | User requested GitHub release history. Follow [RELEASES.md](RELEASES.md); automation depends on the app, CI, and verified free execution or explicit spending approval in issue #31. |
 | Defer accounts, ads, payments, licensed catalogs, and social integrations | Accepted | User confirmed the bounded private prototype scope. |
 
 ## Research context
