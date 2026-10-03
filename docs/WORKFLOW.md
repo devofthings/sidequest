@@ -12,6 +12,8 @@ The private [Sidequest MVP board](https://github.com/users/devofthings/projects/
 
 Before starting an issue, confirm its prerequisites are complete and set its Project status to In progress. Move it to Review when a reviewable result and verification evidence are available, then run the [fresh-agent review and merge loop](REVIEW.md). After merge, close completed implementation issues, set them to Done, and move dependent issues to Ready when all their prerequisites are complete. Product-decision issues stay open until the user selects the proposed behavior or provider; merging research does not select it.
 
+When a PR is ready, enter the [review handoff queue](REVIEW.md#review-handoff-queue). Missing subagent capability blocks merging in the author chat, not discoverability: keep the issue in Review and hand it to an active lead. Leads check the queue before taking new issues, including open ready PRs without the label.
+
 Keep unfinished work open. If work pauses or a new prerequisite blocks it, record the reason in the issue and move it to Ready or Backlog as appropriate.
 
 After each resolved issue or ticket, follow the [chat checkpoint](../AGENTS.md#after-ticket-chat-checkpoint) before starting or assigning another issue. Incorporate newly delivered user steering before choosing the next task.

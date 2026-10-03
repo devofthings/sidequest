@@ -2,6 +2,25 @@
 
 The user authorizes agents to commit and push feature branches and merge PRs after this loop passes. All repository changes, including documentation, use feature branches and PRs. Direct commits or pushes to `main` are prohibited.
 
+## Review handoff queue
+
+`review-needed` marks an open, non-draft PR ready for independent review or a new round. Keep the originating issue in the Project's Review column. A label is a durable queue entry, not a background worker: pickup occurs when an authorized lead chat is active. Recurring pickup requires separately authorized scheduling and the project's spending and usage checks.
+
+1. **Author handoff:** After verification, apply `review-needed` and put a handoff in the PR body or a linked PR comment: originating issue, exact current head/base commits, validation commands/results and unavailable checks, author chat identity or context, and the reason an independent reviewer is needed. Set `Sidequest / independent review` pending on the current head. If this chat cannot dispatch a reviewer, finish with the PR URL and waiting state; leave merging pending. Author self-review does not satisfy the gate.
+2. **Lead pickup:** At chat startup and after the after-ticket chat checkpoint, inspect all open non-draft PRs before selecting new work. Inspect labeled PRs first, then ready PRs missing the label so older work is discoverable. Read the issue, handoff, latest comments, and live head/base; add the label if a review handoff is missing. Drafts and incomplete implementation stay with their author rather than being certified as ready. Respect the current implementation hold and usage/spending limits.
+3. **Claim and dispatch:** Check for an active claim in the PR audit before dispatching. Record lead/reviewer identity, time, and exact head/base in a PR comment, then run the review loop below with a fresh agent. Keep the queue label while review or fixes are underway. A claim prevents duplicate work by convention; GitHub comments provide no exclusive lock. Recheck comments and commits before recording gates or merging. If a claim is interrupted, record its release and checkpoint; a later lead must confirm it is inactive before replacing it.
+4. **Requeue or finish:** Findings, failed verification, or changed head/base leave the PR open with its current review state and next action recorded. Changes invalidate existing evidence and require a new fresh round. After a verified merge or intentional closure, remove `review-needed` and update the issue/Project according to its completion criteria. A restricted chat may execute an independent review directly when it did not implement or fix the change, using the same skill and commit-bound evidence; another lead can record the gates and merge.
+
+Use GitHub for the handoff so it survives chat boundaries. Messaging another Codex chat requires explicit user authorization; a queue label does not authorize a message or create a new chat. If no capable lead is running, checkpoint the queued PRs and resume pickup in a later authorized run. Do not claim continuous monitoring from these instructions.
+
+To inspect the queue and older unlabeled work:
+
+```sh
+gh pr list --repo devofthings/sidequest --state open --limit 1000 --json number,title,isDraft,labels,headRefOid,url
+```
+
+The list limit is bounded; paginate through the API if the repository exceeds it. For a review handoff, capture both commits with `gh pr view <number> --repo devofthings/sidequest --json headRefOid,baseRefOid`.
+
 ## Review loop
 
 1. Finish the bounded change on its feature branch, run proportionate verification, and open a PR with the originating GitHub issue and evidence. Read applicable `AGENTS.md` files and the issue's acceptance criteria.
