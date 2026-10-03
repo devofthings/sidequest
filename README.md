@@ -8,6 +8,7 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 - [Project decisions](docs/DECISIONS.md): accepted choices, proposals, and source research.
 - [Vocabulary](CONTEXT.md): domain names used by issues and implementation.
 - [Agent guidance](AGENTS.md): how to pick up and complete an issue.
+- [Swift formatting](docs/FORMATTING.md): shared style, pre-commit formatting, and strict checks.
 - [Autonomous delivery plan](docs/AUTONOMY.md): technical ownership, the development hold, usage guardrails, and the documentation audit.
 - [Installation and running](docs/INSTALL.md): simulator and personal-iPhone workflow; exact app commands are pending the foundation.
 - [Private release delivery](docs/RELEASES.md): build policy and traceable release history; automation is pending the app and CI.
