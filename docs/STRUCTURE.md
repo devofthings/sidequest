@@ -1,6 +1,6 @@
 # Source layout and ownership
 
-Selected for [issue #29](https://github.com/devofthings/sidequest/issues/29). [Foundation #1](https://github.com/devofthings/sidequest/issues/1) establishes the project, app, resources, and unit/UI test roots. Contract #2 adds core cards/lifecycle, news values, and deck construction. Feed #3 adds selection/presentation and the common retained game runtime. News #4 implements `News/Domain`, local snapshot `News/Adapters`, sourced-card/import `News/Presentation`, and fictional samples/schema in `Resources`. Individual game rules and presentation adapters below remain planned until their owning features create them.
+Selected for [issue #29](https://github.com/devofthings/sidequest/issues/29). [Foundation #1](https://github.com/devofthings/sidequest/issues/1) establishes the project, app, resources, and unit/UI test roots. Contract #2 adds core cards/lifecycle, news values, and deck construction. Feed #3 adds selection/presentation and the common retained game runtime. News #4 implements `News/Domain`, local snapshot `News/Adapters`, sourced-card/import `News/Presentation`, and fictional samples/schema in `Resources`. Sudoku #5 implements `Games/Sudoku/Rules`, its retained controller/SwiftUI `Presentation`, and matching unit/UI tests. Memory, chess, and bubble-shooter rules and presentation adapters remain planned until their owning features land.
 
 ## Source ownership tree
 
