@@ -9,6 +9,21 @@ import subprocess
 import sys
 
 
+def verify_revision(expected, base, event, ref, run):
+    head = run("head", ["git", "rev-parse", "HEAD"]).strip()
+    if head != expected:
+        raise RuntimeError("Checkout does not match the reviewed commit.")
+    if event == "pull_request":
+        run("base-ancestry", ["git", "merge-base", "--is-ancestor", f"origin/{base}", head])
+        run("whitespace", ["git", "diff", "--check", f"origin/{base}...{head}"])
+    elif event == "push" and ref == "refs/heads/main":
+        # A newer main may exist by the time this queued event gets the runner.
+        # Verify this event's own change; PR review already validated its ancestry.
+        run("whitespace", ["git", "diff", "--check", f"{head}^", head])
+    else:
+        raise RuntimeError("Only same-repository PR or main-push verification is supported.")
+
+
 def main():
     root = Path.cwd()
     expected = os.environ["SIDEQUEST_EXPECTED_HEAD"]
@@ -34,11 +49,8 @@ def main():
         return log.read_text(errors="replace")
 
     try:
-        head = run("head", ["git", "rev-parse", "HEAD"]).strip()
-        if head != expected:
-            raise RuntimeError("Checkout does not match the reviewed commit.")
-        run("base-ancestry", ["git", "merge-base", "--is-ancestor", f"origin/{base}", head])
-        run("whitespace", ["git", "diff", "--check", f"origin/{base}...{head}"])
+        verify_revision(expected, base, os.environ["GITHUB_EVENT_NAME"],
+                        os.environ["GITHUB_REF"], run)
         if (root / "Sidequest.xcodeproj/LocalSigning.xcconfig").exists() or (root / ".local-news").exists():
             raise RuntimeError("CI checkout contains local signing or personal news inputs.")
         xcode = run("xcode", ["xcodebuild", "-version"])
@@ -47,6 +59,7 @@ def main():
         run("swift", ["xcrun", "swift", "-version"])
         run("documentation", ["python3", "scripts/check-documentation.py"])
         run("documentation-tests", ["python3", "scripts/test-documentation.py"])
+        run("ci-tests", ["python3", "scripts/test-ci.py"])
         run("format", ["xcrun", "swift-format", "lint", "--strict", "--recursive",
                        "--configuration", ".swift-format", "Sidequest", "SidequestTests", "SidequestUITests"])
         for script in ("test-git-hooks.py", "test-agent-preflight.py", "test-review-gate.py"):

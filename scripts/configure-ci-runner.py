@@ -17,6 +17,20 @@ SHA256 = "5a2cd92908a93d7276a194e1de6008099f3e7946f3f8e14aa7a1a7b4a31fdec2"
 REPOSITORY = "devofthings/sidequest"
 
 
+def validate_directory(directory):
+    if directory.exists():
+        raise RuntimeError("Runner directory already exists; preserve it and choose a fresh path.")
+    if not directory.parent.is_dir():
+        raise RuntimeError("Choose a runner directory with an existing parent outside Git.")
+    if any((ancestor / ".git").exists() or (ancestor / ".git").is_symlink()
+           for ancestor in [directory.parent, *directory.parent.parents]):
+        raise RuntimeError("Private runner storage must be outside every Git checkout.")
+    result = subprocess.run(["git", "-C", str(directory.parent), "rev-parse", "--show-toplevel"],
+                            capture_output=True, text=True)
+    if result.returncode == 0:
+        raise RuntimeError("Private runner storage must be outside every Git checkout.")
+
+
 def github(endpoint, method="GET"):
     result = subprocess.run(["gh", "api", "--method", method, endpoint],
                             capture_output=True, text=True)
@@ -30,12 +44,12 @@ def main():
     parser.add_argument("--directory", type=Path, required=True)
     args = parser.parse_args()
     directory = args.directory.resolve()
+    # Reject unsafe storage before any download, token request, or file creation.
+    validate_directory(directory)
     if platform.system() != "Darwin" or platform.machine() != "arm64":
         raise RuntimeError("This pinned runner requires an Apple-silicon Mac.")
     if not github(f"repos/{REPOSITORY}")["private"]:
         raise RuntimeError("The runner is restricted to the private Sidequest repository.")
-    if directory.exists():
-        raise RuntimeError("Runner directory already exists; preserve it and choose a fresh path.")
     if shutil.disk_usage(directory.parent).free < 1024 ** 3:
         raise RuntimeError("Runner installation requires at least 1 GiB free disk space.")
     directory.mkdir(mode=0o700)

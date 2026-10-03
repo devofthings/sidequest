@@ -18,7 +18,7 @@ cd /private/tmp/sidequest-actions-runner
 ./run.sh
 ```
 
-The installer downloads official ARM64 runner **2.337.0**, checks SHA-256 `5a2cd92908a93d7276a194e1de6008099f3e7946f3f8e14aa7a1a7b4a31fdec2`, confirms the repository is private, and registers `Sidequest-Mac-foreground`. Tokens are parsed in memory and configuration output is suppressed. The private directory and credentials stay outside Git; preserve an existing directory rather than overwriting it. No `svc.sh` or launchd installation is used.
+The installer downloads official ARM64 runner **2.337.0**, checks SHA-256 `5a2cd92908a93d7276a194e1de6008099f3e7946f3f8e14aa7a1a7b4a31fdec2`, confirms the repository is private, and registers `Sidequest-Mac-foreground`. Tokens are parsed in memory and configuration output is suppressed. The private directory and credentials must stay outside every Git checkout, including linked worktrees and symlink destinations; the installer rejects these locations before downloads or registration. Preserve an existing directory rather than overwriting it. No `svc.sh` or launchd installation is used.
 
 Required labels are `self-hosted`, `macOS`, `ARM64`, `sidequest`, and `xcode-27`. Automatic runner updates are disabled to keep the runner version explicit; GitHub [requires prompt manual updates](https://docs.github.com/en/actions/reference/runners/self-hosted-runners#runner-software-updates-on-self-hosted-runners). Update the pinned version/digest through a reviewed PR before GitHub stops assigning jobs. Never work around an unsupported runner with hosted compute.
 
@@ -28,13 +28,15 @@ Leave the foreground process running during build/review/merge work, and give th
 
 The workflow runs for same-repository PRs and each push to main. The repository is private and its agents use trusted feature branches. Fork PRs cannot execute; same-repository contributors can execute code on this Mac, so repository write access must stay trusted. `pull_request_target` is not used. The workflow has only `contents: read`, and checkout is pinned to the reviewed official revision with credentials not persisted.
 
-`Sidequest / verification` checks out the explicit PR head rather than the generated merge ref, fetches history, and requires the current base to be its ancestor. A stale feature branch fails and needs rebase/reverification. Main runs verify their exact merged commit. Obsolete PR runs may be canceled; main runs have unique SHA groups and are never canceled by a newer main update.
+`Sidequest / verification` checks out the explicit PR head rather than the generated merge ref, fetches history, and requires the current base to be its ancestor. A stale feature branch fails and needs rebase/reverification. Main runs verify their exact event commit and its own parent-to-commit change; a newer main tip cannot invalidate an older queued event. Obsolete PR runs may be canceled; main runs have unique SHA groups and are never canceled by a newer main update.
 
 `scripts/ci-verify.py` checks:
 
-- The actual commit, current-base ancestry, whitespace, and absence of local signing/personal news inputs.
+- The actual commit, PR current-base ancestry, whitespace, and absence of local signing/personal news inputs.
 - The verified Xcode 27.0 (27A266a), offline Markdown links/heading anchors, strict first-party Swift formatting, and local tooling regression suites.
 - An unsigned Debug build, the shared scheme's deterministic unit/UI tests, filesystem-synchronized source/resource discovery, and an unsigned Release build.
+
+`scripts/test-ci.py` uses actual disposable Git history to prove older queued main commits pass, stale PRs fail, wrong commits/events fail, and current PRs pass. Stubbed network calls prove Git-owned runner locations are rejected before registration and existing private configuration is preserved.
 
 The driver reuses [foundation commands](INSTALL.md#build-and-test) with a dedicated simulator named `Sidequest CI iPhone` on iOS 27.0 and parallel simulator testing disabled. It creates only that device when absent; it does not delete user devices or download runtimes during a job. Game/lifecycle tests and critical app-flow tests run through the same shared scheme as their owning issues implement them. No live news retrieval or personal signing is allowed.
 
