@@ -60,12 +60,18 @@ def main():
         run("documentation", ["python3", "scripts/check-documentation.py"])
         run("documentation-tests", ["python3", "scripts/test-documentation.py"])
         run("ci-tests", ["python3", "scripts/test-ci.py"])
+        if Path("scripts/test-release.py").is_file():
+            run("release-tests", ["python3", "scripts/test-release.py"])
         run("format", ["xcrun", "swift-format", "lint", "--strict", "--recursive",
                        "--configuration", ".swift-format", "Sidequest", "SidequestTests", "SidequestUITests"])
         for script in ("test-git-hooks.py", "test-agent-preflight.py", "test-review-gate.py"):
             run(script.removesuffix(".py"), ["python3", f"scripts/{script}"])
         devices = json.loads(run("devices", ["xcrun", "simctl", "list", "devices", "available", "--json"]))
         runtime = "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
+        runtimes = json.loads(run("runtimes", ["xcrun", "simctl", "list", "runtimes", "--json"]))
+        installed = [item for item in runtimes["runtimes"] if item["identifier"] == runtime]
+        if len(installed) != 1 or not installed[0]["isAvailable"] or installed[0]["buildversion"] != "24A434":
+            raise RuntimeError("CI requires the verified iOS 27.0 (24A434) simulator runtime.")
         matching = [device for device in devices["devices"].get(runtime, [])
                     if device["name"] == "Sidequest CI iPhone"]
         if len(matching) > 1:
@@ -83,7 +89,18 @@ def main():
         run("source-discovery", ["python3", "scripts/verify-source-discovery.py", "--destination", destination])
         release = command.copy()
         release[release.index("Debug")] = "Release"
-        run("release-build", release + ["build"])
+        run("release-build", release + ["ARCHS=arm64", "build"])
+        manifest = {
+            "schema": 1, "commit": expected, "run_id": run_id, "attempt": attempt,
+            "event": os.environ["GITHUB_EVENT_NAME"], "ref": os.environ["GITHUB_REF"],
+            "runner_name": os.environ["RUNNER_NAME"], "xcode": xcode.strip(),
+            "runtime": f"iOS {installed[0]['version']} ({installed[0]['buildversion']})",
+            "all_checks_passed": True,
+            "release_app": str(diagnostics / "DerivedData/Build/Products/Release-iphonesimulator/Sidequest.app"),
+        }
+        (diagnostics / "verification.json").write_text(json.dumps(manifest, indent=2) + "\n")
+        with Path(os.environ["GITHUB_OUTPUT"]).open("a") as output:
+            output.write(f"verification_directory={diagnostics}\n")
     finally:
         with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a") as output:
             output.write(f"### Sidequest verification\n\nCommit: `{expected}`\n\n")

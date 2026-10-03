@@ -2,7 +2,7 @@
 
 ## Verified foundation
 
-`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. The minimal launch screen is implemented; news, games, and their integrated flows follow their owning issues. Local simulator builds, tests, installation, and launch are verified. Physical-iPhone installation remains unverified and requires your local Apple Account and signing configuration. [CI](CI.md) uses the same verified toolchain on a foreground self-hosted Mac runner. Downloadable releases remain pending.
+`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. The minimal launch screen is implemented; news, games, and their integrated flows follow their owning issues. Local simulator builds, tests, installation, and launch are verified. Physical-iPhone installation remains unverified and requires your local Apple Account and signing configuration. [CI](CI.md) uses the same verified toolchain on a foreground self-hosted Mac runner. The private [preview workflow](RELEASES.md) supplies downloads after a successful main publication; no download is claimed before that run.
 
 | Setting | Verified value |
 | --- | --- |
@@ -62,7 +62,7 @@ xcrun swift-format lint --strict --recursive --configuration .swift-format \
   Sidequest SidequestTests SidequestUITests
 ```
 
-The shared scheme runs two unit checks for host identity and fixture isolation and one UI check that launches the app and reads its accessible heading. These verify the foundation; gameplay and critical integrated-flow tests are added after their behavior exists. Use `-resultBundlePath /absolute/new/path.xcresult` to retain test evidence; Xcode requires a path that does not already exist.
+The shared scheme currently runs 12 unit checks for host/fixture isolation and core card/lifecycle behavior, plus one UI check that launches the app and reads its accessible heading. Gameplay and critical integrated-flow tests are added after their behavior exists. Use `-resultBundlePath /absolute/new/path.xcresult` to retain test evidence; Xcode requires a path that does not already exist.
 
 For a local Release simulator build, use the same build command with `-configuration Release`. This produces a local build, not a published GitHub release.
 
@@ -95,6 +95,39 @@ xcrun simctl launch "$SIDEQUEST_SIMULATOR_ID" dev.devofthings.sidequest
 ```
 
 Open Simulator to see the window. After the first launch renders, the screen displays “Sidequest” and “A little news. A little play.” Simulator builds run on a Mac and cannot be installed on a physical iPhone.
+
+## Download a simulator preview
+
+After a successful main release exists, select its exact `preview-<full-SHA>` tag from the private [release history](https://github.com/devofthings/sidequest/releases). The ARM64 simulator archive requires an Apple-silicon Mac and the verified iOS 27.0 (24A434) runtime above. It cannot be installed directly on an iPhone.
+
+```sh
+SIDEQUEST_PREVIEW_TAG='preview-paste-full-commit-SHA-here'
+SIDEQUEST_PREVIEW_DIRECTORY="$(mktemp -d /private/tmp/sidequest-preview.XXXXXX)"
+gh release download "$SIDEQUEST_PREVIEW_TAG" --repo devofthings/sidequest \
+  --pattern 'Sidequest-simulator-arm64.zip' --pattern 'build-metadata.json' \
+  --pattern 'SHA256SUMS' --dir "$SIDEQUEST_PREVIEW_DIRECTORY"
+cd "$SIDEQUEST_PREVIEW_DIRECTORY"
+shasum -a 256 -c SHA256SUMS
+ditto -x -k Sidequest-simulator-arm64.zip "$SIDEQUEST_PREVIEW_DIRECTORY"
+```
+
+Require both checksums to pass before extracting/installing. Inspect `build-metadata.json` for the full commit, original verification link, runtime, and app identifier. Assign `SIDEQUEST_SIMULATOR_ID` from the available devices as above, boot it if needed, then install and launch:
+
+```sh
+xcrun simctl install "$SIDEQUEST_SIMULATOR_ID" "$SIDEQUEST_PREVIEW_DIRECTORY/Sidequest.app"
+xcrun simctl launch "$SIDEQUEST_SIMULATOR_ID" dev.devofthings.sidequest
+```
+
+For that version's source, use a fresh clone to preserve any existing work, fetch its tag, and check out the tag before opening Xcode:
+
+```sh
+gh repo clone devofthings/sidequest sidequest-preview-source
+cd sidequest-preview-source
+git fetch origin "refs/tags/$SIDEQUEST_PREVIEW_TAG:refs/tags/$SIDEQUEST_PREVIEW_TAG"
+git checkout --detach "$SIDEQUEST_PREVIEW_TAG"
+```
+
+Use the local signing steps below for a physical iPhone. [RELEASES.md](RELEASES.md) explains retry, traceability, and the first/second release demonstrations; an unmerged workflow or draft is not an available build.
 
 ## Install on your own iPhone
 

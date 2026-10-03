@@ -66,7 +66,7 @@ def main():
     result = subprocess.run([
         str(directory / "config.sh"), "--unattended", "--url",
         f"https://github.com/{REPOSITORY}", "--token", token,
-        "--name", "Sidequest-Mac-foreground", "--labels", "sidequest,xcode-27",
+        "--name", "Sidequest-Mac-foreground", "--labels", "sidequest,xcode-27,sidequest-mac-foreground",
         "--work", "_work", "--disableupdate",
     ], cwd=directory, capture_output=True, text=True)
     del token

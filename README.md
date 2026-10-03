@@ -17,7 +17,7 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 - [Swift formatting](docs/FORMATTING.md): shared style, local commit-hook setup, and tooling checks.
 - [Autonomous delivery plan](docs/AUTONOMY.md): technical ownership, start authorization, usage guardrails, and the documentation audit.
 - [Installation and running](docs/INSTALL.md): verified simulator build/test/launch commands and local personal-iPhone signing steps.
-- [Private release delivery](docs/RELEASES.md): build policy and traceable release history; automation is pending the app and CI.
+- [Private release delivery](docs/RELEASES.md): exact-commit preview workflow, traceable assets, and publication/retry policy.
 - [GitHub Issues](https://github.com/devofthings/sidequest/issues): tasks and dependencies.
 - [MVP board](https://github.com/users/devofthings/projects/1): current workflow status; see [task workflow](docs/WORKFLOW.md) for status definitions.
 
