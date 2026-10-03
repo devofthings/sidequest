@@ -88,6 +88,21 @@ final class NewsImportTests: XCTestCase {
     XCTAssertNoThrow(try decode(document))
   }
 
+  func testGregorianCenturyLeapRulesAndHistoricDates() throws {
+    for raw in ["1500-02-29T00:00:00Z", "1700-02-29T00:00:00Z", "1900-02-29T00:00:00Z"] {
+      XCTAssertNil(try NewsTimestamp.parse(raw))
+    }
+    for (raw, expected) in [
+      ("1582-10-10T00:00:00Z", -12_219_724_800.0),
+      ("1500-03-01T00:00:00Z", -14_826_672_000.0),
+      ("1600-02-29T00:00:00Z", -11_670_998_400.0),
+      ("0001-01-01T00:00:00Z", -62_135_596_800.0),
+      ("9999-12-31T00:00:00Z", 253_402_214_400.0),
+    ] {
+      XCTAssertEqual(try XCTUnwrap(NewsTimestamp.parse(raw)).timeIntervalSince1970, expected)
+    }
+  }
+
   @MainActor
   func testAbsentFolderSaveReloadAndRejectedImportPreservesSavedSet() async throws {
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)

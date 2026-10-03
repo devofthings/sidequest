@@ -32,18 +32,19 @@ enum NewsTimestamp {
       guard hours <= 23, minutes <= 59 else { return nil }
       offsetSeconds = (hours * 3600 + minutes * 60) * (sign == "+" ? 1 : -1)
     }
-    var calendar = Calendar(identifier: .gregorian)
-    guard let utc = TimeZone(secondsFromGMT: 0) else { return nil }
-    calendar.timeZone = utc
-    let components = DateComponents(
-      year: year, month: month, day: day, hour: hour, minute: minute, second: second)
-    guard let local = calendar.date(from: components) else { return nil }
-    let recovered = calendar.dateComponents(
-      [.year, .month, .day, .hour, .minute, .second], from: local)
-    guard recovered.year == year, recovered.month == month, recovered.day == day,
-      recovered.hour == hour, recovered.minute == minute, recovered.second == second
-    else { return nil }
+    // Count Gregorian days directly: Foundation calendars use a historical
+    // Julian/Gregorian cutover, whereas RFC 3339 applies Gregorian leap rules.
+    let leapYear = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
+    let monthLengths = [31, leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    guard day <= monthLengths[month - 1] else { return nil }
+    let previousYear = year - 1
+    let daysBeforeYear =
+      previousYear * 365 + previousYear / 4 - previousYear / 100 + previousYear / 400
+    let daysBeforeMonth = monthLengths.prefix(month - 1).reduce(0, +)
+    // 719162 is the number of Gregorian days preceding 1970-01-01.
+    let daysSinceEpoch = daysBeforeYear + daysBeforeMonth + day - 1 - 719_162
+    let secondsSinceEpoch = daysSinceEpoch * 86_400 + hour * 3600 + minute * 60 + second
     let fraction = component(7).flatMap { Double("0." + $0) } ?? 0
-    return local.addingTimeInterval(fraction - Double(offsetSeconds))
+    return Date(timeIntervalSince1970: Double(secondsSinceEpoch - offsetSeconds) + fraction)
   }
 }
