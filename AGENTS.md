@@ -6,6 +6,12 @@ Sidequest is a private iPhone MVP mixing news and quick games in one feed. App i
 
 At the start of a new Sidequest planning or implementation chat, read [docs/MVP.md](docs/MVP.md) and [docs/DECISIONS.md](docs/DECISIONS.md) for the confirmed product scope and choices. Use [GitHub Issues](https://github.com/devofthings/sidequest/issues) for task scope and dependencies; consult an issue before starting its work. When the user changes a decision, update the authoritative document so future chats inherit the new context.
 
+## Autonomous delivery and current hold
+
+The agent is the technical lead and owns issue selection, implementation, verification, fresh-agent code review, fixes, and gated merging. The user provides product steering through the project documents and does not need to review code. Follow [docs/AUTONOMY.md](docs/AUTONOMY.md) for the prepared delivery plan and escalation boundaries.
+
+App development is on hold until the user explicitly authorizes starting it. Preparation may audit and update documentation; it may not create app code or targets or start implementation jobs. Scheduling remains undecided: create no recurring runs under this plan. Repository readiness, a Ready issue, or merging this guidance does not lift the hold.
+
 ## Start an issue
 
 1. Read the assigned GitHub issue, its dependencies, and [docs/MVP.md](docs/MVP.md). Read [docs/WORKFLOW.md](docs/WORKFLOW.md) before starting work or updating its Project status.
@@ -49,6 +55,8 @@ When a ticket has unresolved technical choices, use the project-local [agent-gri
 ## Spending approval
 
 Before any purchase, paid plan activation, billing setup, or action that may incur charges, ask the user with the service, expected cost, and proposed limit, and wait for explicit approval. This includes paid CI and usage that could exceed free quotas. Commit, push, and merge authorization does not authorize spending. Prefer local or verified free options; if zero-cost execution cannot be confirmed, keep that action pending and continue independent work.
+
+Use only included Codex usage. Never spend or purchase Codex credits, redeem usage resets, or fall back to paid API-key usage. Before starting a new issue or reviewer, check the reported included allowance. When any reported window has 10% or less remaining, a limit is reached, or included allowance cannot be verified, checkpoint and stop autonomous work until ordinary included usage is available on a later authorized run. The reserve reduces overrun risk; it is an agent rule, not an account billing lock. See [docs/AUTONOMY.md](docs/AUTONOMY.md) for the account-control limitation.
 
 ## Verification
 
