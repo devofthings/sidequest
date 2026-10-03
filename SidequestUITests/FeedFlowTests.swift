@@ -67,9 +67,21 @@ final class FeedFlowTests: XCTestCase {
   }
 
   @MainActor
+  func testLargestTextKeepsStartAndNavigationReachable() {
+    let app = launch(largeText: true)
+    XCTAssertTrue(app.buttons["game.start"].isHittable)
+    XCTAssertTrue(app.buttons["feed.next"].isHittable)
+    app.buttons["feed.next"].tap()
+    XCTAssertTrue(app.buttons["feed.previous"].isHittable)
+    app.buttons["feed.previous"].tap()
+    XCTAssertTrue(app.buttons["game.start"].isHittable)
+    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 6")
+  }
+
+  @MainActor
   func testEmptyAndGamesOnlySessionsHaveUsableBoundaries() {
     let empty = launch(argument: "-sidequest-feed-empty")
-    XCTAssertTrue(empty.otherElements["feed.empty"].waitForExistence(timeout: 5))
+    XCTAssertTrue(empty.staticTexts["No cards yet"].waitForExistence(timeout: 5))
     XCTAssertFalse(empty.buttons["game.start"].exists)
     empty.terminate()
     let games = launch(argument: "-sidequest-feed-games-only")
@@ -83,10 +95,12 @@ final class FeedFlowTests: XCTestCase {
   }
 
   @MainActor
-  private func launch(argument: String = "-sidequest-feed-test") -> XCUIApplication {
+  private func launch(argument: String = "-sidequest-feed-test", largeText: Bool = false)
+    -> XCUIApplication
+  {
     continueAfterFailure = false
     let app = XCUIApplication()
-    app.launchArguments = [argument]
+    app.launchArguments = [argument] + (largeText ? ["-sidequest-large-text"] : [])
     app.launch()
     XCTAssertTrue(app.staticTexts["foundation.title"].waitForExistence(timeout: 5))
     return app

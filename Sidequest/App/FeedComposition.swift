@@ -54,17 +54,6 @@ final class FeedComposition {
   }
 
   func newsContent(_ news: NewsSnapshot) -> AnyView {
-    AnyView(
-      ScrollView {
-        VStack(alignment: .leading, spacing: 16) {
-          Text(news.headline).font(.title.bold()).accessibilityAddTraits(.isHeader)
-          Text(news.publisher).font(.caption).foregroundStyle(.secondary)
-          Text(news.excerpt)
-          Text("Fictional sample • News imports follow their own task.")
-            .font(.caption)
-            .foregroundStyle(.secondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-      })
+    AnyView(NewsCardView(snapshot: news))
   }
 }

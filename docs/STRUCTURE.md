@@ -1,6 +1,6 @@
 # Source layout and ownership
 
-Selected for [issue #29](https://github.com/devofthings/sidequest/issues/29). [Foundation #1](https://github.com/devofthings/sidequest/issues/1) establishes `Sidequest.xcodeproj`, `Sidequest/App`, `Sidequest/Core` guidance, `Sidequest/Resources`, and the unit/UI test roots and fixtures. Feed, news, game areas, and their test folders below remain planned until their owning features create them.
+Selected for [issue #29](https://github.com/devofthings/sidequest/issues/29). [Foundation #1](https://github.com/devofthings/sidequest/issues/1) establishes the project, app, resources, and unit/UI test roots. Contract #2 adds core cards/lifecycle, news values, and deck construction. Feed #3 adds selection/presentation and the common retained game runtime. Individual news adapters and game rules/presentation below remain planned until their owning features create them.
 
 ## Source ownership tree
 
@@ -17,6 +17,7 @@ Sidequest/
     Adapters/                 # Local snapshot decoding and validation
     Presentation/             # News card and source-link actions
   Games/
+    Presentation/             # Retained runtime bridging core lifecycle to game adapters
     Sudoku/
       Rules/                  # Pure Swift behavior
       Presentation/           # SwiftUI input and rendering adapter
@@ -66,7 +67,7 @@ Private captures and generated outputs stay outside all synchronized source root
 | Shared lifecycle and ports | #2 | `Sidequest/Core/AGENTS.md` |
 | Feed domain and presentation | #3 | `Sidequest/Feed/AGENTS.md` |
 | News domain, snapshots, and presentation | #4 | `Sidequest/News/AGENTS.md` |
-| Common game adapter conventions | #2, coordinated with #3–#8 | `Sidequest/Games/AGENTS.md` |
+| Common game adapter conventions and retained runtime | #2/#3, coordinated with #5–#8 | `Sidequest/Games/AGENTS.md` |
 | Sudoku, memory, chess, bubble shooter | #5, #6, #7, #8 respectively | Each game's `AGENTS.md` |
 | Shared test/resource conventions | #1; integrated flows #9 | `SidequestTests/AGENTS.md`, `SidequestUITests/AGENTS.md` |
 

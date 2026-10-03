@@ -6,6 +6,7 @@ struct FeedView: View {
   let gameContent: (GameCard, GameRuntime) -> AnyView
   let newsContent: (NewsSnapshot) -> AnyView
   @Environment(\.scenePhase) private var scenePhase
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
   var body: some View {
     VStack(spacing: 16) {
@@ -20,14 +21,19 @@ struct FeedView: View {
             .id(card.id)
           navigationRail
         }
-        HStack {
-          Button("Previous", systemImage: "chevron.up", action: controller.previous)
-            .disabled(!controller.canGoBack)
-            .accessibilityIdentifier("feed.previous")
-          Spacer(minLength: 8)
-          Button("Next", systemImage: "chevron.down", action: controller.next)
-            .disabled(!controller.canGoForward)
-            .accessibilityIdentifier("feed.next")
+        Group {
+          if dynamicTypeSize.isAccessibilitySize {
+            VStack(spacing: 8) {
+              previousButton
+              nextButton
+            }
+          } else {
+            HStack {
+              previousButton
+              Spacer(minLength: 8)
+              nextButton
+            }
+          }
         }
         .buttonStyle(.bordered)
         .controlSize(.large)
@@ -67,14 +73,14 @@ struct FeedView: View {
               .accessibilityAddTraits(.isHeader)
             switch runtime.phase {
             case .preview:
-              Text("A quick game, whenever you’re ready.")
-                .foregroundStyle(.secondary)
               Button("Tap to play", action: runtime.start)
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
                 .accessibilityHint("Starts this game without making a move.")
                 .accessibilityIdentifier("game.start")
                 .disabled(!runtime.isVisible)
+              Text("A quick game, whenever you’re ready.")
+                .foregroundStyle(.secondary)
             case .playing, .completed:
               gameContent(game, runtime)
             }
@@ -88,9 +94,9 @@ struct FeedView: View {
 
   private var navigationRail: some View {
     VStack(spacing: 12) {
-      Image(systemName: "chevron.up")
-      Text("Swipe").font(.caption)
-      Image(systemName: "chevron.down")
+      Image(systemName: "chevron.up").font(.system(size: 20))
+      if !dynamicTypeSize.isAccessibilitySize { Text("Swipe").font(.caption) }
+      Image(systemName: "chevron.down").font(.system(size: 20))
     }
     .frame(width: 56)
     .frame(maxHeight: .infinity)
@@ -117,6 +123,18 @@ struct FeedView: View {
       }
     }
     .accessibilityIdentifier("feed.navigationRail")
+  }
+
+  private var previousButton: some View {
+    Button("Previous", action: controller.previous)
+      .disabled(!controller.canGoBack)
+      .accessibilityIdentifier("feed.previous")
+  }
+
+  private var nextButton: some View {
+    Button("Next", action: controller.next)
+      .disabled(!controller.canGoForward)
+      .accessibilityIdentifier("feed.next")
   }
 }
 
