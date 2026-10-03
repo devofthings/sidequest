@@ -11,6 +11,7 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 - [Agent guidance](AGENTS.md): how to pick up and complete an issue.
 - [Coding rules](docs/CODING.md): ownership, Swift interfaces, state, concurrency, errors, and verification for agents.
 - [Card and lifecycle contract](docs/CONTRACT.md): stable IDs, validated news values, shuffled decks, and explicit start/reset effects.
+- [Feed presentation](docs/FEED.md): manual navigation, retained game runtimes, scene handling, and injected card surfaces.
 - [Source structure](docs/STRUCTURE.md): folder ownership, game grouping, scoped guidance, and verified foundation source discovery.
 - [Review gates](docs/REVIEW_GATES.md): reproducible validation, durable review evidence, and pinned merges.
 - [Continuous verification](docs/CI.md): free foreground self-hosted execution, exact-commit checks, and local diagnostics.
@@ -24,7 +25,7 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 
 ## Development status
 
-The SwiftUI foundation launches in the iPhone simulator with app-hosted unit tests and UI tests. Xcode 27.0/iOS 27.0 were verified; the deployment target is iOS 17.0. The shared card/lifecycle contract, shuffled fictional session, and manual news imports with sourced, dated cards are implemented. Use Read news to preview or import snapshots. The mixed feed, games, and gameplay tests follow their own tickets. The private preview workflow verifies and publishes successful main updates while the foreground runner is active; see [release guidance](docs/RELEASES.md) for actual availability and installation. [CI](docs/CI.md) verifies same-repository PRs and main using this Mac while its foreground runner is active.
+The SwiftUI feed hosts a once-shuffled fictional sample session with explicit tap-to-play game demos, a vertical swipe rail, and accessible Previous/Next controls. Skipping or backgrounding resets unfinished play; completed demo state survives revisits. Manual news imports with sourced, dated cards are implemented in a standalone Debug preview; imported-news integration and the four game implementations follow their own tickets. `Sidequest.xcodeproj` provides the shared `Sidequest` scheme and unit/UI tests. Xcode 27.0 and the iOS 27.0 simulator were verified; the deployment target is iOS 17.0. [CI](docs/CI.md) verifies same-repository PRs and main on the foreground Mac runner. The private preview workflow verifies and publishes successful main updates; see [release guidance](docs/RELEASES.md) for actual availability.
 
 The user authorized app implementation on October 3, 2026; see the [autonomous delivery plan](docs/AUTONOMY.md). Start with [INSTALL.md](docs/INSTALL.md) to build, test, and run. Physical-iPhone installation is documented but remains unverified and requires local account/signing setup.
 

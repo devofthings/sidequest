@@ -2,7 +2,7 @@
 
 ## Verified foundation
 
-`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. The minimal launch screen is implemented; news, games, and their integrated flows follow their owning issues. Local simulator builds, tests, installation, and launch are verified. Physical-iPhone installation remains unverified and requires your local Apple Account and signing configuration. [CI](CI.md) uses the same verified toolchain on a foreground self-hosted Mac runner. The private [preview workflow](RELEASES.md) supplies downloads after a successful main publication; no download is claimed before that run.
+`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. The feed uses fictional sample news and provisional game demos; manual news imports are available in the standalone Debug preview while feed integration and real games follow their owning issues. Local simulator builds, tests, installation, and launch are verified. Physical-iPhone installation remains unverified and requires your local Apple Account and signing configuration. [CI](CI.md) uses the same verified toolchain on a foreground self-hosted Mac runner. The private [preview workflow](RELEASES.md) supplies downloads after a successful main publication; no download is claimed before that run.
 
 | Setting | Verified value |
 | --- | --- |
@@ -62,7 +62,7 @@ xcrun swift-format lint --strict --recursive --configuration .swift-format \
   Sidequest SidequestTests SidequestUITests
 ```
 
-The shared scheme includes foundation checks for host identity, fixture isolation, and accessible launch, plus shared-contract and news behavior tests. These verify the foundation; gameplay and critical integrated-flow tests are added after their behavior exists. Use `-resultBundlePath /absolute/new/path.xcresult` to retain test evidence; Xcode requires a path that does not already exist.
+The shared scheme runs foundation membership/fixture checks, shared contract, news, and feed-controller unit tests, plus running-app tests for launch, news provenance/importer access, start, skip/reset, completion retention, independent game/navigation gestures, scene changes, and empty/end states. These use deterministic fictional inputs and provisional game surfaces; individual game rules and imported-news feed integration follow their feature tasks. Use `-resultBundlePath /absolute/new/path.xcresult` to retain test evidence; Xcode requires a path that does not already exist.
 
 For a local Release simulator build, use the same build command with `-configuration Release`. This produces a local build, not a published GitHub release.
 
@@ -94,7 +94,7 @@ xcrun simctl install "$SIDEQUEST_SIMULATOR_ID" \
 xcrun simctl launch "$SIDEQUEST_SIMULATOR_ID" dev.devofthings.sidequest
 ```
 
-Open Simulator to see the window. After the first launch renders, the screen displays “Sidequest” and “A little news. A little play.” Simulator builds run on a Mac and cannot be installed on a physical iPhone.
+Open Simulator to see the window. Normal launch shows Sidequest's shuffled sample feed. Swipe up/down on the separate navigation rail or use Previous/Next. Game cards stay at Tap to play until explicitly started; the provisional demo lets you check interaction/completion while real game implementations are pending. Skipping or backgrounding resets unfinished play. Completed demo state survives returning to its card. See [FEED.md](FEED.md) for adapter ownership and test-only routes. Simulator builds run on a Mac and cannot be installed on a physical iPhone.
 
 ## Download a simulator preview
 
@@ -143,6 +143,16 @@ After a Personal Team profile expires, rebuilding and reinstalling may be necess
 ## Content, versions, and troubleshooting
 
 Keep real personal news captures in ignored `.local-news/` or another directory outside `Sidequest`, `SidequestTests`, and `SidequestUITests`. Use [NEWS.md](NEWS.md) to prepare a version 1 JSON file, import and validate it through Read news, and replace the saved set. Only fictional samples/schema are bundled. Fictional test fixtures are isolated in their test bundles.
+
+Until #9 connects saved imports to the feed, open the standalone library from a Debug build by adding `-sidequest-news-preview` to Xcode's scheme launch arguments, or relaunch the installed Debug simulator app with:
+
+```sh
+xcrun simctl terminate "$SIDEQUEST_SIMULATOR_ID" dev.devofthings.sidequest
+xcrun simctl launch "$SIDEQUEST_SIMULATOR_ID" dev.devofthings.sidequest \
+  -sidequest-news-preview
+```
+
+Skip termination if the app is already stopped. This route shows **Read news** and its importer. Normal feed launch still uses fictional session news; Release previews ignore this Debug argument.
 
 Generated output belongs in ignored `DerivedData/`, `build/`, or an external build directory, outside synchronized source roots. Keep scoped `AGENTS.md` guidance in its owning folder; all target Markdown is excluded from built resources.
 

@@ -3,11 +3,32 @@ import SwiftUI
 @main
 @MainActor
 struct SidequestApp: App {
-  @State private var session = SampleSession.make()
+  @State private var composition = FeedComposition()
 
   var body: some Scene {
     WindowGroup {
-      FoundationView(session: session)
+      #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-sidequest-news-preview") {
+          FoundationView(session: composition.session)
+        } else if ProcessInfo.processInfo.arguments.contains("-sidequest-large-text") {
+          feed.dynamicTypeSize(.accessibility5)
+        } else {
+          feed
+        }
+      #else
+        feed
+      #endif
+    }
+  }
+
+  @ViewBuilder
+  private var feed: some View {
+    if let controller = composition.controller {
+      FeedView(
+        controller: controller, gameContent: composition.gameContent,
+        newsContent: composition.newsContent)
+    } else {
+      FoundationView(session: composition.session)
     }
   }
 }
