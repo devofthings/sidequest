@@ -23,3 +23,6 @@ Angles are radians measured from vertical: negative aims left, positive right. T
 `BubbleShooterView` uses a continuous -60...60 degree slider, an explicit Fire button, and original circles labeled R/B/G beyond color. Gameplay is inside the feed's independently scrollable card; the separate feed rail owns vertical navigation. Completed win/loss offers Replay through the same retained runtime; ordinary revisits retain completion. No scores or campaign are introduced.
 
 Replay replaces the runtime's private lifecycle value only for a visible completed card. Deliver reset with the old token ineligible and phase preview before starting a fresh token. Reject a duplicate injected identity rather than accepting stale callbacks. A reset that hides the card cannot start it. Controllers never own a second lifecycle; root coordinates the common composition and running-app wiring.
+
+
+Running-app tests use root-owned Debug composition arguments `-sidequest-bubble-fixtures` (bubble first, then another card) and `-sidequest-bubble-slow-shot` (longer injected shot pauses only for cancellation observation). They must not affect Release or normal gameplay timing. The game agent owns BubbleFlowTests; root owns central wiring. These tests remain unexecuted until that wiring exists.
