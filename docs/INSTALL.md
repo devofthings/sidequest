@@ -14,6 +14,8 @@ gh repo clone devofthings/sidequest
 
 After cloning, follow [FORMATTING.md](FORMATTING.md#install-commit-checks) to enable the tracked commit checks explicitly in that clone. If setup reports existing executable native hooks or another hooks configuration, reconcile them before retrying; setup leaves those hooks and configuration intact.
 
+Agents recording review evidence or merging changes use the [tracked review gates](REVIEW_GATES.md). Their setup requires Python 3, Git, authenticated GitHub CLI, and the reviewed commits; these tools do not create an application target or start CI.
+
 For a specific published version, open the private [GitHub Releases page](https://github.com/devofthings/sidequest/releases) and use its tagged source. The release notes will identify the full commit, build, required toolchain, and simulator compatibility. Preserve your local signing settings and news imports when switching versions.
 
 ## Run in the iPhone simulator

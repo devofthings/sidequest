@@ -14,7 +14,7 @@ The agent is the technical lead and owns issue selection, implementation, verifi
 
 Delegate ticket-readiness/spec reviews and PR code reviews to fresh subagents when delegation is available. The lead coordinates findings, fixes, actual verification, and merge gates rather than duplicating the full review. Follow the [delegated review responsibilities](docs/REVIEW.md#delegated-review-responsibilities); use the handoff queue when a fresh reviewer cannot be dispatched.
 
-App development is on hold until the user explicitly authorizes starting it. Preparation may audit and update documentation; it may not create app code or targets or start implementation jobs. Scheduling remains undecided: create no recurring runs under this plan. Repository readiness, a Ready issue, or merging this guidance does not lift the hold.
+App development is on hold until the user explicitly authorizes starting it. Preparation may audit and update documentation, establish the approved source-structure plan, and implement/run the explicitly authorized local agent setup and review-gate tooling in issues #62 and #63. It may not create app code or targets, start app implementation or CI jobs, or activate release automation. Scheduling remains undecided: create no recurring runs under this plan. Repository readiness, a Ready issue, or merging this guidance does not lift the hold.
 
 ## Start an issue
 
