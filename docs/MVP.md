@@ -12,7 +12,8 @@ Sidequest is the working name. The GitHub repository is private. Use GitHub Issu
 
 - Import a small set of real English news snapshots manually, including source-provided excerpts and links to the original articles. Automatic news fetching is deferred.
 - Shuffle news cards and game cards together. Movement between cards is controlled by the person swiping, rather than automatic advancement.
-- Reset an unfinished game when its card is skipped. Fresh attempts are more important than saved progress in this test.
+- Each game card initially shows a preview with an accessible "Tap to play" action. Swiping onto the card does not start gameplay, timers, or accept game input. Tapping starts the game inside the card; that tap only starts the attempt.
+- Reset an unfinished game when its card is skipped. Returning shows the tap-to-play preview and requires a new explicit start. Fresh attempts are more important than saved progress in this test.
 - Include simple Sudoku, memory pairs, one-move chess puzzles, and a bubble shooter.
 - Test in the iPhone simulator and on the user's own iPhone through Xcode.
 
