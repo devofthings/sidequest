@@ -56,7 +56,7 @@ The local repository snapshot audited for this preparation is main commit `f71db
 | No explicit app-development hold or scheduling decision in persistent guidance | Added the user-selected hold and no scheduling yet. |
 | No included-usage-only or no-reset rule | Added the standing prohibition, preflight check, reserve, and account-control limitation. |
 | Research describes human code review as an available part of delivery | Clarified that agents own reviews and the user provides product steering. Product-choice acceptance remains intact. |
-| CI research suggests protection where an eligible plan permits it | Aligned with the accepted decision to defer protection and use orchestrator gates. |
+| CI research suggests protection where an eligible plan permits it and unrestricted run cancellation | Aligned with deferred protection and orchestrator gates; restricted cancellation to PR verification and preserved main release jobs. |
 | Feed verification research omits the newly accepted start gate | Added preview, explicit start, and skip back to preview checks. |
 
 Preserved the accepted ADRs, competitor/backend research snapshots, logo proposal, and templates. Their dates, proposal labels, and no-app-yet statements are useful and remain accurate for this snapshot. No files were deleted. App builds and gameplay tests remain unavailable until the foundation is implemented.
