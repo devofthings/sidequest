@@ -12,7 +12,7 @@ You need access to the private repository. Use your existing checkout, or clone 
 gh repo clone devofthings/sidequest
 ```
 
-After cloning, follow [FORMATTING.md](FORMATTING.md#install-commit-checks) to enable the tracked commit checks explicitly in that clone.
+After cloning, follow [FORMATTING.md](FORMATTING.md#install-commit-checks) to enable the tracked commit checks explicitly in that clone. If setup reports existing executable native hooks or another hooks configuration, reconcile them before retrying; setup leaves those hooks and configuration intact.
 
 For a specific published version, open the private [GitHub Releases page](https://github.com/devofthings/sidequest/releases) and use its tagged source. The release notes will identify the full commit, build, required toolchain, and simulator compatibility. Preserve your local signing settings and news imports when switching versions.
 

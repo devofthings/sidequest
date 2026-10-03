@@ -51,5 +51,19 @@ HOOK
   exit 0
 fi
 
+if [ -z "$existing_path" ]; then
+  # Native hooks may live in the common Git directory for linked worktrees.
+  native_hooks_dir=$(git rev-parse --git-path hooks)
+  for native_hook in "$native_hooks_dir"/*; do
+    case "$native_hook" in
+      *.sample) continue ;;
+    esac
+    if [ -f "$native_hook" ] && [ -x "$native_hook" ]; then
+      printf 'Hook setup: existing executable native hook %s would be disabled; reconcile it before installing Sidequest hooks.\n' "$native_hook" >&2
+      exit 1
+    fi
+  done
+fi
+
 git config --local core.hooksPath .githooks
 printf '%s\n' 'Sidequest hooks enabled for this clone.'

@@ -144,6 +144,49 @@ class CommitHookTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(self.git("config", "--get", "core.hooksPath").stdout.strip(), "existing-hooks")
 
+    def test_direct_install_preserves_active_native_hooks(self):
+        self.git("config", "--unset", "core.hooksPath")
+        shutil.copytree(ROOT / ".githooks", self.repo / ".githooks")
+        path = self.stage("Probe.swift", GOOD)
+        path.write_text(BAD)
+        hooks = self.repo / ".git/hooks"
+        config = self.repo / ".git/config"
+        index = self.repo / ".git/index"
+        for name, code in (("pre-commit", 31), ("commit-msg", 32)):
+            with self.subTest(hook=name):
+                hook = hooks / name
+                hook.write_text(f"#!/bin/sh\nprintf '{name}' > native-hook-ran\nexit {code}\n")
+                hook.chmod(0o755)
+                before = (config.read_bytes(), index.read_bytes(), path.read_bytes(),
+                          hook.read_bytes(), hook.stat().st_mode)
+                result = self.command("bash", str(ROOT / "scripts/install-git-hooks.sh"),
+                                      check=False)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(str(Path(".git/hooks") / name), result.stderr)
+                self.assertIn("reconcile", result.stderr)
+                self.assertEqual(before, (config.read_bytes(), index.read_bytes(),
+                                         path.read_bytes(), hook.read_bytes(), hook.stat().st_mode))
+                self.commit(False)
+                self.assertEqual((self.repo / "native-hook-ran").read_text(), name)
+                hook.unlink()
+
+    def test_direct_install_preserves_shared_native_hooks_from_linked_worktree(self):
+        self.git("config", "--unset", "core.hooksPath")
+        hook = self.repo / ".git/hooks/commit-msg"
+        hook.write_text("#!/bin/sh\nexit 32\n")
+        hook.chmod(0o755)
+        config_before = (self.repo / ".git/config").read_bytes()
+        hook_before = hook.read_bytes()
+        linked = self.repo / "linked"
+        self.git("worktree", "add", "-q", "-b", "linked-probe", str(linked))
+        shutil.copytree(ROOT / ".githooks", linked / ".githooks")
+        result = subprocess.run(["bash", str(ROOT / "scripts/install-git-hooks.sh")],
+                                cwd=linked, env=self.env, capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("commit-msg", result.stderr)
+        self.assertEqual((self.repo / ".git/config").read_bytes(), config_before)
+        self.assertEqual(hook.read_bytes(), hook_before)
+
     def install_forwarder_fixture(self):
         self.git("config", "--unset", "core.hooksPath")
         shutil.copytree(ROOT / ".githooks", self.repo / ".githooks")

@@ -23,7 +23,7 @@ From the repository root, run the installer once in each clone:
 ./scripts/install-git-hooks.sh
 ```
 
-With no other hooks path configured, the installer selects the tracked `.githooks` directory using local `core.hooksPath`. Git local configuration is shared by linked worktrees belonging to the same clone, so that selection also affects those worktrees. Installing in a separate clone does not change another clone's configuration.
+With no other hooks path configured and no executable native hooks, the installer selects the tracked `.githooks` directory using local `core.hooksPath`. Existing executable native hooks, including `pre-commit` and `commit-msg`, cause setup to stop with their path before changing configuration or files. Sample hooks do not block setup. Reconcile active hooks explicitly before retrying; selecting another hooks directory would disable them. Git resolves the native hooks directory, including the shared directory used by linked worktrees. Git local configuration is shared by linked worktrees belonging to the same clone, so that selection also affects those worktrees. Installing in a separate clone does not change another clone's configuration.
 
 The existing global Tokensave setup forwards pre-commit to a repository-local hook. When the installer recognizes that exact forwarding script, it installs a small dispatcher under the current Git directory instead, preserving `core.hooksPath`, the global files, and other global hooks. Run setup for each linked worktree in this mode. The installer refuses unknown hooks paths, linked/nonregular repository hooks, and existing repository hooks it does not own; reconcile those explicitly before installing.
 
