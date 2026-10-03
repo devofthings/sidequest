@@ -37,6 +37,7 @@ Before assigning edits in a fresh or handed-off checkout, follow [agent setup](d
 - Submit every repository change, including documentation, through a PR before reporting it as delivered. Make each issue independently reviewable; link prerequisites rather than expanding the issue into neighboring work.
 - Schedule the shared design baseline and wireframes after the MVP and personal test; follow the accepted [design timing](docs/MVP.md#deferred-work) when planning UI work or dependencies for issue #13.
 - After resolving an issue or ticket, complete the chat checkpoint below before starting or assigning the next issue.
+- Check [README.md](README.md) for accuracy after each completed ticket. Update it in the same PR when project status, approved scope, source structure, setup, verification, installation/releases, or documentation entry points change. Keep it concise, link detailed guidance, and distinguish planned work from verified capabilities.
 - Follow [ADR 0003](docs/adr/0003-hexagonal-architecture.md) when adding core behavior, ports, or adapters. Keep game rules separate from presentation and introduce small interfaces at replaceable boundaries.
 - Use deterministic fixtures for tests. Keep live news retrieval out of repeatable test runs.
 - Format first-party Swift files with the official Xcode-bundled `swift-format` and committed `.swift-format` before committing, then run strict lint. Follow [FORMATTING.md](docs/FORMATTING.md) for commands and toolchain consistency.

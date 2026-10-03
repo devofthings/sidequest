@@ -21,6 +21,8 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 
 ## Development status
 
-App implementation has not started. The app foundation ticket will add the iOS target, setup steps, and actual build and test commands.
+The repository contains planning documents, coding standards, the selected source-structure plan, Swift formatting and commit checks, and local agent setup and review-gate tooling. The source folders are planned; there is no app target, gameplay test suite, CI workflow, or installable build yet.
+
+App implementation is on hold until the user explicitly authorizes starting it; see the [autonomous delivery plan](docs/AUTONOMY.md). The [app foundation ticket](https://github.com/devofthings/sidequest/issues/1) will add the iOS target, setup steps, and verified build and test commands.
 
 Sidequest is the working project name. Public naming availability has not been established.
