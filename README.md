@@ -13,7 +13,7 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 - [Source structure](docs/STRUCTURE.md): selected folder ownership, game grouping, scoped guidance, and planned source discovery.
 - [Review gates](docs/REVIEW_GATES.md): reproducible validation, durable review evidence, and pinned merges.
 - [Swift formatting](docs/FORMATTING.md): shared style, local commit-hook setup, and tooling checks.
-- [Autonomous delivery plan](docs/AUTONOMY.md): technical ownership, the development hold, usage guardrails, and the documentation audit.
+- [Autonomous delivery plan](docs/AUTONOMY.md): technical ownership, start authorization, usage guardrails, and the documentation audit.
 - [Installation and running](docs/INSTALL.md): simulator and personal-iPhone workflow; exact app commands are pending the foundation.
 - [Private release delivery](docs/RELEASES.md): build policy and traceable release history; automation is pending the app and CI.
 - [GitHub Issues](https://github.com/devofthings/sidequest/issues): tasks and dependencies.
@@ -23,6 +23,6 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 
 The repository contains planning documents, coding standards, the selected source-structure plan, Swift formatting and commit checks, and local agent setup and review-gate tooling. The source folders are planned; there is no app target, gameplay test suite, CI workflow, or installable build yet.
 
-App implementation is on hold until the user explicitly authorizes starting it; see the [autonomous delivery plan](docs/AUTONOMY.md). The [app foundation ticket](https://github.com/devofthings/sidequest/issues/1) will add the iOS target, setup steps, and verified build and test commands.
+The user authorized app implementation on October 3, 2026; see the [autonomous delivery plan](docs/AUTONOMY.md). The [app foundation ticket](https://github.com/devofthings/sidequest/issues/1) will add the iOS target, setup steps, and verified build and test commands.
 
 Sidequest is the working project name. Public naming availability has not been established.

@@ -2,7 +2,7 @@
 
 Use `scripts/review-gate.py` after the fresh reviewer and actual verification finish. It replaces temporary gate helpers. Python 3, Git, authenticated `gh`, and the reviewed Git objects are required. Fetch the feature branch and main explicitly before running it; the validator never fetches, changes the checkout, or executes receipt commands.
 
-The lead must first confirm the issue's accepted scope, prerequisites, implementation hold, spending rules, included allowance, and the reviewer's independence. The CLI checks the evidence's structure and consistency with GitHub and Git. It cannot read chat authorization, prove that an agent ran a command, authenticate agent identities, or substitute for substantive review. A linked issue, Ready status, or receipt does not approve a feature.
+The lead must first confirm the issue's accepted scope, prerequisites, start authorization, spending rules, included allowance, and the reviewer's independence. The CLI checks the evidence's structure and consistency with GitHub and Git. It cannot read chat authorization, prove that an agent ran a command, authenticate agent identities, or substitute for substantive review. A linked issue, Ready status, or receipt does not approve a feature.
 
 ## Prepare the receipt
 
@@ -26,7 +26,7 @@ Save this shape as JSON outside the checkout, replacing every example value with
   "authorization": {
     "source": "User chat, October 3, 2026; issue #63 records the request",
     "decision": "The user instructed the lead to fix the audited preparation gaps.",
-    "approved_scope": "Repository-owned gate tooling; app implementation remains on hold.",
+    "approved_scope": "Repository-owned gate tooling within the explicitly authorized implementation plan.",
     "confirmed_by": "/root",
     "changed_paths": ["scripts/review-gate.py"]
   },
@@ -46,11 +46,20 @@ Verification modes:
 
 - `documentation`: only Markdown changed; report actual documentation checks.
 - `tooling`: Markdown, files under `scripts/` or `.githooks/`, and `.swift-format`; report relevant local integration checks. Application files require a different mode.
+- `application`: local app verification before hosted workflows exist; see the required evidence below.
 - `ci`: CI owns verification. Include `verification.run_url` matching a successful `Sidequest / verification` check run's details URL. That check run must identify the reviewed head SHA; the receipt binds its run to the reviewed head/base, and the local ancestry check requires the current base inside that tested head. Local agents do not publish or overwrite the CI verification gate. Once workflows exist, the CLI requires this mode; issue #15 must implement the check contract before using these gates for CI-backed changes.
 
-Every listed command must have a real result and numeric zero exit code. Local modes must explain unavailable app/CI checks. The CLI independently checks Git ancestry and whitespace; other command evidence remains the reviewer's and lead's responsibility. These checks are not permission to start app development or potentially chargeable CI.
+Every listed command must have a real result and numeric zero exit code. Local modes must explain unavailable app/CI checks. The CLI independently checks Git ancestry and whitespace; other command evidence remains the reviewer's and lead's responsibility. App implementation has explicit user authorization; these checks do not authorize potentially chargeable CI.
 
 `issue_completion` is `complete` by default for existing receipts. A complete contribution requires a closing reference and must meet the issue's completion criteria. For a reviewed contribution that finishes only a bounded part of an open issue, set `issue_completion` to `partial`, state that narrower approved scope in `authorization.approved_scope`, and use an explicit `Refs #<issue>`, `Part of #<issue>`, or `Related to #<issue>` in the PR body (the full repository issue URL also works). Partial contributions must have no closing reference to their parent in their body or title, and no native GitHub closing link. The gate recognizes uppercase keywords, optional colons, repository-qualified references, and full issue URLs. For partial merges it uses the checked PR title and an empty squash body, preventing feature commit messages from closing the parent through default squash text. The receipt audit labels the contribution, and the lead leaves the issue open and updates only its actual progress. This supports decision-recording PRs without claiming the later design or implementation is complete.
+
+## Local application verification
+
+The user authorized implementation on October 3, 2026. Foundation #1 precedes CI #15; local application verification lets a built and tested feature pass review without inventing CI results or enabling chargeable jobs. Use `verification.mode: application` only before workflows exist. Its complete authorized diff may include the app, unit/UI tests, project/shared schemes, Markdown guidance, `.gitignore`, and `.swift-format`; unrelated tooling changes need their own PR.
+
+Include `verification.environment` with nonempty `xcode`, `project`, `scheme`, and `destination` values from the actual check environment. In the existing `commands` array label the successful build, tests, and strict formatter commands with `check: build`, `check: tests`, and `check: format` respectively. Every command still needs its exact invocation, numeric zero exit code, and observed result. Record relevant simulator launch, source discovery, gameplay, and UI evidence as required by the issue. Unavailable physical-device, CI, or release checks must be explicit; a missing required local check blocks merging.
+
+Receipt text is evidence, never executable input. The lead confirms commands actually ran on the reviewed commits; the CLI checks structure and existing gates but cannot establish that a receipt's claims are true. Workflows continue to require CI-owned verification. This mode does not authorize hosted execution or spending.
 
 ## Validate, record, merge
 

@@ -114,7 +114,11 @@ def main():
     check("swift-format", lambda: command("xcrun", "swift-format", "--version"))
     check("format configuration", lambda: (root / ".swift-format").is_file())
     check("Sidequest hooks (install explicitly with bash scripts/install-git-hooks.sh)", lambda: sidequest_hooks(root))
-    print("INFO App build, gameplay tests, and releases unavailable until the app foundation. App implementation and scheduling remain on hold.")
+    if (root / "Sidequest.xcodeproj/project.pbxproj").is_file():
+        print("INFO App target present; run the current build/test commands in docs/INSTALL.md. Preflight does not build or verify the app.")
+    else:
+        print("INFO App build, gameplay tests, and releases unavailable until the app foundation.")
+    print("INFO App implementation was authorized October 3, 2026; scheduling remains undecided. Hosted CI/release execution needs a zero-cost check or spending approval.")
     print("INFO Lead must separately check included Codex allowance with the account tool before starting an issue or reviewer; preflight does not verify billing or authorize work.")
     return 1 if failures else 0
 
