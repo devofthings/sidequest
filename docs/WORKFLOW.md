@@ -4,14 +4,14 @@ The private [Sidequest MVP board](https://github.com/users/devofthings/projects/
 
 | Status | Meaning |
 | --- | --- |
-| Ideas | Suggestions awaiting evaluation and scope; not selected or authorized implementation work. |
+| Ideas | Proposed features and other suggestions awaiting user agreement; work is limited to capturing the proposal. |
 | Backlog | Planned work that has not been selected or whose prerequisites remain incomplete. |
 | Ready | Scope is clear, prerequisites are complete, and work can start. |
 | In progress | An agent or person is actively working on the issue. |
 | Review | The acceptance criteria are implemented, validation is recorded, and the result is ready for review. |
 | Done | The work is merged or explicitly accepted, and the issue is closed. |
 
-Capture new suggestions in Ideas. Once an idea becomes a bounded GitHub issue with an outcome and acceptance criteria, move it to Backlog; move it to Ready only when scope and prerequisites permit work. Ideas do not expand the confirmed MVP or lift the implementation hold. Keep proposed product changes subject to the existing decision process.
+Capture new suggestions in Ideas. Promote an idea to Backlog only after explicit user agreement and a bounded GitHub issue with an outcome and acceptance criteria; move it to Ready only when scope and prerequisites permit work. Ideas do not expand the confirmed MVP or lift the implementation hold.
 
 Before starting an issue, confirm its prerequisites are complete and set its Project status to In progress. Move it to Review when a reviewable result and verification evidence are available, then run the [fresh-agent review and merge loop](REVIEW.md). After merge, close completed implementation issues, set them to Done, and move dependent issues to Ready when all their prerequisites are complete. Product-decision issues stay open until the user selects the proposed behavior or provider; merging research does not select it.
 
@@ -20,6 +20,14 @@ When a PR is ready, enter the [review handoff queue](REVIEW.md#review-handoff-qu
 Keep unfinished work open. If work pauses or a new prerequisite blocks it, record the reason in the issue and move it to Ready or Backlog as appropriate.
 
 After each resolved issue or ticket, follow the [chat checkpoint](../AGENTS.md#after-ticket-chat-checkpoint) before starting or assigning another issue. Incorporate newly delivered user steering before choosing the next task.
+
+## Ticket authorization
+
+Agents may create and address bug-fix tickets without a separate feature approval. A bug fixes a reproducible defect or a demonstrated mismatch with accepted behavior; record the evidence, expected behavior, and link to its approved scope. Agents may also split already-approved work into necessary implementation subtasks without expanding it. Apply dependencies, the app-development hold, spending/usage rules, and the normal review/verification loop to both.
+
+New features and expanded behavior go into the Project's Ideas status, even when their scope is clear. Record the proposal, rationale, and open questions; beyond capturing it, start or assign no work on the idea until the user explicitly agrees. This includes research, design, prototypes, and implementation. If a proposed change cannot be established as a defect or a necessary part of approved scope, keep it in Ideas rather than treating it as a bug fix.
+
+Accept approval from an explicit user instruction in chat or a user-authored issue response. Record its date, source, and exact approved scope in the issue and update [DECISIONS.md](DECISIONS.md) and applicable agent guidance before promotion or work. Silence, agent-authored approval notes, labels, or moving an item out of Ideas do not authorize it. Approved features and the confirmed MVP do not need approval again; link their existing acceptance evidence. User approval of a feature does not separately authorize spending or lift an unrelated implementation hold.
 
 ## Unanswered decision requests
 
