@@ -1,4 +1,4 @@
-# Sidequest
+# sidequest
 
 A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, memory pairs, chess puzzles, and a bubble shooter in one shuffled feed.
 

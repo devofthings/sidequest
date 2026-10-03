@@ -2,6 +2,16 @@
 
 The user authorizes agents to commit and push feature branches and merge PRs after this loop passes. All repository changes, including documentation, use feature branches and PRs. Direct commits or pushes to `main` are prohibited.
 
+## Delegated review responsibilities
+
+Use a fresh subagent for ticket-readiness/spec checks and PR code reviews when the active lead can delegate. Ticket review checks accepted scope, dependencies, acceptance criteria, and feasible verification; it does not approve a feature idea or replace the later PR review. PR reviewers use the `my-review` skill and exact targets under the loop below.
+
+Dispatch a review as soon as its bounded result is ready and commits are captured. Give the reviewer the originating issue, applicable guidance, verification responsibilities, and an explicit read-only or isolated mutation scope. The lead can perform independent authorized work while review runs. Separate ready PRs may be reviewed in parallel when allowance and isolation permit; shared checkout changes must not affect the review's target or fixtures. Recheck all head/base evidence before merge, including after another PR merges.
+
+The reviewer owns substantive standards/spec findings. The lead owns coordination, assigning fixes, assessing reported evidence, and rechecking authorization and merge gates; it may delegate actual validation to a reviewer or validation agent. Require exact commands/results against the reviewed target and keep unavailable checks explicit. Do not add a duplicate full lead code review after a clean fresh review. Fixes still require another new reviewer, and a reviewer's proposed product changes remain unapproved Ideas.
+
+Apply the included-usage and spending rules before dispatch. When no eligible fresh reviewer can run, use the handoff queue instead of author self-certification. These responsibilities add no recurring execution or cross-chat messaging authorization.
+
 ## Review handoff queue
 
 `review-needed` marks an open, non-draft PR ready for independent review or a new round. Keep the originating issue in the Project's Review column. A label is a durable queue entry, not a background worker: pickup occurs when an authorized lead chat is active. Recurring pickup requires separately authorized scheduling and the project's spending and usage checks.

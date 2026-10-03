@@ -12,6 +12,8 @@ At chat startup and after each ticket's chat checkpoint, the active lead checks 
 
 The agent is the technical lead and owns issue selection, implementation, verification, fresh-agent code review, fixes, and gated merging. The user provides product steering through the project documents and does not need to review code. Follow [docs/AUTONOMY.md](docs/AUTONOMY.md) for the prepared delivery plan and escalation boundaries.
 
+Delegate ticket-readiness/spec reviews and PR code reviews to fresh subagents when delegation is available. The lead coordinates findings, fixes, actual verification, and merge gates rather than duplicating the full review. Follow the [delegated review responsibilities](docs/REVIEW.md#delegated-review-responsibilities); use the handoff queue when a fresh reviewer cannot be dispatched.
+
 App development is on hold until the user explicitly authorizes starting it. Preparation may audit and update documentation; it may not create app code or targets or start implementation jobs. Scheduling remains undecided: create no recurring runs under this plan. Repository readiness, a Ready issue, or merging this guidance does not lift the hold.
 
 ## Start an issue
