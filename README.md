@@ -10,6 +10,7 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 - [Agent setup](docs/AGENT_SETUP.md): isolated checkout ownership, portable review skill, and read-only readiness checks.
 - [Agent guidance](AGENTS.md): how to pick up and complete an issue.
 - [Coding rules](docs/CODING.md): ownership, Swift interfaces, state, concurrency, errors, and verification for agents.
+- [Card and lifecycle contract](docs/CONTRACT.md): stable IDs, validated news values, shuffled decks, and explicit start/reset effects.
 - [Source structure](docs/STRUCTURE.md): folder ownership, game grouping, scoped guidance, and verified foundation source discovery.
 - [Review gates](docs/REVIEW_GATES.md): reproducible validation, durable review evidence, and pinned merges.
 - [Swift formatting](docs/FORMATTING.md): shared style, local commit-hook setup, and tooling checks.
@@ -21,7 +22,7 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 
 ## Development status
 
-The SwiftUI foundation launches in the iPhone simulator. `Sidequest.xcodeproj` provides the shared `Sidequest` scheme, app-hosted unit tests, and a UI launch test. Xcode 27.0 and the iOS 27.0 simulator were verified; the deployment target is iOS 17.0. News, games, gameplay tests, CI, and published releases follow their own tickets.
+The SwiftUI foundation launches in the iPhone simulator. `Sidequest.xcodeproj` provides the shared `Sidequest` scheme, app-hosted unit tests, and a UI launch test. Xcode 27.0 and the iOS 27.0 simulator were verified; the deployment target is iOS 17.0. The shared card/lifecycle contract and shuffled fictional sample session are implemented. The feed, news imports, games, gameplay tests, CI, and published releases follow their own tickets.
 
 The user authorized app implementation on October 3, 2026; see the [autonomous delivery plan](docs/AUTONOMY.md). Start with [INSTALL.md](docs/INSTALL.md) to build, test, and run. Physical-iPhone installation is documented but remains unverified and requires local account/signing setup.
 
