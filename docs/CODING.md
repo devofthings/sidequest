@@ -1,6 +1,6 @@
 # Coding rules for Sidequest
 
-These rules apply to first-party Swift application and test code. They implement the user's request for predictable agent-authored code; they do not start app development or expand the MVP. Read applicable scoped AGENTS.md files, the originating issue, and [ADR 0003](adr/0003-hexagonal-architecture.md) before changing code. Concrete folders and source discovery remain with [issue #29](https://github.com/devofthings/sidequest/issues/29); the toolchain, language mode, and minimum iOS version remain with the [foundation](https://github.com/devofthings/sidequest/issues/1).
+These rules apply to first-party Swift application and test code. They implement the user's request for predictable agent-authored code; they do not start app development or expand the MVP. Read applicable scoped AGENTS.md files, the originating issue, and [ADR 0003](adr/0003-hexagonal-architecture.md) before changing code. [STRUCTURE.md](STRUCTURE.md) selects folders and source discovery; the toolchain, language mode, minimum iOS version, and executable proof remain with the [foundation](https://github.com/devofthings/sidequest/issues/1).
 
 ## Dependencies and ownership
 
