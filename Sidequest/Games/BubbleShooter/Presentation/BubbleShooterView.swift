@@ -37,6 +37,7 @@ struct BubbleShooterView: View {
         .accessibilityIdentifier("bubble.aim")
         Button("Fire") { controller.fire() }
           .buttonStyle(.borderedProminent)
+          .controlSize(.large)
           .frame(minHeight: 44)
           .disabled(!controller.canFire)
           .accessibilityIdentifier("bubble.fire")
@@ -46,6 +47,7 @@ struct BubbleShooterView: View {
           .accessibilityIdentifier("bubble.outcome")
         Button("Replay") { controller.replay() }
           .buttonStyle(.borderedProminent)
+          .controlSize(.large)
           .frame(minHeight: 44)
           .disabled(!controller.runtime.isVisible)
           .accessibilityIdentifier("bubble.replay")

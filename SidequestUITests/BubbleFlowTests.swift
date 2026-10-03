@@ -14,6 +14,8 @@ final class BubbleFlowTests: XCTestCase {
     app.buttons["feed.previous"].tap()
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
     reveal(app.buttons["bubble.replay"], in: app)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height, 44)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.width, 44)
     app.buttons["bubble.replay"].tap()
     XCTAssertFalse(app.staticTexts["bubble.outcome"].exists)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
@@ -31,6 +33,8 @@ final class BubbleFlowTests: XCTestCase {
     XCTAssertTrue(app.staticTexts["bubble.outcome"].waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You lost")
     reveal(app.buttons["bubble.replay"], in: app)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height, 44)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.width, 44)
     app.buttons["bubble.replay"].tap()
     XCTAssertFalse(app.staticTexts["bubble.outcome"].exists)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
@@ -68,6 +72,7 @@ final class BubbleFlowTests: XCTestCase {
     XCTAssertEqual(app.staticTexts["feed.position"].label, position)
     reveal(app.buttons["bubble.fire"], in: app)
     XCTAssertTrue(app.buttons["bubble.fire"].isHittable)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.fire"].frame.height, 44)
     app.buttons["bubble.fire"].tap()
     waitForShots(1, in: app)
     XCTAssertEqual(app.staticTexts["feed.position"].label, position)
@@ -79,25 +84,17 @@ final class BubbleFlowTests: XCTestCase {
   @MainActor
   func testSystemReduceMotionKeepsPendingShotStationary() {
     let settings = XCUIApplication(bundleIdentifier: "com.apple.Preferences")
-    settings.launch()
     continueAfterFailure = false
-    let accessibility = settings.buttons["com.apple.settings.accessibility"]
-    XCTAssertTrue(accessibility.waitForExistence(timeout: 5))
-    XCTAssertTrue(accessibility.isHittable)
-    accessibility.tap()
-    settings.buttons["Motion"].tap()
-    let reduceMotion = settings.switches["Reduce Motion"]
-    XCTAssertTrue(reduceMotion.waitForExistence(timeout: 5))
+    let reduceMotion = openMotionSettings(settings)
     let originalValue = reduceMotion.value as? String
     XCTAssertTrue(originalValue == "0" || originalValue == "1")
-    if originalValue == "0" { reduceMotion.tap() }
     defer {
-      settings.activate()
-      if originalValue == "0", reduceMotion.value as? String != "0" { reduceMotion.tap() }
-      XCTAssertEqual(reduceMotion.value as? String, originalValue)
+      // Relaunch Settings so restoration observes its current foreground hierarchy.
+      settings.terminate()
+      setReduceMotion(originalValue ?? "0", in: settings)
       settings.terminate()
     }
-    XCTAssertEqual(reduceMotion.value as? String, "1")
+    setReduceMotion("1", in: settings)
     let app = launch(slowShot: true)
     start(app)
     reveal(app.buttons["bubble.fire"], in: app)
@@ -111,6 +108,38 @@ final class BubbleFlowTests: XCTestCase {
     attachment.lifetime = .keepAlways
     add(attachment)
     waitForShots(1, in: app)
+  }
+
+  @MainActor
+  private func openMotionSettings(_ settings: XCUIApplication) -> XCUIElement {
+    settings.launch()
+    XCTAssertTrue(settings.wait(for: .runningForeground, timeout: 5))
+    let reduceMotion = settings.switches["Reduce Motion"]
+    if !reduceMotion.exists {
+      if !settings.buttons["Motion"].exists {
+        let accessibility = settings.buttons["com.apple.settings.accessibility"]
+        XCTAssertTrue(accessibility.waitForExistence(timeout: 5))
+        accessibility.tap()
+      }
+      XCTAssertTrue(settings.buttons["Motion"].waitForExistence(timeout: 5))
+      settings.buttons["Motion"].tap()
+    }
+    XCTAssertTrue(reduceMotion.waitForExistence(timeout: 5))
+    return reduceMotion
+  }
+
+  @MainActor
+  private func setReduceMotion(_ value: String, in settings: XCUIApplication) {
+    let control = openMotionSettings(settings)
+    for _ in 0..<3 {
+      if control.value as? String == value { return }
+      XCTAssertTrue(control.isHittable)
+      control.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+      let changed = XCTNSPredicateExpectation(
+        predicate: NSPredicate(format: "value == %@", value), object: control)
+      if XCTWaiter.wait(for: [changed], timeout: 2) == .completed { return }
+    }
+    XCTAssertEqual(control.value as? String, value)
   }
 
   @MainActor
@@ -149,6 +178,8 @@ final class BubbleFlowTests: XCTestCase {
     }
     reveal(app.buttons["bubble.fire"], in: app)
     XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.fire"].frame.height, 44)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.fire"].frame.width, 44)
     app.buttons["bubble.fire"].tap()
     waitForShots(expectedShots, in: app)
   }
@@ -163,11 +194,16 @@ final class BubbleFlowTests: XCTestCase {
 
   @MainActor
   private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
-    for _ in 0..<6 {
-      if element.isHittable { return }
-      app.scrollViews.firstMatch.swipeUp()
+    let scroll = app.scrollViews.firstMatch
+    for _ in 0..<8 {
+      if element.isHittable && scroll.frame.contains(element.frame) { return }
+      scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.65))
+        .press(
+          forDuration: 0.05,
+          thenDragTo: scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4)))
     }
     XCTAssertTrue(element.isHittable)
+    XCTAssertTrue(scroll.frame.contains(element.frame))
   }
 
 }
