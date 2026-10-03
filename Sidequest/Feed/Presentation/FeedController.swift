@@ -1,0 +1,54 @@
+import Observation
+
+@MainActor
+@Observable
+final class FeedController {
+  private var selection: FeedSelection
+  private var sceneIsActive = false
+  let runtimes: [CardID: GameRuntime]
+
+  var selectedCard: FeedCard? { selection.card }
+  var position: Int? { selection.index.map { $0 + 1 } }
+  var count: Int { selection.cards.count }
+  var canGoBack: Bool { selection.canGoBack }
+  var canGoForward: Bool { selection.canGoForward }
+
+  init(cards: [FeedCard], runtimes: [CardID: GameRuntime]) {
+    // DeckBuilder has already validated card identity. Missing adapters are a
+    // composition error, rather than a game that silently accepts no input.
+    precondition(
+      cards.allSatisfy { card in
+        if case .game(let game) = card { return runtimes[game.id] != nil }
+        return true
+      }, "Every game card needs a retained runtime.")
+    selection = FeedSelection(cards: cards)
+    self.runtimes = runtimes
+  }
+
+  func setSceneActive(_ active: Bool) {
+    sceneIsActive = active
+    updateVisibility()
+  }
+
+  func next() { move(by: 1) }
+  func previous() { move(by: -1) }
+
+  private func move(by offset: Int) {
+    guard selection.move(by: offset) else { return }
+    updateVisibility()
+  }
+
+  private func updateVisibility() {
+    let visibleID: CardID?
+    if sceneIsActive, case .game(let game) = selectedCard {
+      visibleID = game.id
+    } else {
+      visibleID = nil
+    }
+    // Invalidate and synchronously cancel old work before enabling another card.
+    for (id, runtime) in runtimes where id != visibleID {
+      runtime.setVisible(false)
+    }
+    if let visibleID { runtimes[visibleID]?.setVisible(true) }
+  }
+}
