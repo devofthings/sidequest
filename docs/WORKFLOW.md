@@ -21,6 +21,14 @@ Keep unfinished work open. If work pauses or a new prerequisite blocks it, recor
 
 After each resolved issue or ticket, follow the [chat checkpoint](../AGENTS.md#after-ticket-chat-checkpoint) before starting or assigning another issue. Incorporate newly delivered user steering before choosing the next task.
 
+## Project updates
+
+Publish a native status update in the private [Sidequest Project](https://github.com/users/devofthings/projects/1) after a completed ticket or a related batch of milestones, when a blocker or required decision meaningfully changes, and at an active work-session handoff if there is new progress. The lead coordinates one update for parallel work. Read the latest update and issue/PR state before posting; skip duplicate or unchanged reports.
+
+Keep each update short and understandable without reading agent logs. Include the date, completed work with evidence links, work in progress or review, next planned action, blockers or required user decisions, and actual validation/build availability. Distinguish proposals, open PRs, and planned checks from merged work and verified results. Describe planned actions as pending when dependencies or the implementation hold apply; avoid invented deadlines or unsupported completion percentages.
+
+Issue comments and PR audits retain detailed findings and commands; updates link those records. Leave credentials, private news captures, and other sensitive material out. Publishing an update does not change accepted scope, authorize an Idea, lift the implementation hold, or permit spending. This cadence applies while authorized work is active and creates no recurring automation or messages to another chat.
+
 ## Ticket authorization
 
 Agents may create and address bug-fix tickets without a separate feature approval. A bug fixes a reproducible defect or a demonstrated mismatch with accepted behavior; record the evidence, expected behavior, and link to its approved scope. Agents may also split already-approved work into necessary implementation subtasks without expanding it. Apply dependencies, the app-development hold, spending/usage rules, and the normal review/verification loop to both.

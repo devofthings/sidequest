@@ -49,6 +49,10 @@ Before assigning edits in a fresh or handed-off checkout, follow [agent setup](d
 
 After every resolved issue or ticket, review newly delivered user messages and annotations in the active chat, including pending questions, before starting or assigning the next issue. Apply steering to scope and priorities, and update the affected issue and decision guidance before continuing. If required clarification is missing, hold dependent work and ask a focused question. When there is no new input, continue under the existing authorization; this checkpoint adds no mandatory approval or fixed waiting period. In parallel work, the orchestrator performs the checkpoint before assigning further work and passes relevant steering to active agents.
 
+## Project updates
+
+The active lead publishes concise progress updates in the private GitHub Project after completed tickets or related milestones, meaningful blocker changes, and handoffs with new progress. Follow [WORKFLOW.md](docs/WORKFLOW.md#project-updates) for cadence and content; inspect the latest update first to avoid duplicates. Keep completion claims tied to verified evidence and report actual build availability.
+
 ## Unanswered requests
 
 Ask the user in chat first when selected work genuinely needs authorization, an account, access, or input not already provided. If the request remains unanswered after a reasonable opportunity to reply, follow the [assigned decision-request workflow](docs/WORKFLOW.md#unanswered-decision-requests) at the next checkpoint or handoff: create or reuse an issue assigned to `devofthings`, keep dependent actions pending, and continue independent work. Record the user's approval or refusal in the issue and durable decisions; issuing, assigning, or closing a request does not authorize the action.
