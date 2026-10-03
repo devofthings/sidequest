@@ -98,10 +98,10 @@ Open Simulator to see the window. Normal launch shows Sidequest's shuffled sampl
 
 ## Download a simulator preview
 
-After a successful main release exists, select its exact `preview-<full-SHA>` tag from the private [release history](https://github.com/devofthings/sidequest/releases). The ARM64 simulator archive requires an Apple-silicon Mac and the verified iOS 27.0 (24A434) runtime above. It cannot be installed directly on an iPhone.
+After a successful main release exists, select its exact release tag (`YYYY.MM.build` for new publisher runs, or historical `preview-<full-SHA>`) from the private [release history](https://github.com/devofthings/sidequest/releases). The ARM64 simulator archive requires an Apple-silicon Mac and the verified iOS 27.0 (24A434) runtime above. It cannot be installed directly on an iPhone.
 
 ```sh
-SIDEQUEST_PREVIEW_TAG='preview-paste-full-commit-SHA-here'
+SIDEQUEST_PREVIEW_TAG='paste-exact-published-release-tag-here'
 SIDEQUEST_PREVIEW_DIRECTORY="$(mktemp -d /private/tmp/sidequest-preview.XXXXXX)"
 gh release download "$SIDEQUEST_PREVIEW_TAG" --repo devofthings/sidequest \
   --pattern 'Sidequest-simulator-arm64.zip' --pattern 'build-metadata.json' \
@@ -111,7 +111,7 @@ shasum -a 256 -c SHA256SUMS
 ditto -x -k Sidequest-simulator-arm64.zip "$SIDEQUEST_PREVIEW_DIRECTORY"
 ```
 
-Require both checksums to pass before extracting/installing. Inspect `build-metadata.json` for the full commit, original verification link, runtime, and app identifier. Assign `SIDEQUEST_SIMULATOR_ID` from the available devices as above, boot it if needed, then install and launch:
+Require both checksums to pass before extracting/installing. Inspect `build-metadata.json` for the full commit, original verification link, runtime, and app identifier. New-format metadata also binds the original workflow run number and UTC creation timestamp to the selected tag; do not invent a tag from today’s date or treat an example version as available. Assign `SIDEQUEST_SIMULATOR_ID` from the available devices as above, boot it if needed, then install and launch:
 
 ```sh
 xcrun simctl install "$SIDEQUEST_SIMULATOR_ID" "$SIDEQUEST_PREVIEW_DIRECTORY/Sidequest.app"

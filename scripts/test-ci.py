@@ -2,6 +2,8 @@
 """Exercise queued-main/PR verification and private runner storage without networking."""
 
 import importlib.util
+import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -22,6 +24,40 @@ installer = load("configure-ci-runner")
 
 
 class CIBoundaryTests(unittest.TestCase):
+    def test_successful_main_manifest_retains_workflow_run_number(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            environment = {"SIDEQUEST_EXPECTED_HEAD": "a" * 40, "SIDEQUEST_BASE_REF": "main",
+                           "GITHUB_RUN_ID": "100", "GITHUB_RUN_ATTEMPT": "2", "GITHUB_RUN_NUMBER": "24",
+                           "GITHUB_EVENT_NAME": "push", "GITHUB_REF": "refs/heads/main",
+                           "RUNNER_TEMP": str(root / "_temp"), "RUNNER_NAME": "Sidequest-Mac-foreground",
+                           "GITHUB_OUTPUT": str(root / "output"), "GITHUB_STEP_SUMMARY": str(root / "summary")}
+
+            def controlled(command, stdout, **kwargs):
+                output = ""
+                if command == ["git", "rev-parse", "HEAD"]:
+                    output = "a" * 40
+                elif command == ["xcodebuild", "-version"]:
+                    output = "Xcode 27.0\nBuild version 27A266a"
+                elif command == ["xcrun", "simctl", "list", "devices", "available", "--json"]:
+                    output = json.dumps({"devices": {"com.apple.CoreSimulator.SimRuntime.iOS-27-0": [
+                        {"name": "Sidequest CI iPhone"}]}})
+                elif command == ["xcrun", "simctl", "list", "runtimes", "--json"]:
+                    output = json.dumps({"runtimes": [{"identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+                                         "version": "27.0", "buildversion": "24A434", "isAvailable": True}]})
+                stdout.write(output)
+                return subprocess.CompletedProcess(command, 0)
+
+            with patch.dict(os.environ, environment), patch.object(Path, "cwd", return_value=root), \
+                 patch.object(subprocess, "run", side_effect=controlled):
+                ci.main()
+            manifest = json.loads((root / "sidequest-diagnostics/100-2/verification.json").read_text())
+            self.assertEqual(manifest["run_number"], "24")
+            self.assertEqual(manifest["run_id"], "100")
+            self.assertEqual(manifest["attempt"], "2")
+            self.assertTrue(manifest["all_checks_passed"])
+            self.assertIn("100-2", (root / "output").read_text())
+
     def test_older_queued_main_and_stale_pr(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

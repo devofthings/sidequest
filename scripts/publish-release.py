@@ -2,6 +2,7 @@
 """Publish a verified main simulator preview; preserve existing release identity/bytes."""
 
 import hashlib
+from datetime import datetime
 import json
 import os
 from pathlib import Path
@@ -60,10 +61,11 @@ class GitHub:
 
 
 def verified_job(github, head, run_id, attempt):
-    require(re.fullmatch(r"[0-9]+", str(run_id)) and re.fullmatch(r"[0-9]+", str(attempt)),
+    require(re.fullmatch(r"[1-9][0-9]*", str(run_id)) and re.fullmatch(r"[1-9][0-9]*", str(attempt)),
             "Invalid verification run identity.")
     run = github.request(f"{API}/actions/runs/{run_id}")
-    require(run["head_sha"] == head and run["event"] == "push" and
+    require(type(run.get("id")) is int and run["id"] == int(run_id) and
+            run["head_sha"] == head and run["event"] == "push" and
             run["head_branch"] == "main" and run["path"] == WORKFLOW,
             "Verification must belong to this exact main release event.")
     jobs = github.request(f"{API}/actions/runs/{run_id}/attempts/{attempt}/jobs?per_page=100")["jobs"]
@@ -81,6 +83,20 @@ def verified_job(github, head, run_id, attempt):
             check["details_url"] == job["html_url"] and check["app"]["slug"] == "github-actions",
             "Native verification check does not match the tested commit/job.")
     return job, run, jobs
+
+
+def release_version(run):
+    """Use immutable workflow-run provenance, never a retry's clock or an override."""
+    created = run.get("created_at")
+    number = run.get("run_number")
+    require(type(number) is int and number > 0 and isinstance(created, str) and
+            re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z", created),
+            "Invalid workflow run version provenance.")
+    try:
+        date = datetime.strptime(created, "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError:
+        raise RuntimeError("Invalid workflow run creation timestamp.") from None
+    return f"{date.year:04d}.{date.month:02d}.{number}"
 
 
 def package(app, directory):
@@ -123,16 +139,19 @@ def release_for_tag(github, tag):
         page += 1
 
 
-def validate_metadata(metadata, head, tag):
+def validate_metadata(metadata, head, tag, run):
     require(isinstance(metadata, dict) and metadata.get("schema") == 1 and
             metadata.get("commit") == head and metadata.get("version") == tag and
+            tag == release_version(run) and metadata.get("run_id") == str(run["id"]) and
+            type(metadata.get("run_number")) is int and metadata["run_number"] == run["run_number"] and
+            metadata.get("run_created_at") == run["created_at"] and
             metadata.get("archive") == "Sidequest-simulator-arm64.zip" and
             metadata.get("architecture") == "arm64" and metadata.get("runtime") == "iOS 27.0 (24A434)" and
             re.fullmatch(r"[0-9a-f]{64}", str(metadata.get("archive_sha256"))),
             "Release metadata conflicts with the expected source/version/asset.")
 
 
-def inspect_assets(github, release, head, tag, scratch):
+def inspect_assets(github, release, head, tag, run, scratch):
     assets = {asset["name"]: asset for asset in release["assets"]}
     require(len(assets) == len(release["assets"]) and
             set(assets) <= {"build-metadata.json", "SHA256SUMS", "Sidequest-simulator-arm64.zip"},
@@ -150,7 +169,7 @@ def inspect_assets(github, release, head, tag, scratch):
         require(not assets and release["draft"], "Release assets lack source metadata.")
         return None, downloaded
     metadata = json.loads(downloaded["build-metadata.json"].read_text())
-    validate_metadata(metadata, head, tag)
+    validate_metadata(metadata, head, tag, run)
     expected_checksums = (f"{metadata['archive_sha256']}  Sidequest-simulator-arm64.zip\n"
                           f"{digest(downloaded['build-metadata.json'])}  build-metadata.json\n")
     if "SHA256SUMS" in downloaded:
@@ -175,6 +194,9 @@ def publish(github, environment, verification_directory):
             "Publisher checkout differs from the event commit.")
     require(github.request(API)["private"], "Publication requires a private repository.")
     job, run, jobs = verified_job(github, head, environment["GITHUB_RUN_ID"], environment["GITHUB_RUN_ATTEMPT"])
+    tag = release_version(run)
+    require(environment.get("GITHUB_RUN_NUMBER") == str(run["run_number"]),
+            "Environment run number differs from live workflow provenance.")
     publishers = [item for item in jobs if item["name"] == "Sidequest / publish preview"]
     require(len(publishers) == 1 and publishers[0]["runner_id"] == job["runner_id"] and
             publishers[0]["runner_name"] == RUNNER, "Local handoff must remain on the same registered Mac runner.")
@@ -188,23 +210,30 @@ def publish(github, environment, verification_directory):
             manifest.get("ref") == "refs/heads/main" and manifest.get("runner_name") == RUNNER and
             manifest.get("runtime") == "iOS 27.0 (24A434)" and
             manifest.get("run_id") == environment["GITHUB_RUN_ID"] and
+            manifest.get("run_number") == str(run["run_number"]) and
             manifest.get("attempt") == environment["GITHUB_RUN_ATTEMPT"],
             "Local verification manifest does not match this successful main event.")
-    tag = "preview-" + head
     reference = github.request(f"{API}/git/ref/tags/{tag}", optional=True)
     if reference:
         require(reference["object"]["type"] == "commit" and reference["object"]["sha"] == head,
                 "Existing version tag points at a different source; never replace it.")
     release = release_for_tag(github, tag)
+    if release:
+        require(release["name"] == tag and release["prerelease"] and release["target_commitish"] == head,
+                "Existing release conflicts with the expected display version/preview identity.")
     with tempfile.TemporaryDirectory() as temporary:
-        metadata, downloaded = inspect_assets(github, release, head, tag, Path(temporary)) if release else (None, {})
+        metadata, downloaded = inspect_assets(github, release, head, tag, run, Path(temporary)) if release else (None, {})
         if metadata:
-            original_job, _, _ = verified_job(github, head, metadata["run_id"], metadata["attempt"])
+            original_job, original_run, _ = verified_job(github, head, metadata["run_id"], metadata["attempt"])
+            validate_metadata(metadata, head, tag, original_run)
             require(original_job["html_url"] == metadata["verification_job_url"], "Original build verification identity changed.")
         if release and not release["draft"]:
             require(reference is not None and release["prerelease"], "Existing version lacks its expected tag/preview identity.")
             return release["html_url"]
         if not metadata:
+            if release:
+                require(f"[Workflow run]({run['html_url']})" in release.get("body", ""),
+                        "Empty draft belongs to a different workflow run; preserve the version collision.")
             app = directory / "DerivedData/Build/Products/Release-iphonesimulator/Sidequest.app"
             require(Path(manifest["release_app"]).resolve() == app.resolve() and app.resolve().is_relative_to(directory),
                     "Release product is outside the verified local build.")
@@ -213,10 +242,11 @@ def publish(github, environment, verification_directory):
                         "archive_sha256": digest(archive), "architecture": "arm64", "runtime": manifest["runtime"],
                         "minimum_ios": info["MinimumOSVersion"], "xcode": manifest["xcode"],
                         "bundle_identifier": info["CFBundleIdentifier"], "run_id": environment["GITHUB_RUN_ID"],
+                        "run_number": run["run_number"], "run_created_at": run["created_at"],
                         "attempt": environment["GITHUB_RUN_ATTEMPT"], "workflow_run_url": run["html_url"],
                         "verification_job_url": job["html_url"],
                         "installation_url": f"https://github.com/{REPO}/blob/{tag}/docs/INSTALL.md"}
-            validate_metadata(metadata, head, tag)
+            validate_metadata(metadata, head, tag, run)
             metadata_path = directory / "release/build-metadata.json"
             metadata_path.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n")
         else:
@@ -237,7 +267,7 @@ def publish(github, environment, verification_directory):
                  "SHA256SUMS and build-metadata.json identify the exact archived build. Personal content and signing are excluded.")
         if not release:
             release = github.request(f"{API}/releases", "POST", {"tag_name": tag, "target_commitish": head,
-                                     "name": "Sidequest preview " + head[:12], "body": notes,
+                                     "name": tag, "body": notes,
                                      "draft": True, "prerelease": True, "make_latest": "false"})
         else:
             # An empty interrupted draft can select this newly verified package.
@@ -250,7 +280,7 @@ def publish(github, environment, verification_directory):
                     require(digest(path) == metadata["archive_sha256"], "Original draft archive changed; never replace its identity.")
                 github.upload(tag, [path])
         ready = github.request(f"{API}/releases/{release['id']}")
-        complete, assets = inspect_assets(github, ready, head, tag, Path(temporary))
+        complete, assets = inspect_assets(github, ready, head, tag, run, Path(temporary))
         require(complete == metadata and len(assets) == 3, "Draft does not contain the complete verified asset set.")
         github.request(f"{API}/releases/{release['id']}", "PATCH", {"draft": False, "prerelease": True, "make_latest": "false"})
         return release["html_url"]

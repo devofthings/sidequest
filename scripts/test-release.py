@@ -22,7 +22,10 @@ HEAD = "a" * 40
 class FakeGitHub:
     def __init__(self):
         self.releases = []
-        self.tag = None
+        self.tags = {}
+        self.run_number = 24
+        self.created_at = "2026-10-01T23:59:59Z"
+        self.run_override = {}
         self.bytes = {}
         self.writes = []
         self.failure = None
@@ -39,8 +42,9 @@ class FakeGitHub:
         if path.startswith("/actions/runs/"):
             run_id = path.split("/")[3]
             if "/attempts/" not in path:
-                return {"head_sha": HEAD, "event": "push", "head_branch": "main", "path": release.WORKFLOW,
-                        "html_url": f"https://github.com/{release.REPO}/actions/runs/{run_id}"}
+                return {"id": int(run_id), "head_sha": HEAD, "event": "push", "head_branch": "main", "path": release.WORKFLOW,
+                        "run_number": self.run_number, "created_at": self.created_at,
+                        "html_url": f"https://github.com/{release.REPO}/actions/runs/{run_id}", **self.run_override}
             return {"jobs": [
                 {"name": release.CHECK, "head_sha": self.verification_head, "status": "completed",
                  "conclusion": self.verification_conclusion, "runner_name": release.RUNNER, "runner_id": 2,
@@ -55,9 +59,10 @@ class FakeGitHub:
                     "details_url": f"https://github.com/{release.REPO}/actions/runs/{run_id}/job/42",
                     "app": {"slug": "github-actions"}}
         if path.startswith("/git/ref/tags/"):
-            return {"object": {"type": "commit", "sha": self.tag}} if self.tag else None
+            tag = path.rsplit("/", 1)[1]
+            return {"object": {"type": "commit", "sha": self.tags[tag]}} if tag in self.tags else None
         if path == "/git/refs":
-            self.tag = body["sha"]
+            self.tags[body["ref"].removeprefix("refs/tags/")] = body["sha"]
             return {}
         if path.startswith("/releases?"):
             return copy.deepcopy(self.releases)
@@ -94,7 +99,7 @@ class ReleaseTests(unittest.TestCase):
         self.root = Path(self.temporary.name)
         self.environment = {"GITHUB_EVENT_NAME": "push", "GITHUB_REF": "refs/heads/main",
                             "GITHUB_REPOSITORY": release.REPO, "GITHUB_SHA": HEAD, "GITHUB_RUN_ID": "100",
-                            "GITHUB_RUN_ATTEMPT": "1", "RUNNER_NAME": release.RUNNER,
+                            "GITHUB_RUN_ATTEMPT": "1", "GITHUB_RUN_NUMBER": "24", "RUNNER_NAME": release.RUNNER,
                             "RUNNER_TEMP": str(self.root / "_temp")}
         self.directory = self.root / "sidequest-diagnostics/100-1"
         self.app = self.directory / "DerivedData/Build/Products/Release-iphonesimulator/Sidequest.app"
@@ -106,7 +111,7 @@ class ReleaseTests(unittest.TestCase):
         (self.app / "Sidequest").write_bytes(b"fictional executable")
         (self.app / "Sidequest").chmod(0o755)
         self.manifest = {"schema": 1, "commit": HEAD, "run_id": "100", "attempt": "1", "event": "push",
-                         "ref": "refs/heads/main", "runner_name": release.RUNNER, "all_checks_passed": True,
+                         "ref": "refs/heads/main", "run_number": "24", "runner_name": release.RUNNER, "all_checks_passed": True,
                          "runtime": "iOS 27.0 (24A434)",
                          "xcode": "Xcode 27.0\nBuild version 27A266a", "release_app": str(self.app)}
         self.write_manifest()
@@ -137,7 +142,8 @@ class ReleaseTests(unittest.TestCase):
         self.publish()
         self.assertFalse(self.github.releases[0]["draft"])
         self.assertTrue(self.github.releases[0]["prerelease"])
-        self.assertEqual(self.github.tag, HEAD)
+        self.assertEqual(self.github.tags["2026.10.24"], HEAD)
+        self.assertEqual(self.github.releases[0]["name"], "2026.10.24")
         self.assertEqual([write[1] for write in self.github.writes if write[0] == "UPLOAD"],
                          ["build-metadata.json", "SHA256SUMS", "Sidequest-simulator-arm64.zip"])
         self.assertEqual(self.github.writes[-1], ("PATCH", "/releases/1"))
@@ -191,21 +197,22 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual(self.github.releases[0]["assets"], [])
         self.assertIn("/runs/100/job/42", self.github.releases[0]["body"])
         self.github.failure = None
-        self.environment["GITHUB_RUN_ID"] = "200"
-        self.directory = self.root / "sidequest-diagnostics/200-1"
+        self.environment["GITHUB_RUN_ATTEMPT"] = "2"
+        self.directory = self.root / "sidequest-diagnostics/100-2"
         new_app = self.directory / "DerivedData/Build/Products/Release-iphonesimulator/Sidequest.app"
         shutil.copytree(self.app, new_app)
         (new_app / "Sidequest").write_bytes(b"new verified bytes")
-        self.manifest.update(run_id="200", release_app=str(new_app))
+        self.manifest.update(attempt="2", release_app=str(new_app))
         self.write_manifest()
         self.publish()
         item = self.github.releases[0]
         metadata_asset = next(asset for asset in item["assets"] if asset["name"] == "build-metadata.json")
         metadata = json.loads(self.github.bytes[metadata_asset["id"]])
-        self.assertEqual(metadata["run_id"], "200")
+        self.assertEqual(metadata["run_id"], "100")
+        self.assertEqual(metadata["attempt"], "2")
+        self.assertEqual(metadata["version"], "2026.10.24")
         self.assertIn(metadata["verification_job_url"], item["body"])
         self.assertIn(metadata["workflow_run_url"], item["body"])
-        self.assertNotIn("/runs/100", item["body"])
         self.assertFalse(item["draft"])
 
     def test_failed_verification_performs_no_publication(self):
@@ -241,7 +248,7 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual(self.github.writes, [])
 
     def test_conflicting_tag_is_never_replaced(self):
-        self.github.tag = "b" * 40
+        self.github.tags["2026.10.24"] = "b" * 40
         with self.assertRaisesRegex(RuntimeError, "different source"):
             self.publish()
         self.assertEqual(self.github.writes, [])
@@ -270,6 +277,124 @@ class ReleaseTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "signing"):
             self.publish()
         self.assertEqual(self.github.writes, [])
+
+    def test_rerun_in_later_month_keeps_original_version_and_bytes(self):
+        self.github.created_at = "2026-10-31T23:59:59Z"
+        self.publish()
+        before = copy.deepcopy(self.github.releases), copy.deepcopy(self.github.bytes)
+        self.github.writes.clear()
+        self.github.run_override["updated_at"] = "2026-11-01T00:00:01Z"
+        self.github.run_override["run_started_at"] = "2026-11-01T00:00:01Z"
+        self.environment["GITHUB_RUN_ATTEMPT"] = "2"
+        self.directory = self.root / "sidequest-diagnostics/100-2"
+        self.directory.mkdir()
+        self.manifest["attempt"] = "2"
+        self.write_manifest()
+        self.publish()
+        self.assertEqual(self.github.releases[0]["tag_name"], "2026.10.24")
+        self.assertEqual((self.github.releases, self.github.bytes), before)
+        self.assertEqual(self.github.writes, [])
+
+    def test_next_month_run_gets_new_version_without_resetting_build(self):
+        self.publish()
+        old_release, old_bytes = copy.deepcopy(self.github.releases[0]), copy.deepcopy(self.github.bytes)
+        self.environment.update(GITHUB_RUN_ID="200", GITHUB_RUN_NUMBER="25")
+        self.github.run_number = 25
+        self.github.created_at = "2026-11-01T00:00:00Z"
+        self.directory = self.root / "sidequest-diagnostics/200-1"
+        new_app = self.directory / "DerivedData/Build/Products/Release-iphonesimulator/Sidequest.app"
+        shutil.copytree(self.app, new_app)
+        self.manifest.update(run_id="200", run_number="25", release_app=str(new_app))
+        self.write_manifest()
+        self.publish()
+        self.assertEqual(self.github.releases[1]["tag_name"], "2026.11.25")
+        self.assertEqual(self.github.releases[1]["name"], "2026.11.25")
+        self.assertEqual(self.github.releases[0], old_release)
+        self.assertTrue(all(self.github.bytes[key] == value for key, value in old_bytes.items()))
+
+    def test_bad_live_run_version_provenance_fails_before_writes(self):
+        for field, value in [("run_number", 0), ("run_number", True), ("run_number", "24"),
+                             ("run_number", -1), ("created_at", "2026-02-30T12:00:00Z"),
+                             ("created_at", "2026-10-01T23:59:59Zextra"),
+                             ("created_at", "2026-10-01T23:59:59+01:00"), ("created_at", None),
+                             ("id", 200), ("id", True), ("path", ".github/workflows/other.yml")]:
+            with self.subTest(field=field, value=value):
+                self.github.run_override = {field: value}
+                with self.assertRaises(RuntimeError):
+                    self.publish()
+                self.assertEqual(self.github.writes, [])
+
+    def test_spoofed_environment_or_manifest_run_number_cannot_select_version(self):
+        self.environment["GITHUB_RUN_NUMBER"] = "99"
+        with self.assertRaisesRegex(RuntimeError, "run number"):
+            self.publish()
+        self.environment["GITHUB_RUN_NUMBER"] = "24"
+        self.manifest["run_number"] = "99"
+        self.write_manifest()
+        with self.assertRaisesRegex(RuntimeError, "manifest"):
+            self.publish()
+        self.assertEqual(self.github.writes, [])
+        self.manifest["run_number"] = "24"
+        self.write_manifest()
+        self.environment["SIDEQUEST_RELEASE_VERSION"] = "2099.12.999"
+        self.publish()
+        self.assertEqual(self.github.releases[0]["tag_name"], "2026.10.24")
+
+    def test_uploaded_provenance_collision_preserves_release(self):
+        self.publish()
+        original_bytes, original_releases = copy.deepcopy(self.github.bytes), copy.deepcopy(self.github.releases)
+        for field, value in [("run_id", "200"), ("run_number", 25), ("run_created_at", "2026-11-01T00:00:00Z")]:
+            with self.subTest(field=field):
+                self.github.bytes = copy.deepcopy(original_bytes)
+                self.github.releases = copy.deepcopy(original_releases)
+                asset = next(a for a in self.github.releases[0]["assets"] if a["name"] == "build-metadata.json")
+                metadata = json.loads(self.github.bytes[asset["id"]])
+                metadata[field] = value
+                self.github.bytes[asset["id"]] = json.dumps(metadata).encode()
+                asset.pop("digest")  # Exercise metadata binding, independent of optional server digests.
+                self.github.writes.clear()
+                with self.assertRaisesRegex(RuntimeError, "metadata conflicts"):
+                    self.publish()
+                self.assertEqual(self.github.writes, [])
+
+    def test_empty_draft_from_different_run_is_not_adopted(self):
+        self.github.failure = "build-metadata.json"
+        with self.assertRaises(RuntimeError):
+            self.publish()
+        before = copy.deepcopy(self.github.releases)
+        self.environment["GITHUB_RUN_ID"] = "200"
+        self.directory = self.root / "sidequest-diagnostics/200-1"
+        self.directory.mkdir()
+        self.manifest["run_id"] = "200"
+        self.write_manifest()
+        self.github.failure = None
+        self.github.writes.clear()
+        with self.assertRaisesRegex(RuntimeError, "different workflow run"):
+            self.publish()
+        self.assertEqual(self.github.releases, before)
+        self.assertEqual(self.github.writes, [])
+
+    def test_historical_preview_tag_and_release_are_untouched(self):
+        legacy = {"id": 9, "tag_name": "preview-" + HEAD, "name": "Sidequest preview " + HEAD[:12],
+                  "draft": False, "prerelease": True, "assets": [], "body": "Historical evidence"}
+        self.github.releases.append(copy.deepcopy(legacy))
+        self.github.tags[legacy["tag_name"]] = HEAD
+        self.publish()
+        self.assertEqual(self.github.releases[0], legacy)
+        self.assertEqual(self.github.tags[legacy["tag_name"]], HEAD)
+        self.assertEqual(self.github.releases[1]["tag_name"], "2026.10.24")
+
+    def test_display_or_source_collision_fails_without_writes(self):
+        self.publish()
+        for field, value in [("name", "different version"), ("target_commitish", "b" * 40)]:
+            with self.subTest(field=field):
+                saved = self.github.releases[0][field]
+                self.github.releases[0][field] = value
+                self.github.writes.clear()
+                with self.assertRaisesRegex(RuntimeError, "display version"):
+                    self.publish()
+                self.assertEqual(self.github.writes, [])
+                self.github.releases[0][field] = saved
 
 
 if __name__ == "__main__":
