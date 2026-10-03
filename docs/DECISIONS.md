@@ -12,7 +12,8 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | Private GitHub Project for workflow status | Accepted | User approved Backlog, Ready, In progress, Review, and Done; see [task workflow](WORKFLOW.md). |
 | Native SwiftUI implementation | Accepted | User choice; see [ADR 0002](adr/0002-native-swiftui.md). |
 | Hexagonal architecture from the start | Accepted | User chose replaceable boundaries to accommodate change; see [ADR 0003](adr/0003-hexagonal-architecture.md). |
-| Agent implementation with developer review | Accepted | User wants agents to implement the project and will review code; the detailed workflow remains proposed in issue #12. |
+| Agent implementation with fresh-agent review and gated automatic merging | Accepted | User authorized the loop in [REVIEW.md](REVIEW.md); developer review remains available without blocking verified implementation PRs. |
+| Feature branches only; protect private main | Accepted | User requires PR integration. GitHub protection setup and its plan prerequisite are tracked in issue #23. |
 | TDD as an optional technique | Accepted | User has not chosen TDD and asked to keep it a minor consideration, rather than a project requirement. |
 | CI in the backlog; no server backend for now | Accepted | User clarified the request as CI planning; see issue #15. |
 | Phase-two backend for accounts and synced preferences | Accepted direction | User requested a backend once users join; Firebase and alternatives will be compared in issue #18. Provider selection remains open. |
