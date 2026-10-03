@@ -122,7 +122,7 @@ final class FeedComposition {
   }
 
   func newsContent(_ news: NewsSnapshot) -> AnyView {
-    AnyView(NewsCardView(snapshot: news))
+    AnyView(NewsCardContent(snapshot: news))
   }
 }
 

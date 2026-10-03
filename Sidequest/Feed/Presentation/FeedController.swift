@@ -5,7 +5,13 @@ import Observation
 final class FeedController {
   private var selection: FeedSelection
   private var sceneIsActive = false
+  private var hostIsAvailable = true
+  private var isRetired = false
   let runtimes: [CardID: GameRuntime]
+
+  var cards: [FeedCard] { selection.cards }
+  var selectedIndex: Int? { selection.index }
+  var canNavigate: Bool { sceneIsActive && hostIsAvailable && !isRetired }
 
   var selectedCard: FeedCard? { selection.card }
   var position: Int? { selection.index.map { $0 + 1 } }
@@ -30,17 +36,34 @@ final class FeedController {
     updateVisibility()
   }
 
+  func setHostAvailable(_ available: Bool) {
+    hostIsAvailable = available
+    updateVisibility()
+  }
+
+  func retire() {
+    isRetired = true
+    updateVisibility()
+  }
+
+  func commitPage(at index: Int) {
+    guard selection.cards.indices.contains(index), let current = selection.index,
+      abs(index - current) == 1
+    else { return }
+    move(by: index - current)
+  }
+
   func next() { move(by: 1) }
   func previous() { move(by: -1) }
 
   private func move(by offset: Int) {
-    guard selection.move(by: offset) else { return }
+    guard canNavigate, selection.move(by: offset) else { return }
     updateVisibility()
   }
 
   private func updateVisibility() {
     let visibleID: CardID?
-    if sceneIsActive, case .game(let game) = selectedCard {
+    if canNavigate, case .game(let game) = selectedCard {
       visibleID = game.id
     } else {
       visibleID = nil

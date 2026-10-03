@@ -94,7 +94,7 @@ xcrun simctl install "$SIDEQUEST_SIMULATOR_ID" \
 xcrun simctl launch "$SIDEQUEST_SIMULATOR_ID" dev.devofthings.sidequest
 ```
 
-Open Simulator to see the window. Normal launch shows Sidequest's shuffled sample feed. Swipe up/down on the separate navigation rail or use Previous/Next. Game cards stay at Tap to play until explicitly started. On Sudoku, select an editable cell and use 1–4 or Clear selected cell; see [SUDOKU.md](SUDOKU.md) for rules and feedback. On Memory, flip two cards to find a matching pair; see [MEMORY.md](MEMORY.md) for rules and feedback. The other two games remain explicitly provisional demos. Skipping or backgrounding resets unfinished play. Completed results survive returning to their card. See [FEED.md](FEED.md) for adapter ownership and test-only routes. Simulator builds run on a Mac and cannot be installed on a physical iPhone.
+Open Simulator to see the window. Normal launch shows Sidequest's shuffled sample feed. Swipe up/down directly on the card or open Feed navigation for Previous card/Next card. Overflowing card content scrolls first; a new outward gesture at its top/bottom edge changes cards. Game cards stay at Tap to play until explicitly started. On Sudoku, select an editable cell and use 1–4 or Clear selected cell; see [SUDOKU.md](SUDOKU.md) for rules and feedback. On Memory, flip two cards to find a matching pair; see [MEMORY.md](MEMORY.md) for rules and feedback. The other two games remain explicitly provisional demos. Skipping or backgrounding resets unfinished play. Completed results survive returning to their card. See [FEED.md](FEED.md) for adapter ownership and test-only routes. Simulator builds run on a Mac and cannot be installed on a physical iPhone.
 
 ## Download a simulator preview
 

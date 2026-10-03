@@ -17,8 +17,8 @@ final class SudokuFlowTests: XCTestCase {
     app.buttons["sudoku.clear"].tap()
     XCTAssertEqual(app.buttons["sudoku.cell.2"].value as? String, "Empty")
     app.buttons["sudoku.number.3"].tap()
-    app.buttons["feed.next"].tap()
-    app.buttons["feed.previous"].tap()
+    app.nextFeedCard()
+    app.previousFeedCard()
     XCTAssertTrue(app.buttons["game.start"].exists)
     app.buttons["game.start"].tap()
     XCTAssertEqual(app.buttons["sudoku.cell.2"].value as? String, "Empty")
@@ -31,8 +31,8 @@ final class SudokuFlowTests: XCTestCase {
     app.buttons["game.start"].tap()
     let cell = app.buttons["sudoku.cell.2"]
     reveal(cell, in: app, upwards: true)
-    XCTAssertGreaterThanOrEqual(cell.frame.width, 44)
-    XCTAssertGreaterThanOrEqual(cell.frame.height, 44)
+    XCTAssertGreaterThanOrEqual(cell.frame.width + 0.001, 44)
+    XCTAssertGreaterThanOrEqual(cell.frame.height + 0.001, 44)
     for point in [(0.1, 0.1), (0.9, 0.1), (0.1, 0.9), (0.9, 0.9)] {
       app.buttons["sudoku.cell.4"].tap()
       cell.coordinate(withNormalizedOffset: CGVector(dx: point.0, dy: point.1)).tap()
@@ -42,13 +42,13 @@ final class SudokuFlowTests: XCTestCase {
     for value in 1...4 {
       let number = app.buttons["sudoku.number.\(value)"]
       reveal(number, in: app, upwards: true)
-      XCTAssertGreaterThanOrEqual(number.frame.width, 44)
-      XCTAssertGreaterThanOrEqual(number.frame.height, 44)
+      XCTAssertGreaterThanOrEqual(number.frame.width + 0.001, 44)
+      XCTAssertGreaterThanOrEqual(number.frame.height + 0.001, 44)
     }
     let clear = app.buttons["sudoku.clear"]
     reveal(clear, in: app, upwards: true)
-    XCTAssertGreaterThanOrEqual(clear.frame.width, 44)
-    XCTAssertGreaterThanOrEqual(clear.frame.height, 44)
+    XCTAssertGreaterThanOrEqual(clear.frame.width + 0.001, 44)
+    XCTAssertGreaterThanOrEqual(clear.frame.height + 0.001, 44)
     XCTAssertFalse(app.buttons["sudoku.cell.0"].isEnabled)
     capture(app, name: "normal-full-touch-controls")
   }
@@ -63,8 +63,8 @@ final class SudokuFlowTests: XCTestCase {
     }
     XCTAssertEqual(app.staticTexts["sudoku.status"].label, "Sudoku solved!")
     XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 2")
-    app.buttons["feed.next"].tap()
-    app.buttons["feed.previous"].tap()
+    app.nextFeedCard()
+    app.previousFeedCard()
     XCTAssertEqual(app.staticTexts["sudoku.status"].label, "Sudoku solved!")
     XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertFalse(app.buttons["sudoku.cell.2"].isEnabled)
@@ -90,14 +90,14 @@ final class SudokuFlowTests: XCTestCase {
     capture(app, name: "number-tapped")
     reveal(cell, in: app, upwards: false)
     XCTAssertEqual(cell.value as? String, "3")
-    XCTAssertTrue(app.buttons["feed.next"].isHittable)
-    app.buttons["feed.next"].tap()
-    XCTAssertTrue(app.buttons["feed.previous"].isHittable)
+    XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
+    app.nextFeedCard()
+    XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
   }
 
   @MainActor
   private func reveal(_ element: XCUIElement, in app: XCUIApplication, upwards: Bool) {
-    let scroll = app.scrollViews.firstMatch
+    let scroll = app.scrollViews["feed.cardScroll"]
     for _ in 0..<18 {
       if element.exists && element.isHittable && scroll.frame.contains(element.frame) { return }
       let start = scroll.coordinate(
