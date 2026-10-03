@@ -32,6 +32,11 @@ struct ChessAttempt: Sendable {
       feedback = nil
       return
     }
+    submit(to: square)
+  }
+
+  mutating func submit(to square: ChessSquare) {
+    guard !isSolved else { return }
     guard let origin = selectedSquare else {
       feedback = .chooseMovingPiece
       return

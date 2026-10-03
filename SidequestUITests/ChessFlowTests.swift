@@ -1,0 +1,135 @@
+import XCTest
+
+final class ChessFlowTests: XCTestCase {
+  @MainActor
+  func testWhiteFixtureWrongMovesResetAndCompletedRevisit() {
+    checkFixture(color: "white", queen: "g6", opponent: "h8", wrong: "g5", mate: "g7")
+  }
+
+  @MainActor
+  func testBlackFixtureWrongMovesResetAndCompletedRevisit() {
+    checkFixture(color: "black", queen: "b3", opponent: "a1", wrong: "b4", mate: "b2")
+  }
+
+  @MainActor
+  func testBackgroundRequiresFreshChessStart() {
+    let app = launch(color: "white")
+    app.buttons["game.start"].tap()
+    app.buttons["chess.square.g6"].tap()
+    XCTAssertTrue(app.staticTexts["chess.selection"].label.contains("g6"))
+    XCUIDevice.shared.press(.home)
+    app.activate()
+    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    app.buttons["game.start"].tap()
+    XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
+    XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
+  }
+
+  @MainActor
+  func testLargestTextSupportsCoordinateSolutionAndNavigation() {
+    let app = launch(color: "black", largeText: true)
+    XCTAssertTrue(app.buttons["game.start"].isHittable)
+    XCTAssertTrue(app.buttons["feed.next"].isHittable)
+    app.buttons["game.start"].tap()
+    submit(app, queen: "b3", destination: "b2")
+    reveal(app.staticTexts["chess.completed"], in: app)
+    XCTAssertTrue(app.staticTexts["chess.completed"].isHittable)
+    XCTAssertTrue(app.buttons["feed.next"].isHittable)
+    app.buttons["feed.next"].tap()
+    XCTAssertTrue(app.buttons["feed.previous"].isHittable)
+    app.buttons["feed.previous"].tap()
+    XCTAssertTrue(app.staticTexts["chess.completed"].exists)
+    XCTAssertFalse(app.buttons["game.start"].exists)
+  }
+
+  @MainActor
+  private func checkFixture(
+    color: String, queen: String, opponent: String, wrong: String, mate: String
+  ) {
+    let app = launch(color: color)
+    XCTAssertFalse(app.buttons["chess.square.\(queen)"].exists)
+    app.buttons["game.start"].tap()
+    XCTAssertTrue(app.staticTexts["chess.side"].label.hasPrefix(color.capitalized))
+    XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
+    XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
+    XCTAssertTrue(app.buttons["chess.square.\(queen)"].label.contains("queen"))
+    app.buttons["chess.square.\(opponent)"].tap()
+    XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
+    reveal(app.staticTexts["chess.feedback"], in: app)
+    XCTAssertTrue(app.staticTexts["chess.feedback"].label.hasPrefix("Select a"))
+    submit(app, queen: queen, destination: wrong)
+    reveal(app.staticTexts["chess.feedback"], in: app)
+    XCTAssertTrue(app.staticTexts["chess.feedback"].label.contains("not checkmate"))
+    XCTAssertTrue(app.buttons["chess.square.\(queen)"].label.contains("queen"))
+    XCTAssertTrue(app.buttons["chess.square.\(wrong)"].label.contains("Empty square"))
+    submit(app, queen: queen, destination: queen)
+    reveal(app.staticTexts["chess.feedback"], in: app)
+    XCTAssertTrue(app.staticTexts["chess.feedback"].label.contains("not legal"))
+    reveal(app.buttons["chess.piece.\(queen)"], in: app)
+    app.buttons["chess.piece.\(queen)"].tap()
+    app.buttons["feed.next"].tap()
+    app.buttons["feed.previous"].tap()
+    XCTAssertTrue(app.buttons["game.start"].exists)
+    app.buttons["game.start"].tap()
+    XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
+    XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
+    submit(app, queen: queen, destination: mate)
+    XCTAssertTrue(app.staticTexts["chess.completed"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["chess.square.\(queen)"].label.contains("Empty square"))
+    XCTAssertTrue(app.buttons["chess.square.\(mate)"].label.contains("queen"))
+    XCTAssertFalse(app.buttons["chess.square.\(mate)"].isEnabled)
+    app.buttons["feed.next"].tap()
+    app.buttons["feed.previous"].tap()
+    XCTAssertTrue(app.staticTexts["chess.completed"].exists)
+    XCTAssertTrue(app.buttons["chess.square.\(mate)"].label.contains("queen"))
+    XCTAssertFalse(app.buttons["game.start"].exists)
+  }
+
+  @MainActor
+  private func submit(_ app: XCUIApplication, queen: String, destination: String) {
+    let piece = app.buttons["chess.piece.\(queen)"]
+    reveal(piece, in: app)
+    piece.tap()
+    let file = app.buttons["chess.file"]
+    reveal(file, in: app)
+    file.tap()
+    let fileOption = app.buttons["File \(destination.prefix(1).uppercased())"]
+    XCTAssertTrue(fileOption.waitForExistence(timeout: 3))
+    fileOption.tap()
+    let rank = app.buttons["chess.rank"]
+    reveal(rank, in: app)
+    rank.tap()
+    let rankOption = app.buttons["Rank \(destination.suffix(1))"]
+    XCTAssertTrue(rankOption.waitForExistence(timeout: 3))
+    rankOption.tap()
+    let submit = app.buttons["chess.submit"]
+    reveal(submit, in: app)
+    XCTAssertTrue(submit.isEnabled)
+    submit.tap()
+  }
+
+  @MainActor
+  private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
+    for _ in 0..<7 {
+      if element.isHittable { return }
+      app.scrollViews.firstMatch.swipeUp()
+    }
+    for _ in 0..<7 {
+      if element.isHittable { return }
+      app.scrollViews.firstMatch.swipeDown()
+    }
+    XCTAssertTrue(element.isHittable)
+  }
+
+  @MainActor
+  private func launch(color: String, largeText: Bool = false) -> XCUIApplication {
+    continueAfterFailure = false
+    let app = XCUIApplication()
+    app.launchArguments =
+      ["-sidequest-chess-\(color)-fixture"]
+      + (largeText ? ["-sidequest-large-text"] : [])
+    app.launch()
+    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    return app
+  }
+}
