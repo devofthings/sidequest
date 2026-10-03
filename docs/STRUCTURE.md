@@ -1,8 +1,8 @@
 # Source layout and ownership
 
-Selected for [issue #29](https://github.com/devofthings/sidequest/issues/29). The tree below is planned: no app sources, targets, or test bundles exist yet. [Foundation #1](https://github.com/devofthings/sidequest/issues/1) creates and verifies this layout after app development is authorized.
+Selected for [issue #29](https://github.com/devofthings/sidequest/issues/29). [Foundation #1](https://github.com/devofthings/sidequest/issues/1) establishes `Sidequest.xcodeproj`, `Sidequest/App`, `Sidequest/Core` guidance, `Sidequest/Resources`, and the unit/UI test roots and fixtures. Feed, news, game areas, and their test folders below remain planned until their owning features create them.
 
-## Planned tree
+## Source ownership tree
 
 ```text
 Sidequest.xcodeproj/           # Foundation-owned project and shared schemes
@@ -54,7 +54,9 @@ Keep assets and redistributable fictional samples in `Resources`. Real personal 
 
 Use Xcode filesystem-synchronized folders for the app and each test root, with distinct target membership. Select folders that track changes on disk instead of maintaining a per-file project list. Apple's [folder guidance](https://developer.apple.com/documentation/xcode/managing-files-and-folders-in-your-xcode-project) explains how this reduces project-file changes when sources are added or removed.
 
-The foundation must verify this choice in an actual project: a newly added source builds without a per-file project edit; removing it removes it from compilation; unit/UI test sources stay out of the app target; fixture resources reach only their intended bundles; and `AGENTS.md`, private captures, and generated outputs stay out of build resources. Document target exclusions and any membership exceptions. If the selected toolchain cannot satisfy these checks, record an evidence-based replacement before enabling feature work. Source discovery is selected, but not executable or verified yet.
+The foundation verifies this choice with [INSTALL.md](INSTALL.md#build-and-test)'s `scripts/verify-source-discovery.py` command. In a disposable source copy, added compilation-error probes are discovered automatically; removing them restores successful builds without changing the project file. Unit/UI sources stay out of app compilation and their fixtures reach only their own bundles. Target-wide `EXCLUDED_SOURCE_FILE_NAMES = *.md` excludes current and subsequently added nested scoped guidance from all products. Ordinary sources/resources need no per-file membership exceptions.
+
+Private captures and generated outputs stay outside all synchronized source roots; ignored `.local-news/` and `DerivedData/` provide repository-local locations. The verification checks an external private-input probe is not copied into products and inspects actual app/test resources. Keep these boundaries when adding features; ignored files inside a synchronized root are still visible to Xcode and must not be used for private captures.
 
 ## Agent ownership
 

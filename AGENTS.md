@@ -1,6 +1,6 @@
 # Working on Sidequest
 
-Sidequest is a private iPhone MVP mixing news and quick games in one feed. App implementation has not started.
+Sidequest is a private iPhone MVP mixing news and quick games in one feed. The SwiftUI foundation and simulator verification exist; feed, news, and games follow their owning issues.
 
 ## Context for new chats
 
@@ -78,4 +78,4 @@ Use only included Codex usage. Never spend or purchase Codex credits, redeem usa
 
 Implement features without a TDD or test-first workflow, then add or update meaningful unit tests for game rules and feed lifecycle and deterministic end-to-end tests for critical integrated app flows. Cover news actions, explicit tap-to-play, game interaction, and skip/reset through the running app as those flows become available. Applicable tests must pass before merging under [docs/REVIEW.md](docs/REVIEW.md). This is the user's accepted [testing decision](docs/DECISIONS.md); documentation-only changes still use proportionate documentation checks.
 
-There is currently no application target, app build command, or gameplay test suite. The app foundation issue must establish executable setup and verification instructions in README.md. For hook and installer changes, run the [tooling checks](docs/FORMATTING.md#verify-tooling-changes). Continue validating documentation links and template structure; report app builds as unavailable.
+Follow [INSTALL.md](docs/INSTALL.md) for the verified Xcode project, shared scheme, simulator build/test/launch commands, source-discovery checks, and local signing workflow. [Application guidance](Sidequest/AGENTS.md) owns foundation isolation and target-membership choices; scoped test guidance owns fixtures. Run applicable app tests and strict Swift lint before merging. For hook and installer changes, run the [tooling checks](docs/FORMATTING.md#verify-tooling-changes). Physical-device execution, gameplay tests, CI, and releases remain unverified or pending until their owning tasks provide actual evidence.

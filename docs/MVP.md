@@ -31,8 +31,8 @@ See [DECISIONS.md](DECISIONS.md) for the status of each decision.
 
 ## Delivery sequence
 
-The selected [source structure](STRUCTURE.md) groups games into independently owned areas and defines scoped guidance and planned source discovery. The app foundation establishes runnable targets and verification commands using that layout after start authorization. The shared card contract enables separate work on the feed, news imports, and four games. Integration follows those feature tasks; the personal test follows a working integrated build. GitHub Issues own the detailed acceptance criteria and prerequisite links.
+The selected [source structure](STRUCTURE.md) groups games into independently owned areas and defines scoped guidance and source discovery. The foundation provides runnable app/test targets and verified simulator commands using that layout. The shared card contract enables separate work on the feed, news imports, and four games. Integration follows those feature tasks; the personal test follows a working integrated build. GitHub Issues own the detailed acceptance criteria and prerequisite links.
 
 ## Current repository state
 
-This repository contains project guidance and planning artifacts. It has no app target or implementation yet.
+The repository includes a minimal SwiftUI launch screen, unit/UI test targets, and verified local simulator setup. Feed, news, and game behavior are not implemented yet. Physical-device installation is documented but unverified; CI and release automation remain pending.
