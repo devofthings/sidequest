@@ -24,7 +24,7 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | Assigned issues for unanswered user requests | Accepted | User wants missed chat requests tracked for approval or refusal. Follow the [decision-request workflow](WORKFLOW.md#unanswered-decision-requests); record outcomes and update scoped agent guidance. |
 | Feature branches only; defer GitHub main protection | Accepted | User chose to proceed without a plan upgrade or branch protection. Use the review and verification gates with agent-controlled merging in [REVIEW.md](REVIEW.md); see issue #23. |
 | Explicit user approval before spending | Accepted | User requires approval before any purchase or action that may incur charges; see the spending approval rule in [AGENTS.md](../AGENTS.md). |
-| TDD as an optional technique | Accepted | User has not chosen TDD and asked to keep it a minor consideration, rather than a project requirement. |
+| Unit and end-to-end tests; skip TDD | Accepted | User explicitly requested unit and end-to-end tests and declined TDD on October 3, 2026, superseding the earlier optional-TDD choice. Implement behavior, then verify it with meaningful tests before merging; follow [AGENTS.md](../AGENTS.md#verification). |
 | CI in the backlog; no server backend for now | Accepted | User clarified the request as CI planning; see issue #15. |
 | Phase-two backend for accounts and synced preferences | Accepted direction | User requested a backend once users join; Firebase and alternatives will be compared in issue #18. Provider selection remains open. |
 | Gamification as an important product direction | Accepted direction | User emphasized gamification. Specific mechanics and scoring rules remain open. |
