@@ -24,7 +24,7 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 
 ## Development status
 
-The SwiftUI foundation launches in the iPhone simulator with app-hosted unit tests and UI tests. Xcode 27.0/iOS 27.0 were verified; the deployment target is iOS 17.0. The shared card/lifecycle contract, shuffled fictional session, and manual news imports with sourced, dated cards are implemented. Use Read news to preview or import snapshots. The mixed feed, games, gameplay tests, and published releases follow their own tickets. [CI](docs/CI.md) verifies same-repository PRs and main using this Mac while its foreground runner is active.
+The SwiftUI foundation launches in the iPhone simulator with app-hosted unit tests and UI tests. Xcode 27.0/iOS 27.0 were verified; the deployment target is iOS 17.0. The shared card/lifecycle contract, shuffled fictional session, and manual news imports with sourced, dated cards are implemented. Use Read news to preview or import snapshots. The mixed feed, games, and gameplay tests follow their own tickets. The private preview workflow verifies and publishes successful main updates while the foreground runner is active; see [release guidance](docs/RELEASES.md) for actual availability and installation. [CI](docs/CI.md) verifies same-repository PRs and main using this Mac while its foreground runner is active.
 
 The user authorized app implementation on October 3, 2026; see the [autonomous delivery plan](docs/AUTONOMY.md). Start with [INSTALL.md](docs/INSTALL.md) to build, test, and run. Physical-iPhone installation is documented but remains unverified and requires local account/signing setup.
 
