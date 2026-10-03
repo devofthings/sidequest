@@ -23,9 +23,9 @@ class FakeGitHub:
             "pr": {"state": "open", "draft": False, "mergeable": True,
                    "head": {"sha": receipt["head"], "ref": "codex/63-gates", "repo": {"full_name": gate.REPO}},
                    "base": {"sha": receipt["base"], "ref": "main", "repo": {"full_name": gate.REPO}},
-                   "body": "Closes #63"},
+                   "title": "Record a scoped decision", "body": "Closes #63"},
             "refs": {"head": receipt["head"], "base": receipt["base"]},
-            "statuses": {}, "checks": [], "threads": [], "reviews": {}}
+            "statuses": {}, "checks": [], "threads": [], "reviews": {}, "closing_issues": []}
         self.change_on_snapshot = None
         self.snapshot_count = 0
 
@@ -156,6 +156,79 @@ class GateTests(unittest.TestCase):
         self.github.state["pr"]["body"] = "Related #63"
         self.blocked()
 
+    def test_valid_partial_issue_reference_is_read_only(self):
+        self.receipt["issue_completion"] = "partial"
+        for body in ("Refs #63", "Part of #63", "Related to #63",
+                     f"Ref https://github.com/{gate.REPO}/issues/63",
+                     "Refs devofthings/sidequest#63"):
+            with self.subTest(body=body):
+                self.github.state["pr"]["body"] = body
+                result = gate.deliver(self.receipt, self.github, self.root)
+                self.assertTrue(result["validated"])
+                self.assertEqual(self.github.calls, [])
+
+    def test_partial_issue_merge_records_partial_without_closing_parent(self):
+        self.receipt["issue_completion"] = "partial"
+        self.github.state["pr"]["body"] = "Refs #63; records a decision only."
+        gate.deliver(self.receipt, self.github, self.root, record=True, merge=True)
+        self.assertEqual(self.github.calls, ["record", "merge"])
+        self.assertIn("Issue contribution: partial.", gate.audit_body(self.receipt))
+        self.assertEqual(self.github.issue(63)["state"], "open")
+        self.assertEqual(self.github.state["pr"]["body"], "Refs #63; records a decision only.")
+
+    def test_invalid_partial_references_block_all_actions_before_writes(self):
+        self.receipt["issue_completion"] = "partial"
+        for body in ("", "Refs #64", "Refs #630", "Closes #63", "Refs #63. Closes #63",
+                     f"Refs #63. Resolves https://github.com/{gate.REPO}/issues/63",
+                     "Refs #63. Closes: #63", "Refs #63. CLOSES: #63",
+                     "Refs #63. fixes devofthings/sidequest#63",
+                     "Refs #63. RESOLVED:devofthings/sidequest#63"):
+            for flags in ({}, {"record": True}, {"merge": True}, {"record": True, "merge": True}):
+                with self.subTest(body=body, flags=flags):
+                    self.github.state["pr"]["body"] = body
+                    with self.assertRaises(gate.GateError):
+                        gate.deliver(self.receipt, self.github, self.root, **flags)
+                    self.assertEqual(self.github.calls, [])
+
+    def test_partial_title_and_manual_closing_link_block_before_writes(self):
+        self.receipt["issue_completion"] = "partial"
+        self.github.state["pr"]["body"] = "Refs #63"
+        for title, linked in (("Closes: #63", []), ("Record decision", [
+                {"number": 63, "repository": {"nameWithOwner": gate.REPO}}])):
+            for flags in ({}, {"record": True}, {"merge": True}, {"record": True, "merge": True}):
+                with self.subTest(title=title, linked=linked, flags=flags):
+                    self.github.state["pr"]["title"] = title
+                    self.github.state["closing_issues"] = linked
+                    with self.assertRaises(gate.GateError):
+                        gate.deliver(self.receipt, self.github, self.root, **flags)
+                    self.assertEqual(self.github.calls, [])
+
+    def test_complete_supported_github_closing_syntax(self):
+        for body in ("Closes: #63", "CLOSES: #63", "Fixed devofthings/sidequest#63",
+                     "RESOLVED:devofthings/sidequest#63"):
+            with self.subTest(body=body):
+                self.github.state["pr"]["body"] = body
+                self.validate()
+
+    def test_invalid_completion_values_block_before_writes(self):
+        for value in (None, True, 0, "", "Partial", "unknown", [], {}):
+            with self.subTest(value=value):
+                self.receipt["issue_completion"] = value
+                with self.assertRaises(gate.GateError):
+                    gate.deliver(self.receipt, self.github, self.root, record=True, merge=True)
+                self.assertEqual(self.github.calls, [])
+
+    def test_complete_and_legacy_receipts_require_closing_reference(self):
+        for explicit in (False, True):
+            with self.subTest(explicit=explicit):
+                if explicit:
+                    self.receipt["issue_completion"] = "complete"
+                self.github.state["pr"]["body"] = "Refs #63"
+                self.blocked()
+                self.github.state["pr"]["body"] = "Closes #63"
+                self.validate()
+                self.assertIn("Issue contribution: complete.", gate.audit_body(self.receipt))
+
     def test_pending_or_failed_statuses_block(self):
         for state in ("pending", "failure", "error"):
             with self.subTest(state=state):
@@ -284,7 +357,8 @@ class GateTests(unittest.TestCase):
             if path == "graphql":
                 cursor = data["variables"]["cursor"]
                 cursor_requests.append(cursor)
-                return {"data": {"repository": {"pullRequest": {"reviewThreads": {
+                return {"data": {"repository": {"pullRequest": {"closingIssuesReferences": {
+                    "nodes": [], "pageInfo": {"hasNextPage": False}}, "reviewThreads": {
                     "nodes": [{"isResolved": cursor is None}],
                     "pageInfo": {"hasNextPage": cursor is None, "endCursor": "next"}}}}}}
             self.fail(path)
@@ -318,7 +392,8 @@ class GateTests(unittest.TestCase):
                 target = "base" if path.endswith("main") else "head"
                 return {"object": {"sha": self.receipt[target]}}
             if path == "graphql":
-                return {"data": {"repository": {"pullRequest": {"reviewThreads": {
+                return {"data": {"repository": {"pullRequest": {"closingIssuesReferences": {
+                    "nodes": [], "pageInfo": {"hasNextPage": False}}, "reviewThreads": {
                     "nodes": [], "pageInfo": {"hasNextPage": False, "endCursor": None}}}}}}
             self.fail(path)
         def pages(path, key=None):
@@ -365,6 +440,33 @@ class GateTests(unittest.TestCase):
         self.assertEqual(github.merge(self.receipt), "e" * 40)
         self.assertEqual(commands, [["gh", "pr", "merge", "63", "--repo", gate.REPO,
                                      "--squash", "--match-head-commit", self.receipt["head"]]])
+
+    def test_partial_squash_uses_safe_title_and_empty_body(self):
+        self.receipt["issue_completion"] = "partial"
+        commands = []
+        original = gate.run
+        gate.run = lambda args, **kwargs: commands.append(args) or ""
+        self.addCleanup(setattr, gate, "run", original)
+        github = gate.GitHub()
+        responses = [{"title": "Record scoped decision"},
+                     {"merged": True, "merge_commit_sha": "e" * 40},
+                     {"parents": [{"sha": self.receipt["base"]}]}]
+        github.api = lambda *args: responses.pop(0)
+        github.merge(self.receipt)
+        self.assertEqual(commands[0][-4:], ["--subject", "Record scoped decision", "--body", ""])
+        self.assertIn(self.receipt["head"], commands[0])
+
+    def test_partial_squash_rechecks_title_before_merge(self):
+        self.receipt["issue_completion"] = "partial"
+        commands = []
+        original = gate.run
+        gate.run = lambda args, **kwargs: commands.append(args) or ""
+        self.addCleanup(setattr, gate, "run", original)
+        github = gate.GitHub()
+        github.api = lambda *args: {"title": "CLOSES: #63"}
+        with self.assertRaises(gate.GateError):
+            github.merge(self.receipt)
+        self.assertEqual(commands, [])
 
     def test_merge_outcome_detects_base_race(self):
         original = gate.run

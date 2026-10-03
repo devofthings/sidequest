@@ -15,6 +15,7 @@ Save this shape as JSON outside the checkout, replacing every example value with
   "schema": 1,
   "pr": 123,
   "issue": 63,
+  "issue_completion": "complete",
   "head": "0000000000000000000000000000000000000000",
   "base": "1111111111111111111111111111111111111111",
   "reviewer": "/root/fresh-reviewer",
@@ -49,6 +50,8 @@ Verification modes:
 
 Every listed command must have a real result and numeric zero exit code. Local modes must explain unavailable app/CI checks. The CLI independently checks Git ancestry and whitespace; other command evidence remains the reviewer's and lead's responsibility. These checks are not permission to start app development or potentially chargeable CI.
 
+`issue_completion` is `complete` by default for existing receipts. A complete contribution requires a closing reference and must meet the issue's completion criteria. For a reviewed contribution that finishes only a bounded part of an open issue, set `issue_completion` to `partial`, state that narrower approved scope in `authorization.approved_scope`, and use an explicit `Refs #<issue>`, `Part of #<issue>`, or `Related to #<issue>` in the PR body (the full repository issue URL also works). Partial contributions must have no closing reference to their parent in their body or title, and no native GitHub closing link. The gate recognizes uppercase keywords, optional colons, repository-qualified references, and full issue URLs. For partial merges it uses the checked PR title and an empty squash body, preventing feature commit messages from closing the parent through default squash text. The receipt audit labels the contribution, and the lead leaves the issue open and updates only its actual progress. This supports decision-recording PRs without claiming the later design or implementation is complete.
+
 ## Validate, record, merge
 
 Run from a checkout containing the reviewed commits, or pass `--checkout /absolute/path`:
@@ -57,7 +60,7 @@ Run from a checkout containing the reviewed commits, or pass `--checkout /absolu
 python3 scripts/review-gate.py /private/tmp/review-receipt.json
 ```
 
-The default makes GitHub reads and local Git reads only. It rejects malformed or stale evidence, prohibited targets, drafts, conflicts or unknown mergeability, unresolved threads or change requests, and pending/failed checks. It requires an open originating issue, a matching `codex/<issue>-...` branch, and `Closes #<issue>` or an equivalent closing reference in the PR body. For local verification, prior Sidequest status gates may be pending or stale while a fresh receipt is validated; all other gates must pass.
+The default makes GitHub reads and local Git reads only. It rejects malformed or stale evidence, prohibited targets, drafts, conflicts or unknown mergeability, unresolved threads or change requests, and pending/failed checks. It requires an open originating issue, a matching `codex/<issue>-...` branch, and the appropriate completion or partial reference described above. For local verification, prior Sidequest status gates may be pending or stale while a fresh receipt is validated; all other gates must pass.
 
 Publish a new audit comment and local commit statuses explicitly:
 
