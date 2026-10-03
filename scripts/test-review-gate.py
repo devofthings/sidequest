@@ -306,6 +306,36 @@ class GateTests(unittest.TestCase):
         self.assertEqual(cursor_requests, [None, "next"])
         self.assertEqual(snapshot["threads"], [{"isResolved": True}, {"isResolved": False}])
 
+    def test_unsubmitted_review_preserves_previous_change_request(self):
+        github = gate.GitHub()
+        mutations = []
+        def api(path, data=None):
+            if path.endswith("/pulls/63"):
+                return self.github.state["pr"]
+            if path.endswith("/issues/63"):
+                return {"state": "open"}
+            if "/git/ref/" in path:
+                target = "base" if path.endswith("main") else "head"
+                return {"object": {"sha": self.receipt[target]}}
+            if path == "graphql":
+                return {"data": {"repository": {"pullRequest": {"reviewThreads": {
+                    "nodes": [], "pageInfo": {"hasNextPage": False, "endCursor": None}}}}}}
+            self.fail(path)
+        def pages(path, key=None):
+            if path.endswith("/reviews"):
+                return [{"id": 1, "user": {"login": "fixture"}, "state": "CHANGES_REQUESTED"},
+                        {"id": 2, "user": {"login": "fixture"}, "state": "PENDING"}]
+            return []
+        github.api, github.pages = api, pages
+        github.record = lambda receipt: mutations.append("record")
+        github.merge = lambda receipt: mutations.append("merge")
+        self.assertEqual(github.snapshot(63)["reviews"], {"fixture": "CHANGES_REQUESTED"})
+        for flags in ({}, {"record": True}, {"record": True, "merge": True}, {"merge": True}):
+            with self.subTest(flags=flags):
+                with self.assertRaisesRegex(gate.GateError, "requests changes"):
+                    gate.deliver(self.receipt, github, self.root, **flags)
+                self.assertEqual(mutations, [])
+
     def test_real_record_adapter_never_overwrites_ci_verification(self):
         github = gate.GitHub()
         writes = []

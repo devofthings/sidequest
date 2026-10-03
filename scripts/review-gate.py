@@ -135,7 +135,8 @@ class GitHub:
         reviews = self.pages(f"repos/{REPO}/pulls/{number}/reviews")
         latest_reviews = {}
         for review in sorted(reviews, key=lambda item: item["id"]):
-            if review["state"] != "COMMENTED":
+            # An unsubmitted draft leaves the last submitted decision in force.
+            if review["state"] not in ("COMMENTED", "PENDING"):
                 latest_reviews[review["user"]["login"]] = review["state"]
         threads = []
         cursor = None
