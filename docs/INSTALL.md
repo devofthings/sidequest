@@ -2,7 +2,7 @@
 
 ## Verified foundation
 
-`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. The feed uses fictional sample news, playable mini Sudoku, and provisional demos for the other three games. Manual news imports are available in the standalone Debug preview while imported-news feed integration follows #9. Local simulator builds, tests, installation, and launch are verified; [Sudoku verification](SUDOKU.md#verification) distinguishes its passed focused checks from pending final validation. Physical-iPhone installation remains unverified and requires your local Apple Account and signing configuration. [CI](CI.md) uses the same verified toolchain on a foreground self-hosted Mac runner. The private [preview workflow](RELEASES.md) supplies downloads after a successful main publication; no download is claimed before that run.
+`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. The feed uses fictional sample news, playable mini Sudoku and memory pairs, and provisional demos for the other two games. Manual news imports are available in the standalone Debug preview while imported-news feed integration follows #9. Local simulator builds, tests, installation, and launch are verified; [Sudoku verification](SUDOKU.md#verification) records its passed delivery checks; [Memory verification](MEMORY.md#verification) records its passed focused checks and points to live PR gates. Physical-iPhone installation remains unverified and requires your local Apple Account and signing configuration. [CI](CI.md) uses the same verified toolchain on a foreground self-hosted Mac runner. The private [preview workflow](RELEASES.md) has published the merged Sudoku commit as an [ARM64 simulator preview](https://github.com/devofthings/sidequest/releases/tag/preview-fb02ebb45bb20a12308138b6ad39236b6fc11e25). Check the release history for each later version.
 
 | Setting | Verified value |
 | --- | --- |
@@ -62,7 +62,7 @@ xcrun swift-format lint --strict --recursive --configuration .swift-format \
   Sidequest SidequestTests SidequestUITests
 ```
 
-The shared scheme includes foundation membership/fixture checks, shared contract, news, feed-controller, and Sudoku rule/controller tests, plus running-app tests for launch, news provenance/importer access, start, skip/reset, completion retention, independent game/navigation gestures, scene changes, empty/end states, and Sudoku gameplay. The generic feed harness uses provisional demos independently of game rules; Sudoku checks use validated original fixtures. See [SUDOKU.md](SUDOKU.md#verification) for the actual passed checks and pending validation. Other game rules and imported-news feed integration follow their feature tasks. Use `-resultBundlePath /absolute/new/path.xcresult` to retain test evidence; Xcode requires a path that does not already exist.
+The shared scheme includes foundation membership/fixture checks, shared contract, news, feed-controller, and Sudoku/Memory rule/controller tests, plus running-app tests for launch, news provenance/importer access, start, skip/reset, completion retention, independent game/navigation gestures, scene changes, empty/end states, and Sudoku/Memory gameplay. The generic feed harness uses provisional demos independently of game rules; Sudoku checks use validated original fixtures. See [SUDOKU.md](SUDOKU.md#verification) and [MEMORY.md](MEMORY.md#verification) for actual passed checks and live gate references. Other game rules and imported-news feed integration follow their feature tasks. Use `-resultBundlePath /absolute/new/path.xcresult` to retain test evidence; Xcode requires a path that does not already exist.
 
 For a local Release simulator build, use the same build command with `-configuration Release`. This produces a local build, not a published GitHub release.
 
@@ -94,7 +94,7 @@ xcrun simctl install "$SIDEQUEST_SIMULATOR_ID" \
 xcrun simctl launch "$SIDEQUEST_SIMULATOR_ID" dev.devofthings.sidequest
 ```
 
-Open Simulator to see the window. Normal launch shows Sidequest's shuffled sample feed. Swipe up/down on the separate navigation rail or use Previous/Next. Game cards stay at Tap to play until explicitly started. On Sudoku, select an editable cell and use 1–4 or Clear selected cell; see [SUDOKU.md](SUDOKU.md) for rules and feedback. The other three games remain explicitly provisional demos. Skipping or backgrounding resets unfinished play. Completed results survive returning to their card. See [FEED.md](FEED.md) for adapter ownership and test-only routes. Simulator builds run on a Mac and cannot be installed on a physical iPhone.
+Open Simulator to see the window. Normal launch shows Sidequest's shuffled sample feed. Swipe up/down on the separate navigation rail or use Previous/Next. Game cards stay at Tap to play until explicitly started. On Sudoku, select an editable cell and use 1–4 or Clear selected cell; see [SUDOKU.md](SUDOKU.md) for rules and feedback. On Memory, flip two cards to find a matching pair; see [MEMORY.md](MEMORY.md) for rules and feedback. The other two games remain explicitly provisional demos. Skipping or backgrounding resets unfinished play. Completed results survive returning to their card. See [FEED.md](FEED.md) for adapter ownership and test-only routes. Simulator builds run on a Mac and cannot be installed on a physical iPhone.
 
 ## Download a simulator preview
 
@@ -158,4 +158,4 @@ Generated output belongs in ignored `DerivedData/`, `build/`, or an external bui
 
 If Xcode reports no destination, check `xcrun simctl list runtimes` and `xcrun simctl list devices available`; unavailable entries with missing runtime profiles cannot run the app. Install the matching runtime rather than claiming a build or test passed. If simulator access is denied in a sandbox, run the approved build/simulator commands with their required local filesystem access.
 
-Published versions will appear in the private [GitHub Releases page](https://github.com/devofthings/sidequest/releases) after [release automation](RELEASES.md) exists. Its initial asset is a simulator archive; source plus local Xcode signing remains the personal-iPhone path.
+Published versions appear in the private [GitHub Releases page](https://github.com/devofthings/sidequest/releases) after their successful [release workflow](RELEASES.md). Its initial asset is a simulator archive; source plus local Xcode signing remains the personal-iPhone path.
