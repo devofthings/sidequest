@@ -230,15 +230,19 @@ def publish(github, environment, verification_directory):
                                  f"{digest(metadata_path)}  build-metadata.json\n")
         if not reference:
             github.request(f"{API}/git/refs", "POST", {"ref": "refs/tags/" + tag, "sha": head})
+        notes = (f"Private simulator preview from `{head}`.\n\n"
+                 f"ARM64 Mac; {metadata['runtime']}; Xcode 27.0 (27A266a). This is a simulator `.app`, not an iPhone IPA.\n\n"
+                 f"[Verified build]({metadata['verification_job_url']}) · [Workflow run]({metadata['workflow_run_url']}) · "
+                 f"[Installation and source-based iPhone signing]({metadata['installation_url']})\n\n"
+                 "SHA256SUMS and build-metadata.json identify the exact archived build. Personal content and signing are excluded.")
         if not release:
-            notes = (f"Private simulator preview from `{head}`.\n\n"
-                     f"ARM64 Mac; {metadata['runtime']}; Xcode 27.0 (27A266a). This is a simulator `.app`, not an iPhone IPA.\n\n"
-                     f"[Verified build]({metadata['verification_job_url']}) · [Workflow run]({metadata['workflow_run_url']}) · "
-                     f"[Installation and source-based iPhone signing]({metadata['installation_url']})\n\n"
-                     "SHA256SUMS and build-metadata.json identify the exact archived build. Personal content and signing are excluded.")
             release = github.request(f"{API}/releases", "POST", {"tag_name": tag, "target_commitish": head,
                                      "name": "Sidequest preview " + head[:12], "body": notes,
                                      "draft": True, "prerelease": True, "make_latest": "false"})
+        else:
+            # An empty interrupted draft can select this newly verified package.
+            # Reconcile its unpublished notes with the selected metadata too.
+            release = github.request(f"{API}/releases/{release['id']}", "PATCH", {"body": notes})
         for path in [metadata_path, checksum_path, archive]:
             if path.name not in downloaded:
                 require(path.is_file(), "Original draft package is unavailable; preserve the draft and recover its exact bytes.")

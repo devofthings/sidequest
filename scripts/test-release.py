@@ -6,6 +6,7 @@ import importlib.util
 import json
 from pathlib import Path
 import plistlib
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -180,6 +181,31 @@ class ReleaseTests(unittest.TestCase):
         metadata = next(asset for asset in item["assets"] if asset["name"] == "build-metadata.json")
         self.assertEqual(self.github.bytes[archive["id"]], original_archive)
         self.assertEqual(json.loads(self.github.bytes[metadata["id"]])["attempt"], "1")
+        self.assertFalse(item["draft"])
+
+    def test_empty_draft_retry_reconciles_notes_with_new_verified_metadata(self):
+        self.github.failure = "build-metadata.json"
+        with self.assertRaisesRegex(RuntimeError, "interrupted"):
+            self.publish()
+        self.assertTrue(self.github.releases[0]["draft"])
+        self.assertEqual(self.github.releases[0]["assets"], [])
+        self.assertIn("/runs/100/job/42", self.github.releases[0]["body"])
+        self.github.failure = None
+        self.environment["GITHUB_RUN_ID"] = "200"
+        self.directory = self.root / "sidequest-diagnostics/200-1"
+        new_app = self.directory / "DerivedData/Build/Products/Release-iphonesimulator/Sidequest.app"
+        shutil.copytree(self.app, new_app)
+        (new_app / "Sidequest").write_bytes(b"new verified bytes")
+        self.manifest.update(run_id="200", release_app=str(new_app))
+        self.write_manifest()
+        self.publish()
+        item = self.github.releases[0]
+        metadata_asset = next(asset for asset in item["assets"] if asset["name"] == "build-metadata.json")
+        metadata = json.loads(self.github.bytes[metadata_asset["id"]])
+        self.assertEqual(metadata["run_id"], "200")
+        self.assertIn(metadata["verification_job_url"], item["body"])
+        self.assertIn(metadata["workflow_run_url"], item["body"])
+        self.assertNotIn("/runs/100", item["body"])
         self.assertFalse(item["draft"])
 
     def test_failed_verification_performs_no_publication(self):
