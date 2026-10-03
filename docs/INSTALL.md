@@ -2,7 +2,7 @@
 
 ## Current status
 
-Sidequest currently contains planning documents only. There is no Xcode app project, executable scheme, simulator build, or iPhone package to install. The [app foundation](https://github.com/devofthings/sidequest/issues/1) will supply verified project paths and commands; [integration](https://github.com/devofthings/sidequest/issues/9) will verify the complete news-and-games experience. The steps below describe the installation workflow and have not yet been verified with a Sidequest app.
+Sidequest currently contains planning documents and [Swift formatting configuration](FORMATTING.md). There is no Xcode app project, executable scheme, simulator build, or iPhone package to install. The [app foundation](https://github.com/devofthings/sidequest/issues/1) will supply verified project paths and commands; [integration](https://github.com/devofthings/sidequest/issues/9) will verify the complete news-and-games experience. The steps below describe the installation workflow and have not yet been verified with a Sidequest app.
 
 ## Get the source
 
