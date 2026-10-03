@@ -1,5 +1,7 @@
 # Shared pure Swift core
 
-This area owns shared values and small replaceable-boundary ports when they are needed. Import no SwiftUI, UIKit, rendering, networking-client, or storage SDK. Core is nonisolated by default under the [application settings](../AGENTS.md); UI isolation belongs to presentation.
+Shared `CardID`, `FeedCard`, `GameKind`, and `GameLifecycle` belong here. Import no UI, networking-client, or storage SDK. Core remains nonisolated under [application settings](../AGENTS.md).
 
-The foundation establishes ownership without placeholder types. Issue #2 introduces the shared card/lifecycle contract; feature-specific rules belong to their owning folders under [STRUCTURE.md](../../docs/STRUCTURE.md).
+Use the [card contract](../../docs/CONTRACT.md) for exact transitions and effect ordering. IDs are explicit immutable source identities; do not derive them from display order. Attempt IDs distinguish retries, and every move, tick, or delayed result must pass the lifecycle gate immediately before mutation. Invalidate an attempt before canceling/resetting its adapter. Completed cards remain completed when revisited; replay and persistence are deferred.
+
+These choices were resolved through the agent-grill interview for #2. Pure value transitions and returned effects separate game rules from UI/task ownership without an unused protocol or dependency-injection framework. Feature-specific rules belong to their owning game folders.
