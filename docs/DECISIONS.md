@@ -14,6 +14,7 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | Native SwiftUI implementation | Accepted | User choice; see [ADR 0002](adr/0002-native-swiftui.md). |
 | Hexagonal architecture from the start | Accepted | User chose replaceable boundaries to accommodate change; see [ADR 0003](adr/0003-hexagonal-architecture.md). |
 | Agent implementation with fresh-agent review and gated automatic merging | Accepted | User authorized the loop in [REVIEW.md](REVIEW.md); developer review remains available without blocking verified implementation PRs. |
+| Check chat steering after every resolved ticket | Accepted | User requested a checkpoint before continuing to another task. Follow the [after-ticket chat checkpoint](../AGENTS.md#after-ticket-chat-checkpoint). |
 | Feature branches only; defer GitHub main protection | Accepted | User chose to proceed without a plan upgrade or branch protection. Use the review and verification gates with agent-controlled merging in [REVIEW.md](REVIEW.md); see issue #23. |
 | Explicit user approval before spending | Accepted | User requires approval before any purchase or action that may incur charges; see the spending approval rule in [AGENTS.md](../AGENTS.md). |
 | TDD as an optional technique | Accepted | User has not chosen TDD and asked to keep it a minor consideration, rather than a project requirement. |
