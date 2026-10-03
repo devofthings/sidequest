@@ -8,22 +8,25 @@ The first test asks whether switching between reading and playing is enjoyable e
 
 Sidequest is the working name. The GitHub repository is private. Use GitHub Issues for small tasks and repository documentation for durable decisions and agent context.
 
-## Decisions to settle before implementation
+## First-test experience
 
-- The initial source and freshness of test stories.
-- The first game types and the intended length of a challenge.
-- Swipe behavior while interacting with a game and what happens to progress after leaving a card.
-- A private testing route and the devices needed for the first test.
+- Import a small set of real English news snapshots manually, including source-provided excerpts and links to the original articles. Automatic news fetching is deferred.
+- Shuffle news cards and game cards together. Movement between cards is controlled by the person swiping, rather than automatic advancement.
+- Reset an unfinished game when its card is skipped. Fresh attempts are more important than saved progress in this test.
+- Include simple Sudoku, memory pairs, one-move chess puzzles, and a bubble shooter.
+- Test in the iPhone simulator and on the user's own iPhone through Xcode.
 
-The overall experience is evaluated through personal testing; a quantitative retention target has not been established.
+The overall experience is evaluated through personal testing; a quantitative retention target has not been established. Success means the user enjoys switching between news and games and wants to reopen Sidequest.
 
-See [DECISIONS.md](DECISIONS.md) for the status of each decision. These questions are planning work, not authorization to choose a provider or add integrations.
+## Deferred work
 
-## Ideas discussed
+Defer accounts, ads, payments, licensed game catalogs, and social-platform integrations. The user confirmed these boundaries for the first prototype. Automatic scraping and news refreshing are also deferred in favor of manual imports.
 
-Mini Sudoku, short chess puzzles, memory games, and matching games are candidate activities. Scraping news for personal testing is a possible content approach; no source or importer has been selected. Licensed game catalogs are alternatives to custom games.
+See [DECISIONS.md](DECISIONS.md) for the status of each decision.
 
-Instagram and TikTok content are longer-term candidates. Their integration is not required by an accepted MVP decision.
+## Delivery sequence
+
+The app foundation establishes runnable targets and verification commands. The shared card contract then enables separate work on the feed, news imports, and four games. Integration follows those feature tasks; the personal test follows a working integrated build. GitHub Issues own the detailed acceptance criteria and prerequisite links.
 
 ## Current repository state
 

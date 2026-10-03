@@ -12,7 +12,11 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | Native SwiftUI implementation | Accepted | User choice; see [ADR 0002](adr/0002-native-swiftui.md). |
 | English news for the first test | Accepted | User choice; documentation is also written in US English. |
 | Validate enjoyment of the mixed feed first | Accepted | User chose enjoyment and willingness to reopen as the initial hypothesis. |
-| Initial game selection, news acquisition, session behavior, testing route | Open | To be resolved in the planning interview. |
+| Sudoku, memory, chess puzzles, and a bubble shooter | Accepted | User selected four game types and clarified the ball game as a bubble shooter. |
+| Manually imported news snapshots | Accepted | User chose real snapshot content before automatic refreshing. |
+| Shuffle news and games; reset skipped unfinished games | Accepted | User chose shuffled cards and fresh attempts. |
+| Simulator and the user's own iPhone via Xcode | Accepted | User choice; TestFlight is deferred. |
+| Defer accounts, ads, payments, licensed catalogs, and social integrations | Accepted | User confirmed the bounded private prototype scope. |
 
 ## Research context
 

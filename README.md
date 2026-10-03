@@ -1,10 +1,10 @@
 # Sidequest
 
-A private iPhone MVP combining short news stories and quick mini-games in one swipeable feed.
+A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, memory pairs, chess puzzles, and a bubble shooter in one shuffled feed.
 
 ## Start here
 
-- [MVP brief](docs/MVP.md): product direction and unresolved scope.
+- [MVP brief](docs/MVP.md): confirmed product direction and delivery sequence.
 - [Project decisions](docs/DECISIONS.md): accepted choices, proposals, and source research.
 - [Vocabulary](CONTEXT.md): domain names used by issues and implementation.
 - [Agent guidance](AGENTS.md): how to pick up and complete an issue.
