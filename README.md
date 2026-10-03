@@ -16,6 +16,7 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 - [Continuous verification](docs/CI.md): free foreground self-hosted execution, exact-commit checks, and local diagnostics.
 - [Swift formatting](docs/FORMATTING.md): shared style, local commit-hook setup, and tooling checks.
 - [Autonomous delivery plan](docs/AUTONOMY.md): technical ownership, start authorization, usage guardrails, and the documentation audit.
+- [Manual news imports](docs/NEWS.md): prepare, validate, replace, and privately retain English snapshots.
 - [Installation and running](docs/INSTALL.md): verified simulator build/test/launch commands and local personal-iPhone signing steps.
 - [Private release delivery](docs/RELEASES.md): exact-commit preview workflow, traceable assets, and publication/retry policy.
 - [GitHub Issues](https://github.com/devofthings/sidequest/issues): tasks and dependencies.
@@ -23,7 +24,7 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 
 ## Development status
 
-The SwiftUI foundation launches in the iPhone simulator. `Sidequest.xcodeproj` provides the shared `Sidequest` scheme, app-hosted unit tests, and a UI launch test. Xcode 27.0 and the iOS 27.0 simulator were verified; the deployment target is iOS 17.0. The shared card/lifecycle contract and shuffled fictional sample session are implemented. The feed, news imports, games, gameplay tests, and published releases follow their own tickets. [CI](docs/CI.md) verifies same-repository PRs and main using this Mac while its foreground runner is active.
+The SwiftUI foundation launches in the iPhone simulator with app-hosted unit tests and UI tests. Xcode 27.0/iOS 27.0 were verified; the deployment target is iOS 17.0. The shared card/lifecycle contract, shuffled fictional session, and manual news imports with sourced, dated cards are implemented. Use Read news to preview or import snapshots. The mixed feed, games, gameplay tests, and published releases follow their own tickets. [CI](docs/CI.md) verifies same-repository PRs and main using this Mac while its foreground runner is active.
 
 The user authorized app implementation on October 3, 2026; see the [autonomous delivery plan](docs/AUTONOMY.md). Start with [INSTALL.md](docs/INSTALL.md) to build, test, and run. Physical-iPhone installation is documented but remains unverified and requires local account/signing setup.
 

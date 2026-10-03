@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sidequest manual news snapshots v1",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "snapshots"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "snapshots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "headline",
+          "excerpt",
+          "publisher",
+          "sourceURL",
+          "capturedAt",
+          "isSample"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "headline": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "excerpt": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "publisher": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "sourceURL": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^[Hh][Tt][Tt][Pp][Ss]?://"
+          },
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "isSample": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

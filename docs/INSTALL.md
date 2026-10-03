@@ -62,7 +62,7 @@ xcrun swift-format lint --strict --recursive --configuration .swift-format \
   Sidequest SidequestTests SidequestUITests
 ```
 
-The shared scheme currently runs 12 unit checks for host/fixture isolation and core card/lifecycle behavior, plus one UI check that launches the app and reads its accessible heading. Gameplay and critical integrated-flow tests are added after their behavior exists. Use `-resultBundlePath /absolute/new/path.xcresult` to retain test evidence; Xcode requires a path that does not already exist.
+The shared scheme includes foundation checks for host identity, fixture isolation, and accessible launch, plus shared-contract and news behavior tests. These verify the foundation; gameplay and critical integrated-flow tests are added after their behavior exists. Use `-resultBundlePath /absolute/new/path.xcresult` to retain test evidence; Xcode requires a path that does not already exist.
 
 For a local Release simulator build, use the same build command with `-configuration Release`. This produces a local build, not a published GitHub release.
 
@@ -142,7 +142,7 @@ After a Personal Team profile expires, rebuilding and reinstalling may be necess
 
 ## Content, versions, and troubleshooting
 
-Keep real personal news captures in ignored `.local-news/` or another directory outside `Sidequest`, `SidequestTests`, and `SidequestUITests`. News import format and replacement commands follow [issue #4](https://github.com/devofthings/sidequest/issues/4); no import is implemented in the foundation. Fictional test fixtures are isolated in their test bundles.
+Keep real personal news captures in ignored `.local-news/` or another directory outside `Sidequest`, `SidequestTests`, and `SidequestUITests`. Use [NEWS.md](NEWS.md) to prepare a version 1 JSON file, import and validate it through Read news, and replace the saved set. Only fictional samples/schema are bundled. Fictional test fixtures are isolated in their test bundles.
 
 Generated output belongs in ignored `DerivedData/`, `build/`, or an external build directory, outside synchronized source roots. Keep scoped `AGENTS.md` guidance in its owning folder; all target Markdown is excluded from built resources.
 
