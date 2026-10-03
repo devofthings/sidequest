@@ -22,6 +22,8 @@ The overall experience is evaluated through personal testing; a quantitative ret
 
 Defer accounts, ads, payments, licensed game catalogs, and social-platform integrations. The user confirmed these boundaries for the first prototype. Automatic scraping and news refreshing are also deferred in favor of manual imports.
 
+Phase two will introduce a backend for accounts and synced preferences, plus high scores and leaderboards. Backend provider and gamification rules are still open decisions; they are outside the first-test scope.
+
 See [DECISIONS.md](DECISIONS.md) for the status of each decision.
 
 ## Delivery sequence
