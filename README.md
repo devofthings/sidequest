@@ -1,8 +1,71 @@
-# sidequest
+# Sidequest
 
-A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, memory pairs, chess puzzles, and a bubble shooter in one shuffled feed.
+[![Main verification](https://github.com/devofthings/sidequest/actions/workflows/releases.yml/badge.svg?branch=main)](https://github.com/devofthings/sidequest/actions/workflows/releases.yml)
+![iOS 17+ deployment target](docs/assets/readme/ios.svg)
+![Swift 6 language mode](docs/assets/readme/swift.svg)
 
-## Start here
+A private iPhone prototype mixing short English news and quick games in one shuffled feed. The first test: is switching between reading and playing enjoyable enough to come back?
+
+**[Install and run](docs/INSTALL.md)** · **[Private releases](https://github.com/devofthings/sidequest/releases)** · **[MVP board](https://github.com/users/devofthings/projects/1)** · **[Issues](https://github.com/devofthings/sidequest/issues)**
+
+## Try it
+
+Open `Sidequest.xcodeproj`, select the shared **Sidequest** scheme, and run on an iPhone simulator. The verified environment is Xcode 27.0 and the iOS 27.0 simulator on Apple silicon; the minimum deployment target is iOS 17.0, whose execution remains unverified. See [installation instructions](docs/INSTALL.md) for tools, commands, and troubleshooting.
+
+| Delivery | Availability |
+| --- | --- |
+| Recorded development preview | [2026.10.7](https://github.com/devofthings/sidequest/releases/tag/2026.10.7), from `5dc0320e2757`, published October 3, 2026; predates the current pager |
+| Download | Unsigned ARM64 simulator archive for a Mac; select a verified version from the private [release history](https://github.com/devofthings/sidequest/releases) |
+| Next release | Held until reviewed MVP integration readiness; afterward, explicit manual dispatch under [release policy](docs/RELEASES.md) |
+| Your iPhone | Physical installation is deferred and unverified ([#79](https://github.com/devofthings/sidequest/issues/79)); [local source signing instructions](docs/INSTALL.md#install-on-your-own-iphone) are available |
+| Verified checks for 2026.10.7 | Debug build, unit/UI tests (16 UI tests), and ARM64 Release build passed in the [release verification job](https://github.com/devofthings/sidequest/actions/runs/37158924819/job/111308053366) |
+
+The recorded preview and test results describe that release, rather than the latest source or a completed MVP. Main updates continue native verification without automatic publication. The workflow badge links the latest main run; open its details for actual checks. Simulator archives cannot be installed directly on an iPhone.
+
+## What's playable?
+
+Game cards require **Tap to play**. Skipping or backgrounding resets unfinished attempts; completed results survive revisits during the session.
+
+Current source supports full-card native vertical paging: swipe up/down directly on a card or use the compact **Feed navigation** menu. Overflowing content scrolls within its card; a new outward gesture at its top/bottom edge changes cards. See [feed navigation](docs/FEED.md#navigation-and-eligibility).
+
+| Game | Merged implementation | Details / next step |
+| --- | --- | --- |
+| Mini Sudoku | Playable 4×4 puzzle | [Rules, controls, and checks](docs/SUDOKU.md) |
+| Memory pairs | Playable six-pair board | [Rules, controls, and checks](docs/MEMORY.md) |
+| Chess puzzles | Provisional demo | Playable one-move puzzles pending [#7](https://github.com/devofthings/sidequest/issues/7) |
+| Bubble shooter | Provisional demo | Playable shooting/matching pending [#8](https://github.com/devofthings/sidequest/issues/8) |
+
+The feed currently uses clearly labeled fictional news. Manual English snapshot imports are implemented in a standalone Debug preview; connecting saved imports to the mixed feed is pending [#9](https://github.com/devofthings/sidequest/issues/9). See [news preparation and import](docs/NEWS.md). Accounts, synced preferences, and leaderboards are deferred to phase two; [MVP.md](docs/MVP.md) owns the approved scope.
+
+## Code snapshot
+
+<!-- sidequest:stats:start -->
+| Swift source | Files | Physical lines |
+| --- | ---: | ---: |
+| App | 29 | 1,954 |
+| Unit tests | 10 | 1,105 |
+| UI tests | 8 | 622 |
+| **Total** | **47** | **3,681** |
+
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+800 / −182 lines**.
+<!-- sidequest:stats:end -->
+
+These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
+
+From the repository root, refresh the table in the same feature PR when Swift source changes. Stage new source files before counting. Fetch the selected release tag if it is missing locally:
+
+```sh
+python3 scripts/readme-stats.py --baseline 2026.10.7 --write
+```
+
+Omit `--write` to print statistics without editing files. The dependency-free command replaces only the marked block; it makes no network calls or commits. Verify changes with `python3 scripts/test-readme-stats.py` and `python3 scripts/check-documentation.py`. Keep the selected baseline until intentionally choosing another verified release; the generator does not refresh game readiness or release/test claims.
+
+## Pick up the project
+
+Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisions](docs/DECISIONS.md), and the assigned issue. Use [agent setup](docs/AGENT_SETUP.md) for an isolated feature branch, then follow the [workflow](docs/WORKFLOW.md) and [fresh-agent review process](docs/REVIEW.md). The [autonomous delivery plan](docs/AUTONOMY.md) records authorization and limits. Implementation is authorized; spending and recurring runs require their own approval.
+
+<details>
+<summary>Development documentation</summary>
 
 - [MVP brief](docs/MVP.md): confirmed product direction and delivery sequence.
 - [Project decisions](docs/DECISIONS.md): accepted choices, proposals, and source research.
@@ -25,10 +88,6 @@ A private SwiftUI iPhone MVP combining short English news snapshots, Sudoku, mem
 - [GitHub Issues](https://github.com/devofthings/sidequest/issues): tasks and dependencies.
 - [MVP board](https://github.com/users/devofthings/projects/1): current workflow status; see [task workflow](docs/WORKFLOW.md) for status definitions.
 
-## Development status
-
-The SwiftUI feed hosts a once-shuffled fictional news session with explicit tap-to-play games, full-card native vertical paging, and a compact accessible navigation menu. Mini Sudoku and memory pairs have playable rules and controls; chess and bubble-shooter surfaces remain provisional demos until their owning tickets land. Skipping or backgrounding resets unfinished play; completed results survive revisits. Manual news imports with sourced, dated cards are implemented in a standalone Debug preview; imported-news feed integration remains pending. `Sidequest.xcodeproj` provides the shared `Sidequest` scheme and unit/UI tests. Xcode 27.0 and the iOS 27.0 simulator were verified; the deployment target is iOS 17.0. See [Sudoku verification](docs/SUDOKU.md#verification) and [Memory verification](docs/MEMORY.md#verification) for actual checks and remaining validation. [CI](docs/CI.md) verifies same-repository PRs and main on the foreground Mac runner. Main updates continue verification; publication is held until reviewed MVP integration readiness, then requires explicit manual dispatch. The retained 2026.10.7 preview is a development build; see [release guidance](docs/RELEASES.md) for actual availability.
-
-The user authorized app implementation on October 3, 2026; see the [autonomous delivery plan](docs/AUTONOMY.md). Start with [INSTALL.md](docs/INSTALL.md) to build, test, and run. Physical-iPhone installation is documented but remains unverified and requires local account/signing setup.
+</details>
 
 Sidequest is the working project name. Public naming availability has not been established.

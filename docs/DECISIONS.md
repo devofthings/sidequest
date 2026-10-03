@@ -6,6 +6,7 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | --- | --- | --- |
 | Sidequest as the working project name | Accepted | User choice; public naming availability remains unresolved. |
 | Private GitHub repository | Accepted | User requested a private repository. |
+| README dashboard with reproducible source statistics | Accepted | User approved the proposed first pass with “go ahead” on October 4, 2026, then specified “no screenshot yet pls.” Issue [#93](https://github.com/devofthings/sidequest/issues/93) owns native/local badges, verified release/install links, game readiness, tracked Swift file/physical-line counts, and additions/deletions from an explicit release baseline. Keep recorded test evidence separate from source volume; refresh within feature PRs using [README.md](../README.md#code-snapshot). Screenshots remain deferred; no external metrics service or automated commits. |
 | iPhone MVP before other platforms | Accepted | User chose iOS first; see [ADR 0001](adr/0001-private-ios-mvp.md). |
 | News and games in the same feed | Accepted | User identified the news habit as central to the idea. |
 | GitHub Issues for tasks, Markdown for agent guidance and decisions | Accepted | User requested issues and agent Markdown files. |
