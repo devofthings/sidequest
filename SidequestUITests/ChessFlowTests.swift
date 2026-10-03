@@ -135,7 +135,7 @@ final class ChessFlowTests: XCTestCase {
         let end = scroll.coordinate(
           withNormalizedOffset: CGVector(dx: 0.5, dy: upwards ? 0.4 : 0.6))
         start.press(
-          forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
+          forDuration: 0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0)
       }
     }
     XCTAssertTrue(element.isHittable)
