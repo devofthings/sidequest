@@ -1,0 +1,57 @@
+name: Sidequest releases
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sidequest-release-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verification:
+    name: Sidequest / verification
+    runs-on: [self-hosted, macOS, ARM64, sidequest, xcode-27, sidequest-mac-foreground]
+    timeout-minutes: 20
+    outputs:
+      verification_directory: ${{ steps.verify.outputs.verification_directory }}
+    steps:
+      - name: Check out the exact merged commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, reviewed immutable revision
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+          clean: true
+      - name: Verify source, documentation, build, and tests
+        id: verify
+        env:
+          SIDEQUEST_EXPECTED_HEAD: ${{ github.sha }}
+          SIDEQUEST_BASE_REF: main
+        run: python3 scripts/ci-verify.py
+  publish:
+    name: Sidequest / publish preview
+    needs: verification
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, macOS, ARM64, sidequest, xcode-27, sidequest-mac-foreground]
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
+      checks: read
+    steps:
+      - name: Check out the verified event commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, reviewed immutable revision
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+          clean: true
+      - name: Publish or verify the existing private preview
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SIDEQUEST_VERIFICATION_DIRECTORY: ${{ needs.verification.outputs.verification_directory }}
+        run: python3 scripts/publish-release.py

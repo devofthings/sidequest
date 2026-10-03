@@ -3,8 +3,6 @@ name: Sidequest
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-  push:
-    branches: [main]
 
 permissions:
   contents: read
@@ -17,7 +15,7 @@ jobs:
   verification:
     name: Sidequest / verification
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, macOS, ARM64, sidequest, xcode-27]
+    runs-on: [self-hosted, macOS, ARM64, sidequest, xcode-27, sidequest-mac-foreground]
     timeout-minutes: 20
     steps:
       - name: Check out the exact reviewed commit
