@@ -25,7 +25,8 @@ Sidequest/
       Rules/
       Presentation/
     Chess/
-      Rules/
+      Domain/                 # Pure coordinates, validated puzzle values, and attempt rules
+      Adapters/               # Bundled original-fixture loader
       Presentation/
     BubbleShooter/
       Rules/
@@ -45,7 +46,7 @@ These paths describe ownership, not a requirement to create empty folders or pla
 
 ## Dependency direction
 
-Follow [ADR 0003](adr/0003-hexagonal-architecture.md) and [CODING.md](CODING.md). `Core`, `Feed/Domain`, `News/Domain`, and each game's `Rules` contain pure Swift behavior and import no UI, rendering, networking-client, or storage SDK. Folder boundaries express this rule; a single app module does not enforce it automatically.
+Follow [ADR 0003](adr/0003-hexagonal-architecture.md) and [CODING.md](CODING.md). `Core`, `Feed/Domain`, `News/Domain`, and each game's pure `Rules` or `Domain` contain Swift behavior and import no UI, rendering, networking-client, or storage SDK. Folder boundaries express this rule; a single app module does not enforce it automatically.
 
 Presentation and adapters depend on their domain behavior and shared contracts. The feed never imports or inspects individual game rules. `App` wires concrete games and news adapters to the shared card/lifecycle contract. [Contract #2](https://github.com/devofthings/sidequest/issues/2) owns that interface and the agreed start/reset semantics; this layout does not invent its types. Time and randomness enter through small deterministic seams where behavior requires them.
 

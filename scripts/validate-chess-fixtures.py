@@ -62,7 +62,7 @@ def main():
     parser.add_argument(
         "fixtures", nargs="?", type=Path,
         default=Path(__file__).resolve().parents[1]
-        / "Sidequest/Games/Chess/chess-puzzles.json",
+        / "Sidequest/Resources/chess-puzzles.json",
     )
     args = parser.parse_args()
     try:

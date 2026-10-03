@@ -74,6 +74,7 @@ struct ChessPuzzleView: View {
         } label: {
           Text("\(controller.puzzle.board[square]?.label ?? "Piece") on \(square.coordinate)")
             .frame(maxWidth: .infinity, minHeight: 44)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.bordered)
         .disabled(!controller.canAcceptInput)
@@ -99,6 +100,7 @@ struct ChessPuzzleView: View {
           } ?? "File: —"
         )
         .frame(maxWidth: .infinity, minHeight: 44)
+        .contentShape(Rectangle())
       }
       .accessibilityIdentifier("chess.file")
       .accessibilityHint("Choose a destination file from A through H.")
@@ -110,14 +112,18 @@ struct ChessPuzzleView: View {
       } label: {
         Text(controller.destinationRank.map { "Rank: \($0 + 1)" } ?? "Rank: —")
           .frame(maxWidth: .infinity, minHeight: 44)
+          .contentShape(Rectangle())
       }
       .accessibilityIdentifier("chess.rank")
       .accessibilityHint("Choose a destination rank from 1 through 8.")
-      Button("Submit move", action: controller.submitCoordinates)
-        .frame(maxWidth: .infinity, minHeight: 44)
-        .buttonStyle(.borderedProminent)
-        .disabled(!controller.canSubmitCoordinates)
-        .accessibilityIdentifier("chess.submit")
+      Button(action: controller.submitCoordinates) {
+        Text("Submit move")
+          .frame(maxWidth: .infinity, minHeight: 44)
+          .contentShape(Rectangle())
+      }
+      .buttonStyle(.borderedProminent)
+      .disabled(!controller.canSubmitCoordinates)
+      .accessibilityIdentifier("chess.submit")
     }
     .buttonStyle(.bordered)
     .disabled(!controller.canAcceptInput || controller.attempt?.selectedSquare == nil)

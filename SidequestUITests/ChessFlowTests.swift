@@ -2,6 +2,22 @@ import XCTest
 
 final class ChessFlowTests: XCTestCase {
   @MainActor
+  func testCoordinateAlternativesHaveUsableTargetsAndAcceptEdgeTaps() {
+    let app = launch(color: "white")
+    app.buttons["game.start"].tap()
+    tapEdge(app.buttons["chess.piece.g6"], in: app)
+    XCTAssertTrue(app.staticTexts["chess.selection"].label.contains("g6"))
+    tapEdge(app.buttons["chess.file"], in: app)
+    XCTAssertTrue(app.buttons["File G"].waitForExistence(timeout: 3))
+    app.buttons["File G"].tap()
+    tapEdge(app.buttons["chess.rank"], in: app)
+    XCTAssertTrue(app.buttons["Rank 7"].waitForExistence(timeout: 3))
+    app.buttons["Rank 7"].tap()
+    tapEdge(app.buttons["chess.submit"], in: app)
+    XCTAssertTrue(app.staticTexts["chess.completed"].waitForExistence(timeout: 3))
+  }
+
+  @MainActor
   func testWhiteFixtureWrongMovesResetAndCompletedRevisit() {
     checkFixture(color: "white", queen: "g6", opponent: "h8", wrong: "g5", mate: "g7")
   }
@@ -143,6 +159,14 @@ final class ChessFlowTests: XCTestCase {
       scroll.frame.contains(element.frame),
       "Bring the entire control into view before tapping: \(element.identifier) \(element.frame) in \(scroll.frame)."
     )
+  }
+
+  @MainActor
+  private func tapEdge(_ element: XCUIElement, in app: XCUIApplication) {
+    reveal(element, in: app)
+    XCTAssertGreaterThanOrEqual(element.frame.width, 44)
+    XCTAssertGreaterThanOrEqual(element.frame.height, 44)
+    element.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.8)).tap()
   }
 
   @MainActor
