@@ -19,6 +19,7 @@ At the start of a new Sidequest planning or implementation chat, read [docs/MVP.
 - The user authorizes feature-branch commits and pushes, and PR merging after the review loop and verification gates in [docs/REVIEW.md](docs/REVIEW.md) pass. Private GitHub Releases follow the authorized [release policy](docs/RELEASES.md); other publishing requires separate authorization. Apply the spending approval rule below before actions that may incur charges.
 - GitHub CLI (`gh`) commands for Sidequest are authorized within these project rules. This authorization preserves the feature-branch, review, publishing, and spending requirements.
 - Use US English for new prose, comments, and identifiers. Preserve existing contracts and quotations.
+- Always write the project and app name as `sidequest` in lowercase, including in headings, sentence starts, documentation, UI copy, comments, and display names. Preserve existing technical identifiers, paths, and external quotations unless explicitly asked to change them.
 - GitHub Issues own task scope and dependencies. The GitHub Project owns workflow status. Repository docs own the product brief, vocabulary, and decisions.
 - Make each issue independently reviewable. Link prerequisites rather than expanding the issue into neighboring work.
 - After resolving an issue or ticket, complete the chat checkpoint below before starting or assigning the next issue.
