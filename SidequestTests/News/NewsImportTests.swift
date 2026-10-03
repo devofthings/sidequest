@@ -89,7 +89,10 @@ final class NewsImportTests: XCTestCase {
   }
 
   func testGregorianCenturyLeapRulesAndHistoricDates() throws {
-    for raw in ["1500-02-29T00:00:00Z", "1700-02-29T00:00:00Z", "1900-02-29T00:00:00Z"] {
+    for raw in [
+      "0000-01-01T00:00:00Z", "1500-02-29T00:00:00Z", "1700-02-29T00:00:00Z",
+      "1900-02-29T00:00:00Z",
+    ] {
       XCTAssertNil(try NewsTimestamp.parse(raw))
     }
     for (raw, expected) in [

@@ -13,7 +13,7 @@ The top-level object has `schemaVersion: 1` and a `snapshots` array. Each snapsh
 | `id` | Unique, stable, nonblank string; use a source-based news ID rather than its position. |
 | `headline`, `excerpt`, `publisher` | Nonblank strings. Preserve the source-provided excerpt and attribution; no full-article extraction or AI rewriting. |
 | `sourceURL` | Absolute HTTP(S) original article URL with a host. |
-| `capturedAt` | Actual capture timestamp in ISO 8601 with a time zone, such as `2026-10-03T19:00:00Z`; fractional seconds are accepted. Use the full RFC 3339 form (four-digit year, valid Gregorian date, hours 00–23, minutes/seconds 00–59, and Z or a valid signed hours:minutes offset). Leap-second values are unsupported. |
+| `capturedAt` | Actual capture timestamp in ISO 8601 with a time zone, such as `2026-10-03T19:00:00Z`; fractional seconds are accepted. Use the full RFC 3339 form (four-digit year 0001–9999, valid proleptic Gregorian date, hours 00–23, minutes/seconds 00–59, and Z or a valid signed hours:minutes offset). Year 0000 and leap-second values are unsupported. |
 | `publishedAt` | Optional publication timestamp, or null when the precise time is unknown. Never invent an exact time from a day-only source date. |
 | `isSample` | `true` for fictional examples; `false` for real source snapshots. |
 
