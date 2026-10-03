@@ -2,6 +2,10 @@
 
 Sidequest is a private iPhone MVP mixing news and quick games in one feed. App implementation has not started.
 
+## Context for new chats
+
+At the start of a new Sidequest planning or implementation chat, read [docs/MVP.md](docs/MVP.md) and [docs/DECISIONS.md](docs/DECISIONS.md) for the confirmed product scope and choices. Use [GitHub Issues](https://github.com/devofthings/sidequest/issues) for current task scope and progress; consult an issue before starting its work. When the user changes a decision, update the authoritative document so future chats inherit the new context.
+
 ## Start an issue
 
 1. Read the assigned GitHub issue, its dependencies, and [docs/MVP.md](docs/MVP.md).
