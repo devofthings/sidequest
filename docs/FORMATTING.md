@@ -15,6 +15,35 @@ Replace the angle-bracket arguments with actual file paths; quote paths containi
 
 The repository has no Swift sources yet. The commands above were verified against a temporary SwiftUI-shaped fixture outside Git; they are not a Sidequest app build or test result.
 
+## Install commit checks
+
+From the repository root, run the installer once in each clone:
+
+```sh
+./scripts/install-git-hooks.sh
+```
+
+The installer selects the tracked `.githooks` directory using local `core.hooksPath`. It refuses to replace a different effective hooks path; reconcile existing hooks explicitly before installing. Git local configuration is shared by linked worktrees belonging to the same clone, so enabling it also affects those worktrees. Installing in a separate clone does not change another clone's configuration.
+
+The hook checks staged whitespace with `git diff --cached --check`. It then strictly lints staged regular `.swift` file blobs using the staged `.swift-format`. It supports partially staged files and unusual filenames, and leaves the index and working tree unchanged. Deletions and symlinks are skipped for Swift lint. Swift lint excludes `.build`, `.swiftpm`, `build`, `DerivedData`, `Pods`, `Vendor`, `vendor`, and `Generated` at the root, plus nested `Generated` directories. All staged files still receive the whitespace check. Review these exclusions when source ownership or generated paths change.
+
+Documentation-only commits do not require the formatter. If staged Swift files fail, use the formatting commands above, inspect the diff, and stage the intended changes before retrying. Invalid or missing staged configuration and an unavailable formatter reject commits containing Swift source. Keep builds and gameplay tests in the separate verification workflow.
+
+The hook and installer use the system Bash and Git; Swift lint uses the existing Xcode formatter. There is no Husky/npm dependency. Hooks are local feedback and can be bypassed; successful hook execution does not replace independent review or CI verification.
+
+To remove this clone's Sidequest selection, first confirm that `git config --local --get core.hooksPath` reports `.githooks`, then run `git config --local --unset core.hooksPath`. Any existing global hooks path becomes effective again.
+
+## Verify tooling changes
+
+Run these checks from the repository root with Python 3, Git, Bash, and the selected Xcode formatter available:
+
+```sh
+bash -n .githooks/pre-commit scripts/install-git-hooks.sh
+python3 scripts/test-git-hooks.py
+```
+
+The integration checks exercise actual commits and installation in temporary repositories. They cover staged/unstaged differences, unusual paths, renames/deletions, whitespace failures, staged configuration, formatter availability, generated files, symlinks, and preservation of existing hooks configuration. Python is used for these checks only; the commit hook and installer do not require it. These are tooling checks, not app or gameplay tests.
+
 ## Toolchain and CI
 
 Use the same selected Xcode toolchain locally and in CI. Check availability with `xcrun --find swift-format` and record `xcodebuild -version`; the installed formatter reports `main` as its version, so that string alone does not pin a reproducible formatter. The [foundation](https://github.com/devofthings/sidequest/issues/1) must select and document the app's supported toolchain. Review formatting differences when upgrading it and update the exported configuration deliberately.

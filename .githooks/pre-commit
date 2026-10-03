@@ -1,0 +1,51 @@
+#!/bin/bash
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+if ! git diff --cached --check; then
+  printf '%s\n' 'Pre-commit: fix staged whitespace errors before committing.' >&2
+  exit 1
+fi
+
+check_dir=$(mktemp -d "${TMPDIR:-/tmp}/sidequest-pre-commit.XXXXXX")
+trap 'rm -rf "$check_dir"' EXIT
+git diff --cached --name-only --diff-filter=ACMR -z > "$check_dir/paths"
+formatter_ready=false
+
+while IFS= read -r -d '' source_path; do
+  case "$source_path" in
+    .build/*|.swiftpm/*|build/*|DerivedData/*|Pods/*|Vendor/*|vendor/*|Generated/*|*/Generated/*) continue ;;
+    *.swift) ;;
+    *) continue ;;
+  esac
+
+  # Read the index entry, including its mode, without following working-tree links.
+  entry=$(git --literal-pathspecs ls-files --stage -- "$source_path")
+  mode=${entry%% *}
+  case "$mode" in
+    100644|100755) ;;
+    *) continue ;;
+  esac
+  remainder=${entry#* }
+  blob=${remainder%% *}
+
+  if [ "$formatter_ready" = false ]; then
+    if ! git show :.swift-format > "$check_dir/configuration"; then
+      printf '%s\n' 'Pre-commit: staged .swift-format is missing; include the formatter configuration.' >&2
+      exit 1
+    fi
+    if ! xcrun --find swift-format >/dev/null 2>&1; then
+      printf '%s\n' 'Pre-commit: swift-format is unavailable; select the documented Xcode toolchain.' >&2
+      exit 1
+    fi
+    formatter_ready=true
+  fi
+
+  if ! git cat-file blob "$blob" |
+    xcrun swift-format lint --strict --configuration "$check_dir/configuration" \
+      --assume-filename "./$source_path" -; then
+    printf 'Pre-commit: staged Swift check failed for %q. Format and stage the intended changes, then retry.\n' "$source_path" >&2
+    exit 1
+  fi
+done < "$check_dir/paths"
