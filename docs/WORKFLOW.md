@@ -4,11 +4,14 @@ The private [Sidequest MVP board](https://github.com/users/devofthings/projects/
 
 | Status | Meaning |
 | --- | --- |
+| Ideas | Suggestions awaiting evaluation and scope; not selected or authorized implementation work. |
 | Backlog | Planned work that has not been selected or whose prerequisites remain incomplete. |
 | Ready | Scope is clear, prerequisites are complete, and work can start. |
 | In progress | An agent or person is actively working on the issue. |
 | Review | The acceptance criteria are implemented, validation is recorded, and the result is ready for review. |
 | Done | The work is merged or explicitly accepted, and the issue is closed. |
+
+Capture new suggestions in Ideas. Once an idea becomes a bounded GitHub issue with an outcome and acceptance criteria, move it to Backlog; move it to Ready only when scope and prerequisites permit work. Ideas do not expand the confirmed MVP or lift the implementation hold. Keep proposed product changes subject to the existing decision process.
 
 Before starting an issue, confirm its prerequisites are complete and set its Project status to In progress. Move it to Review when a reviewable result and verification evidence are available, then run the [fresh-agent review and merge loop](REVIEW.md). After merge, close completed implementation issues, set them to Done, and move dependent issues to Ready when all their prerequisites are complete. Product-decision issues stay open until the user selects the proposed behavior or provider; merging research does not select it.
 
