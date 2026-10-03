@@ -21,6 +21,8 @@ The overall experience is evaluated through personal testing; a quantitative ret
 
 ## Deferred work
 
+The shared design baseline, wireframes, and visual polish follow the first MVP and personal test in [design task #13](https://github.com/devofthings/sidequest/issues/13). Use simple, consistent UI for the MVP based on the confirmed behavior above; a Figma or wireframe approval is not an MVP prerequisite.
+
 Defer accounts, ads, payments, licensed game catalogs, and social-platform integrations. The user confirmed these boundaries for the first prototype. Automatic scraping and news refreshing are also deferred in favor of manual imports.
 
 Phase two will introduce a backend for accounts and synced preferences, plus high scores and leaderboards. Backend provider and gamification rules are still open decisions; they are outside the first-test scope.

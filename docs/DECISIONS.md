@@ -26,7 +26,7 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | Durable PR handoff when the author cannot dispatch reviewers | Accepted workflow | Lead implementation choice addressing the user's stranded-review concern on October 3, 2026. Use the [review queue](REVIEW.md#review-handoff-queue); active leads check it before new work. No recurring monitoring was enabled. |
 | Check chat steering after every resolved ticket | Accepted | User requested a checkpoint before continuing to another task. Follow the [after-ticket chat checkpoint](../AGENTS.md#after-ticket-chat-checkpoint). |
 | Assigned issues for unanswered user requests | Accepted | User wants missed chat requests tracked for approval or refusal. Follow the [decision-request workflow](WORKFLOW.md#unanswered-decision-requests); record outcomes and update scoped agent guidance. |
-| Feature branches only; defer GitHub main protection | Accepted | User chose to proceed without a plan upgrade or branch protection. Use the review and verification gates with agent-controlled merging in [REVIEW.md](REVIEW.md); see issue #23. |
+| Feature branches only; defer GitHub main protection | Accepted | User chose to proceed without a plan upgrade or branch protection and reaffirmed on October 3, 2026 that every change, including documentation, must have a PR. Use the review and verification gates with agent-controlled merging in [REVIEW.md](REVIEW.md); see issue #23. |
 | Explicit user approval before spending | Accepted | User requires approval before any purchase or action that may incur charges; see the spending approval rule in [AGENTS.md](../AGENTS.md). |
 | Unit and end-to-end tests; skip TDD | Accepted | User explicitly requested unit and end-to-end tests and declined TDD on October 3, 2026, superseding the earlier optional-TDD choice. Implement behavior, then verify it with meaningful tests before merging; follow [AGENTS.md](../AGENTS.md#verification). |
 | CI in the backlog; no server backend for now | Accepted | User clarified the request as CI planning; see issue #15. |
@@ -35,6 +35,7 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | High scores and leaderboards in phase two | Accepted | User confirmed delivery alongside accounts; the private first MVP remains unchanged. |
 | English news for the first test | Accepted | User choice; documentation is also written in US English. |
 | Validate enjoyment of the mixed feed first | Accepted | User chose enjoyment and willingness to reopen as the initial hypothesis. |
+| Shared design baseline and wireframes after the MVP | Accepted | User deferred this work on October 3, 2026. Build the first MVP with simple, consistent UI following the confirmed product behavior; use personal-test feedback to agree on wireframes and visual direction in issue #13 afterward. Figma is a proposed tool, not a selected dependency. |
 | Sudoku, memory, chess puzzles, and a bubble shooter | Accepted | User selected four game types and clarified the ball game as a bubble shooter. |
 | Manually imported news snapshots | Accepted | User chose real snapshot content before automatic refreshing. |
 | Shuffle news and games; reset skipped unfinished games | Accepted | User chose shuffled cards and fresh attempts. |

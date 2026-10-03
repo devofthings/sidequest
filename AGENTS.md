@@ -34,7 +34,8 @@ Before assigning edits in a fresh or handed-off checkout, follow [agent setup](d
 - Use US English for new prose, comments, and identifiers. Preserve existing contracts and quotations.
 - GitHub Issues own task scope and dependencies. The GitHub Project owns workflow status. Repository docs own the product brief, vocabulary, and decisions.
 - Agents may create and address bounded bug-fix tickets and necessary subtasks within already-approved scope. New or expanded features must be captured in Ideas and receive explicit user agreement before any work beyond recording the proposal. Follow [ticket authorization](docs/WORKFLOW.md#ticket-authorization) before creating, promoting, or assigning work; existing implementation holds and spending/review rules still apply.
-- Make each issue independently reviewable. Link prerequisites rather than expanding the issue into neighboring work.
+- Submit every repository change, including documentation, through a PR before reporting it as delivered. Make each issue independently reviewable; link prerequisites rather than expanding the issue into neighboring work.
+- Schedule the shared design baseline and wireframes after the MVP and personal test; follow the accepted [design timing](docs/MVP.md#deferred-work) when planning UI work or dependencies for issue #13.
 - After resolving an issue or ticket, complete the chat checkpoint below before starting or assigning the next issue.
 - Follow [ADR 0003](docs/adr/0003-hexagonal-architecture.md) when adding core behavior, ports, or adapters. Keep game rules separate from presentation and introduce small interfaces at replaceable boundaries.
 - Use deterministic fixtures for tests. Keep live news retrieval out of repeatable test runs.
