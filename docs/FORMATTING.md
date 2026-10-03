@@ -44,7 +44,7 @@ bash -n .githooks/pre-commit scripts/install-git-hooks.sh
 python3 scripts/test-git-hooks.py
 ```
 
-The integration checks exercise actual commits and installation in temporary repositories. They cover staged/unstaged differences, unusual paths, renames/deletions, whitespace failures, staged configuration, formatter availability, generated files, symlinks, and preservation of existing hooks configuration, repository hooks, and the Tokensave forwarding chain. Python is used for these checks only; the commit hook and installer do not require it. These are tooling checks, not app or gameplay tests.
+The integration checks exercise actual commits and installation in temporary repositories. They cover staged/unstaged differences, unusual paths, renames/deletions, whitespace failures, staged configuration, formatter availability, generated files, symlinks, staged type changes between symlinks and regular Swift source, and preservation of existing hooks configuration, repository hooks, and the Tokensave forwarding chain. Python is used for these checks only; the commit hook and installer do not require it. These are tooling checks, not app or gameplay tests.
 
 ## Toolchain and CI
 

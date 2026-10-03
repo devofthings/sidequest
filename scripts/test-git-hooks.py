@@ -129,6 +129,47 @@ class CommitHookTests(unittest.TestCase):
         self.git("add", "Link.swift")
         self.commit(True)
 
+    def test_unformatted_symlink_to_regular_source_rejected(self):
+        path = self.repo / "Probe.swift"
+        path.symlink_to("missing-target")
+        self.git("add", "Probe.swift")
+        self.commit(True)
+        path.unlink()
+        self.stage("Probe.swift", BAD)
+        path.write_text(GOOD)
+        self.assertEqual(self.git("diff", "--cached", "--name-status").stdout,
+                         "T\tProbe.swift\n")
+        self.assertIn("staged Swift check failed", self.commit(False).stderr)
+        self.assertEqual(path.read_text(), GOOD)
+        self.assertEqual(self.git("show", ":Probe.swift").stdout, BAD)
+
+    def test_formatted_type_change_commits_and_staged_symlink_skips_lint(self):
+        path = self.repo / "Probe.swift"
+        path.symlink_to("missing-target")
+        self.git("add", "Probe.swift")
+        self.commit(True)
+        path.unlink()
+        self.stage("Probe.swift", GOOD)
+        path.write_text(BAD)
+        self.assertEqual(self.git("diff", "--cached", "--name-status").stdout,
+                         "T\tProbe.swift\n")
+        self.commit(True)
+        self.assertEqual(self.git("show", "HEAD:Probe.swift").stdout, GOOD)
+        self.assertEqual(path.read_text(), BAD)
+        path.unlink()
+        path.symlink_to("missing-target")
+        self.git("add", "Probe.swift")
+        fake_bin = self.repo / "fake-bin"
+        fake_bin.mkdir()
+        fake = fake_bin / "xcrun"
+        fake.write_text("#!/bin/sh\nexit 99\n")
+        fake.chmod(0o755)
+        self.env["PATH"] = str(fake_bin) + os.pathsep + self.env["PATH"]
+        self.assertEqual(self.git("diff", "--cached", "--name-status").stdout,
+                         "T\tProbe.swift\n")
+        self.commit(True)
+        self.assertTrue(path.is_symlink())
+
     def test_installer_is_explicit_and_repeatable(self):
         self.git("config", "--unset", "core.hooksPath")
         shutil.copytree(ROOT / ".githooks", self.repo / ".githooks")

@@ -10,7 +10,7 @@ fi
 
 check_dir=$(mktemp -d "${TMPDIR:-/tmp}/sidequest-pre-commit.XXXXXX")
 trap 'rm -rf "$check_dir"' EXIT
-git diff --cached --name-only --diff-filter=ACMR -z > "$check_dir/paths"
+git diff --cached --name-only --diff-filter=ACMRT -z > "$check_dir/paths"
 formatter_ready=false
 
 while IFS= read -r -d '' source_path; do
