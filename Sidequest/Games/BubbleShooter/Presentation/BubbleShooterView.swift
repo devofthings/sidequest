@@ -3,6 +3,7 @@ import SwiftUI
 @MainActor
 struct BubbleShooterView: View {
   let controller: BubbleShooterController
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   var body: some View {
     VStack(spacing: 12) {
@@ -21,13 +22,18 @@ struct BubbleShooterView: View {
       if controller.game.outcome == .playing {
         Text("Next bubble: \(controller.game.nextColor.name), \(controller.game.nextColor.symbol)")
         Text("Aim: \(controller.aimDegrees, specifier: "%.0f")°")
+          .accessibilityIdentifier("bubble.angle")
         Slider(
-          value: Binding(get: { controller.aimDegrees }, set: { controller.aim(degrees: $0) }),
-          in: -60...60
+          value: Binding(
+            get: { (controller.aimDegrees + 60) / 120 },
+            set: { controller.aim(degrees: $0 * 120 - 60) }),
+          in: 0...1
         )
         .disabled(!controller.canFire)
         .accessibilityLabel("Aim")
-        .accessibilityValue("\(Int(controller.aimDegrees)) degrees; negative left, positive right")
+        .accessibilityHint(
+          "Aim from 60 degrees left to 60 degrees right of vertical. The angle is shown above."
+        )
         .accessibilityIdentifier("bubble.aim")
         Button("Fire") { controller.fire() }
           .buttonStyle(.borderedProminent)
@@ -76,7 +82,9 @@ struct BubbleShooterView: View {
           }
         }
         if let flight = controller.flight {
-          bubble(flight.color, at: flight.position, scale: scale)
+          bubble(
+            flight.color, at: reduceMotion ? BubbleGeometry.launcher : flight.position, scale: scale
+          )
         } else if controller.game.outcome == .playing {
           bubble(controller.game.nextColor, at: BubbleGeometry.launcher, scale: scale)
         }
