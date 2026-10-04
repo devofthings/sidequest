@@ -9,3 +9,7 @@ These choices were resolved through the agent-grill interview for #2. Pure value
 ## Endless challenge identity
 
 `ChallengeRandom` owns reproducible SplitMix64 value state for local generation; production seeds each session from system randomness. `GameLifecycle(completed:)` restores only trusted archived completion with visibility false; external input never constructs completed state. [ENDLESS.md](../../docs/ENDLESS.md) owns generated identities and retention.
+
+## Demo news and cadence #106
+
+Distinguish immutable story identity from feed appearance identity. A repeated news appearance has its own CardID and retains its unchanged NewsSnapshot. Pure cadence owns game count, news cursor and ordinal; presentation and persistence stay outside it. Finite historical routes can default appearance IDs to snapshot IDs. See [demo news policy](../../docs/DEMO_NEWS.md).

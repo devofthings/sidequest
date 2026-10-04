@@ -84,3 +84,7 @@ Follow [INSTALL.md](docs/INSTALL.md) for the verified Xcode project, shared sche
 ## Endless feed #104
 
 The user approved extending production beyond its finite deck on October 4, 2026. Before changing replenishment, generated challenges, adapter eviction, or completed-result restoration, read [ENDLESS.md](docs/ENDLESS.md). Keep challenge identity/configuration stable per card, preserve manual settled paging and explicit start/reset, and retain completed revisits using lightweight state. Current optional defaults are news once and validated Chess reuse; they are stated assumptions, not owner answers. The #104 branch implements these policies; actual checks and remaining delivery gates are recorded in ENDLESS.md. Preserve the immutable finite-MVP release evidence.
+
+## Demo news and cadence #106
+
+The owner approved more fictional demo articles, an article after four or five games, and removal of the bottom counter on October 4. Follow the lead-selected five-game cadence and nil-only demo policy; preserve private captures and intentional empty imports. This supersedes the initial news-once default, not game generation or the manual release policy. See [demo news policy](docs/DEMO_NEWS.md).

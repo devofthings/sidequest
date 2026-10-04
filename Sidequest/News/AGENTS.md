@@ -33,3 +33,7 @@ Controlled offline tests prove immutable late reads cannot adopt state, failed p
 ## Asynchronous replacement #104
 
 Capture the originating session/request before the first import/load await. Prepare all fallible generated-game/news state before persistence. Recheck identity after suspension, then exclusively acquire the main-actor save/adoption lease. Always release it on failure or after commit. After successful durable save, synchronously adopt news and feed even if canceled; no new check/throw/await may split that boundary. Imported stories appear once per session under the stated default. Exact initial game-ID collisions reject; later generated collisions skip that game sequence instead of banning a news-ID prefix. See [ENDLESS.md](../../docs/ENDLESS.md).
+
+## Demo news and cadence #106
+
+Bundle 30 original clearly fictional demo stories separately from the legacy two samples. Resolve only confirmed missing storage to demos, never empty/corrupt/unavailable data, and never persist demos automatically. Preserve import bytes and source IDs, and use truthful sample labels/source-placeholder wording. See [demo news policy](../../docs/DEMO_NEWS.md).

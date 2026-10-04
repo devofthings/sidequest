@@ -21,3 +21,7 @@ Integration #9 adds an optional accessible 44-point News action to the existing 
 ## Endless feed #104
 
 The user approved extending production beyond its finite deck on October 4, 2026. Before changing replenishment, generated challenges, adapter eviction, or completed-result restoration, read [ENDLESS.md](../../docs/ENDLESS.md). Keep challenge identity/configuration stable per card, preserve manual settled paging and explicit start/reset, and retain completed revisits using lightweight state. Current optional defaults are news once and validated Chess reuse; they are stated assumptions, not owner answers. The #104 branch implements these policies; actual checks and remaining delivery gates are recorded in ENDLESS.md. Preserve the immutable finite-MVP release evidence.
+
+## Demo news and cadence #106
+
+Interleave an available story pool after exactly five games, carrying cadence across batch boundaries and preserving history on revisits. Remove the bottom counter completely; native tests observe settled semantic card identity without hidden numeric state or raw-ID speech. Preserve native gesture and lifecycle boundaries. See [demo news policy](../../docs/DEMO_NEWS.md).

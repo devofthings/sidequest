@@ -44,3 +44,7 @@ The deployment target is iOS 17.0; execution there is unverified. Simulator-firs
 ## Approved follow-up: endless feed
 
 On October 4, 2026, the user requested endless scrolling with automatically generated games in [#104](https://github.com/devofthings/sidequest/issues/104). Manual swiping continues beyond the initial cards using locally generated challenges; explicit tap-to-play and skip/reset remain accepted. The working defaults are each imported story once per session and reused validated Chess puzzles, with fresh Sudoku, Memory, and Bubble variants. Optional owner preferences are pending. The #104 source branch implements this direction; delivery remains pending actual full verification, fresh review, and the merge gates: the immutable `2026.10.14` release remains the verified finite-deck MVP. See [ENDLESS.md](ENDLESS.md).
+
+## Approved follow-up: demo news cadence
+
+The owner approved more clearly fictional English articles for realistic private testing, one article after four or five games, and removal of the visible bottom card counter in [#106](https://github.com/devofthings/sidequest/issues/106). The lead chose five and a 30-story original demo pool for genuinely absent saved news; imported or intentionally empty news stays authoritative. This supersedes the initial news-once/global mixed-shuffle default. The follow-up is in progress, not yet delivered; see [DEMO_NEWS.md](DEMO_NEWS.md).

@@ -20,3 +20,7 @@ Integration #9’s readiness PR was partial until actual selected published-tag 
 ## Endless follow-up evidence
 
 [ENDLESS.md](ENDLESS.md) owns #104's generated challenge, bounded adapter, retained lightweight-history, transaction, and verification decisions. Keep current-source behavior distinct from immutable `2026.10.14` finite-deck delivery. Optional news-once and Chess-reuse policies are explicitly labeled implementation defaults, not user replies. Physical-device and personal enjoyment evidence remain outside automated delivery.
+
+## Demo news and cadence #106
+
+DEMO_NEWS.md owns the approved #106 cadence, fictional-data, absence/empty/error and counter-removal decisions. Update current contracts consistently, distinguish source stories from appearances, and preserve immutable finite-release and historical test evidence. See [demo news policy](DEMO_NEWS.md).
