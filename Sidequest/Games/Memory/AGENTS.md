@@ -29,3 +29,7 @@ Actual implementation check: Xcode 27.0/Swift 6.4 built the Debug app and passed
 ## Frozen generated layouts #104
 
 Production generates each six-pair layout before publishing its card and injects that immutable `MemoryRules` value through the board factory. Skip/reset and a later new start reuse the same layout. Mismatch tasks remain controller-owned/cancellable. Completed rule values rehydrate in a fresh inactive controller after eviction. Legacy finite harnesses retain their original layout policy. See [ENDLESS.md](../../../docs/ENDLESS.md).
+
+## Stable tile and feedback geometry #108
+
+Reserve the natural footprint of all six symbols and the hidden question mark at the current font/text size, so revealing a differently shaped glyph cannot resize a tile or its grid row. Reserve mismatch/completion feedback separately. Read [stable layout](../../../docs/GAME_LAYOUT.md) before changing these regions; full feedback and all tiles remain reachable through the feed's owned scroller.

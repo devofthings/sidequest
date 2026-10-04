@@ -11,16 +11,35 @@ struct ChessPuzzleView: View {
         .accessibilityIdentifier("chess.side")
       Text("Find checkmate in one move.")
       board
-      if controller.attempt?.isSolved == true {
-        Text("Checkmate! \(controller.puzzle.sideToMove.name) wins.")
-          .font(.headline)
-          .accessibilityIdentifier("chess.completed")
-      } else {
+      StableGameRegion {
+        ZStack {
+          Text("No piece selected")
+          ForEach(movingSquares, id: \.self) { square in
+            Text(
+              "Selected: \(controller.puzzle.board[square]?.label ?? "Piece") on \(square.coordinate)"
+            )
+          }
+        }
+      } content: {
         Text(selectionLabel)
           .accessibilityIdentifier("chess.selection")
-        pieceControls
-        coordinateControls
-        if let feedback = controller.attempt?.feedback {
+      }
+      pieceControls
+      coordinateControls
+      StableGameRegion {
+        ZStack {
+          Text(feedbackLabel(.chooseMovingPiece))
+          Text(feedbackLabel(.illegalMove))
+          Text(feedbackLabel(.notCheckmate))
+          Text(feedbackLabel(.checkmate))
+          Text("Checkmate! \(controller.puzzle.sideToMove.name) wins.").font(.headline)
+        }
+      } content: {
+        if controller.attempt?.isSolved == true {
+          Text("Checkmate! \(controller.puzzle.sideToMove.name) wins.")
+            .font(.headline)
+            .accessibilityIdentifier("chess.completed")
+        } else if let feedback = controller.attempt?.feedback {
           Text(feedbackLabel(feedback))
             .accessibilityIdentifier("chess.feedback")
         }
@@ -59,14 +78,18 @@ struct ChessPuzzleView: View {
     .accessibilityLabel("Chessboard, a1 at bottom left")
   }
 
+  private var movingSquares: [ChessSquare] {
+    ChessSquare.displayOrder.filter {
+      controller.puzzle.board[$0]?.side == controller.puzzle.sideToMove
+    }
+  }
+
   private var pieceControls: some View {
     VStack(spacing: 8) {
       Text("Select a piece")
         .font(.headline)
       ForEach(
-        ChessSquare.displayOrder.filter {
-          controller.puzzle.board[$0]?.side == controller.puzzle.sideToMove
-        },
+        movingSquares,
         id: \.self
       ) { square in
         Button {

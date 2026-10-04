@@ -26,7 +26,7 @@ The recorded MVP and test results describe that selected release. Later document
 
 Game cards require **Tap to play**. Skipping or backgrounding resets unfinished attempts; completed results survive revisits during the session.
 
-Current source supports full-card native vertical paging: swipe up/down directly on a card or use the compact **Feed navigation** menu. Overflowing content scrolls within its card; a new outward gesture at its top/bottom edge changes cards. See [feed navigation](docs/FEED.md#navigation-and-eligibility).
+Current source supports full-card native vertical paging: swipe up/down directly on a card or use the compact **Feed navigation** menu. Overflowing content scrolls within its card; a new outward gesture at its top/bottom edge changes cards. See [feed navigation](docs/FEED.md#navigation-and-eligibility). Game boards and primary controls retain their geometry when feedback or results change; [stable layout](docs/GAME_LAYOUT.md) describes the current source correction and verification.
 
 | Game | Merged implementation | Details / next step |
 | --- | --- | --- |
@@ -42,12 +42,12 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 50 | 4,218 |
+| App | 51 | 4,346 |
 | Unit tests | 23 | 3,539 |
-| UI tests | 12 | 1,652 |
-| **Total** | **85** | **9,409** |
+| UI tests | 13 | 1,908 |
+| **Total** | **87** | **9,793** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+6,816 / −470 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+7,223 / −493 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
@@ -74,6 +74,7 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 - [Agent guidance](AGENTS.md): how to pick up and complete an issue.
 - [Coding rules](docs/CODING.md): ownership, Swift interfaces, state, concurrency, errors, and verification for agents.
 - [Card and lifecycle contract](docs/CONTRACT.md): stable IDs, validated news values, shuffled decks, and explicit start/reset effects.
+- [Stable game layout](docs/GAME_LAYOUT.md): measured feedback regions, completion controls, and iPhone review checks.
 - [Feed presentation](docs/FEED.md): manual navigation, bounded game adapters, scene handling, and injected card surfaces.
 - [Demo news and cadence](docs/DEMO_NEWS.md): original fictional stories, nil-only fallback, unique appearances, and five-game cadence.
 - [Endless feed](docs/ENDLESS.md): local generation, stable history, completed restoration, atomic replacement, and verification.

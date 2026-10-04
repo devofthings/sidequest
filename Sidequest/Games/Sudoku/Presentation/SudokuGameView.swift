@@ -48,14 +48,23 @@ struct SudokuGameView: View {
         .buttonStyle(.bordered)
         .disabled(controller.selectedCell == nil || board.isComplete)
         .accessibilityIdentifier("sudoku.clear")
-        Text(
-          board.isComplete
-            ? "Sudoku solved!"
-            : (board.conflicts.isEmpty
-              ? "Select an empty cell, then enter a number." : "Conflicts need correction.")
-        )
-        .font(.body.bold())
-        .accessibilityIdentifier("sudoku.status")
+        StableGameRegion {
+          ZStack {
+            Text("Sudoku solved!")
+            Text("Select an empty cell, then enter a number.")
+            Text("Conflicts need correction.")
+          }
+          .font(.body.bold())
+        } content: {
+          Text(
+            board.isComplete
+              ? "Sudoku solved!"
+              : (board.conflicts.isEmpty
+                ? "Select an empty cell, then enter a number." : "Conflicts need correction.")
+          )
+          .font(.body.bold())
+          .accessibilityIdentifier("sudoku.status")
+        }
       }
     }
   }

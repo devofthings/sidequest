@@ -354,6 +354,102 @@
         "SidequestUITests/NewsPresentationTests.swift",
         "Sidequest/Resources/"
       ]
+    },
+    "SidequestUITests/StableGameLayoutTests/testSudokuFeedbackAndCompletionKeepBoardAndControlsStable": {
+      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
+      "paths": [
+        "SidequestUITests/StableGameLayoutTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/StableGameLayoutTests/testLargestTextSudokuFeedbackAndCompletionKeepBoardAndControlsStable": {
+      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
+      "paths": [
+        "SidequestUITests/StableGameLayoutTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/StableGameLayoutTests/testMemoryMismatchAndCompletionKeepTilesStable": {
+      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
+      "paths": [
+        "SidequestUITests/StableGameLayoutTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/StableGameLayoutTests/testLargestTextMemoryMismatchAndCompletionKeepTilesStable": {
+      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
+      "paths": [
+        "SidequestUITests/StableGameLayoutTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/StableGameLayoutTests/testChessSelectionFeedbackAndCompletionKeepBoardAndControlsStable": {
+      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
+      "paths": [
+        "SidequestUITests/StableGameLayoutTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/StableGameLayoutTests/testLargestTextChessSelectionFeedbackAndCompletionKeepBoardAndControlsStable": {
+      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
+      "paths": [
+        "SidequestUITests/StableGameLayoutTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/StableGameLayoutTests/testBubbleFeedbackCompletionAndReplayKeepBoardAndControlsStable": {
+      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
+      "paths": [
+        "SidequestUITests/StableGameLayoutTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/StableGameLayoutTests/testLargestTextBubbleFeedbackCompletionAndReplayKeepBoardAndControlsStable": {
+      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
+      "paths": [
+        "SidequestUITests/StableGameLayoutTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
     }
   },
   "required": [
