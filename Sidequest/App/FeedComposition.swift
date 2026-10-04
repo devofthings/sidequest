@@ -138,7 +138,7 @@ final class FeedComposition {
                   controller = BubbleShooterController(
                     runtime: runtime,
                     pause: {
-                      try await Task.sleep(for: .milliseconds(100))
+                      try await Task.sleep(for: .milliseconds(250))
                     })
                 } else {
                   controller = BubbleShooterController(runtime: runtime)

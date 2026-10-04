@@ -10,12 +10,12 @@ final class BubbleFlowTests: XCTestCase {
     }
     XCTAssertTrue(app.staticTexts["bubble.outcome"].waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
-    app.buttons["feed.next"].tap()
-    app.buttons["feed.previous"].tap()
+    app.nextFeedCard()
+    app.previousFeedCard()
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
     reveal(app.buttons["bubble.replay"], in: app)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height, 44)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.width, 44)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height + 0.001, 44)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.width + 0.001, 44)
     app.buttons["bubble.replay"].tap()
     XCTAssertFalse(app.staticTexts["bubble.outcome"].exists)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
@@ -33,8 +33,8 @@ final class BubbleFlowTests: XCTestCase {
     XCTAssertTrue(app.staticTexts["bubble.outcome"].waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You lost")
     reveal(app.buttons["bubble.replay"], in: app)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height, 44)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.width, 44)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height + 0.001, 44)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.width + 0.001, 44)
     app.buttons["bubble.replay"].tap()
     XCTAssertFalse(app.staticTexts["bubble.outcome"].exists)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
@@ -49,8 +49,8 @@ final class BubbleFlowTests: XCTestCase {
     app.buttons["bubble.fire"].tap()
     XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
     XCTAssertFalse(app.buttons["bubble.fire"].isEnabled)
-    app.buttons["feed.next"].tap()
-    app.buttons["feed.previous"].tap()
+    app.nextFeedCard()
+    app.previousFeedCard()
     XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
     XCTAssertFalse(app.buttons["bubble.fire"].exists)
     start(app)
@@ -72,74 +72,97 @@ final class BubbleFlowTests: XCTestCase {
     XCTAssertEqual(app.staticTexts["feed.position"].label, position)
     reveal(app.buttons["bubble.fire"], in: app)
     XCTAssertTrue(app.buttons["bubble.fire"].isHittable)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.fire"].frame.height, 44)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.fire"].frame.height + 0.001, 44)
     app.buttons["bubble.fire"].tap()
     waitForShots(1, in: app)
     XCTAssertEqual(app.staticTexts["feed.position"].label, position)
-    app.buttons["feed.next"].tap()
-    app.buttons["feed.previous"].tap()
+    app.nextFeedCard()
+    app.previousFeedCard()
     XCTAssertTrue(app.buttons["game.start"].isHittable)
   }
 
   @MainActor
-  func testSystemReduceMotionKeepsPendingShotStationary() {
-    let settings = XCUIApplication(bundleIdentifier: "com.apple.Preferences")
-    continueAfterFailure = false
-    let reduceMotion = openMotionSettings(settings)
-    let originalValue = reduceMotion.value as? String
-    XCTAssertTrue(originalValue == "0" || originalValue == "1")
-    defer {
-      // Relaunch Settings so restoration observes its current foreground hierarchy.
-      settings.terminate()
-      setReduceMotion(originalValue ?? "0", in: settings)
-      settings.terminate()
-    }
-    setReduceMotion("1", in: settings)
+  func testNativeHorizontalAndDiagonalAimDragsDoNotPage() {
+    let app = launch()
+    start(app)
+    let slider = app.sliders["bubble.aim"]
+    reveal(slider, in: app)
+    let position = app.staticTexts["feed.position"].label
+    let center = slider.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+    let right = slider.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5))
+    center.press(
+      forDuration: 0.01, thenDragTo: right, withVelocity: .slow, thenHoldForDuration: 0.1)
+    let afterHorizontal = app.staticTexts["bubble.angle"].label
+    XCTAssertNotEqual(afterHorizontal, "Aim: 0°")
+    XCTAssertEqual(app.staticTexts["feed.position"].label, position)
+    slider.adjust(toNormalizedSliderPosition: 0.5)
+    let diagonal = slider.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.65))
+    center.press(
+      forDuration: 0.01, thenDragTo: diagonal, withVelocity: .slow, thenHoldForDuration: 0.1)
+    XCTAssertNotEqual(app.staticTexts["bubble.angle"].label, "Aim: 0°")
+    XCTAssertEqual(app.staticTexts["feed.position"].label, position)
+    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
+    fire(app, aim: 0.5, expectedShots: 1)
+    XCTAssertEqual(app.staticTexts["feed.position"].label, position)
+  }
+
+  @MainActor
+  func testShortBoardDragKeepsAttemptAndDirectSkipResetsPendingShot() {
     let app = launch(slowShot: true)
     start(app)
+    let board = app.otherElements["bubble.board"]
+    reveal(board, in: app)
+    let middle = board.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+    let short = board.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.6))
+    middle.press(
+      forDuration: 0.01, thenDragTo: short, withVelocity: .slow, thenHoldForDuration: 0.2)
+    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 2")
+    XCTAssertFalse(app.buttons["game.start"].exists)
+    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     reveal(app.buttons["bubble.fire"], in: app)
     app.buttons["bubble.fire"].tap()
     XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
-    let first = app.otherElements["bubble.board"].screenshot()
-    let second = app.otherElements["bubble.board"].screenshot()
-    XCTAssertEqual(first.pngRepresentation, second.pngRepresentation)
-    let attachment = XCTAttachment(screenshot: second)
-    attachment.name = "Bubble flight with system Reduce Motion"
-    attachment.lifetime = .keepAlways
-    add(attachment)
-    waitForShots(1, in: app)
-  }
-
-  @MainActor
-  private func openMotionSettings(_ settings: XCUIApplication) -> XCUIElement {
-    settings.launch()
-    XCTAssertTrue(settings.wait(for: .runningForeground, timeout: 5))
-    let reduceMotion = settings.switches["Reduce Motion"]
-    if !reduceMotion.exists {
-      if !settings.buttons["Motion"].exists {
-        let accessibility = settings.buttons["com.apple.settings.accessibility"]
-        XCTAssertTrue(accessibility.waitForExistence(timeout: 5))
-        accessibility.tap()
-      }
-      XCTAssertTrue(settings.buttons["Motion"].waitForExistence(timeout: 5))
-      settings.buttons["Motion"].tap()
-    }
-    XCTAssertTrue(reduceMotion.waitForExistence(timeout: 5))
-    return reduceMotion
-  }
-
-  @MainActor
-  private func setReduceMotion(_ value: String, in settings: XCUIApplication) {
-    let control = openMotionSettings(settings)
+    let pager = app.scrollViews["feed.pager"]
     for _ in 0..<3 {
-      if control.value as? String == value { return }
-      XCTAssertTrue(control.isHittable)
-      control.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
-      let changed = XCTNSPredicateExpectation(
-        predicate: NSPredicate(format: "value == %@", value), object: control)
-      if XCTWaiter.wait(for: [changed], timeout: 2) == .completed { return }
+      if app.staticTexts["feed.position"].label != "Card 1 of 2" { break }
+      pager.swipeUp(velocity: .fast)
     }
-    XCTAssertEqual(control.value as? String, value)
+    waitForPosition("End of feed • Card 2 of 2", in: app)
+    pager.swipeDown(velocity: .fast)
+    waitForPosition("Card 1 of 2", in: app)
+    XCTAssertTrue(app.buttons["game.start"].exists)
+    XCTAssertFalse(app.buttons["bubble.fire"].exists)
+    start(app)
+    fire(app, aim: 0.5, expectedShots: 1)
+  }
+
+  @MainActor
+  func testSystemReduceMotionKeepsPendingShotStationary() {
+    continueAfterFailure = false
+    SystemAccessibilitySupport.withReduceMotion {
+      let app = launch(slowShot: true)
+      start(app)
+      reveal(app.buttons["bubble.fire"], in: app)
+      app.buttons["bubble.fire"].tap()
+      XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
+      let first = app.otherElements["bubble.board"].screenshot()
+      let second = app.otherElements["bubble.board"].screenshot()
+      XCTAssertEqual(first.pngRepresentation, second.pngRepresentation)
+      let attachment = XCTAttachment(screenshot: second)
+      attachment.name = "Bubble flight with system Reduce Motion"
+      attachment.lifetime = .keepAlways
+      add(attachment)
+      waitForShots(1, in: app)
+      app.terminate()
+    }
+  }
+
+  @MainActor
+  private func waitForPosition(_ position: String, in app: XCUIApplication) {
+    let expected = expectation(
+      for: NSPredicate(format: "label == %@", position),
+      evaluatedWith: app.staticTexts["feed.position"])
+    wait(for: [expected], timeout: 5)
   }
 
   @MainActor
@@ -178,8 +201,8 @@ final class BubbleFlowTests: XCTestCase {
     }
     reveal(app.buttons["bubble.fire"], in: app)
     XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.fire"].frame.height, 44)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.fire"].frame.width, 44)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.fire"].frame.height + 0.001, 44)
+    XCTAssertGreaterThanOrEqual(app.buttons["bubble.fire"].frame.width + 0.001, 44)
     app.buttons["bubble.fire"].tap()
     waitForShots(expectedShots, in: app)
   }
@@ -194,13 +217,14 @@ final class BubbleFlowTests: XCTestCase {
 
   @MainActor
   private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
-    let scroll = app.scrollViews.firstMatch
-    for _ in 0..<8 {
-      if element.isHittable && scroll.frame.contains(element.frame) { return }
-      scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.65))
-        .press(
-          forDuration: 0.05,
-          thenDragTo: scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4)))
+    let scroll = app.scrollViews["feed.cardScroll"]
+    for _ in 0..<18 {
+      if element.exists && element.isHittable && scroll.frame.contains(element.frame) { return }
+      let needsUp = element.frame.midY > scroll.frame.midY
+      let start = scroll.coordinate(
+        withNormalizedOffset: CGVector(dx: 0.5, dy: needsUp ? 0.65 : 0.35))
+      let end = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: needsUp ? 0.4 : 0.6))
+      start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
     }
     XCTAssertTrue(element.isHittable)
     XCTAssertTrue(scroll.frame.contains(element.frame))
