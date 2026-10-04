@@ -20,7 +20,20 @@ struct SidequestApp: App {
     #endif
     _newsModel = State(
       initialValue: NewsImportModel(
-        store: store, beginReplacement: session.beginReplacement))
+        store: store, usesDemoWhenMissing: Self.usesDemoNews,
+        beginReplacement: session.beginReplacement))
+  }
+
+  private static var usesDemoNews: Bool {
+    #if DEBUG
+      if FeedSessionState.usesLegacyHarness { return false }
+      if CommandLine.arguments.contains("-sidequest-integration-fixtures"),
+        !CommandLine.arguments.contains("-sidequest-endless-fixtures")
+      {
+        return false
+      }
+    #endif
+    return true
   }
 
   var body: some Scene {

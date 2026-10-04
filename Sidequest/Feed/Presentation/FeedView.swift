@@ -57,17 +57,6 @@ struct FeedView: View {
           }
         )
         .id(ObjectIdentifier(controller))
-        Text(
-          controller.isEndless
-            ? "Card \(controller.position ?? 0)"
-            : controller.canGoForward
-              ? "Card \(controller.position ?? 0) of \(controller.count)"
-              : "End of feed • Card \(controller.position ?? 0) of \(controller.count)"
-        )
-        .font(.footnote)
-        .foregroundStyle(.secondary)
-        .accessibilityIdentifier("feed.position")
-        .padding(.horizontal, 16)
         if let message = controller.replenishmentMessage {
           VStack {
             Text(message)
@@ -105,7 +94,7 @@ struct FeedView: View {
   @ViewBuilder
   private func cardContent(_ card: FeedCard) -> some View {
     switch card {
-    case .news(let news): newsContent(news)
+    case .news(let news): newsContent(news.snapshot)
     case .game(let game):
       if let runtime = controller.runtimes[game.id] {
         VStack(spacing: 20) {

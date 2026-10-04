@@ -8,8 +8,9 @@ final class EndlessConcurrencyTests: XCTestCase {
   func testCanceledReplenishmentCannotAppendOrPublishLateErrorAndResumesOnce() async throws {
     let gate = GameBatchGate()
     let puzzles = try await ChessPuzzleLoader.bundled()
+    let news = try await DemoNewsLoader.bundled()
     let composition = try await FeedComposition.endless(
-      news: [], chessPuzzles: puzzles, seed: 104,
+      news: news, chessPuzzles: puzzles, seed: 104,
       ordered: true,
       prepareBatch: { id, sequence, seed, puzzles, ordered in
         if sequence > 0 { try await gate.pause() }
@@ -22,27 +23,34 @@ final class EndlessConcurrencyTests: XCTestCase {
     feed.next()
     feed.next()
     feed.next()
+    feed.next()
     await gate.waitForRequest(1)
     feed.setSceneActive(false)
     feed.setSceneActive(true)
     await gate.waitForRequest(2)
     await gate.finish(1, error: BubbleGenerationError.noAttainableChallenge)
     await Task.yield()
-    XCTAssertEqual(feed.count, 8)
+    XCTAssertEqual(feed.count, 9)
     XCTAssertNil(feed.replenishmentMessage)
     await gate.finish(2)
-    try await wait { feed.count == 16 }
-    XCTAssertEqual(Set(feed.cards.map(\.id)).count, 16)
+    try await wait { feed.count == 19 }
+    XCTAssertEqual(Set(feed.cards.map(\.id)).count, 19)
     let count = await gate.count
     XCTAssertEqual(count, 2)
+    let appearances = feed.cards.compactMap { card -> NewsSnapshot? in
+      if case .news(let story) = card { return story.snapshot }
+      return nil
+    }
+    XCTAssertEqual(appearances, Array(news.prefix(3)))
     feed.retire()
   }
 
   func testGenerationFailureKeepsHistoryAndRetrySuppliesCurrentBatch() async throws {
     let gate = GameBatchGate()
     let puzzles = try await ChessPuzzleLoader.bundled()
+    let news = try await DemoNewsLoader.bundled()
     let composition = try await FeedComposition.endless(
-      news: [], chessPuzzles: puzzles, ordered: true,
+      news: news, chessPuzzles: puzzles, ordered: true,
       prepareBatch: { id, sequence, seed, puzzles, ordered in
         if sequence > 0 { try await gate.pause() }
         return try await GeneratedGameBatch.prepare(
@@ -55,6 +63,7 @@ final class EndlessConcurrencyTests: XCTestCase {
     feed.next()
     feed.next()
     feed.next()
+    feed.next()
     await gate.waitForRequest(1)
     await gate.finish(1, error: BubbleGenerationError.noAttainableChallenge)
     try await wait { feed.replenishmentMessage != nil }
@@ -62,9 +71,58 @@ final class EndlessConcurrencyTests: XCTestCase {
     feed.retryReplenishment?()
     await gate.waitForRequest(2)
     await gate.finish(2)
-    try await wait { feed.count == 16 }
-    XCTAssertEqual(Array(feed.cards.prefix(8)), initial)
+    try await wait { feed.count == 19 }
+    XCTAssertEqual(Array(feed.cards.prefix(9)), initial)
     XCTAssertNil(feed.replenishmentMessage)
+    let appearances = feed.cards.compactMap { card -> NewsSnapshot? in
+      if case .news(let story) = card { return story.snapshot }
+      return nil
+    }
+    XCTAssertEqual(appearances, Array(news.prefix(3)))
+    feed.retire()
+  }
+
+  func testRejectedAppendAppearanceCollisionKeepsCadenceAndRetriesTheSameStoryOrder() async throws {
+    let gate = GameBatchGate()
+    let id = UUID()
+    let news = try await DemoNewsLoader.bundled()
+    let puzzles = try await ChessPuzzleLoader.bundled()
+    let collision = try CardID("news-\(id.uuidString.lowercased())-1")
+    let composition = try await FeedComposition.endless(
+      news: news, chessPuzzles: puzzles, sessionID: id, ordered: true,
+      prepareBatch: { id, sequence, seed, puzzles, ordered in
+        if sequence > 0 { try await gate.pause() }
+        let batch = try await GeneratedGameBatch.prepare(
+          sessionID: id, sequence: sequence, seed: seed,
+          chessPuzzles: puzzles, ordered: ordered)
+        if sequence > 0, await gate.count == 1 {
+          var descriptors = batch.descriptors
+          let original = descriptors[0]
+          descriptors[0] = GeneratedGameDescriptor(
+            card: GameCard(id: collision, kind: original.card.kind), challenge: original.challenge)
+          return GeneratedGameBatch(descriptors: descriptors, nextSequence: batch.nextSequence)
+        }
+        return batch
+      })
+    let feed = try XCTUnwrap(composition.controller)
+    let initial = feed.cards
+    feed.setSceneActive(true)
+    for _ in 0..<4 { feed.next() }
+    await gate.waitForRequest(1)
+    await gate.finish(1)
+    try await wait { feed.replenishmentMessage != nil }
+    XCTAssertEqual(feed.cards, initial)
+    feed.retryReplenishment?()
+    await gate.waitForRequest(2)
+    await gate.finish(2)
+    try await wait { feed.count == 19 }
+    let stories = feed.cards.compactMap { card -> NewsSnapshot? in
+      if case .news(let news) = card { return news.snapshot }
+      return nil
+    }
+    XCTAssertEqual(stories, Array(news.prefix(3)))
+    XCTAssertEqual(Array(feed.cards.prefix(initial.count)), initial)
+    XCTAssertEqual(Set(feed.cards.map(\.id)).count, 19)
     feed.retire()
   }
 

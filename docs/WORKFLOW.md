@@ -17,6 +17,8 @@ Before starting an issue, confirm its prerequisites are complete and set its Pro
 
 When a PR is ready, enter the [review handoff queue](REVIEW.md#review-handoff-queue). Missing subagent capability blocks merging in the author chat, not discoverability: keep the issue in Review and hand it to an active lead. Leads check the queue before taking new issues, including open ready PRs without the label.
 
+The user requested on October 4, 2026 that Review items include instructions for testing on their personal iPhone without paid Apple Developer Program membership. For app changes, include a concise testing section in the issue/PR handoff, identify the current PR branch and reviewed commit, and link [local iPhone installation](INSTALL.md#install-on-your-own-iphone). Explain free Personal Team signing, the local ignored configuration, device pairing/Developer Mode/Run, seven-day reinstallation, and the relevant behavior checklist. Distinguish simulator downloads from physical-device builds and keep actual device verification truthful. This documentation rule does not authorize paid enrollment or account setup.
+
 Keep unfinished work open. If work pauses or a new prerequisite blocks it, record the reason in the issue and move it to Ready or Backlog as appropriate.
 
 After each resolved issue or ticket, follow the [chat checkpoint](../AGENTS.md#after-ticket-chat-checkpoint) before starting or assigning another issue. Incorporate newly delivered user steering before choosing the next task.

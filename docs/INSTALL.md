@@ -2,7 +2,7 @@
 
 ## Verified foundation
 
-`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. Normal launch mixes saved private English snapshots with mini Sudoku, Memory, two one-move Chess puzzles, and Bubble shooter. **News snapshots** opens native Files imports; missing/empty news leaves the five real game cards. Fictional news and generic demos are restricted to explicit Debug test routes.
+`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. Merged #104 source provides endless generated Sudoku, frozen Memory layouts, attainable Bubble challenges, and repeated validated Chess puzzles. The #106 feature branch adds 30 clearly fictional demo stories only when saved news is absent, cycles the active pool after every five games, and removes the bottom counter; review and exact-head CI remain pending. Valid saved news stays authoritative, saved empty news permits games only, and storage errors remain recoverable. **News snapshots** opens native Files imports. The immutable `2026.10.14` download and explicit historical Debug routes retain their finite decks; the release evidence below describes that download.
 
 The [2026.10.14 MVP](https://github.com/devofthings/sidequest/releases/tag/2026.10.14) passed 133 native tests and separate installations of freshly built tagged source and the downloaded ARM64 simulator archive. [Verified delivery](#verified-mvp-delivery) records the exact source, checksums, and evidence. [CI](CI.md) uses the same toolchain on a foreground self-hosted Mac runner. Seven older preview downloads were removed; Git tags/source remain. Main updates verify without automatic publication under [RELEASES.md](RELEASES.md).
 
@@ -151,24 +151,53 @@ Use the local signing steps below for a physical iPhone. [RELEASES.md](RELEASES.
 
 ## Install on your own iPhone
 
-These steps are documented but have not been verified with a physical Sidequest device:
+A normal Apple Account gives you a free **Personal Team** in Xcode for testing on your own device. Paid Apple Developer Program membership is unnecessary for this route. Apple requires rebuilding and reinstalling after the provisioning profile expires, seven days after issuance; see [Personal Team guidance](https://developer.apple.com/help/account/basics/about-your-developer-account). Physical Sidequest signing, installation, and gameplay remain **unverified**.
 
-1. Sign in to your Apple Account in Xcode > Settings > Accounts. Choose a free Personal Team for your own-device testing; no paid membership is required. Apple's [account guidance](https://developer.apple.com/help/account/basics/about-your-developer-account) describes its limits, including seven-day provisioning profiles.
-2. Create the ignored file `Sidequest.xcodeproj/LocalSigning.xcconfig`. Set `DEVELOPMENT_TEAM` to your local team identifier. If the default app identifier is unavailable for your team, also set `SIDEQUEST_BUNDLE_IDENTIFIER` to a unique identifier. The tracked `Signing.xcconfig` includes these local overrides; all app/test identifiers derive from the same base. Keep this file outside Git and review `git status` before committing anything.
-3. Connect and pair an iPhone running iOS 17 or later. Enable Developer Mode following [Apple's guide](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device).
-4. Open `Sidequest.xcodeproj`, select the shared `Sidequest` scheme and your iPhone, and use Run. Xcode manages local development signing using your ignored configuration. Follow account/device prompts yourself; agents do not collect account credentials or signing secrets.
+For #106, use the PR source once the item reaches Review. Its handoff identifies the exact commit. Before merge, `main` and the older `2026.10.14` simulator download do not contain these changes. A separate checkout preserves your existing work and private news:
 
-After a Personal Team profile expires, rebuilding and reinstalling may be necessary. A device signing or runtime failure needs its actual error investigated; simulator success is not proof of physical-device installation. App Store and TestFlight distribution remain separately authorized work.
+```sh
+gh repo clone devofthings/sidequest sidequest-iphone
+cd sidequest-iphone
+git fetch origin
+git switch codex/106-demo-news-cadence
+open Sidequest.xcodeproj
+```
+
+After merge, a clean checkout of the reviewed main commit also works. The simulator ZIP is built for the Mac simulator and cannot be installed directly on an iPhone.
+
+1. In **Xcode → Settings → Accounts**, add your regular Apple Account. Identify its **Personal Team** and local team ID. Complete account prompts yourself; credentials stay in Xcode.
+2. Create the ignored `Sidequest.xcodeproj/LocalSigning.xcconfig` in this checkout with your team ID and a unique identifier, replacing both example values:
+
+   ```xcconfig
+   DEVELOPMENT_TEAM = YOUR_PERSONAL_TEAM_ID
+   SIDEQUEST_BUNDLE_IDENTIFIER = com.yourname.sidequest.personal
+   ```
+
+   The existing `Signing.xcconfig` loads this file for the app and both test targets. Keep personal values out of tracked project files and Git. In the app target's **Signing & Capabilities**, check **Automatically manage signing** and confirm the resolved team is your Personal Team; automatic signing is already configured in the project. A different bundle identifier installs a separate app with its own saved news.
+3. Connect your iPhone to the Mac by USB, unlock it, and accept the pairing and **Trust This Computer** prompts. Use an iPhone running iOS 17 or later that your installed Xcode supports. Wait for Xcode to finish preparing the device.
+4. On the iPhone, enable **Settings → Privacy & Security → Developer Mode**. Restart and confirm when prompted. Pairing with Xcode makes this option available; follow [Apple's Developer Mode guide](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device).
+5. Select the shared **Sidequest** scheme and your actual iPhone as Xcode's destination. Press **Run (⌘R)**. Complete any signing or device-trust prompts locally. If signing fails, check the actual message, Personal Team ID, unique bundle identifier, and automatic signing; do not substitute the unsigned simulator build command.
+6. After seven days, reconnect and press **Run** again to rebuild, reprovision, and reinstall. Keep the same local bundle identifier to use the same app's storage.
+
+For the #106 personal test:
+
+- On an install without saved news, swipe through five game cards and check the next card is visibly labeled **Fictional sample**. Continue another five game cards to reach the next story. The pool contains 30 stories, with truthful sample-placeholder link wording.
+- Check that the bottom counter is absent, each game starts only after **Tap to play**, skipping unfinished play resets it, and completed games retain their result when revisited.
+- Continue through several stories, return to earlier cards, and try your preferred text size. Report the device/iOS version and actual errors or behavior in the Review issue or personal test #10.
+
+Existing saved news remains authoritative; an empty saved import intentionally gives games only. To try all 30 on an existing installation, AirDrop `Sidequest/Resources/demo-news.json` from the Mac and save it to Files, then choose it through **News snapshots → Import news JSON**. This explicitly replaces the active pool using the normal import transaction. Keep a private copy of prior captures if you want to restore them; see [demo import steps](NEWS.md#try-the-demo-pool-on-an-existing-install).
+
+These steps document a local testing route, not a verified physical-device result or TestFlight distribution. No signing account, membership, or credentials were created by this work.
 
 ## Content, versions, and troubleshooting
 
 Keep real personal news captures in ignored `.local-news/` or another directory outside `Sidequest`, `SidequestTests`, and `SidequestUITests`. Use [NEWS.md](NEWS.md) to prepare a version 1 JSON file, import and validate it through the feed’s News snapshots button, and replace the saved set. Only fictional samples/schema are bundled. Fictional test fixtures are isolated in their test bundles.
 
-Normal launch mixes your saved snapshots with Sudoku, Memory, two Chess puzzles, and Bubble shooter. Tap the newspaper button (**News snapshots**) in the feed header, then **Import news JSON** and select the file in native Files. Successful selection replaces the complete news set and starts a new shuffled session. Missing or empty news leaves the real games available; invalid input preserves the prior deck and saved bytes. Opening the library resets unfinished play; completed results survive closing or canceling it. See [NEWS.md](NEWS.md) for reserved IDs, format, persistence, and recovery.
+Normal launch uses your saved snapshots, or the 30 bundled fictional demo stories when the saved document is confirmed absent. It shuffles games and inserts one news card after every five game cards, cycling the news pool in its original order. A saved empty pool intentionally gives games only; a corrupt or unavailable saved document shows a recoverable error and keeps games available. Tap the newspaper button (**News snapshots**) in the feed header, then **Import news JSON** and select the file in native Files. Successful selection replaces the complete news set and starts a new session; invalid input preserves the prior feed and saved bytes. Opening the library resets unfinished play; completed results survive closing or canceling it. See [NEWS.md](NEWS.md) for format, appearance IDs, persistence, and recovery.
 
-For deterministic integration checks, a Debug build can launch with `-sidequest-integration-fixtures -sidequest-integration-reset`. It creates original fictional valid/empty/malformed/reserved-ID JSON under **On My iPhone → Sidequest → Sidequest Fixtures** and uses an isolated persistent test store. Remove the reset argument to test persistence across relaunch. Debug exposes Documents to Files; Release excludes these fixture/reset routes and file-sharing keys. To try private captures in the simulator, place your JSON in its Debug Documents directory using the app’s data-container path, select it with Files, and keep the file outside Git. On iPhone, AirDrop or another existing Files location works without enabling app file sharing.
+For deterministic integration checks, a Debug build can launch with `-sidequest-integration-fixtures -sidequest-integration-reset`. It creates original fictional valid/empty/malformed/reserved-ID JSON under **On My iPhone → Sidequest → Sidequest Fixtures v2** and uses an isolated persistent test store. Remove the reset argument to test persistence across relaunch. Debug exposes Documents to Files; Release excludes these fixture/reset routes and file-sharing keys. To try private captures in the simulator, place your JSON in its Debug Documents directory using the app’s data-container path, select it with Files, and keep the file outside Git. On iPhone, AirDrop or another existing Files location works without enabling app file sharing.
 
-The older standalone Debug fixture route `-sidequest-news-preview` still provides **Read news** for its original tests. Production does not use fictional news or demo games. Release ignores all fixture flags. A successful simulator run establishes neither physical signing/install nor device VoiceOver/iOS17 behavior; those remain unverified until exercised.
+The older standalone Debug fixture route `-sidequest-news-preview` still provides **Read news** for its original tests. The immutable finite MVP release `2026.10.14` did not load fictional news on normal launch. Current source uses the [demo fallback](DEMO_NEWS.md#product-policy) only when the saved document is confirmed absent; all four game kinds remain playable implementations. Release ignores all Debug fixture flags. A successful simulator run establishes neither physical signing/install nor device VoiceOver/iOS17 behavior; those remain unverified until exercised.
 
 Generated output belongs in ignored `DerivedData/`, `build/`, or an external build directory, outside synchronized source roots. Keep scoped `AGENTS.md` guidance in its owning folder; all target Markdown is excluded from built resources.
 
@@ -178,4 +207,4 @@ Published versions appear in the private [GitHub Releases page](https://github.c
 
 ## Endless source work
 
-The #104 source branch implements endless manual scrolling with local generated Sudoku, frozen Memory layouts, and bounded attainable Bubble challenges. The stated default presents each imported story once per session and reuses validated Chess puzzles. Build/run commands and local signing remain unchanged. `2026.10.14` is immutable and contains the finite MVP deck; this feature does not create a new downloadable release. See [ENDLESS.md](ENDLESS.md) for actual branch checks and pending delivery gates.
+Merged #104 source implements endless manual scrolling with generated Sudoku, frozen Memory layouts, bounded attainable Bubble challenges, and reused validated Chess puzzles. The #106 feature branch adds 30 labeled demo stories only when saved news is confirmed absent, and cycles the active pool after every five games while removing the bottom counter. Importing an empty set disables news; valid imports replace demos, while corrupt/unavailable storage shows recoverable errors instead. Demos are never automatically saved. Existing valid imports remain authoritative; to explicitly try all 30 stories, transfer `Sidequest/Resources/demo-news.json` to Files and select it through **News snapshots → Import news JSON**. This uses the normal replacement transaction; preserve a private copy of previous captures if you want to restore them. See [demo import steps](NEWS.md#try-the-demo-pool-on-an-existing-install). Build/run commands and local signing remain unchanged. `2026.10.14` is immutable and contains the finite MVP deck; this feature does not create a new downloadable release. See [ENDLESS.md](ENDLESS.md) and [DEMO_NEWS.md](DEMO_NEWS.md) for current behavior, actual checks, and pending delivery gates.

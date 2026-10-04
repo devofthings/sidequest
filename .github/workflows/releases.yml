@@ -17,7 +17,7 @@ jobs:
     name: Sidequest / verification
     if: github.ref == 'refs/heads/main'
     runs-on: [self-hosted, macOS, ARM64, sidequest, xcode-27, sidequest-mac-foreground]
-    timeout-minutes: 40
+    timeout-minutes: 45
     outputs:
       verification_directory: ${{ steps.verify.outputs.verification_directory }}
     steps:

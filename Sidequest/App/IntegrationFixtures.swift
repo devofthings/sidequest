@@ -30,7 +30,7 @@
       {
         try FileManager.default.removeItem(at: store.directory)
       }
-      let folder = documents.appendingPathComponent("Sidequest Fixtures", isDirectory: true)
+      let folder = documents.appendingPathComponent("Sidequest Fixtures v2", isDirectory: true)
       try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
       let valid = """
         {"schemaVersion":1,"snapshots":[{"id":"imported-news-one","headline":"Imported fixture story","excerpt":"A fictional story for offline import and overflow checks. ","publisher":"Sidequest fixture","sourceURL":"https://example.com/news","capturedAt":"2026-10-04T00:00:00.123456Z","isSample":true}]}
@@ -55,7 +55,11 @@
       }
       for (name, content) in selectedFiles {
         try Task.checkCancellation()
-        try Data(content.utf8).write(to: folder.appendingPathComponent(name), options: .atomic)
+        let data = Data(content.utf8)
+        let file = folder.appendingPathComponent(name)
+        // Preserve File Provider item identity across test launches and app installations.
+        if (try? Data(contentsOf: file)) == data { continue }
+        try data.write(to: file, options: .atomic)
       }
     }
   }

@@ -7,3 +7,5 @@ Reset tests observe ineligibility inside the delivered effect, before clearing s
 Issue #87 adds settled adjacent-page commits and independent scene/host eligibility. Cover canceled/nonadjacent offsets, neighbor ineligibility, exactly-once skip reset, late commits while unavailable, and permanent retirement against stale activation callbacks. These tests verify lifecycle; actual UIKit gesture and hosting behavior requires running-app checks.
 
 The native adapter regression gives a replacement pager a retired session request while the replacement is already active and has a laid-out viewport. Assert no movement/reset, then legitimate new-session movement, then rejection of stopped-host callbacks; an unlaid-out pager would produce a false passing rejection.
+
+`FeedNewsCadenceTests` verifies carried five-game cadence over varied preparation boundaries and complete demo-pool cycles, with unique appearance IDs and unchanged source snapshots. Preparing or repeating a candidate must leave the prior cadence value unchanged. See [demo policy](../../docs/DEMO_NEWS.md).

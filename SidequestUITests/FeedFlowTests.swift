@@ -60,14 +60,14 @@ final class FeedFlowTests: XCTestCase {
     XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
     app.previousFeedCard()
     XCTAssertTrue(app.buttons["game.start"].isHittable)
-    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 6")
+    XCTAssertEqual(app.selectedFeedCardID, "sample-game-bubbleShooter")
   }
 
   @MainActor
   func testNewsCardsKeepProvenanceWhileNavigatingTheMixedFeed() {
     let app = launch()
     for _ in 0..<4 { app.nextFeedCard() }
-    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 5 of 6")
+    XCTAssertEqual(app.selectedFeedCardID, "sample-news-garden")
     XCTAssertTrue(app.staticTexts["news.sample"].exists)
     XCTAssertTrue(app.staticTexts["news.captured"].exists)
     XCTAssertTrue(app.links["news.source"].exists)
@@ -95,7 +95,7 @@ final class FeedFlowTests: XCTestCase {
     games.buttons["feed.navigation"].tap()
     XCTAssertFalse(games.buttons["feed.next"].isEnabled)
     games.coordinate(withNormalizedOffset: CGVector(dx: 0.05, dy: 0.1)).tap()
-    XCTAssertTrue(games.staticTexts["feed.position"].label.hasPrefix("End of feed"))
+    XCTAssertFalse(games.staticTexts["feed.position"].exists)
     games.previousFeedCard()
     games.buttons["feed.navigation"].tap()
     XCTAssertTrue(games.buttons["feed.next"].isEnabled)

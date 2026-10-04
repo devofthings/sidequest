@@ -111,11 +111,8 @@ final class ChessFlowTests: XCTestCase {
   @MainActor
   private func navigate(_ app: XCUIApplication, forward: Bool) {
     if forward { app.nextFeedCard() } else { app.previousFeedCard() }
-    let label = forward ? "End of feed • Card 2 of 2" : "Card 1 of 2"
-    let settled = expectation(
-      for: NSPredicate(format: "label == %@", label),
-      evaluatedWith: app.staticTexts["feed.position"])
-    wait(for: [settled], timeout: 5)
+    let side = app.launchArguments.contains("-sidequest-chess-black-fixture") ? "black" : "white"
+    app.waitForFeedCard(forward ? "sample-news-garden" : "sample-game-chess-\(side)")
   }
 
   @MainActor
