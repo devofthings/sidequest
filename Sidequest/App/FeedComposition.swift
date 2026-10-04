@@ -24,7 +24,17 @@ final class FeedComposition {
     #if DEBUG
       if case .loaded(let cards) = source {
         let arguments = ProcessInfo.processInfo.arguments
-        if arguments.contains("-sidequest-chess-white-fixture")
+        if arguments.contains("-sidequest-bubble-fixtures") {
+          let bubble = cards.filter { card in
+            if case .game(let game) = card { return game.kind == .bubbleShooter }
+            return false
+          }
+          let news = cards.sorted { $0.id.rawValue < $1.id.rawValue }.filter { card in
+            if case .news = card { return true }
+            return false
+          }.prefix(1)
+          session = .loaded(bubble + news)
+        } else if arguments.contains("-sidequest-chess-white-fixture")
           || arguments.contains("-sidequest-chess-black-fixture")
         {
           let side = arguments.contains("-sidequest-chess-black-fixture") ? "black" : "white"
@@ -129,6 +139,22 @@ final class FeedComposition {
                 throw GameCompositionError.missingChessFixture(fixtureID)
               }
               games[game.id] = .chess(ChessController(puzzle: puzzle, runtime: runtime))
+            case .bubbleShooter where !useDemoGames:
+              let controller: BubbleShooterController
+              #if DEBUG
+                if ProcessInfo.processInfo.arguments.contains("-sidequest-bubble-slow-shot") {
+                  controller = BubbleShooterController(
+                    runtime: runtime,
+                    pause: {
+                      try await Task.sleep(for: .milliseconds(250))
+                    })
+                } else {
+                  controller = BubbleShooterController(runtime: runtime)
+                }
+              #else
+                controller = BubbleShooterController(runtime: runtime)
+              #endif
+              games[game.id] = .bubbleShooter(controller)
             default:
               games[game.id] = .placeholder(PlaceholderGameController(runtime: runtime))
             }
