@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 import re
 import shlex
+import signal
+import time
 import subprocess
 import sys
 import tempfile
@@ -27,6 +29,122 @@ installer = load("configure-ci-runner")
 
 
 class CIBoundaryTests(unittest.TestCase):
+    def test_owned_command_status_and_logs_are_preserved(self):
+        with tempfile.TemporaryDirectory() as directory, ci.OwnedCommands() as commands:
+            log = Path(directory) / "command.log"
+            for status in (0, 7):
+                with log.open("w") as output:
+                    result = commands.run([sys.executable, "-c",
+                                           f"print('diagnostic'); raise SystemExit({status})"], output)
+                self.assertEqual(result.returncode, status)
+                self.assertEqual(log.read_text(), "diagnostic\n")
+                self.assertEqual(commands.active, {})
+
+    def test_successful_leader_cannot_leave_owned_descendant(self):
+        with tempfile.TemporaryDirectory() as directory, ci.OwnedCommands(grace_seconds=0.1) as commands:
+            pid_file = Path(directory) / "child.pid"
+            child = ("import os, pathlib, signal, time; "
+                     "signal.signal(signal.SIGTERM, signal.SIG_IGN); "
+                     f"pathlib.Path({str(pid_file)!r}).write_text(str(os.getpid())); time.sleep(60)")
+            parent = ("import pathlib, subprocess, sys, time; "
+                      "subprocess.Popen([sys.executable, '-c', sys.argv[1]]); "
+                      f"path = pathlib.Path({str(pid_file)!r}); "
+                      "\nwhile not path.exists(): time.sleep(0.01)\n")
+            with (Path(directory) / "log").open("w") as output:
+                result = commands.run([sys.executable, "-c", parent, child], output)
+            self.assertEqual(result.returncode, 0)
+            pid = int(pid_file.read_text())
+            state = subprocess.run(["ps", "-o", "stat=", "-p", str(pid)],
+                                   capture_output=True, text=True).stdout.strip()
+            self.assertTrue(not state or state.startswith("Z"), f"owned child {pid} survived success")
+            self.assertEqual(commands.active, {})
+
+    def test_interrupt_drains_owned_tree_and_preserves_unrelated_process(self):
+        # Real isolated groups, a TERM-resistant descendant, both runner signals,
+        # and a simultaneous worker exercise the defect rather than mocking kill.
+        source = str(Path(ci.__file__).resolve())
+        for signum in (signal.SIGINT, signal.SIGTERM):
+            with self.subTest(signal=signum), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                driver = root / "driver.py"
+                driver.write_text("\n".join([
+                    "import importlib.util, json, pathlib, signal, sys, threading",
+                    f"sys.path.insert(0, {str(Path(source).parent)!r})",
+                    f"spec = importlib.util.spec_from_file_location('driver_ci', {source!r})",
+                    "ci = importlib.util.module_from_spec(spec); spec.loader.exec_module(ci)",
+                    "root = pathlib.Path(sys.argv[1])",
+                    "child = \"import os, pathlib, signal, time; signal.signal(signal.SIGTERM, signal.SIG_IGN); pathlib.Path(os.environ['CHILD_PID']).write_text(str(os.getpid())); time.sleep(60)\"",
+                    "parent = \"import os, pathlib, subprocess, sys, time; pathlib.Path(os.environ['PARENT_PID']).write_text(str(os.getpid())); subprocess.Popen([sys.executable, '-c', sys.argv[1]]); time.sleep(60)\"",
+                    "import os",
+                    "os.environ['PARENT_PID'] = str(root / 'parent.pid')",
+                    "os.environ['CHILD_PID'] = str(root / 'child.pid')",
+                    "try:",
+                    "    with ci.OwnedCommands(grace_seconds=0.15) as commands:",
+                    "        def worker():",
+                    "            with (root / 'worker.log').open('w') as output:",
+                    "                commands.run([sys.executable, '-c', 'import time; time.sleep(60)'], output)",
+                    "        thread = threading.Thread(target=worker); thread.start()",
+                    "        try:",
+                    "            with (root / 'tree.log').open('w') as output:",
+                    "                commands.run([sys.executable, '-c', parent, child], output)",
+                    "        finally:",
+                    "            thread.join(timeout=2)",
+                    "except ci.VerificationCanceled as error:",
+                    "    try:",
+                    "        commands.run([sys.executable, '-c', 'raise SystemExit(99)'], sys.stdout)",
+                    "    except ci.VerificationCanceled:",
+                    "        pass",
+                    "    else:",
+                    "        raise AssertionError('ordinary command launched after cancellation')",
+                    "    commands.run([sys.executable, '-c', \"print('owned cleanup')\"], sys.stdout, cleanup=True)",
+                    "    (root / 'canceled.json').write_text(json.dumps({'signal': error.signum, 'active': list(commands.active)}))",
+                    "    raise SystemExit(128 + error.signum)",
+                ]) + "\n")
+                unrelated = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"],
+                                             start_new_session=True)
+                invocation = subprocess.Popen([sys.executable, str(driver), str(root)],
+                                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                              text=True, start_new_session=True)
+                try:
+                    deadline = time.monotonic() + 5
+                    while not (root / "child.pid").exists() and time.monotonic() < deadline:
+                        time.sleep(0.01)
+                    self.assertTrue((root / "child.pid").exists())
+                    pids = [int((root / name).read_text()) for name in ("parent.pid", "child.pid")]
+                    invocation.send_signal(signum)
+                    time.sleep(0.03)
+                    invocation.send_signal(signum)  # Runner escalation during bounded drain.
+                    output, error = invocation.communicate(timeout=5)
+                    self.assertEqual(invocation.returncode, 128 + signum, error)
+                    self.assertIn("owned cleanup", output)
+                    self.assertEqual(json.loads((root / "canceled.json").read_text()),
+                                     {"signal": signum, "active": []})
+                    self.assertIsNone(unrelated.poll())
+                    for pid in pids:
+                        deadline = time.monotonic() + 2
+                        while time.monotonic() < deadline:
+                            state = subprocess.run(["ps", "-o", "stat=", "-p", str(pid)],
+                                                   capture_output=True, text=True).stdout.strip()
+                            if not state or state.startswith("Z"):
+                                break
+                            time.sleep(0.01)
+                        self.assertTrue(not state or state.startswith("Z"), f"owned PID {pid} survived")
+                finally:
+                    if invocation.poll() is None:
+                        # The driver file proves this group belongs to this fixture.
+                        os.killpg(invocation.pid, signal.SIGKILL)
+                        invocation.wait()
+                    if (root / "parent.pid").exists():
+                        try:
+                            os.killpg(int((root / "parent.pid").read_text()), signal.SIGKILL)
+                        except ProcessLookupError:
+                            pass
+                        except PermissionError:
+                            if not ci.OwnedCommands.group_is_inert(int((root / "parent.pid").read_text())):
+                                raise
+                    unrelated.terminate()
+                    unrelated.wait()
+
     def test_routine_workflow_is_pr_only_and_release_jobs_require_manual_main(self):
         directory = Path(__file__).resolve().parent.parent / ".github/workflows"
         expected = {"verification.yml": {"pull_request"}, "releases.yml": {"workflow_dispatch"}}
@@ -124,9 +242,10 @@ class CIBoundaryTests(unittest.TestCase):
             self.assertEqual(commands[1][-2:], [f"{head}^", head])
 
     def test_successful_main_manifest_retains_workflow_run_number(self):
-        scenarios = [("push", False, False), ("workflow_dispatch", False, False),
-                     ("push", True, False), ("workflow_dispatch", True, False), ("push", False, True)]
-        for event, inherited, cleanup_failure in scenarios:
+        scenarios = [("push", False, False, False), ("workflow_dispatch", False, False, False),
+                     ("push", True, False, False), ("workflow_dispatch", True, False, False),
+                     ("push", False, True, False), ("push", False, False, "summary"), ("push", False, False, "teardown")]
+        for event, inherited, cleanup_failure, late_cancellation in scenarios:
             with self.subTest(event=event, inherited=inherited, cleanup_failure=cleanup_failure), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 environment = {"SIDEQUEST_EXPECTED_HEAD": "a" * 40, "SIDEQUEST_BASE_REF": "main",
@@ -160,8 +279,29 @@ class CIBoundaryTests(unittest.TestCase):
                         stdout.write(output)
                     return subprocess.CompletedProcess(command, 0)
 
+                original_open = Path.open
+
+                def summary_open(path, mode="r", *args, **kwargs):
+                    if late_cancellation == "summary" and path == root / "summary" and mode == "a":
+                        # Interrupt after successful native/device cleanup and
+                        # manifest writing, before final summary output completes.
+                        self.assertTrue((root / "sidequest-diagnostics/100-2/verification.json").exists())
+                        signal.raise_signal(signal.SIGTERM)
+                    return original_open(path, mode, *args, **kwargs)
+
+                original_signal = signal.signal
+
+                def restore_signal(signum, handler):
+                    if (late_cancellation == "teardown" and signum == signal.SIGTERM and
+                            not callable(handler) and
+                            (root / "sidequest-diagnostics/100-2/verification.json").exists()):
+                        signal.raise_signal(signal.SIGTERM)
+                    return original_signal(signum, handler)
+
                 with patch.dict(os.environ, environment), patch.object(Path, "cwd", return_value=root), \
-                     patch.object(subprocess, "run", side_effect=controlled), \
+                     patch.object(signal, "signal", restore_signal), \
+                     patch.object(Path, "open", summary_open), \
+                     patch.object(ci.OwnedCommands, "run", side_effect=lambda command, output, cleanup=False: controlled(command, stdout=output)), \
                      patch.object(ci, "inherited_tests", return_value={"mode": "inherited", "gate": "pre_design_smoke", "original_head": "b" * 40, "inventory": ["original/test/case"]} if inherited else None), \
                      patch.object(ci.native_tests, "owned_execution", side_effect=nullcontext), \
                      patch.object(ci.native_tests, "selection", return_value=["SidequestTests"]), \
@@ -169,12 +309,22 @@ class CIBoundaryTests(unittest.TestCase):
                      patch.object(ci.native_tests, "execute", return_value=({"mode": "full", "gate": "pre_design_smoke", "selected": ["SidequestTests"]}, root / "cache")) as execute:
                     (root / "scripts").mkdir()
                     (root / "scripts/native-test-inventory.json").write_text("{}")
-                    if cleanup_failure:
+                    if late_cancellation:
+                        with self.assertRaises(ci.VerificationCanceled):
+                            ci.main()
+                    elif cleanup_failure:
                         with self.assertRaisesRegex(RuntimeError, "Owned simulator cleanup failed: delete-1"):
                             ci.main()
                     else:
                         ci.main()
                 diagnostics = root / "sidequest-diagnostics/100-2"
+                if late_cancellation:
+                    self.assertFalse((diagnostics / "verification.json").exists())
+                    self.assertEqual(json.loads((diagnostics / "cancellation.json").read_text()),
+                                     {"signal": signal.SIGTERM, "commit": "a" * 40, "cleanup_completed": True})
+                    self.assertTrue((diagnostics / "commands.json").exists())
+                    self.assertEqual(json.loads((diagnostics / "commands.json").read_text())[-1]["exit"], 0)
+                    continue
                 if cleanup_failure:
                     self.assertFalse((diagnostics / "verification.json").exists())
                     commands = json.loads((diagnostics / "commands.json").read_text())

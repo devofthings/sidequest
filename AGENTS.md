@@ -99,4 +99,4 @@ On October 4, 2026, the owner instructed "dont do a second check on main". Use e
 
 ## Current authorized usage window
 
-On October 5, 2026, the owner personally reset included usage and authorized this run only until 90% remains (10% used). This stricter current-run checkpoint supersedes the ordinary 1% reserve: check reported usage before new tickets/reviewers and periodically while working, commit and push unfinished work to a PR or draft PR at the threshold, then stop. Do not redeem resets or purchase usage yourself.
+On October 5, 2026, the owner personally reset included usage and authorized this run only until 85% remains (15% used), extending the initially selected 90% checkpoint. This stricter current-run checkpoint supersedes the ordinary 1% reserve: check reported usage before new tickets/reviewers and periodically while working, commit and push unfinished work to a PR or draft PR at the threshold, then stop. Do not redeem resets or purchase usage yourself.

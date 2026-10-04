@@ -5,11 +5,135 @@ import json
 import os
 from pathlib import Path
 import shlex
+import signal
 import subprocess
+import threading
 import sys
 import time
 
 import native_tests
+
+
+class VerificationCanceled(BaseException):
+    """Cancellation must unwind worker/device contexts without becoming success."""
+
+    def __init__(self, signum):
+        self.signum = signum
+        super().__init__(f"Verification canceled by signal {signum}.")
+
+
+class OwnedCommands:
+    """Terminate only command groups created by this verification invocation."""
+
+    def __init__(self, grace_seconds=3):
+        self.grace_seconds = grace_seconds
+        self.active = {}
+        self.lock = threading.RLock()
+        self.canceled = None
+        self.previous = {}
+        self.spawning = False
+        self.tearing_down = False
+
+    def __enter__(self):
+        for signum in (signal.SIGINT, signal.SIGTERM):
+            self.previous[signum] = signal.signal(signum, self.cancel)
+        return self
+
+    def __exit__(self, kind, value, traceback):
+        self.tearing_down = True
+        try:
+            self.drain()
+        finally:
+            for signum, handler in self.previous.items():
+                signal.signal(signum, handler)
+        if self.canceled is not None and kind is None:
+            raise VerificationCanceled(self.canceled)
+
+    @staticmethod
+    def group_is_inert(identifier):
+        # macOS can report EPERM for groups containing only adopted zombies.
+        # They cannot execute; never hide a permission failure for a live member.
+        result = subprocess.run(["ps", "-axo", "pgid=,stat="], capture_output=True,
+                                text=True, check=True)
+        states = [fields[1] for line in result.stdout.splitlines()
+                  if len(fields := line.split()) == 2 and fields[0] == str(identifier)]
+        return not states or all(state.startswith("Z") for state in states)
+
+    @classmethod
+    def send(cls, process, signum):
+        try:
+            os.killpg(process.pid, signum)
+        except ProcessLookupError:
+            pass
+        except PermissionError:
+            if not cls.group_is_inert(process.pid):
+                raise
+
+    def drain(self, reap=True):
+        with self.lock:
+            processes = list(self.active.values())
+            for process in processes:
+                self.send(process, signal.SIGTERM)
+            # Do not call Popen.wait inside a signal handler: the interrupted
+            # main-thread wait may already own subprocess's non-reentrant lock.
+            if processes:
+                time.sleep(self.grace_seconds)
+            for process in processes:
+                self.send(process, signal.SIGKILL)
+            if reap:
+                for process in processes:
+                    process.wait()
+                self.active.clear()
+
+    def cancel(self, signum, frame):
+        if self.canceled is not None:
+            return  # Repeated runner signals must not interrupt owned cleanup.
+        self.canceled = signum
+        # A main-thread signal during Popen must let registration finish before
+        # raising. Unlike masking, this does not pass blocked signals to children.
+        if self.spawning or self.tearing_down:
+            return
+        self.drain(reap=False)
+        raise VerificationCanceled(signum)
+
+    def run(self, command, output, cleanup=False):
+        with self.lock:
+            if self.canceled is not None and not cleanup:
+                raise VerificationCanceled(self.canceled)
+            self.spawning = True
+            try:
+                process = subprocess.Popen(command, stdout=output, stderr=subprocess.STDOUT,
+                                           start_new_session=True)
+                self.active[process.pid] = process
+            finally:
+                self.spawning = False
+            if self.canceled is not None and not cleanup:
+                self.drain()
+                raise VerificationCanceled(self.canceled)
+        try:
+            status = process.wait()
+            if self.canceled is not None and not cleanup:
+                raise VerificationCanceled(self.canceled)
+            return subprocess.CompletedProcess(command, status)
+        finally:
+            # The interrupted wait has unwound before this reap; workers also
+            # finish their owned child before executor/device contexts exit.
+            process.wait()
+            with self.lock:
+                # A command can exit while an owned descendant remains. Retain
+                # its group until those descendants are stopped, even on success.
+                try:
+                    os.killpg(process.pid, 0)
+                except ProcessLookupError:
+                    pass
+                except PermissionError:
+                    if not self.group_is_inert(process.pid):
+                        raise
+                else:
+                    self.send(process, signal.SIGTERM)
+                    time.sleep(self.grace_seconds)
+                    self.send(process, signal.SIGKILL)
+                self.active.pop(process.pid, None)
 
 
 def inherited_tests(root, expected, diagnostics_root):
@@ -66,6 +190,22 @@ def changed_paths(expected, base, event, run):
 
 
 def main():
+    commands = OwnedCommands()
+    try:
+        with commands:
+            verify(commands)
+    finally:
+        # This outer boundary also runs when cancellation interrupts command
+        # diagnostics, summary output, or the signal-handler context teardown.
+        if commands.canceled is not None and hasattr(commands, "diagnostics"):
+            (commands.diagnostics / "verification.json").unlink(missing_ok=True)
+            (commands.diagnostics / "cancellation.json").write_text(json.dumps({
+                "signal": commands.canceled, "commit": commands.expected,
+                "cleanup_completed": not commands.active,
+            }, indent=2) + "\n")
+
+
+def verify(commands):
     root = Path.cwd()
     expected = os.environ["SIDEQUEST_EXPECTED_HEAD"]
     base = os.environ["SIDEQUEST_BASE_REF"]
@@ -73,6 +213,8 @@ def main():
     attempt = os.environ["GITHUB_RUN_ATTEMPT"]
     diagnostics = Path(os.environ["RUNNER_TEMP"]).parent / "sidequest-diagnostics" / f"{run_id}-{attempt}"
     diagnostics.mkdir(parents=True, exist_ok=False)
+    commands.diagnostics = diagnostics
+    commands.expected = expected
     summary = []
     timings = []
 
@@ -81,10 +223,17 @@ def main():
         print(f"::group::{label}", flush=True)
         print(shlex.join(command), flush=True)
         started = time.monotonic()
-        with log.open("w") as output:
-            result = subprocess.run(command, stdout=output, stderr=subprocess.STDOUT)
-        timings.append({"label": label, "command": command, "exit": result.returncode,
-                        "seconds": time.monotonic() - started, "log": str(log)})
+        result = None
+        try:
+            with log.open("w") as output:
+                cleanup = (label.startswith(("shutdown-", "delete-")) and
+                           command[:3] in (["xcrun", "simctl", "shutdown"], ["xcrun", "simctl", "delete"]))
+                result = commands.run(command, output, cleanup=cleanup)
+        finally:
+            timings.append({"label": label, "command": command,
+                            "exit": result.returncode if result else None,
+                            "canceled": commands.canceled is not None,
+                            "seconds": time.monotonic() - started, "log": str(log)})
         lines = log.read_text(errors="replace").splitlines()
         print("\n".join(lines[-80:]), flush=True)
         print("::endgroup::", flush=True)
@@ -166,6 +315,8 @@ def main():
         with Path(os.environ["GITHUB_OUTPUT"]).open("a") as output:
             output.write(f"verification_directory={diagnostics}\n")
     finally:
+        if commands.canceled is not None:
+            summary.append(f"- CANCELED by signal {commands.canceled}; no successful verification manifest.")
         (diagnostics / "commands.json").write_text(json.dumps(timings, indent=2) + "\n")
         with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a") as output:
             output.write(f"### Sidequest verification\n\nCommit: `{expected}`\n\n")
@@ -176,6 +327,9 @@ def main():
 if __name__ == "__main__":
     try:
         main()
+    except VerificationCanceled as error:
+        print(str(error), file=sys.stderr)
+        sys.exit(128 + error.signum)
     except (RuntimeError, OSError, ValueError, KeyError) as error:
         print(f"Verification failed: {error}", file=sys.stderr)
         sys.exit(1)
