@@ -18,9 +18,9 @@ API = f"repos/{REPO}"
 CHECK = "Sidequest / verification"
 WORKFLOW = ".github/workflows/releases.yml"
 RUNNER = "Sidequest-Mac-foreground"
-# Issue #92: integration #9 must establish MVP readiness in a reviewed PR before enabling.
-# No environment override; main pushes never publish even after this flag changes.
-PUBLICATION_ENABLED = False
+# Integration #9 establishes functional readiness; only reviewed main may publish manually.
+# No environment override. Main pushes never publish; native exact-event gates still apply.
+PUBLICATION_ENABLED = True
 
 
 def require(condition, message):

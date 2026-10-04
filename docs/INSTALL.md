@@ -98,7 +98,7 @@ Open Simulator to see the window. Normal launch shows Sidequest's shuffled news 
 
 ## Download a simulator preview
 
-Publication is currently held until reviewed MVP readiness; local source builds remain available. For an existing download, select its exact release tag (`YYYY.MM.build` for new publisher runs, or historical `preview-<full-SHA>`) from the private [release history](https://github.com/devofthings/sidequest/releases). The ARM64 simulator archive requires an Apple-silicon Mac and the verified iOS 27.0 (24A434) runtime above. It cannot be installed directly on an iPhone.
+Functional integration passed 133 native tests; first MVP publication still requires independent readiness review, exact-head CI, gated merge, successful main verification, and explicit manual dispatch. Local source builds remain available. For an existing download, select its exact release tag (`YYYY.MM.build` for new publisher runs, or historical `preview-<full-SHA>`) from the private [release history](https://github.com/devofthings/sidequest/releases). The ARM64 simulator archive requires an Apple-silicon Mac and the verified iOS 27.0 (24A434) runtime above. It cannot be installed directly on an iPhone.
 
 ```sh
 SIDEQUEST_PREVIEW_TAG='paste-exact-published-release-tag-here'

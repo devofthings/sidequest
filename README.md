@@ -16,7 +16,7 @@ Open `Sidequest.xcodeproj`, select the shared **Sidequest** scheme, and run on a
 | --- | --- |
 | Recorded development preview | [2026.10.7](https://github.com/devofthings/sidequest/releases/tag/2026.10.7), from `5dc0320e2757`, published October 3, 2026; predates the current pager |
 | Download | Unsigned ARM64 simulator archive for a Mac; select a verified version from the private [release history](https://github.com/devofthings/sidequest/releases) |
-| Next release | Held until reviewed MVP integration readiness; afterward, explicit manual dispatch under [release policy](docs/RELEASES.md) |
+| Next release | Functional integration passed 133 native tests; fresh review/CI and explicit manual publication remain required under [release policy](docs/RELEASES.md) |
 | Your iPhone | Physical installation is deferred and unverified ([#79](https://github.com/devofthings/sidequest/issues/79)); [local source signing instructions](docs/INSTALL.md#install-on-your-own-iphone) are available |
 | Verified checks for 2026.10.7 | Debug build, unit/UI tests (16 UI tests), and ARM64 Release build passed in the [release verification job](https://github.com/devofthings/sidequest/actions/runs/37158924819/job/111308053366) |
 
