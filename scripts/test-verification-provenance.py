@@ -25,8 +25,17 @@ class ProvenanceTests(unittest.TestCase):
         self.git("config", "core.hooksPath", "/dev/null")
         self.git("config", "user.name", "Fixture")
         self.git("config", "user.email", "fixture@example.invalid")
+        for target, body in (
+            ("SidequestTests", "final class Rules: XCTestCase { func testRules() {} func testSecond() {} }"),
+            ("SidequestUITests", "final class Feed: XCTestCase { func testTap() {} }")):
+            (self.root / target).mkdir()
+            (self.root / target / "Fixture.swift").write_text(body)
+        (self.root / "scripts").mkdir()
+        (self.root / "scripts/native-test-inventory.json").write_text(json.dumps({
+            "active_gate": "pre_design_smoke", "pre_design_smoke": ["SidequestUITests/Feed/testTap"],
+            "required": ["SidequestUITests/Feed/testTap"], "extended": {}}))
         (self.root / "source").write_text("base")
-        self.git("add", "source")
+        self.git("add", ".")
         self.git("commit", "-qm", "base")
         self.base = self.git("rev-parse", "HEAD")
         (self.root / "source").write_text("reviewed")
@@ -75,15 +84,15 @@ class ProvenanceTests(unittest.TestCase):
                 "status": "completed", "conclusion": "success",
                 "runner_name": "Sidequest-Mac-foreground", "html_url": self.url,
                 "check_run_url": f"https://api.github.com/{self.prefix}/check-runs/200"}}
-        inventory = ["SidequestTests/Rules/testRules", "SidequestUITests/Feed/testTap"]
-        selected = ["SidequestTests", inventory[1]]
+        inventory = ["SidequestTests/Rules/testRules", "SidequestTests/Rules/testSecond", "SidequestUITests/Feed/testTap"]
+        selected = ["SidequestTests", inventory[-1]]
         self.manifest = {
             "schema": 2, "commit": self.original, "run_id": "100", "attempt": "1",
             "run_number": "7", "event": "pull_request", "ref": "refs/pull/90/merge",
             "runner_name": "Sidequest-Mac-foreground", "all_checks_passed": True,
-            "tests": {"mode": "full", "inventory": inventory, "selected": selected,
+            "tests": {"mode": "full", "gate": "pre_design_smoke", "inventory": inventory, "selected": selected,
                 "workers": 1, "worker_inventory": [{"destination": "platform=iOS Simulator,id=fixture",
-                    "inventory": inventory, "tests": selected, "exit_code": 0, "passed": 2,
+                    "inventory": inventory, "tests": selected, "exit_code": 0, "passed": 3,
                     "failed": 0, "skipped": 0, "result_bundle": "/tmp/fixture.xcresult",
                     "test_seconds": 1.5}]}}
 
@@ -104,6 +113,7 @@ class ProvenanceTests(unittest.TestCase):
         self.assertEqual(evidence["original_head"], self.original)
         self.assertEqual(evidence["inventory"], self.manifest["tests"]["inventory"])
         self.assertEqual(evidence["run_url"], self.url)
+        self.assertEqual(evidence["gate"], "pre_design_smoke")
 
     def test_evidence_mutations_require_full_verification(self):
         mutations = [
@@ -119,6 +129,8 @@ class ProvenanceTests(unittest.TestCase):
             ("wrong head", lambda: self.data[f"{self.prefix}/actions/jobs/200"].update(head_sha=self.head)),
             ("legacy manifest", lambda: self.manifest.update(schema=1)),
             ("transitive inheritance", lambda: self.manifest["tests"].update(mode="inherited")),
+            ("wrong gate", lambda: self.manifest["tests"].update(gate="required")),
+            ("missing gate", lambda: self.manifest["tests"].pop("gate")),
             ("missing selected case", lambda: self.manifest["tests"]["selected"].append("SidequestUITests/Feed/testMissing")),
             ("duplicate inventory", lambda: self.manifest["tests"]["inventory"].append(self.manifest["tests"]["inventory"][0])),
             ("worker failures", lambda: self.manifest["tests"]["worker_inventory"][0].update(failed=1)),
@@ -138,13 +150,47 @@ class ProvenanceTests(unittest.TestCase):
         tests = self.manifest["tests"]
         first = tests["worker_inventory"][0]
         second = copy.deepcopy(first)
-        first.update(tests=["SidequestTests"], inventory=[tests["inventory"][0]], passed=1)
+        first.update(tests=["SidequestTests"], inventory=tests["inventory"][:2], passed=2)
         second.update(destination="platform=iOS Simulator,id=second",
-                      tests=[tests["selected"][1]], inventory=[tests["inventory"][1]], passed=1)
+                      tests=[tests["selected"][1]], inventory=[tests["inventory"][-1]], passed=1)
         tests.update(workers=2, worker_inventory=[first, second])
         self.assertEqual(self.resolve()["original_workers"], 2)
         second.update(inventory=first["inventory"])
         self.assertIsNone(self.resolve())
+
+    def test_complete_worker_record_missing_committed_unit_requires_fallback(self):
+        tests = self.manifest["tests"]
+        tests["inventory"].remove("SidequestTests/Rules/testSecond")
+        tests["worker_inventory"][0].update(inventory=tests["inventory"], passed=2)
+        self.assertIsNone(self.resolve())
+
+    def test_unapproved_additional_ui_record_requires_fallback(self):
+        tests = self.manifest["tests"]
+        tests["selected"].append("SidequestUITests/Feed/testExtra")
+        tests["inventory"].append("SidequestUITests/Feed/testExtra")
+        tests["worker_inventory"][0].update(tests=tests["selected"], inventory=tests["inventory"], passed=4)
+        self.assertIsNone(self.resolve())
+
+    def test_gate_activation_must_match_committed_policy(self):
+        policy_file = self.root / "scripts/native-test-inventory.json"
+        policy = json.loads(policy_file.read_text())
+        policy["active_gate"] = "required"
+        policy_file.write_text(json.dumps(policy))
+        self.git("add", ".")
+        self.git("commit", "-qm", "explicit gate activation")
+        original = self.git("rev-parse", "HEAD")
+        self.git("reset", "--soft", self.base)
+        self.git("commit", "-qm", "activated gate squash")
+        head = self.git("rev-parse", "HEAD")
+        self.data = json.loads(json.dumps(self.data).replace(self.original, original).replace(self.head, head))
+        self.original, self.head = original, head
+        self.receipt["head"] = original
+        self.receipt["verification"]["head"] = original
+        self.data[f"{self.prefix}/issues/comments/300"]["body"] = gate.audit_body(self.receipt)
+        self.manifest["commit"] = original
+        self.assertIsNone(self.resolve())
+        self.manifest["tests"]["gate"] = "required"
+        self.assertEqual(self.resolve()["gate"], "required")
 
     def test_job_and_check_have_independent_linked_identities(self):
         self.data[f"{self.prefix}/commits/{self.original}/check-runs"]["check_runs"][0]["id"] = 250

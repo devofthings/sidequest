@@ -89,6 +89,38 @@ def validate_inventory(tests):
     require(actual == inventory and planned == selected)
 
 
+def committed_cases(git, head, target):
+    cases = set()
+    paths = git("ls-tree", "-r", "--name-only", "-z", head, "--", target).split("\0")
+    for path in paths:
+        if path.endswith(".swift"):
+            body = git("show", f"{head}:{path}")
+            classes = re.findall(r"final class (\w+): XCTestCase", body)
+            require(len(classes) <= 1)
+            if classes:
+                cases.update(f"{target}/{classes[0]}/{name}"
+                             for name in re.findall(r"func (test\w+)\(", body))
+    require(bool(cases))
+    return cases
+
+
+def validate_committed_gate(git, head, base, tests):
+    policy = json.loads(git("show", f"{head}:scripts/native-test-inventory.json"))
+    active = policy["active_gate"]
+    require(active in ("pre_design_smoke", "required") and tests["gate"] == active)
+    ui = identifiers(policy[active])
+    if active == "required":
+        paths = git("diff", "--no-renames", "--name-only", "-z", base, head).split("\0")
+        for case, rule in policy["extended"].items():
+            if any(path.startswith(tuple(rule["paths"])) for path in paths if path):
+                ui.add(case)
+    require(ui.issubset(committed_cases(git, head, "SidequestUITests")))
+    units = committed_cases(git, head, "SidequestTests")
+    require(identifiers(tests["selected"]) == {"SidequestTests", *ui})
+    require(identifiers(tests["inventory"]) == units | ui)
+    return active
+
+
 def resolve_inherited_tests(checkout, head, diagnostics_root, *,
                             repository="devofthings/sidequest",
                             runner_name="Sidequest-Mac-foreground", read_api=None):
@@ -193,7 +225,8 @@ def _resolve(checkout, head, diagnostics_root, repository, runner_name, api):
             manifest["runner_name"] == runner_name and positive(manifest["run_id"]) == run_id and
             positive(manifest["attempt"]) == attempt and positive(manifest["run_number"]) == run_number)
     validate_inventory(manifest["tests"])
-    return {"mode": "inherited", "original_head": original, "pr": number,
+    gate = validate_committed_gate(git, head, receipt["base"], manifest["tests"])
+    return {"mode": "inherited", "gate": gate, "original_head": original, "pr": number,
             "reviewed_base": receipt["base"], "run_id": run_id, "attempt": attempt,
             "run_url": run_url, "original_run_number": run_number,
             "inventory": manifest["tests"]["inventory"], "receipt_url": receipt_url,
