@@ -24,7 +24,7 @@ The recorded MVP and test results describe that selected release. Later document
 
 ## What's playable?
 
-Game cards require **Tap to play**. Skipping or backgrounding resets unfinished attempts; completed results survive revisits during the session.
+Game cards show their actual inactive boards before **Tap to play**; Memory stays face down. Starting enables play without moving or reshuffling the board. Skipping or backgrounding resets unfinished attempts; completed results survive revisits during the session.
 
 Current source supports full-card native vertical paging: swipe up/down directly on a card or use the compact **Feed navigation** menu. Overflowing content scrolls within its card; a new outward gesture at its top/bottom edge changes cards. See [feed navigation](docs/FEED.md#navigation-and-eligibility). Game boards and primary controls retain their geometry when feedback or results change; [stable layout](docs/GAME_LAYOUT.md) describes the current source correction and verification.
 
@@ -42,12 +42,12 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 51 | 4,346 |
-| Unit tests | 23 | 3,539 |
-| UI tests | 13 | 1,908 |
-| **Total** | **87** | **9,793** |
+| App | 51 | 4,353 |
+| Unit tests | 23 | 3,564 |
+| UI tests | 14 | 2,114 |
+| **Total** | **88** | **10,031** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+7,223 / −493 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+7,513 / −545 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.

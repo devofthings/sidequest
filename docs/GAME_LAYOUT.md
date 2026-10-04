@@ -4,7 +4,7 @@ Approved bug [#108](https://github.com/devofthings/sidequest/issues/108) correct
 
 ## Presentation boundary
 
-Playable game cards anchor at the top of the existing full-card host. Previews retain their existing centered layout and explicit **Tap to play**. News, pager geometry, game rules, attempt lifecycle, and five-game/news cadence remain unchanged.
+Issue #88 extends the same top anchor to actual visible inactive previews. The explicit **Tap to play** action sits above the board and keeps its measured footprint after starting; see [preview guidance](GAME_PREVIEWS.md). News, pager geometry, game rules, attempt lifecycle, and five-game/news cadence remain unchanged.
 
 `StableGameRegion` reserves the natural size of the supported text alternatives at the current width, font, and Dynamic Type setting. Reservations are invisible, inaccessible, and noninteractive. Actual messages remain fully readable; no fixed text height, line limit, or shrinking text hides feedback. When changing message copy or styling, update the corresponding reservation. The existing card scroller owns overflow on smaller viewports and at larger text sizes.
 

@@ -42,3 +42,7 @@ The stated first implementation default reuses the two validated original White/
 ## Stable selection and completion #108
 
 Reserve all own-piece selection and feedback/result text variants with their actual styles. Retain the alternative piece and coordinate controls after checkmate, visibly disabled through the existing input gates, to preserve board/control positions and scroll extent. Read [stable layout](../../../docs/GAME_LAYOUT.md) before changing completion composition. Native regression anchors use an unselected square, not its enlarged selected outline.
+
+## Visible inactive boards #88
+
+Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../../docs/GAME_PREVIEWS.md).

@@ -4,21 +4,30 @@ import XCTest
 
 @MainActor
 final class MemoryControllerTests: XCTestCase {
-  func testPreviewHiddenInputAndStartDoNotFlipCards() throws {
+  func testFrozenVisiblePreviewRejectsInputAndStartDoesNotFlipCards() async throws {
     let runtime = GameRuntime()
     let board = try fixedBoard()
+    let differentBoard = try MemoryRules(symbols: Array(board.symbols.reversed()))
     var creations = 0
+    var delays = 0
     let controller = MemoryController(
       runtime: runtime,
       makeBoard: {
         creations += 1
-        return board
-      })
+        return creations == 1 ? board : differentBoard
+      },
+      delay: { delays += 1 })
     controller.flip(0)
     runtime.start()
     XCTAssertNil(controller.rules)
-    XCTAssertEqual(creations, 0)
+    XCTAssertEqual(controller.displayedRules, board)
+    XCTAssertEqual(creations, 1)
+    await Task.yield()
+    XCTAssertEqual(delays, 0)
     runtime.setVisible(true)
+    controller.flip(0)
+    XCTAssertNil(controller.rules)
+    XCTAssertEqual(controller.displayedRules, board)
     runtime.start()
     XCTAssertEqual(controller.rules, board)
     XCTAssertFalse(
@@ -29,11 +38,13 @@ final class MemoryControllerTests: XCTestCase {
     runtime.setVisible(false)
     XCTAssertEqual(runtime.phase, .preview)
     XCTAssertNil(controller.rules)
+    XCTAssertEqual(controller.displayedRules, board)
     controller.flip(1)
     runtime.setVisible(true)
     runtime.start()
     XCTAssertEqual(controller.rules, board)
-    XCTAssertEqual(creations, 2)
+    XCTAssertEqual(controller.displayedRules, board)
+    XCTAssertEqual(creations, 1)
   }
 
   func testMismatchLocksInputThenRevealsOnlyMatchedPairs() async throws {

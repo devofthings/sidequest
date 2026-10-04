@@ -5,7 +5,8 @@ final class FeedFlowTests: XCTestCase {
   func testStartConsumesNoMoveAndSkippingRequiresFreshStart() {
     let app = launch()
     XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
-    XCTAssertFalse(app.buttons["game.interact"].exists)
+    XCTAssertTrue(app.buttons["game.interact"].exists)
+    XCTAssertFalse(app.buttons["game.interact"].isEnabled)
     app.nextFeedCard()
     app.previousFeedCard()
     XCTAssertTrue(app.buttons["game.start"].exists)

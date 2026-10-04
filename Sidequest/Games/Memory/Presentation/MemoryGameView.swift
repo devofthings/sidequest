@@ -6,42 +6,41 @@ struct MemoryGameView: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
   var body: some View {
-    if let board = controller.rules {
-      VStack(spacing: 16) {
-        Text("Find all six pairs.")
-          .font(.body)
-        Text("\(board.matchedPairCount) of 6 pairs matched")
-          .font(.headline)
-          .accessibilityIdentifier("memory.progress")
-        LazyVGrid(
-          columns: Array(
-            repeating: GridItem(.flexible(), spacing: 12),
-            count: dynamicTypeSize.isAccessibilitySize ? 2 : 3), spacing: 12
-        ) {
-          ForEach(board.symbols.indices, id: \.self) { index in
-            tile(index, board: board)
-          }
-        }
-        StableGameRegion {
-          ZStack {
-            Label("All pairs found!", systemImage: "checkmark.circle.fill")
-              .font(.title2.bold())
-            Text("Try another pair when these turn over.").font(.footnote)
-          }
-        } content: {
-          if board.isCompleted {
-            Label("All pairs found!", systemImage: "checkmark.circle.fill")
-              .font(.title2.bold())
-              .accessibilityIdentifier("memory.completed")
-          } else if board.isResolvingMismatch {
-            Text("Try another pair when these turn over.")
-              .font(.footnote)
-              .accessibilityIdentifier("memory.feedback")
-          }
+    let board = controller.displayedRules
+    return VStack(spacing: 16) {
+      Text("Find all six pairs.")
+        .font(.body)
+      Text("\(board.matchedPairCount) of 6 pairs matched")
+        .font(.headline)
+        .accessibilityIdentifier("memory.progress")
+      LazyVGrid(
+        columns: Array(
+          repeating: GridItem(.flexible(), spacing: 12),
+          count: dynamicTypeSize.isAccessibilitySize ? 2 : 3), spacing: 12
+      ) {
+        ForEach(board.symbols.indices, id: \.self) { index in
+          tile(index, board: board)
         }
       }
-      .padding(.horizontal, 4)
+      StableGameRegion {
+        ZStack {
+          Label("All pairs found!", systemImage: "checkmark.circle.fill")
+            .font(.title2.bold())
+          Text("Try another pair when these turn over.").font(.footnote)
+        }
+      } content: {
+        if board.isCompleted {
+          Label("All pairs found!", systemImage: "checkmark.circle.fill")
+            .font(.title2.bold())
+            .accessibilityIdentifier("memory.completed")
+        } else if board.isResolvingMismatch {
+          Text("Try another pair when these turn over.")
+            .font(.footnote)
+            .accessibilityIdentifier("memory.feedback")
+        }
+      }
     }
+    .padding(.horizontal, 4)
   }
 
   private func tile(_ index: Int, board: MemoryRules) -> some View {

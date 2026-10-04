@@ -101,26 +101,29 @@ struct FeedView: View {
           Text(game.kind.title)
             .font(.title.bold())
             .accessibilityAddTraits(.isHeader)
-          switch runtime.phase {
-          case .preview:
-            Button("Tap to play", action: runtime.start)
-              .buttonStyle(.borderedProminent)
-              .controlSize(.large)
-              .accessibilityHint("Starts this game without making a move.")
-              .accessibilityIdentifier("game.start")
-              .disabled(!runtime.isVisible)
-            Text("A quick game, whenever you’re ready.")
-              .foregroundStyle(.secondary)
-          case .playing, .completed:
-            gameContent(game, runtime)
+          StableGameRegion {
+            startButton(runtime).disabled(true)
+          } content: {
+            if runtime.phase == .preview { startButton(runtime) }
           }
+          gameContent(game, runtime)
+            .disabled(runtime.phase == .preview)
         }
         .padding(16)
         .frame(
           maxWidth: .infinity, maxHeight: .infinity,
-          alignment: runtime.phase == .preview ? .center : .top)
+          alignment: .top)
       }
     }
+  }
+
+  private func startButton(_ runtime: GameRuntime) -> some View {
+    Button("Tap to play", action: runtime.start)
+      .buttonStyle(.borderedProminent)
+      .controlSize(.large)
+      .accessibilityHint("Starts this game without making a move.")
+      .accessibilityIdentifier("game.start")
+      .disabled(!runtime.isVisible)
   }
 }
 

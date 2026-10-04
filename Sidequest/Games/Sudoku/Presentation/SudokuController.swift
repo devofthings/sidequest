@@ -5,8 +5,11 @@ import Observation
 final class SudokuController {
   let runtime: GameRuntime
   let puzzle: SudokuPuzzle
+  private let initialBoard: SudokuBoard
   private(set) var board: SudokuBoard?
   private(set) var selectedCell: Int?
+
+  var displayedBoard: SudokuBoard { board ?? initialBoard }
 
   init(
     puzzle: SudokuPuzzle, runtime: GameRuntime, completedBoard: SudokuBoard? = nil,
@@ -14,6 +17,7 @@ final class SudokuController {
   ) {
     self.puzzle = puzzle
     self.runtime = runtime
+    initialBoard = SudokuBoard(puzzle: puzzle)
     board = completedBoard
     self.selectedCell = selectedCell
     runtime.installEffectHandler { [weak self] effect in self?.apply(effect) }
@@ -38,7 +42,7 @@ final class SudokuController {
   private func apply(_ effect: GameLifecycleEffect) {
     switch effect {
     case .start:
-      board = SudokuBoard(puzzle: puzzle)
+      board = initialBoard
       selectedCell = nil
     case .reset:
       board = nil
