@@ -3,7 +3,13 @@ import UniformTypeIdentifiers
 
 @MainActor
 struct NewsLibraryView: View {
-  @State private var model = NewsImportModel()
+  @State private var model: NewsImportModel
+  let automaticallyRestores: Bool
+
+  init(model: NewsImportModel = NewsImportModel(), automaticallyRestores: Bool = true) {
+    _model = State(initialValue: model)
+    self.automaticallyRestores = automaticallyRestores
+  }
   @State private var showsImporter = false
   @State private var importTask: Task<Void, Never>?
 
@@ -11,6 +17,8 @@ struct NewsLibraryView: View {
     VStack(spacing: 12) {
       Button("Import news JSON") { showsImporter = true }
         .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+        .frame(minHeight: 44)
         .disabled(model.isBusy)
         .accessibilityIdentifier("news.import")
       if model.isBusy { ProgressView("Loading news") }
@@ -19,6 +27,14 @@ struct NewsLibraryView: View {
           .font(.footnote)
           .accessibilityIdentifier("news.message")
           .padding(.horizontal)
+        if model.canRetryRestore {
+          Button("Retry loading saved news") {
+            importTask?.cancel()
+            importTask = Task { await model.restore() }
+          }
+          .frame(minHeight: 44)
+          .accessibilityIdentifier("news.retry")
+        }
       }
       if !model.isBusy && model.snapshots.isEmpty {
         ContentUnavailableView(
@@ -35,7 +51,7 @@ struct NewsLibraryView: View {
       }
     }
     .padding(.top, 12)
-    .task { await model.restore() }
+    .task { if automaticallyRestores { await model.restore() } }
     .fileImporter(isPresented: $showsImporter, allowedContentTypes: [.json]) { result in
       switch result {
       case .success(let url):

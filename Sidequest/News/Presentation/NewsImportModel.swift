@@ -7,6 +7,7 @@ final class NewsImportModel {
   private(set) var snapshots: [NewsSnapshot] = []
   private(set) var isBusy = false
   private(set) var message: String?
+  var canRetryRestore: Bool { !hasLoaded && !isBusy }
   private var hasLoaded = false
   private let store: (any NewsSnapshotStorage)?
   private let prepareReplacement: @MainActor ([NewsSnapshot]) throws -> (@MainActor () -> Void)

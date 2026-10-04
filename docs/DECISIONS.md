@@ -55,6 +55,9 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | Defer accounts, ads, payments, licensed catalogs, and social integrations | Accepted | User confirmed the bounded private prototype scope. |
 | Portable agent setup and repository-local review skill | Accepted implementation guidance | User authorized fixing agent setup gaps on October 3, 2026. Follow [AGENT_SETUP.md](AGENT_SETUP.md); hook installation is explicit and preflight is read-only. App start was authorized on October 3, 2026; scheduling remains undecided. |
 
+| Integrated startup and atomic news replacement | Accepted implementation guidance | Integration #9 evolves the retained startup into one coordinator. Immutable reads plus current loading identity precede full candidate construction/adoption; cached fixtures prepare a throwing replacement before atomic save, followed by nonthrowing synchronous commit. Missing/corrupt news keeps real games available without fictional fallback. Modal/scene/retirement gates reuse the existing feed lifecycle. See [App guidance](../Sidequest/App/AGENTS.md), [News guidance](../Sidequest/News/AGENTS.md), and [FEED.md](FEED.md). |
+| Integration readiness PR precedes final published-source proof | Accepted implementation guidance under the release hold | #9’s functional MVP, source install, full native suite and fresh review must pass before the tracked readiness flag can be enabled. The readiness PR references #9 as a partial contribution; after gated merge and exact-main verification, explicit manual publication permits actual final-tag/source/checksum/install proof, then issue closure. The old development preview cannot certify the integrated MVP. See [RELEASES.md](RELEASES.md). |
+
 ## Research context
 
 Publisher APIs, news licensing, and game catalogs were discussed as possible inputs, not selected dependencies. Previous price examples are research snapshots and should be rechecked before purchase or integration.

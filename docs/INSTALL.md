@@ -142,17 +142,13 @@ After a Personal Team profile expires, rebuilding and reinstalling may be necess
 
 ## Content, versions, and troubleshooting
 
-Keep real personal news captures in ignored `.local-news/` or another directory outside `Sidequest`, `SidequestTests`, and `SidequestUITests`. Use [NEWS.md](NEWS.md) to prepare a version 1 JSON file, import and validate it through Read news, and replace the saved set. Only fictional samples/schema are bundled. Fictional test fixtures are isolated in their test bundles.
+Keep real personal news captures in ignored `.local-news/` or another directory outside `Sidequest`, `SidequestTests`, and `SidequestUITests`. Use [NEWS.md](NEWS.md) to prepare a version 1 JSON file, import and validate it through the feed’s News snapshots button, and replace the saved set. Only fictional samples/schema are bundled. Fictional test fixtures are isolated in their test bundles.
 
-Until #9 connects saved imports to the feed, open the standalone library from a Debug build by adding `-sidequest-news-preview` to Xcode's scheme launch arguments, or relaunch the installed Debug simulator app with:
+Normal launch mixes your saved snapshots with Sudoku, Memory, two Chess puzzles, and Bubble shooter. Tap the newspaper button (**News snapshots**) in the feed header, then **Import news JSON** and select the file in native Files. Successful selection replaces the complete news set and starts a new shuffled session. Missing or empty news leaves the real games available; invalid input preserves the prior deck and saved bytes. Opening the library resets unfinished play; completed results survive closing or canceling it. See [NEWS.md](NEWS.md) for reserved IDs, format, persistence, and recovery.
 
-```sh
-xcrun simctl terminate "$SIDEQUEST_SIMULATOR_ID" dev.devofthings.sidequest
-xcrun simctl launch "$SIDEQUEST_SIMULATOR_ID" dev.devofthings.sidequest \
-  -sidequest-news-preview
-```
+For deterministic integration checks, a Debug build can launch with `-sidequest-integration-fixtures -sidequest-integration-reset`. It creates original fictional valid/empty/malformed/reserved-ID JSON under **On My iPhone → Sidequest → Sidequest Fixtures** and uses an isolated persistent test store. Remove the reset argument to test persistence across relaunch. Debug exposes Documents to Files; Release excludes these fixture/reset routes and file-sharing keys. To try private captures in the simulator, place your JSON in its Debug Documents directory using the app’s data-container path, select it with Files, and keep the file outside Git. On iPhone, AirDrop or another existing Files location works without enabling app file sharing.
 
-Skip termination if the app is already stopped. This route shows **Read news** and its importer. Normal feed launch still uses fictional session news; Release previews ignore this Debug argument.
+The older standalone Debug fixture route `-sidequest-news-preview` still provides **Read news** for its original tests. Production does not use fictional news or demo games. Release ignores all fixture flags. A successful simulator run establishes neither physical signing/install nor device VoiceOver/iOS17 behavior; those remain unverified until exercised.
 
 Generated output belongs in ignored `DerivedData/`, `build/`, or an external build directory, outside synchronized source roots. Keep scoped `AGENTS.md` guidance in its owning folder; all target Markdown is excluded from built resources.
 

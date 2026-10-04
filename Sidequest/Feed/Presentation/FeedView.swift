@@ -5,6 +5,7 @@ struct FeedView: View {
   let controller: FeedController
   let gameContent: (GameCard, GameRuntime) -> AnyView
   let newsContent: (NewsSnapshot) -> AnyView
+  var openNews: (() -> Void)? = nil
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.self) private var environment
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -18,6 +19,14 @@ struct FeedView: View {
           .accessibilityAddTraits(.isHeader)
           .accessibilityIdentifier("foundation.title")
         Spacer(minLength: 8)
+        if let openNews {
+          Button(action: openNews) {
+            Label("News snapshots", systemImage: "newspaper")
+              .labelStyle(.iconOnly)
+              .frame(minWidth: 44, minHeight: 44)
+          }
+          .accessibilityIdentifier("feed.news")
+        }
         Menu {
           Button("Previous card") { requestPage(-1) }
             .disabled(!controller.canGoBack || !controller.canNavigate)
