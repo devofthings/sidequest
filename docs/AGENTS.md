@@ -9,7 +9,7 @@
 
 ## README dashboard
 
-Keep [README.md](../README.md) concise and tied to merged capabilities. Update game readiness, installation links, and recorded release/test evidence only from actual source and successful checks. A recorded release is a historical snapshot; the main workflow badge reports live status. Use native GitHub workflow badges and repository-local platform SVGs, with no credentials or private-data metrics in external image URLs. Screenshots are deferred by the user on October 4, 2026.
+Keep [README.md](../README.md) concise and tied to merged capabilities. Update game readiness, installation links, and recorded release/test evidence only from actual source and successful checks. A recorded release is a historical snapshot; the PR verification workflow badge reports live PR-check status. Routine merging starts no automatic main job under #112; manual releases require explicit owner publication authorization. Use native GitHub workflow badges and repository-local platform SVGs, with no credentials or private-data metrics in external image URLs. Screenshots are deferred by the user on October 4, 2026.
 
 When refreshing delivery or navigation status, preserve the current [release hold](RELEASES.md#accepted-delivery-policy) and [merged feed behavior](FEED.md#navigation-and-eligibility). Distinguish the retained development preview from current source and keep deferred physical installation labeled unverified.
 

@@ -27,6 +27,28 @@ installer = load("configure-ci-runner")
 
 
 class CIBoundaryTests(unittest.TestCase):
+    def test_routine_workflow_is_pr_only_and_release_jobs_require_manual_main(self):
+        directory = Path(__file__).resolve().parent.parent / ".github/workflows"
+        expected = {"verification.yml": {"pull_request"}, "releases.yml": {"workflow_dispatch"}}
+        for name, events in expected.items():
+            source = (directory / name).read_text()
+            block = re.search(r"^on:\n((?:[ \t]+[^\n]*\n)+)", source, re.MULTILINE)
+            self.assertIsNotNone(block)
+            self.assertEqual(set(re.findall(r"^  ([\w-]+):", block[1], re.MULTILINE)), events)
+        pr = (directory / "verification.yml").read_text()
+        activities = re.search(r"^    types: \[([^\]]+)\]$", pr, re.MULTILINE)
+        self.assertIsNotNone(activities)
+        self.assertEqual([value.strip() for value in activities[1].split(",")],
+                         ["opened", "synchronize", "reopened"])
+        # Draft opening and commit changes run; an unchanged ready transition reuses its check.
+        self.assertEqual(re.findall(r"^    if: (.+)$", pr, re.MULTILINE), [
+            "github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository"])
+        self.assertIn("ref: ${{ github.event.pull_request.head.sha || github.sha }}", pr)
+        release = (directory / "releases.yml").read_text()
+        guards = re.findall(r"^    if: (.+)$", release, re.MULTILINE)
+        self.assertEqual(guards, ["github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'"] * 2)
+        self.assertIn("needs: verification", release)
+
     def test_main_workflow_grants_exact_read_only_provenance_permissions(self):
         workflow = Path(__file__).resolve().parent.parent / ".github/workflows/releases.yml"
         source = workflow.read_text()

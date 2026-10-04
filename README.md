@@ -1,6 +1,6 @@
 # Sidequest
 
-[![Main verification](https://github.com/devofthings/sidequest/actions/workflows/releases.yml/badge.svg?branch=main)](https://github.com/devofthings/sidequest/actions/workflows/releases.yml)
+[![PR verification](https://github.com/devofthings/sidequest/actions/workflows/verification.yml/badge.svg?event=pull_request)](https://github.com/devofthings/sidequest/actions/workflows/verification.yml)
 ![iOS 17+ deployment target](docs/assets/readme/ios.svg)
 ![Swift 6 language mode](docs/assets/readme/swift.svg)
 
@@ -16,11 +16,11 @@ Open `Sidequest.xcodeproj`, select the shared **Sidequest** scheme, and run on a
 | --- | --- |
 | Recorded MVP | [2026.10.14](https://github.com/devofthings/sidequest/releases/tag/2026.10.14), from `65bd39003a2a`, published October 4, 2026 |
 | Download | Verified unsigned ARM64 simulator archive for an Apple-silicon Mac; [download and checksum instructions](docs/INSTALL.md#download-a-simulator-preview) |
-| Publication | Explicit manual main dispatch; main updates verify without automatic publication under [release policy](docs/RELEASES.md) |
+| Publication | Owner-authorized manual main dispatch under [release policy](docs/RELEASES.md); merging starts no automatic main job |
 | Your iPhone | Physical installation is deferred and unverified ([#79](https://github.com/devofthings/sidequest/issues/79)); [local source signing instructions](docs/INSTALL.md#install-on-your-own-iphone) are available |
 | Verified checks for 2026.10.14 | 133 native tests (96 unit, 37 UI), Debug/ARM64 Release builds, and source discovery passed in the [release verification job](https://github.com/devofthings/sidequest/actions/runs/37178518287/job/111366112952); fresh tagged-source and downloaded-app installation/launch [also passed](https://github.com/devofthings/sidequest/issues/9#issuecomment-5976928508) |
 
-The recorded MVP and test results describe that selected release. Later documentation updates do not create another download. Seven older preview releases and their 21 assets were removed; Git tags/source remain, including the `2026.10.7` statistics baseline. Main updates continue native verification without automatic publication. The workflow badge links the latest main run; open its details for actual checks. Simulator archives cannot be installed directly on an iPhone.
+The recorded MVP and test results describe that selected release. Later documentation updates do not create another download. Seven older preview releases and their 21 assets were removed; Git tags/source remain, including the `2026.10.7` statistics baseline. Routine verification runs on exact PR heads; merging starts no automatic main job. The workflow badge links PR verification; open its details for actual checks. Simulator archives cannot be installed directly on an iPhone.
 
 ## What's playable?
 
@@ -96,4 +96,4 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 
 Sidequest is the working project name. Public naming availability has not been established.
 
-Until design agreement, verification uses [all unit tests and three UI smoke cases](docs/TESTING.md) on one owned simulator, current-source Debug compilation, and proven same-gate main test inheritance. Longer UI journeys remain available explicitly. The approved 123-case PR gate passed in 3 minutes 45 seconds, and main's full-gate fallback passed in 3 minutes 41 seconds with fresh install/launch and Release verification; [recorded evidence](docs/TESTING.md#measured-temporary-gate-ci) distinguishes these from the historical broader benchmark. See [#90](https://github.com/devofthings/sidequest/issues/90) for actual workflow-token inheritance evidence. Focused checks do not replace exact-head CI.
+Until design agreement, verification uses [all unit tests and three UI smoke cases](docs/TESTING.md) on one owned simulator, current-source Debug compilation, and exact-head PR checks before merge. Merging starts no automatic main job under the owner's [PR-only decision](docs/CI.md#verification-contract). Longer UI journeys remain available explicitly. The approved 123-case PR gate passed in 3 minutes 45 seconds, and main's full-gate fallback passed in 3 minutes 41 seconds with fresh install/launch and Release verification; [recorded evidence](docs/TESTING.md#measured-temporary-gate-ci) distinguishes these from the historical broader benchmark. Historical main inheritance remains available for explicitly owner-authorized manual releases; [#90](https://github.com/devofthings/sidequest/issues/90) records its proof. Focused checks do not replace exact-head CI.

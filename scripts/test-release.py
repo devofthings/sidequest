@@ -35,6 +35,8 @@ class PublicationHoldTests(unittest.TestCase):
         self.assertTrue(release.PUBLICATION_ENABLED)
         github = FakeGitHub()
         for event, ref in [("push", "refs/heads/main"), ("pull_request", "refs/pull/1/merge"),
+                           ("schedule", "refs/heads/main"), ("workflow_run", "refs/heads/main"),
+                           ("repository_dispatch", "refs/heads/main"),
                            ("workflow_dispatch", "refs/heads/feature"), ("workflow_dispatch", "refs/tags/2026.10.24")]:
             with self.subTest(event=event, ref=ref), \
                  patch.object(github, "request", side_effect=AssertionError("No network allowed")):
