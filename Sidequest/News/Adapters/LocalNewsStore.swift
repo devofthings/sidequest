@@ -5,7 +5,7 @@ struct ValidatedNewsImport: Sendable {
   let snapshots: [NewsSnapshot]
 }
 
-struct LocalNewsStore: Sendable {
+struct LocalNewsStore: NewsSnapshotStorage {
   let directory: URL
   var fileURL: URL { directory.appendingPathComponent("snapshots.json") }
 
@@ -44,6 +44,7 @@ struct LocalNewsStore: Sendable {
     _ = try NewsSnapshotImporter.decode(data)
     try Task.checkCancellation()
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    // The caller must synchronously publish after success, even if cancellation arrives now.
     try data.write(to: fileURL, options: .atomic)
   }
 
