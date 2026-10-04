@@ -24,7 +24,7 @@ jobs:
       verification_directory: ${{ steps.verify.outputs.verification_directory }}
     steps:
       - name: Check out the exact merged commit
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, reviewed immutable revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1, Node 24, reviewed immutable revision
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
@@ -51,7 +51,7 @@ jobs:
       statuses: read
     steps:
       - name: Check out the verified event commit
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, reviewed immutable revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1, Node 24, reviewed immutable revision
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
