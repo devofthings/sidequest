@@ -41,3 +41,6 @@ The owner's repeated-skip recommendation idea is captured in [#119](https://gith
 ## Selected MVP visual baseline
 
 Use the researched [DESIGN.md](../../docs/DESIGN.md) direction for approved #13 styling. Keep news still and readable, preview/play boards stable, shared start footprints, settled native paging, and Reduce Motion. Styling changes must preserve feed lifecycle and source attribution.
+## Shared MVP style #123
+
+Use [shared presentation tokens](../Presentation/AGENTS.md) for the calm canvas, rounded headings, and explicit lime start action. Keep preview and play on the same top-anchored layout with the same measured start reservation. Transparent UIKit hosting backgrounds expose the opaque SwiftUI canvas; forward color-scheme contrast and Reduce Motion into separate hosting roots alongside Dynamic Type and appearance. Shared styling owns neither paging nor runtime eligibility.

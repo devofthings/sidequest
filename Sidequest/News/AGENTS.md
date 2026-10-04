@@ -37,3 +37,7 @@ Capture the originating session/request before the first import/load await. Prep
 ## Demo news and cadence #106
 
 Bundle 30 original clearly fictional demo stories separately from the legacy two samples. Resolve only confirmed missing storage to demos, never empty/corrupt/unavailable data, and never persist demos automatically. Preserve import bytes and source IDs, and use truthful sample labels/source-placeholder wording. See [demo news policy](../../docs/DEMO_NEWS.md).
+
+## Shared MVP style #123
+
+Use the [shared presentation palette](../Presentation/AGENTS.md), an opaque rounded reading surface, semantic serif headline, and regular system body text. Keep every attribution, date, fictional label, source URL/action, and text-selection behavior. Local source-action press feedback follows Reduce Motion; article text stays still. Feed content remains unwrapped so the feed owns its existing content scroller.
