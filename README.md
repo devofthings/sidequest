@@ -42,12 +42,12 @@ The feed currently uses clearly labeled fictional news. Manual English snapshot 
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 29 | 1,954 |
-| Unit tests | 10 | 1,105 |
-| UI tests | 8 | 622 |
-| **Total** | **47** | **3,681** |
+| App | 35 | 2,467 |
+| Unit tests | 13 | 1,417 |
+| UI tests | 9 | 823 |
+| **Total** | **57** | **4,707** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+800 / −182 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+1,837 / −193 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
