@@ -7,7 +7,12 @@ final class FeedController {
   private var sceneIsActive = false
   private var hostIsAvailable = true
   private var isRetired = false
-  let runtimes: [CardID: GameRuntime]
+  private(set) var runtimes: [CardID: GameRuntime]
+  let isEndless: Bool
+  var replenishmentMessage: String?
+  @ObservationIgnored var windowDidChange: (([FeedCard]) -> [CardID: GameRuntime])?
+  @ObservationIgnored var demandDidChange: (() -> Void)?
+  @ObservationIgnored var retryReplenishment: (() -> Void)?
 
   var cards: [FeedCard] { selection.cards }
   var selectedIndex: Int? { selection.index }
@@ -19,16 +24,18 @@ final class FeedController {
   var canGoBack: Bool { selection.canGoBack }
   var canGoForward: Bool { selection.canGoForward }
 
-  init(cards: [FeedCard], runtimes: [CardID: GameRuntime]) {
+  init(cards: [FeedCard], runtimes: [CardID: GameRuntime], isEndless: Bool = false) {
     // DeckBuilder has already validated card identity. Missing adapters are a
     // composition error, rather than a game that silently accepts no input.
     precondition(
-      cards.allSatisfy { card in
-        if case .game(let game) = card { return runtimes[game.id] != nil }
-        return true
-      }, "Every game card needs a retained runtime.")
+      isEndless
+        || cards.allSatisfy { card in
+          if case .game(let game) = card { return runtimes[game.id] != nil }
+          return true
+        }, "Every game card needs a retained runtime.")
     selection = FeedSelection(cards: cards)
     self.runtimes = runtimes
+    self.isEndless = isEndless
   }
 
   func setSceneActive(_ active: Bool) {
@@ -43,7 +50,22 @@ final class FeedController {
 
   func retire() {
     isRetired = true
+    for runtime in runtimes.values { runtime.retire() }
+    demandDidChange?()
+  }
+
+  /// Prepared descriptors have been validated before this synchronous append.
+  func append(_ cards: [FeedCard]) {
+    guard !isRetired else { return }
+    selection.append(cards)
+    reconcileWindow()
     updateVisibility()
+  }
+
+  func reconcileWindow() {
+    guard let index = selectedIndex, let windowDidChange else { return }
+    let window = Array(cards[max(0, index - 1)...min(count - 1, index + 1)])
+    runtimes = windowDidChange(window)
   }
 
   func commitPage(at index: Int) {
@@ -58,6 +80,7 @@ final class FeedController {
 
   private func move(by offset: Int) {
     guard canNavigate, selection.move(by: offset) else { return }
+    reconcileWindow()
     updateVisibility()
   }
 
@@ -73,5 +96,6 @@ final class FeedController {
       runtime.setVisible(false)
     }
     if let visibleID { runtimes[visibleID]?.setVisible(true) }
+    demandDidChange?()
   }
 }

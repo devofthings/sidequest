@@ -11,7 +11,7 @@ final class MemoryController {
   @ObservationIgnored private var mismatchTask: Task<Void, Never>?
 
   init(
-    runtime: GameRuntime,
+    runtime: GameRuntime, completedRules: MemoryRules? = nil,
     makeBoard: @escaping () -> MemoryRules = {
       var random = SystemRandomNumberGenerator()
       return MemoryRules(using: &random)
@@ -21,6 +21,7 @@ final class MemoryController {
     }
   ) {
     self.runtime = runtime
+    rules = completedRules
     self.makeBoard = makeBoard
     self.delay = delay
     runtime.installEffectHandler { [weak self] effect in self?.apply(effect) }

@@ -58,14 +58,24 @@ struct FeedView: View {
         )
         .id(ObjectIdentifier(controller))
         Text(
-          controller.canGoForward
-            ? "Card \(controller.position ?? 0) of \(controller.count)"
-            : "End of feed • Card \(controller.position ?? 0) of \(controller.count)"
+          controller.isEndless
+            ? "Card \(controller.position ?? 0)"
+            : controller.canGoForward
+              ? "Card \(controller.position ?? 0) of \(controller.count)"
+              : "End of feed • Card \(controller.position ?? 0) of \(controller.count)"
         )
         .font(.footnote)
         .foregroundStyle(.secondary)
         .accessibilityIdentifier("feed.position")
         .padding(.horizontal, 16)
+        if let message = controller.replenishmentMessage {
+          VStack {
+            Text(message)
+            Button("Retry games") { controller.retryReplenishment?() }
+              .frame(minHeight: 44)
+              .accessibilityIdentifier("feed.retryGames")
+          }
+        }
       } else {
         ContentUnavailableView(
           "No cards yet", systemImage: "rectangle.stack",

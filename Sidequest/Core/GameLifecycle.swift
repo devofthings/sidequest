@@ -26,6 +26,10 @@ struct GameLifecycle: Equatable, Sendable {
   private(set) var phase: GamePhase = .preview
   private(set) var isVisible = false
 
+  init(completed: GameAttemptID? = nil) {
+    if let completed { phase = .completed(completed) }
+  }
+
   /// Visibility means the feed's selected card, not a view appearance callback.
   mutating func setVisible(_ visible: Bool) -> GameLifecycleEffect? {
     isVisible = visible

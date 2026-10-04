@@ -4,18 +4,18 @@ Memory has six distinct symbols, each appearing twice on a shuffled twelve-card 
 
 ## Controls and feedback
 
-1. Navigate to Memory and choose **Tap to play**. Starting creates a board without flipping a card.
+1. Navigate to Memory and choose **Tap to play**. Starting initializes the card's frozen board without flipping a card.
 2. Tap one hidden card, then another. Tapping the same revealed card again changes nothing. Hidden accessibility labels disclose the card's position, not its symbol.
 3. Matching pairs stay revealed. Unmatched pairs turn back over after 700 ms; extra input is ignored while that mismatch is being resolved. Already matched cards cannot be flipped again.
 4. Find every pair to see **All pairs found!**. Completion stays on the card, without advancing the feed. Leaving and returning retains the completed board.
 
-Skipping or backgrounding an unfinished attempt cancels pending work and clears its board. Returning shows the preview and requires another explicit start, creating a fresh shuffle. Late callbacks from an old attempt cannot change the new attempt. No scores, timers beyond mismatch presentation, persistence, replay, or additional modes are added.
+Skipping or backgrounding an unfinished attempt cancels pending work and clears its board. Returning shows the preview and requires another explicit start with the same frozen layout. Production generates and freezes each layout before publishing its card, so reset does not reshuffle. Late callbacks from an old attempt cannot change the new attempt. No scores, timers beyond mismatch presentation, persistence, replay, or additional modes are added.
 
 ## Ownership and deterministic checks
 
-Pure `MemoryRules` owns pair validation, flip state, matches, and completion. The retained `MemoryController(runtime:makeBoard:delay:)` owns its delayed work and consumes the composition-provided `GameRuntime`; it never creates another lifecycle. Randomness and delay are injectable. See [Memory guidance](../Sidequest/Games/Memory/AGENTS.md), [FEED.md](FEED.md), and [INSTALL.md](INSTALL.md).
+Pure `MemoryRules` owns pair validation, flip state, matches, and completion. The retained `MemoryController(runtime:makeBoard:delay:)` owns its delayed work and consumes the composition-provided `GameRuntime`; it never creates another lifecycle. Randomness and delay are injectable. Production retains concrete controllers only for previous/current/next cards; eviction archives completed rules and permanently retires the old runtime. A completed revisit restores those rules in a fresh inactive owner. See [ENDLESS.md](ENDLESS.md) for this ownership policy, plus [Memory guidance](../Sidequest/Games/Memory/AGENTS.md), [FEED.md](FEED.md), and [INSTALL.md](INSTALL.md).
 
-The DEBUG-only `-sidequest-memory-fixtures` route places Memory before one news card, uses adjacent original pairs in symbol order, and delays mismatches for two seconds so running-app checks can inspect them before skipping. Production retains shuffled boards and the 700 ms delay. `-sidequest-large-text` selects the largest accessibility text size for checks. Release ignores these test routes. The generic `-sidequest-feed-test` harness still uses demos independently of actual game rules.
+The DEBUG-only `-sidequest-memory-fixtures` route places Memory before one news card, uses adjacent original pairs in symbol order, and delays mismatches for two seconds so running-app checks can inspect them before skipping. Finite historical Debug composition retains its original board factories and controllers. Production uses a shuffled layout frozen per card and the 700 ms delay. `-sidequest-large-text` selects the largest accessibility text size for checks. Release ignores these test routes. The generic `-sidequest-feed-test` harness still uses demos independently of actual game rules.
 
 ## Verification
 

@@ -12,7 +12,10 @@
           for: .applicationSupportDirectory, in: .userDomainMask
         ).first
       else { return nil }
-      return LocalNewsStore(directory: support.appendingPathComponent("IntegrationNewsTests"))
+      let folder =
+        CommandLine.arguments.contains("-sidequest-endless-fixtures")
+        ? "EndlessNewsTests" : "IntegrationNewsTests"
+      return LocalNewsStore(directory: support.appendingPathComponent(folder))
     }
 
     @concurrent static func prepare() async throws {
@@ -44,7 +47,13 @@
         "Reserved News.json": valid.replacingOccurrences(
           of: "imported-news-one", with: "sample-game-memory"),
       ]
-      for (name, content) in files {
+      var selectedFiles = files
+      if CommandLine.arguments.contains("-sidequest-endless-fixtures") {
+        selectedFiles["Collision News.json"] = valid.replacingOccurrences(
+          of: "imported-news-one",
+          with: "game-00000000-0000-0000-0000-000000000104-0")
+      }
+      for (name, content) in selectedFiles {
         try Task.checkCancellation()
         try Data(content.utf8).write(to: folder.appendingPathComponent(name), options: .atomic)
       }

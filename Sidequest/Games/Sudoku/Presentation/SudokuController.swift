@@ -8,9 +8,14 @@ final class SudokuController {
   private(set) var board: SudokuBoard?
   private(set) var selectedCell: Int?
 
-  init(puzzle: SudokuPuzzle, runtime: GameRuntime) {
+  init(
+    puzzle: SudokuPuzzle, runtime: GameRuntime, completedBoard: SudokuBoard? = nil,
+    selectedCell: Int? = nil
+  ) {
     self.puzzle = puzzle
     self.runtime = runtime
+    board = completedBoard
+    self.selectedCell = selectedCell
     runtime.installEffectHandler { [weak self] effect in self?.apply(effect) }
   }
 

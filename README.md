@@ -35,19 +35,19 @@ Current source supports full-card native vertical paging: swipe up/down directly
 | Chess puzzles | Playable one-move mates for both colors | [Rules, accessible controls, and exhaustive fixture checks](docs/CHESS.md) |
 | Bubble shooter | Playable bounded challenge | [Rules, aiming, win/loss, and replay checks](docs/BUBBLES.md) |
 
-Normal launch mixes saved English news snapshots with all four real game kinds (five game cards, including both Chess colors). Use **News snapshots** in the feed header to import a JSON replacement set through native Files. Missing or empty news leaves games playable; rejected imports preserve saved news and the current deck. Integrated delivery and selected-release source/download installation evidence are recorded in [#9](https://github.com/devofthings/sidequest/issues/9) and the [install guide](docs/INSTALL.md#verified-mvp-delivery). The enjoyment hypothesis still needs your personal test in #10. See [news preparation and import](docs/NEWS.md). Accounts, synced preferences, and leaderboards are deferred to phase two; [MVP.md](docs/MVP.md) owns the approved scope.
+The #104 source branch extends normal launch to endless locally generated Sudoku, frozen Memory layouts, and attainable Bubble challenges, with reused validated Chess puzzles. Initial cards and each new batch shuffle once; imported stories appear once per session under the stated default. [Endless feed guidance](docs/ENDLESS.md) records implementation, actual checks, and pending delivery gates. The immutable `2026.10.14` download retains the finite five-game deck. Use **News snapshots** in the feed header to import a JSON replacement set through native Files. Missing or empty news leaves games playable; rejected imports preserve saved news and the current deck. Integrated delivery and selected-release source/download installation evidence are recorded in [#9](https://github.com/devofthings/sidequest/issues/9) and the [install guide](docs/INSTALL.md#verified-mvp-delivery). The enjoyment hypothesis still needs your personal test in #10. See [news preparation and import](docs/NEWS.md). Accounts, synced preferences, and leaderboards are deferred to phase two; [MVP.md](docs/MVP.md) owns the approved scope.
 
 ## Code snapshot
 
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 42 | 3,488 |
-| Unit tests | 19 | 2,555 |
-| UI tests | 11 | 1,313 |
-| **Total** | **72** | **7,356** |
+| App | 48 | 4,079 |
+| Unit tests | 21 | 3,206 |
+| UI tests | 12 | 1,538 |
+| **Total** | **81** | **8,823** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+4,736 / −443 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+6,218 / −458 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
@@ -74,7 +74,8 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 - [Agent guidance](AGENTS.md): how to pick up and complete an issue.
 - [Coding rules](docs/CODING.md): ownership, Swift interfaces, state, concurrency, errors, and verification for agents.
 - [Card and lifecycle contract](docs/CONTRACT.md): stable IDs, validated news values, shuffled decks, and explicit start/reset effects.
-- [Feed presentation](docs/FEED.md): manual navigation, retained game runtimes, scene handling, and injected card surfaces.
+- [Feed presentation](docs/FEED.md): manual navigation, bounded game adapters, scene handling, and injected card surfaces.
+- [Endless feed](docs/ENDLESS.md): local generation, stable history, completed restoration, atomic replacement, and verification.
 - [Mini Sudoku](docs/SUDOKU.md): the 4×4 board, controls, fixture validation, and lifecycle behavior.
 - [Memory pairs](docs/MEMORY.md): the six-pair board, delayed mismatches, and attempt reset.
 - [Chess puzzles](docs/CHESS.md): original one-move puzzles, accessible coordinates, and exhaustive fixture validation.

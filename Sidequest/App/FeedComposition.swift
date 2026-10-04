@@ -5,7 +5,153 @@ final class FeedComposition {
   let chessPuzzles: [ChessPuzzle]
   let session: SampleSession
   let controller: FeedController?
-  private let games: [CardID: ComposedGame]
+  private(set) var games: [CardID: ComposedGame]
+  private var descriptors: [CardID: GeneratedGameDescriptor] = [:]
+  private var completed: [CardID: CompletedGameState] = [:]
+  private var nextSequence = 0
+  private var generatedSessionID = UUID()
+  private var generationSeed: UInt64 = 0
+  private var orderedGeneration = false
+  private var prepareBatch: GameBatchPreparation = { id, sequence, seed, puzzles, ordered in
+    try await GeneratedGameBatch.prepare(
+      sessionID: id, sequence: sequence, seed: seed,
+      chessPuzzles: puzzles, ordered: ordered)
+  }
+  private var generationTask: Task<Void, Never>?
+  private var generationRequest: UUID?
+  private var knownIDs = Set<CardID>()
+
+  var cachedAdapterCount: Int { games.count }
+  var generatedDescriptors: [CardID: GeneratedGameDescriptor] { descriptors }
+
+  deinit { generationTask?.cancel() }
+
+  @MainActor static func endless(
+    news: [NewsSnapshot], chessPuzzles: [ChessPuzzle],
+    sessionID: UUID = UUID(), seed: UInt64 = UInt64.random(in: .min ... .max),
+    ordered: Bool = false,
+    prepareBatch: @escaping GameBatchPreparation = { id, sequence, seed, puzzles, ordered in
+      try await GeneratedGameBatch.prepare(
+        sessionID: id, sequence: sequence, seed: seed,
+        chessPuzzles: puzzles, ordered: ordered)
+    }
+  ) async throws -> FeedComposition {
+    let batch = try await prepareBatch(sessionID, 0, seed, chessPuzzles, ordered)
+    try Task.checkCancellation()
+    let cards = news.map(FeedCard.news) + batch.descriptors.map { FeedCard.game($0.card) }
+    var seen = Set<CardID>()
+    for card in cards {
+      guard seen.insert(card.id).inserted else {
+        throw DeckConstructionError.duplicateCardID(card.id)
+      }
+    }
+    var random = ChallengeRandom(seed: seed)
+    let deck = ordered ? cards : cards.shuffled(using: &random)
+    return FeedComposition(
+      cards: deck, chessPuzzles: chessPuzzles, batch: batch,
+      sessionID: sessionID, seed: seed, ordered: ordered, prepareBatch: prepareBatch)
+  }
+
+  private init(
+    cards: [FeedCard], chessPuzzles: [ChessPuzzle], batch: GeneratedGameBatch,
+    sessionID: UUID, seed: UInt64, ordered: Bool, prepareBatch: @escaping GameBatchPreparation
+  ) {
+    self.chessPuzzles = chessPuzzles
+    session = .loaded(cards)
+    games = [:]
+    descriptors = Dictionary(uniqueKeysWithValues: batch.descriptors.map { ($0.card.id, $0) })
+    nextSequence = batch.nextSequence
+    generatedSessionID = sessionID
+    generationSeed = seed
+    self.prepareBatch = prepareBatch
+    orderedGeneration = ordered
+    knownIDs = Set(cards.map(\.id))
+    let feed = FeedController(cards: cards, runtimes: [:], isEndless: true)
+    controller = feed
+    feed.windowDidChange = { [weak self] cards in self?.prepareWindow(cards) ?? [:] }
+    feed.demandDidChange = { [weak self] in self?.replenishIfNeeded() }
+    feed.retryReplenishment = { [weak self] in
+      self?.controller?.replenishmentMessage = nil
+      self?.replenishIfNeeded()
+    }
+    feed.reconcileWindow()
+  }
+
+  private func prepareWindow(_ cards: [FeedCard]) -> [CardID: GameRuntime] {
+    let required = Set(cards.map(\.id))
+    for (id, game) in games where !required.contains(id) {
+      if let snapshot = game.completedState {
+        completed[id] = snapshot
+      } else {
+        completed[id] = nil
+      }
+      game.runtime.retire()
+      games[id] = nil
+    }
+    for card in cards {
+      guard case .game = card, games[card.id] == nil, let descriptor = descriptors[card.id] else {
+        continue
+      }
+      games[card.id] = ComposedGame.generated(descriptor, completed: completed[card.id])
+    }
+    return games.mapValues(\.runtime)
+  }
+
+  private func replenishIfNeeded() {
+    guard let controller, controller.isEndless else { return }
+    guard controller.canNavigate else {
+      generationTask?.cancel()
+      generationTask = nil
+      generationRequest = nil
+      return
+    }
+    guard controller.count - (controller.selectedIndex ?? 0) - 1 <= 4,
+      generationTask == nil, controller.replenishmentMessage == nil
+    else { return }
+    let request = UUID()
+    generationRequest = request
+    let sessionID = generatedSessionID
+    let sequence = nextSequence
+    let seed = generationSeed
+    let puzzles = chessPuzzles
+    let ordered = orderedGeneration
+    let prepare = prepareBatch
+    generationTask = Task { [weak self] in
+      do {
+        let batch = try await prepare(sessionID, sequence, seed, puzzles, ordered)
+        try Task.checkCancellation()
+        guard let self, generationRequest == request, controller.canNavigate else { return }
+        var batchIDs = Set<CardID>()
+        for descriptor in batch.descriptors {
+          guard batchIDs.insert(descriptor.card.id).inserted else {
+            throw DeckConstructionError.duplicateCardID(descriptor.card.id)
+          }
+        }
+        guard batch.nextSequence > sequence else {
+          throw BubbleGenerationError.noAttainableChallenge
+        }
+        // A later generated identity may equal an imported story's literal ID. Skip that
+        // sequence, preserving the story and prior order without banning an ID prefix.
+        let fresh = batch.descriptors.filter { !knownIDs.contains($0.card.id) }
+        let additions = fresh.map { FeedCard.game($0.card) }
+        for descriptor in fresh {
+          descriptors[descriptor.card.id] = descriptor
+          knownIDs.insert(descriptor.card.id)
+        }
+        nextSequence = batch.nextSequence
+        generationTask = nil
+        generationRequest = nil
+        controller.append(additions)
+      } catch {
+        guard let self, generationRequest == request else { return }
+        generationTask = nil
+        generationRequest = nil
+        if !(error is CancellationError), !Task.isCancelled {
+          controller.replenishmentMessage = "Could not prepare more games. Retry to continue."
+        }
+      }
+    }
+  }
 
   static let gameIDs: Set<String> = [
     "sample-game-sudoku", "sample-game-memory", "sample-game-bubbleShooter",

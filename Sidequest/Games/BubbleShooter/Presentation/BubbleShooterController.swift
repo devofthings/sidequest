@@ -19,15 +19,20 @@ final class BubbleShooterController {
 
   init(
     runtime: GameRuntime, game: BubbleShooterGame = BubbleShooterGame(),
+    completedAim: Double = 0, completedFeedback: String? = nil,
     pause: @escaping @MainActor () async throws -> Void = {
       try await Task.sleep(for: .milliseconds(20))
     }
   ) {
     self.runtime = runtime
     self.game = game
+    aimDegrees = completedAim
+    if let completedFeedback { feedback = completedFeedback }
     self.pause = pause
     runtime.installEffectHandler { [weak self] effect in self?.apply(effect) }
   }
+
+  deinit { shotTask?.cancel() }
 
   var canFire: Bool {
     guard let attempt else { return false }

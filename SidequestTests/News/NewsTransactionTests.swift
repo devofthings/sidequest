@@ -108,12 +108,12 @@ final class NewsTransactionTests: XCTestCase {
     let bytes = try NewsSnapshotImporter.encode(original)
     let replacement = try validated([])
     let store = NewsStorageProbe(bytes: bytes)
-    var reject = true
+    let rejection = NewsPreparationRejection()
     var commits = 0
     let model = NewsImportModel(
       store: store,
       prepareReplacement: { _ in
-        if reject { throw NewsImportError.invalid("The replacement cannot be composed.") }
+        if rejection.reject { throw NewsImportError.invalid("The replacement cannot be composed.") }
         return { commits += 1 }
       }, readImport: { _ in replacement })
     model.adoptRestored(original)
@@ -125,7 +125,7 @@ final class NewsTransactionTests: XCTestCase {
     XCTAssertEqual(saved, bytes)
     XCTAssertEqual(writes, 0)
     XCTAssertEqual(commits, 0)
-    reject = false
+    rejection.reject = false
     await model.importFile(at: importURL)
     XCTAssertEqual(model.snapshots, [])
     XCTAssertEqual(commits, 1)
@@ -347,3 +347,6 @@ private actor NewsReadGate {
     continuation = nil
   }
 }
+
+@MainActor
+private final class NewsPreparationRejection { var reject = true }

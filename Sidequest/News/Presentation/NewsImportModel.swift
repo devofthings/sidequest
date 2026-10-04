@@ -10,7 +10,7 @@ final class NewsImportModel {
   var canRetryRestore: Bool { !hasLoaded && !isBusy }
   private var hasLoaded = false
   private let store: (any NewsSnapshotStorage)?
-  private let prepareReplacement: @MainActor ([NewsSnapshot]) throws -> (@MainActor () -> Void)
+  private let beginReplacement: @MainActor () throws -> NewsReplacementRequest
   private let readImport: @Sendable (URL) async throws -> ValidatedNewsImport
 
   init(
@@ -18,11 +18,18 @@ final class NewsImportModel {
     prepareReplacement: @escaping @MainActor ([NewsSnapshot]) throws -> (@MainActor () -> Void) = {
       _ in {}
     },
+    beginReplacement: (@MainActor () throws -> NewsReplacementRequest)? = nil,
     readImport: @escaping @Sendable (URL) async throws -> ValidatedNewsImport =
       LocalNewsStore.readImport
   ) {
     self.store = store
-    self.prepareReplacement = prepareReplacement
+    self.beginReplacement =
+      beginReplacement ?? {
+        NewsReplacementRequest { snapshots in
+          let commit = try prepareReplacement(snapshots)
+          return PreparedNewsReplacement(acquire: {}, commit: commit, release: {})
+        }
+      }
     self.readImport = readImport
   }
 
@@ -54,6 +61,7 @@ final class NewsImportModel {
     isBusy = true
     defer { isBusy = false }
     do {
+      let request = try beginReplacement()
       let saved = try await loadSavedSnapshots()
       var restored = saved ?? []
       #if DEBUG
@@ -65,10 +73,12 @@ final class NewsImportModel {
         }
       #endif
       try Task.checkCancellation()
-      let commit = try prepareReplacement(restored)
+      let prepared = try await request.prepare(restored)
       try Task.checkCancellation()
+      try prepared.acquire()
+      defer { prepared.release() }
       adoptRestored(restored)
-      commit()
+      prepared.commit()
     } catch is CancellationError {
       hasLoaded = false
     } catch {
@@ -83,16 +93,19 @@ final class NewsImportModel {
     defer { isBusy = false }
     do {
       guard let store else { throw NewsImportError.unavailableStorage }
+      let request = try beginReplacement()
       let imported = try await readImport(url)
       try Task.checkCancellation()
-      let commit = try prepareReplacement(imported.snapshots)
+      let prepared = try await request.prepare(imported.snapshots)
       try Task.checkCancellation()
+      try prepared.acquire()
+      defer { prepared.release() }
       try await store.save(imported.data)
       // Durable success and adoption are one main-actor turn; no cancellation check or await here.
       snapshots = imported.snapshots
       hasLoaded = true
       message = "Imported \(imported.snapshots.count) news snapshots."
-      commit()
+      prepared.commit()
     } catch is CancellationError {
       message = "Import canceled. Your previous news is unchanged."
     } catch {

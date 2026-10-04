@@ -10,9 +10,10 @@ final class ChessController {
   private(set) var destinationRank: Int?
   private var attemptID: GameAttemptID?
 
-  init(puzzle: ChessPuzzle, runtime: GameRuntime) {
+  init(puzzle: ChessPuzzle, runtime: GameRuntime, completedAttempt: ChessAttempt? = nil) {
     self.puzzle = puzzle
     self.runtime = runtime
+    attempt = completedAttempt
     runtime.installEffectHandler { [weak self] effect in self?.apply(effect) }
   }
 

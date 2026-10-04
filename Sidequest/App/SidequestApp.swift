@@ -20,7 +20,7 @@ struct SidequestApp: App {
     #endif
     _newsModel = State(
       initialValue: NewsImportModel(
-        store: store, prepareReplacement: session.prepareReplacement))
+        store: store, beginReplacement: session.beginReplacement))
   }
 
   var body: some Scene {
