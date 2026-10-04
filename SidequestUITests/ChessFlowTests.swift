@@ -45,15 +45,15 @@ final class ChessFlowTests: XCTestCase {
   func testLargestTextSupportsCoordinateSolutionAndNavigation() {
     let app = launch(color: "black", largeText: true)
     XCTAssertTrue(app.buttons["game.start"].isHittable)
-    XCTAssertTrue(app.buttons["feed.next"].isHittable)
+    XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
     app.buttons["game.start"].tap()
     submit(app, queen: "b3", destination: "b2")
     reveal(app.staticTexts["chess.completed"], in: app)
     XCTAssertTrue(app.staticTexts["chess.completed"].isHittable)
-    XCTAssertTrue(app.buttons["feed.next"].isHittable)
-    app.buttons["feed.next"].tap()
-    XCTAssertTrue(app.buttons["feed.previous"].isHittable)
-    app.buttons["feed.previous"].tap()
+    XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
+    navigate(app, forward: true)
+    XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
+    navigate(app, forward: false)
     XCTAssertTrue(app.staticTexts["chess.completed"].exists)
     XCTAssertFalse(app.buttons["game.start"].exists)
   }
@@ -86,8 +86,8 @@ final class ChessFlowTests: XCTestCase {
     XCTAssertTrue(app.staticTexts["chess.feedback"].label.contains("not legal"))
     reveal(app.buttons["chess.piece.\(queen)"], in: app)
     app.buttons["chess.piece.\(queen)"].tap()
-    app.buttons["feed.next"].tap()
-    app.buttons["feed.previous"].tap()
+    navigate(app, forward: true)
+    navigate(app, forward: false)
     XCTAssertTrue(app.buttons["game.start"].exists)
     app.buttons["game.start"].tap()
     XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
@@ -100,12 +100,22 @@ final class ChessFlowTests: XCTestCase {
     XCTAssertTrue(app.buttons["chess.square.\(mate)"].label.contains("queen"))
     XCTAssertFalse(app.buttons["chess.square.\(mate)"].isEnabled)
     capture(app, name: "chess-\(color)-solved")
-    app.buttons["feed.next"].tap()
-    app.buttons["feed.previous"].tap()
+    navigate(app, forward: true)
+    navigate(app, forward: false)
     XCTAssertTrue(app.staticTexts["chess.completed"].exists)
     reveal(app.buttons["chess.square.\(mate)"], in: app)
     XCTAssertTrue(app.buttons["chess.square.\(mate)"].label.contains("queen"))
     XCTAssertFalse(app.buttons["game.start"].exists)
+  }
+
+  @MainActor
+  private func navigate(_ app: XCUIApplication, forward: Bool) {
+    if forward { app.nextFeedCard() } else { app.previousFeedCard() }
+    let label = forward ? "End of feed • Card 2 of 2" : "Card 1 of 2"
+    let settled = expectation(
+      for: NSPredicate(format: "label == %@", label),
+      evaluatedWith: app.staticTexts["feed.position"])
+    wait(for: [settled], timeout: 5)
   }
 
   @MainActor
@@ -136,7 +146,7 @@ final class ChessFlowTests: XCTestCase {
 
   @MainActor
   private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
-    let scroll = app.scrollViews.firstMatch
+    let scroll = app.scrollViews["feed.cardScroll"].firstMatch
     for fallbackUpwards in [true, false] {
       for _ in 0..<12 {
         if element.exists && element.isHittable && scroll.frame.contains(element.frame) { return }
