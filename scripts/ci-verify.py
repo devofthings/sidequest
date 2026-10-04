@@ -47,6 +47,16 @@ def verify_revision(expected, base, event, ref, run):
         raise RuntimeError("Only same-repository PR or main push/manual verification is supported.")
 
 
+def verify_clean_checkout(root, expected, run, phase):
+    head = run(f"{phase}-head", ["git", "-C", str(root), "rev-parse", "HEAD"]).strip()
+    if head != expected:
+        raise RuntimeError("Checkout changed from the reviewed commit during verification.")
+    status = run(f"{phase}-checkout", ["git", "-C", str(root), "status", "--porcelain=v1",
+                                      "-z", "--untracked-files=all"])
+    if status:
+        raise RuntimeError("Verification requires a clean tracked and untracked checkout.")
+
+
 def changed_paths(expected, base, event, run):
     revisions = [f"origin/{base}...{expected}"] if event == "pull_request" else [f"{expected}^", expected]
     # Report both owners of a rename, preserving paths with spaces or newlines.
@@ -117,6 +127,7 @@ def main():
         workers = json.loads((root / "scripts/native-test-inventory.json").read_text()).get("workers", 1)
         if workers not in (1, 2):
             raise RuntimeError("Unsupported native worker policy.")
+        verify_clean_checkout(root, expected, run, "native-source")
         with native_tests.owned_execution(), native_tests.devices(run, f"Sidequest CI {run_id}-{attempt}", 1 if evidence else workers) as destinations:
             destination = destinations[0]
             if evidence:
@@ -137,6 +148,7 @@ def main():
             release = native_tests.command(diagnostics / "DerivedData", destination)
             release[release.index("Debug")] = "Release"
             run("release-build", release + ["ARCHS=arm64", "build"])
+        verify_clean_checkout(root, expected, run, "manifest-source")
         summary.append(f"- tests: {tests['mode']}; {len(tests.get('inventory', []))} verified cases")
         manifest = {
             "schema": 2, "commit": expected, "run_id": run_id, "attempt": attempt,

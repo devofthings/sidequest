@@ -20,6 +20,8 @@ The generic demo feed walkthroughs and foundation launch check overlap the requi
 
 Every execution first runs `build-for-testing` against the current checkout, then `test-without-building`. Incremental Debug output is keyed by canonical checkout path, toolchain identity, SDK identity/path, runtime, configuration, scheme/project and explicit unsigned settings. A nonblocking exclusive file lock owns that cache through compilation and all workers; a separate Mac-wide ownership lock serializes native jobs. A failed current build stops before tests. Cached output never supplies a result or a Release product.
 
+CI also requires the exact expected HEAD and a clean tracked/untracked checkout before native work and before emitting a successful manifest. This binds the compiled source to its commit; focused local commands can test uncommitted changes without claiming exact-commit CI evidence.
+
 Run from the repository root, choosing a new output directory:
 
 ```sh
@@ -62,8 +64,19 @@ Xcode verbose post-failure sysdiagnose is disabled with its documented `-collect
 
 The original serial baseline above is observed. Compact one/two-worker measurements and the complete ordinary verification duration must be recorded before claiming the 5–10-minute target is met. Exact-head CI and fresh independent review remain required before merge. Physical-device execution remains deferred under #79.
 
-Initial compact attempt: 120 unit and 19 UI cases executed; 138 passed and the native import case failed at its Locations assertion. UI time was 512.698 seconds, but this failed run cannot choose a worker policy or establish the target. A focused cold-picker attempt failed its initial provider-existence assertion in 20.759 seconds. Both failed bundles/logs remain outside Git. Targeted retest and a complete same-inventory worker comparison remain pending; the policy stays at one worker.
+Initial compact attempt: 120 unit and 19 UI cases executed; 138 passed and the native import case failed at its Locations assertion. UI time was 512.698 seconds, but this failed run cannot choose a worker policy or establish the target. A focused cold-picker attempt failed its initial provider-existence assertion in 20.759 seconds. Both failed bundles/logs remain outside Git. At that checkpoint, targeted retest and a complete same-inventory worker comparison were pending; the policy stayed at one worker.
 
 Focused Files retest passed on a fresh owned simulator after the native Browse-state correction: 160.436 seconds for the unchanged test, 186.845 seconds for native execution, and 54.288 seconds for the cold Debug compile. The picker became available during its 10-second readiness wait, and repeated valid/rejected/empty selection, native cancellation and terminate/relaunch persistence assertions all passed. The owned device shut down successfully.
 
 The complete comparison also runs offline tooling, strict format/whitespace, source discovery and a unique cold ARM64 Release build for each worker policy. `ordinary_verification_seconds` measures those required checks together with current compilation and native execution. Device creation/toolchain inspection are separately recorded; both policies start with the same warmed Debug cache and booted owned devices. Record this boundary when reporting the target and retain cold-start overhead separately.
+
+The completed October 4 comparison at `cbbe733d6c23af85e7afcf58977388e8272606eb` used the same 120 unit and 19 UI cases, Xcode 27.0 (27A266a), iOS 27.0 (24A434), and native source fingerprint `165886f1558ba8ce84768c9838c21819c173f12d006606db988a428a7b26e6fe`. Both policies passed every case with zero failures or skips:
+
+| Policy | Current incremental Debug compile | Tests and result validation | Complete ordinary pipeline |
+| --- | --- | --- | --- |
+| One owned simulator | 3.608 seconds | 664.053 seconds | 738.603 seconds (12 minutes 19 seconds) |
+| Two owned simulators | 1.781 seconds | 327.398 seconds | 398.434 seconds (6 minutes 38 seconds) |
+
+The two-worker inventory was disjoint: worker 1 ran 120 units and 9 UI cases in 325.997 native seconds; worker 2 ran 10 UI cases in 310.418 native seconds. Their actual device IDs were `8EEA5694-3F2B-4B37-83B0-72D5C97E1A09` and `45D608EC-EFF8-45B9-A8E2-1F07CA227170`. Both shut down successfully. Results, commands, logs, and fresh Release products remain at `/private/tmp/sidequest-90-benchmark-4` on the verification Mac.
+
+The measured complete pipeline improved by 46.1% and met the target for this inventory under the stated warm boundary. Toolchain inspection, device creation/initial boot, and initial Debug compile took another 142.728 seconds, including 53.937 seconds for compilation; they were outside both timed policies. The second policy reused the first simulator after the serial run. Cold Actions wall time, broader source-affected selections, and main's full fallback have not been measured by this comparison. Do not claim every app change or cold run meets 5–10 minutes. The owner's subsequent pre-design UI-gate decision remains pending; this comparison records the existing coverage.

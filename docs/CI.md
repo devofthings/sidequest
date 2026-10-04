@@ -32,11 +32,11 @@ PR verification runs for same-repository PRs; the main-only [release workflow](R
 
 `scripts/ci-verify.py` checks:
 
-- The actual commit, PR current-base ancestry, whitespace, and absence of local signing/personal news inputs.
+- The actual commit, PR current-base ancestry, whitespace, and absence of local signing/personal news inputs. Recheck exact HEAD and a clean tracked/untracked checkout before native compilation and before a successful manifest.
 - The verified Xcode 27.0 (27A266a), offline Markdown links/heading anchors, strict first-party Swift formatting, and local tooling regression suites.
 - An unsigned current Debug build-for-testing, the required deterministic unit/UI inventory and selected extended cases, filesystem-synchronized source/resource discovery, and an unsigned ARM64 Release build (`ARCHS=arm64`).
 
-`scripts/test-ci.py` uses actual disposable Git history to prove older queued main commits pass, stale PRs fail, wrong commits/events fail, and current PRs pass. Stubbed network calls prove Git-owned runner locations are rejected before registration and existing private configuration is preserved.
+`scripts/test-ci.py` uses actual disposable Git history to prove older queued main commits pass, stale PRs fail, wrong commits/events fail, and current PRs pass. Actual changed-path regressions preserve both ownership paths of renames and filenames with newlines; dirty tracked or untracked native files cannot supply exact-commit evidence. Stubbed network calls prove Git-owned runner locations are rejected before registration and existing private configuration is preserved.
 
 Issue #90 replaces duplicate native walkthroughs with an explicit required/extended inventory and always-current incremental `build-for-testing` followed by `test-without-building`. Follow [testing policy](TESTING.md) for coverage mapping, exclusive cache/native ownership, focused commands, worker benchmark and measured timing. Both native workflow budgets retain their 45-minute failure bound for affected extended scenarios; the ordinary target is 5–10 minutes, not an arbitrary timeout. Every failed command fails the job.
 

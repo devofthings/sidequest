@@ -81,7 +81,7 @@ class CIBoundaryTests(unittest.TestCase):
 
                 def controlled(command, stdout=None, **kwargs):
                     output = ""
-                    if command == ["git", "rev-parse", "HEAD"]:
+                    if command[-2:] == ["rev-parse", "HEAD"]:
                         output = "a" * 40
                     elif "launch" in command and "--terminate-running-process" in command:
                         output = "dev.devofthings.sidequest: 123"
@@ -128,6 +128,40 @@ class CIBoundaryTests(unittest.TestCase):
                     self.assertNotIn("tests-1", labels)
                 self.assertTrue(manifest["main_smoke_passed"])
                 self.assertIn("100-2", (root / "output").read_text())
+                self.assertLess(labels.index("native-source-checkout"), labels.index("create-1"))
+                self.assertLess(labels.index("release-build"), labels.index("manifest-source-checkout"))
+
+    def test_clean_checkout_rejects_real_tracked_and_untracked_native_inputs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            def git(*args):
+                return subprocess.check_output(["git", "-C", str(root), *args], text=True).strip()
+            git("init", "-q")
+            git("config", "core.hooksPath", "/dev/null")
+            git("config", "user.name", "CI fixture")
+            git("config", "user.email", "fixture@example.com")
+            (root / "Sidequest").mkdir()
+            tracked = root / "Sidequest/App.swift"
+            tracked.write_text("let fixture = 1\n")
+            git("add", ".")
+            git("commit", "-qm", "reviewed source")
+            expected = git("rev-parse", "HEAD")
+            def run(label, command):
+                return subprocess.check_output(command, text=True)
+            for phase in ("native-source", "manifest-source"):
+                ci.verify_clean_checkout(root, expected, run, phase)
+                tracked.write_text("let fixture = 2\n")
+                with self.assertRaisesRegex(RuntimeError, "clean tracked and untracked"):
+                    ci.verify_clean_checkout(root, expected, run, phase)
+                git("checkout", "--", "Sidequest/App.swift")
+                extra = root / "Sidequest/Unreviewed.swift"
+                extra.write_text("let unreviewed = 3\n")
+                with self.assertRaisesRegex(RuntimeError, "clean tracked and untracked"):
+                    ci.verify_clean_checkout(root, expected, run, phase)
+                extra.unlink()
+            git("commit", "--allow-empty", "-qm", "unreviewed head")
+            with self.assertRaisesRegex(RuntimeError, "changed from the reviewed commit"):
+                ci.verify_clean_checkout(root, expected, run, "manifest-source")
 
     def test_main_smoke_requires_actual_launch_and_running_process(self):
         calls = []
