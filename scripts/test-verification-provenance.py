@@ -217,6 +217,23 @@ class ProvenanceTests(unittest.TestCase):
         self.assertIsNone(resolve_inherited_tests(self.root, self.head, self.root / "diagnostics",
                                                  read_api=unavailable))
 
+    def test_fallback_diagnostic_reports_category_without_private_error_output(self):
+        for error, category in (
+                (RuntimeError("token=private-fixture-value; API payload"), "API evidence"),
+                (subprocess.CalledProcessError(1, ["gh", "private-command"],
+                                              stderr="private-fixture-value"), "evidence command")):
+            with self.subTest(error=type(error).__name__):
+                messages = []
+                def unavailable(path):
+                    raise error
+                self.assertIsNone(resolve_inherited_tests(
+                    self.root, self.head, self.root / "diagnostics", read_api=unavailable,
+                    diagnostic=messages.append))
+                self.assertEqual(len(messages), 1)
+                self.assertIn(category, messages[0])
+                self.assertNotIn("private", messages[0])
+                self.assertNotIn("token", messages[0])
+
     def test_equal_tree_with_wrong_parent_requires_full_verification(self):
         self.git("commit", "--allow-empty", "-qm", "extra main parent")
         new_head = self.git("rev-parse", "HEAD")

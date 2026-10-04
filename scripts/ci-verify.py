@@ -14,7 +14,8 @@ import native_tests
 
 def inherited_tests(root, expected, diagnostics_root):
     from verification_provenance import resolve_inherited_tests
-    return resolve_inherited_tests(root, expected, diagnostics_root)
+    return resolve_inherited_tests(root, expected, diagnostics_root, diagnostic=lambda reason: print(
+        f"::notice::Main test inheritance unavailable: {reason} Running the complete active gate.", flush=True))
 
 
 def smoke(destination, app, run):

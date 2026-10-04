@@ -6,6 +6,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import re
 import shlex
 import subprocess
 import sys
@@ -26,6 +27,19 @@ installer = load("configure-ci-runner")
 
 
 class CIBoundaryTests(unittest.TestCase):
+    def test_main_workflow_grants_exact_read_only_provenance_permissions(self):
+        workflow = Path(__file__).resolve().parent.parent / ".github/workflows/releases.yml"
+        source = workflow.read_text()
+        required_reads = {"actions": "read", "checks": "read", "pull-requests": "read", "statuses": "read"}
+        # Job-specific permissions replace workflow permissions, so check both callers.
+        for indent, contents in ((0, "read"), (4, "write")):
+            match = re.search(r"^" + " " * indent + r"permissions:\n((?:" +
+                              " " * (indent + 2) + r"[^\n]+\n)+)", source, re.MULTILINE)
+            self.assertIsNotNone(match)
+            permissions = dict(re.findall(r"^\s+([\w-]+): (read|write|none)$", match[1], re.MULTILINE))
+            self.assertEqual(permissions, {"contents": contents, **required_reads})
+        self.assertEqual(source.count("GH_TOKEN: ${{ github.token }}"), 2)
+
     def test_changed_paths_uses_real_pr_range_and_main_parent(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

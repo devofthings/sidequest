@@ -127,7 +127,7 @@ def validate_committed_gate(git, head, base, tests):
 
 def resolve_inherited_tests(checkout, head, diagnostics_root, *,
                             repository="devofthings/sidequest",
-                            runner_name="Sidequest-Mac-foreground", read_api=None):
+                            runner_name="Sidequest-Mac-foreground", read_api=None, diagnostic=None):
     """Return original test provenance, or None to require fresh full verification.
 
     Every lookup is read-only. Receipt commands are never executed. Legacy,
@@ -137,7 +137,18 @@ def resolve_inherited_tests(checkout, head, diagnostics_root, *,
         return _resolve(Path(checkout), head, Path(diagnostics_root), repository,
                         runner_name, read_api or globals()["read_api"])
     except (EvidenceError, RuntimeError, OSError, ValueError, TypeError, KeyError, IndexError,
-            subprocess.SubprocessError):
+            subprocess.SubprocessError) as error:
+        if diagnostic:
+            # Report a bounded category, never exception text, commands, or API payloads.
+            if isinstance(error, subprocess.SubprocessError):
+                reason = "A read-only evidence command failed or timed out."
+            elif isinstance(error, RuntimeError):
+                reason = "Read-only API evidence was unavailable."
+            elif isinstance(error, OSError):
+                reason = "Local evidence was unavailable."
+            else:
+                reason = "Evidence was missing, unsupported, or inconsistent."
+            diagnostic(reason)
         return None
 
 
