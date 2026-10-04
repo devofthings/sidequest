@@ -84,7 +84,7 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 - [Bubble shooter](docs/BUBBLES.md): aiming, connected matches, bounded win/loss, flight cancellation, and replay.
 - [Source structure](docs/STRUCTURE.md): folder ownership, game grouping, scoped guidance, and verified foundation source discovery.
 - [Review gates](docs/REVIEW_GATES.md): reproducible validation, durable review evidence, and pinned merges.
-- [Continuous verification](docs/CI.md): free foreground self-hosted execution, exact-commit checks, and local diagnostics.
+- [Continuous verification](docs/CI.md): free foreground self-hosted execution, exact-commit checks, owned-command cancellation, and retained local diagnostics.
 - [Swift formatting](docs/FORMATTING.md): shared style, local commit-hook setup, and tooling checks.
 - [Autonomous delivery plan](docs/AUTONOMY.md): technical ownership, start authorization, usage guardrails, and the documentation audit.
 - [Manual news imports](docs/NEWS.md): prepare, validate, replace, and privately retain English snapshots.
