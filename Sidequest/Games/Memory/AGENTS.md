@@ -37,3 +37,9 @@ Reserve the natural footprint of all six symbols and the hidden question mark at
 ## Visible inactive boards #88
 
 Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../../docs/GAME_PREVIEWS.md).
+
+## Vivid presentation and contained motion #124
+
+Follow [the researched baseline](../../../docs/DESIGN.md). Replace the answer image immediately with no animation or transition; its transaction disables animations, including inherited transactions. Animate only the tile backing and matched outline for 160 ms. Matched cards gain a contained, inaccessible checkmark overlay, lime fill, and their existing explicit matched label. Hidden answer reservations remain inaccessible. The 700 ms mismatch controller delay is unchanged. All presentation preferences resolve the propagated override before the system value. Preview, reset, and offscreen transactions disable animation; Reduce Motion supplies no local animation. Completed restoration is static because values are rendered initially, rather than changed by appearance. Keep animations inside existing board/control footprints and leave lifecycle/input/rule mutations with the controller.
+
+Agent-grill self-assessment: Reveal and match is a delegated presentation choice under #124, supported by the existing controller/runtime boundaries and DESIGN.md. Source inspection establishes no new rule or timing owner; exact-head unit/smoke CI and root-owned focused rendered/motion checks remain required before delivery. This record is not rendered verification.

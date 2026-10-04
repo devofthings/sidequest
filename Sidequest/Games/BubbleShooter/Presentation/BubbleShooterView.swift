@@ -3,7 +3,21 @@ import SwiftUI
 @MainActor
 struct BubbleShooterView: View {
   let controller: BubbleShooterController
-  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.colorScheme) private var scheme
+  @Environment(\.colorSchemeContrast) private var systemContrast
+  @Environment(\.sidequestContrast) private var contrastOverride
+  @Environment(\.accessibilityReduceMotion) private var systemReduceMotion
+  @Environment(\.sidequestReduceMotion) private var motionOverride
+
+  private var theme: SidequestTheme {
+    SidequestTheme(scheme: scheme, contrast: contrastOverride ?? systemContrast)
+  }
+  private var reduceMotion: Bool { motionOverride ?? systemReduceMotion }
+  private var feedbackAnimation: Animation? {
+    guard !reduceMotion, controller.runtime.isVisible else { return nil }
+    if case .preview = controller.runtime.phase { return nil }
+    return .smooth(duration: 0.16)
+  }
 
   var body: some View {
     VStack(spacing: 12) {
@@ -49,14 +63,19 @@ struct BubbleShooterView: View {
         } content: {
           Text(isPlaying ? "Fire" : "Replay")
         }
+        .frame(maxWidth: .infinity, minHeight: 44)
       }
-      .buttonStyle(.borderedProminent)
+      .buttonStyle(SidequestButtonStyle(prominent: true, compact: true))
       .controlSize(.large)
       .frame(minHeight: 44)
       .disabled(isPlaying ? !controller.canFire : !controller.runtime.isVisible)
       .accessibilityIdentifier(isPlaying ? "bubble.fire" : "bubble.replay")
     }
     .allowsHitTesting(controller.runtime.isVisible)
+    .transaction { transaction in
+      if case .preview = controller.runtime.phase { transaction.disablesAnimations = true }
+      if !controller.runtime.isVisible { transaction.disablesAnimations = true }
+    }
   }
 
   private var aimingControls: some View {
@@ -110,13 +129,17 @@ struct BubbleShooterView: View {
     GeometryReader { geometry in
       let scale = geometry.size.width / BubbleGeometry.width
       ZStack(alignment: .topLeading) {
-        RoundedRectangle(cornerRadius: 12).fill(.secondary.opacity(0.08))
+        RoundedRectangle(cornerRadius: 16).fill(theme.surface)
+          .overlay {
+            RoundedRectangle(cornerRadius: 16).strokeBorder(
+              theme.border, lineWidth: theme.borderWidth)
+          }
         Path { path in
           let y = BubbleGeometry.center(of: BubbleSlot(row: 4, column: 0)).y * scale
           path.move(to: CGPoint(x: 0, y: y))
           path.addLine(to: CGPoint(x: geometry.size.width, y: y))
         }
-        .stroke(.secondary, style: StrokeStyle(lineWidth: 2, dash: [4]))
+        .stroke(theme.secondaryInk, style: StrokeStyle(lineWidth: 2, dash: [4]))
         if controller.canFire {
           Path { path in
             let angle = controller.aimDegrees * .pi / 180
@@ -126,13 +149,18 @@ struct BubbleShooterView: View {
               to: CGPoint(
                 x: (launcher.x + sin(angle) * 3) * scale, y: (launcher.y - cos(angle) * 3) * scale))
           }
-          .stroke(.primary, style: StrokeStyle(lineWidth: 2, dash: [3]))
+          .stroke(theme.ink, style: StrokeStyle(lineWidth: 2, dash: [3]))
         }
         ForEach(BubbleGeometry.slots, id: \.self) { slot in
           if let color = controller.game.board[slot] {
             bubble(color, at: BubbleGeometry.center(of: slot), scale: scale)
+              .transition(reduceMotion ? .identity : .opacity)
           }
         }
+        // Only committed shots animate removal; preview/reset/restoration never animate the board.
+        .animation(
+          controller.game.shotsFired > 0 ? feedbackAnimation : nil,
+          value: controller.game.shotsFired)
         if let flight = controller.flight {
           bubble(
             flight.color, at: reduceMotion ? BubbleGeometry.launcher : flight.position, scale: scale
@@ -158,6 +186,11 @@ struct BubbleShooterView: View {
       .foregroundStyle(.white)
       .frame(width: scale * 2, height: scale * 2)
       .background(color.tint, in: Circle())
+      .overlay { Circle().strokeBorder(.white.opacity(0.7), lineWidth: 2) }
+      .overlay(alignment: .topLeading) {
+        Circle().fill(.white.opacity(0.4)).frame(width: scale * 0.45, height: scale * 0.45)
+          .padding(scale * 0.3).accessibilityHidden(true)
+      }
       .position(x: point.x * scale, y: point.y * scale)
   }
 }

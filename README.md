@@ -42,12 +42,12 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 52 | 4,465 |
+| App | 52 | 4,608 |
 | Unit tests | 23 | 3,564 |
 | UI tests | 14 | 2,114 |
-| **Total** | **89** | **10,143** |
+| **Total** | **89** | **10,286** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+7,625 / −545 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+7,772 / −549 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
@@ -99,4 +99,4 @@ Sidequest is the working project name. Public naming availability has not been e
 
 Until design agreement, verification uses [all unit tests and three UI smoke cases](docs/TESTING.md) on one owned simulator that is [deleted after the run](docs/TESTING.md#owned-simulator-cleanup-114), current-source Debug compilation, and exact-head PR checks before merge. Merging starts no automatic main job under the owner's [PR-only decision](docs/CI.md#verification-contract). Longer UI journeys remain available explicitly. The approved 123-case PR gate passed in 3 minutes 45 seconds, and main's full-gate fallback passed in 3 minutes 41 seconds with fresh install/launch and Release verification; [recorded evidence](docs/TESTING.md#measured-temporary-gate-ci) distinguishes these from the historical broader benchmark. Historical main inheritance remains available for explicitly owner-authorized manual releases; [#90](https://github.com/devofthings/sidequest/issues/90) records its proof. Focused checks do not replace exact-head CI.
 
-The next [design baseline](https://github.com/devofthings/sidequest/issues/13) will research vivid, modern visuals and animations for a pitch-ready MVP. The [researched baseline](docs/DESIGN.md) is selected; implementation remains planned.
+The [design baseline](https://github.com/devofthings/sidequest/issues/13) guides vivid, modern visuals and animations for a pitch-ready MVP. The [researched baseline](docs/DESIGN.md) is selected. Shared feed/news styling is implemented; #124 adds vivid game surfaces and contained motion, with actual verification recorded in its PR. Pocket variants and difficulty remain separate specifications.

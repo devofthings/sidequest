@@ -3,6 +3,21 @@ import SwiftUI
 @MainActor
 struct ChessPuzzleView: View {
   let controller: ChessController
+  @Environment(\.colorScheme) private var scheme
+  @Environment(\.colorSchemeContrast) private var systemContrast
+  @Environment(\.sidequestContrast) private var contrastOverride
+  @Environment(\.accessibilityReduceMotion) private var systemReduceMotion
+  @Environment(\.sidequestReduceMotion) private var motionOverride
+
+  private var theme: SidequestTheme {
+    SidequestTheme(scheme: scheme, contrast: contrastOverride ?? systemContrast)
+  }
+  private var reduceMotion: Bool { motionOverride ?? systemReduceMotion }
+  private var feedbackAnimation: Animation? {
+    guard !reduceMotion, controller.runtime.isVisible else { return nil }
+    if case .preview = controller.runtime.phase { return nil }
+    return .smooth(duration: 0.16)
+  }
 
   var body: some View {
     VStack(spacing: 16) {
@@ -45,6 +60,10 @@ struct ChessPuzzleView: View {
         }
       }
     }
+    .transaction { transaction in
+      if case .preview = controller.runtime.phase { transaction.disablesAnimations = true }
+      if !controller.runtime.isVisible { transaction.disablesAnimations = true }
+    }
   }
 
   private var board: some View {
@@ -52,19 +71,32 @@ struct ChessPuzzleView: View {
       ForEach(ChessSquare.displayOrder, id: \.self) { square in
         let displayedBoard = controller.attempt?.board ?? controller.puzzle.board
         let piece = displayedBoard[square]
+        let selected = controller.attempt?.selectedSquare == square
+        let destination = controller.attempt?.solution?.destination == square
         Button {
           controller.tap(square)
         } label: {
           VStack(spacing: 0) {
-            Text(symbol(piece)).font(.system(size: 26))
+            Text(symbol(piece)).font(.system(size: 26, weight: .semibold))
+              .scaleEffect(destination && !reduceMotion ? 1.12 : 1)
+              .animation(feedbackAnimation, value: destination)
             Text(square.coordinate).font(.system(size: 10))
           }
           .frame(maxWidth: .infinity)
           .aspectRatio(1, contentMode: .fit)
-          .background(Color.secondary.opacity((square.file + square.rank) % 2 == 0 ? 0.18 : 0.05))
+          .foregroundStyle(SidequestTheme.darkInk)
+          .background(
+            selected
+              ? SidequestTheme.cyan
+              : (destination
+                ? SidequestTheme.lime
+                : ((square.file + square.rank) % 2 == 0 ? SidequestTheme.lavender : Color.white))
+          )
+          .animation(feedbackAnimation, value: selected)
+          .animation(feedbackAnimation, value: destination)
           .overlay {
-            if controller.attempt?.selectedSquare == square {
-              Rectangle().stroke(.primary, lineWidth: 3)
+            if selected || destination {
+              Rectangle().strokeBorder(SidequestTheme.darkInk, lineWidth: 3)
             }
           }
         }
@@ -73,6 +105,11 @@ struct ChessPuzzleView: View {
         .accessibilityLabel("\(piece?.label ?? "Empty square") on \(square.coordinate)")
         .accessibilityIdentifier("chess.square.\(square.coordinate)")
       }
+    }
+    .clipShape(RoundedRectangle(cornerRadius: 12))
+    .overlay {
+      RoundedRectangle(cornerRadius: 12).strokeBorder(theme.border, lineWidth: theme.borderWidth)
+        .allowsHitTesting(false)
     }
     .accessibilityElement(children: .contain)
     .accessibilityLabel("Chessboard, a1 at bottom left")
@@ -99,7 +136,7 @@ struct ChessPuzzleView: View {
             .frame(maxWidth: .infinity, minHeight: 44)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(SidequestButtonStyle(compact: true))
         .disabled(!controller.canAcceptInput)
         .accessibilityIdentifier("chess.piece.\(square.coordinate)")
       }
@@ -145,11 +182,11 @@ struct ChessPuzzleView: View {
           .frame(maxWidth: .infinity, minHeight: 44)
           .contentShape(Rectangle())
       }
-      .buttonStyle(.borderedProminent)
+      .buttonStyle(SidequestButtonStyle(prominent: true, compact: true))
       .disabled(!controller.canSubmitCoordinates)
       .accessibilityIdentifier("chess.submit")
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(SidequestButtonStyle(compact: true))
     .disabled(!controller.canAcceptInput || controller.attempt?.selectedSquare == nil)
   }
 

@@ -91,4 +91,4 @@ On October 4, 2026, the owner clarified: "also tap to play should not hide the g
 
 ## Selected MVP design baseline October 5, 2026
 
-Under the owner’s design authorization, the lead selected bright arcade objects on calm light/dark surfaces, vivid game accents, semantic typography, and contained purposeful motion with Reduce Motion alternatives. See [DESIGN.md](DESIGN.md) and [research](research/mvp-design.md). Implementation and rendered evidence remain pending; this is a selected design direction, not verified product behavior.
+Under the owner’s design authorization, the lead selected bright arcade objects on calm light/dark surfaces, vivid game accents, semantic typography, and contained purposeful motion with Reduce Motion alternatives. See [DESIGN.md](DESIGN.md) and [research](research/mvp-design.md). Shared feed/news styling is implemented in #123 / PR #125. The #124 feature branch adds game surfaces and contained motion; its exact-head CI, independent review, and focused rendered/motion validation remain pending. The selected direction alone is not verified product behavior.
