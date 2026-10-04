@@ -10,6 +10,7 @@ permissions:
   actions: read
   checks: read
   pull-requests: read
+  statuses: read
 
 concurrency:
   group: sidequest-release-${{ github.sha }}
@@ -49,6 +50,7 @@ jobs:
       actions: read
       checks: read
       pull-requests: read
+      statuses: read
     steps:
       - name: Check out the verified event commit
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, reviewed immutable revision
