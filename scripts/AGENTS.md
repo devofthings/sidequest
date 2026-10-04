@@ -37,3 +37,5 @@ Issue #7's fixture validator exhaustively compares canonical original Chess posi
 ## Faster verification #90
 
 Follow [TESTING.md](../docs/TESTING.md): compile the current checkout before each native execution, hold exclusive canonical cache and Mac ownership, validate actual per-worker inventory/devices, retain extended ownership-selected cases, and keep Release/results/logs/manifests unique. Two workers require passing comparable measured evidence. Main inheritance requires historical captured review base, actual sole-parent/tree equality and live original native provenance; missing evidence runs the full suite. New schema-2 packages distinguish inherited tests and fresh main smoke; preserve uploaded schema-1 history and original-byte retries.
+
+For changed-path selection, use one three-dot range for PRs and the event's parent/head pair for main. Preserve NUL-delimited paths and disable rename detection so both former and new owners receive affected coverage. Exercise these commands with real disposable Git histories in `test-ci.py`; mocked subprocess success cannot prove Git accepts their arguments.

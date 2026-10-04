@@ -47,6 +47,13 @@ def verify_revision(expected, base, event, ref, run):
         raise RuntimeError("Only same-repository PR or main push/manual verification is supported.")
 
 
+def changed_paths(expected, base, event, run):
+    revisions = [f"origin/{base}...{expected}"] if event == "pull_request" else [f"{expected}^", expected]
+    # Report both owners of a rename, preserving paths with spaces or newlines.
+    output = run("changed-paths", ["git", "diff", "--no-renames", "--name-only", "-z", *revisions])
+    return [path for path in output.split("\0") if path]
+
+
 def main():
     root = Path.cwd()
     expected = os.environ["SIDEQUEST_EXPECTED_HEAD"]
@@ -103,8 +110,7 @@ def main():
             raise RuntimeError("CI requires the verified iOS 27.0 (24A434) simulator runtime.")
         event = os.environ["GITHUB_EVENT_NAME"]
         evidence = inherited_tests(root, expected, diagnostics.parent) if event != "pull_request" else None
-        changed = run("changed-paths", ["git", "diff", "--name-only", "-z",
-                      f"origin/{base}...{expected}" if event == "pull_request" else f"{expected}^", expected]).split("\0")
+        changed = changed_paths(expected, base, event, run)
         selected = native_tests.selection(root, changed if event == "pull_request" else None)
         cache_root = diagnostics.parent.parent / "sidequest-debug-cache"
         # Selected only from the recorded comparable benchmark; serial is the safe default.

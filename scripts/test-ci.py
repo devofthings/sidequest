@@ -26,6 +26,49 @@ installer = load("configure-ci-runner")
 
 
 class CIBoundaryTests(unittest.TestCase):
+    def test_changed_paths_uses_real_pr_range_and_main_parent(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+
+            def git(*args):
+                return subprocess.run(["git", *args], cwd=root, text=True,
+                                      capture_output=True, check=True).stdout.strip()
+
+            git("init", "-q")
+            git("config", "core.hooksPath", "/dev/null")
+            git("config", "user.name", "CI fixture")
+            git("config", "user.email", "fixture@example.invalid")
+            for name in ("deleted.swift", "old.swift", "changed.swift"):
+                (root / name).write_text("base\n")
+            git("add", ".")
+            git("commit", "-qm", "base")
+            base = git("rev-parse", "HEAD")
+            git("update-ref", "refs/remotes/origin/main", base)
+            (root / "deleted.swift").unlink()
+            (root / "old.swift").rename(root / "renamed\nfile.swift")
+            (root / "changed.swift").write_text("changed\n")
+            git("add", "-A")
+            git("commit", "-qm", "feature changes")
+            (root / "new.swift").write_text("new\n")
+            git("add", ".")
+            git("commit", "-qm", "second feature commit")
+            head = git("rev-parse", "HEAD")
+            commands = []
+
+            def run(label, command):
+                commands.append(command)
+                return subprocess.run(command, cwd=root, text=True,
+                                      capture_output=True, check=True).stdout
+
+            self.assertEqual(set(ci.changed_paths(head, "main", "pull_request", run)),
+                             {"deleted.swift", "old.swift", "renamed\nfile.swift",
+                              "changed.swift", "new.swift"})
+            for event in ("push", "workflow_dispatch"):
+                with self.subTest(event=event):
+                    self.assertEqual(ci.changed_paths(head, "main", event, run), ["new.swift"])
+            self.assertEqual(commands[0][-1], f"origin/main...{head}")
+            self.assertEqual(commands[1][-2:], [f"{head}^", head])
+
     def test_successful_main_manifest_retains_workflow_run_number(self):
         for event, inherited in [("push", False), ("workflow_dispatch", False), ("push", True), ("workflow_dispatch", True)]:
             with self.subTest(event=event, inherited=inherited), tempfile.TemporaryDirectory() as directory:
