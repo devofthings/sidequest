@@ -52,3 +52,9 @@ The owner approved more clearly fictional English articles for realistic private
 ## Stable gameplay correction
 
 Approved bug [#108](https://github.com/devofthings/sidequest/issues/108) keeps boards and primary controls stable during feedback/completion changes, with complete accessible text and owned overflow. See [GAME_LAYOUT.md](GAME_LAYOUT.md); this does not start the deferred design baseline.
+
+## Requested pocket-game follow-ups
+
+On October 4, 2026, the owner requested pocket-sized variants for every game, Chess closer to [Pocket Chess](https://play.google.com/store/apps/details?hl=en&id=com.dkxqzbfkjt.pocketchess), and different difficulties. [#117](https://github.com/devofthings/sidequest/issues/117) owns the compact-variant specification, including Chess board/rule choices; [#118](https://github.com/devofthings/sidequest/issues/118) owns difficulty tiers and how they enter the feed. These are accepted future directions with concrete behavior and rollout still pending, not claims about the current MVP. The reference listing describes small boards focused on relevant pieces and puzzles of varying move depth; it does not select Sidequest's dimensions or rules.
+
+The owner also proposed reducing a game's future frequency after repeated skips. [#119](https://github.com/devofthings/sidequest/issues/119) records this in Ideas until signals, bounds, storage and reset behavior are specified. Keep game preference separate from difficulty and the five-game/news cadence. No recommendation algorithm, telemetry service or backend is selected. Current implementation and immutable release evidence remain as recorded above.

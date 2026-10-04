@@ -65,6 +65,16 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | Temporary UI gate until design agreement | Accepted owner choice, October 4, 2026 | Owner selected "Tiny UI smoke suite plus all unit tests (Recommended)". Run all units plus existing launch, native direct paging/reverse preview, and Sudoku real input/skip-reset cases on one simulator. Retain longer UI journeys explicitly; ownership changes cannot reactivate them before a recorded design decision and reviewed source PR. Label full/inherited metadata `pre_design_smoke`; comprehensive UI remains deferred. See [TESTING.md](TESTING.md). |
 | Faster testing before feature delivery | Accepted owner direction, implementation #90 | Owner targets ordinary PR checks at 5–10 minutes and rejects duplicate full PR/main runs. Follow [TESTING.md](TESTING.md) for explicit coverage, current-source build reuse, measured isolated workers, captured audit-base/tree/main smoke and honest inherited provenance. Target achievement requires actual measurement. |
 
+## Pocket-game direction recorded October 4, 2026
+
+| Direction | Status | Follow-up |
+| --- | --- | --- |
+| Pocket-sized variants for every existing game, with compact Chess inspired by the owner's Pocket Chess reference | Accepted future product direction; exact variants and rollout pending | [#117](https://github.com/devofthings/sidequest/issues/117) specifies boards, mechanics, session size and accessibility. Existing small variants should be assessed before replacement; the reference does not select a reduced-board ruleset. |
+| Different difficulties across the games | Accepted future product direction; tiers, defaults and selection/progression pending | [#118](https://github.com/devofthings/sidequest/issues/118) separates challenge difficulty from game preference and phase-two scoring. |
+| Recommend a game less after repeated skips, applying this to all kinds | Requested idea; policy and implementation scope pending | [#119](https://github.com/devofthings/sidequest/issues/119) remains in Ideas. Define exposures/skips, thresholds, recovery, variety, storage and user reset before implementation; no online service is selected. |
+
+The owner's request was to capture these in tickets and Ideas. This record authorizes no unspecified mechanics or preference algorithm, changes no current challenge, and does not broaden preview correction #88. See [MVP follow-ups](MVP.md#requested-pocket-game-follow-ups).
+
 ## Research context
 
 Publisher APIs, news licensing, and game catalogs were discussed as possible inputs, not selected dependencies. Previous price examples are research snapshots and should be rechecked before purchase or integration.

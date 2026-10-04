@@ -33,3 +33,7 @@ Anchor playing/completed game content at the top of the viewport-sized host so c
 ## Visible inactive boards #88
 
 Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../docs/GAME_PREVIEWS.md).
+
+## Proposed preference-based frequency
+
+The owner's repeated-skip recommendation idea is captured in [#119](https://github.com/devofthings/sidequest/issues/119), with its pending status in [DECISIONS.md](../../docs/DECISIONS.md#pocket-game-direction-recorded-october-4-2026). Current selection/cadence stays authoritative. Implement preference weighting only after a bounded policy is approved; separate game-type preference from difficulty, define real exposures and recovery, and preserve stable existing cards and the five-game/news cadence. This proposal selects no telemetry, storage or backend service.

@@ -24,3 +24,7 @@ Use the shared `StableGameRegion` for state-dependent text that could change boa
 ## Visible inactive boards #88
 
 Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../docs/GAME_PREVIEWS.md).
+
+## Requested compact variants and difficulties
+
+The owner requested pocket-sized games and different difficulties on October 4, 2026. Before changing game dimensions, rules, generation or difficulty, read [the recorded direction](../../docs/DECISIONS.md#pocket-game-direction-recorded-october-4-2026) and the bounded specifications in #117/#118. Concrete variants, tier behavior and rollout remain pending; the Pocket Chess reference selects a direction rather than a board size or ruleset. Keep existing challenge/lifecycle and stable-layout guarantees while planning those changes.
