@@ -33,7 +33,7 @@ Current source supports full-card native vertical paging: swipe up/down directly
 | Mini Sudoku | Playable 4×4 puzzle | [Rules, controls, and checks](docs/SUDOKU.md) |
 | Memory pairs | Playable six-pair board | [Rules, controls, and checks](docs/MEMORY.md) |
 | Chess puzzles | Playable one-move mates for both colors | [Rules, accessible controls, and exhaustive fixture checks](docs/CHESS.md) |
-| Bubble shooter | Provisional demo | Playable shooting/matching pending [#8](https://github.com/devofthings/sidequest/issues/8) |
+| Bubble shooter | Playable bounded challenge | [Rules, aiming, win/loss, and replay checks](docs/BUBBLES.md) |
 
 The feed currently uses clearly labeled fictional news. Manual English snapshot imports are implemented in a standalone Debug preview; connecting saved imports to the mixed feed is pending [#9](https://github.com/devofthings/sidequest/issues/9). See [news preparation and import](docs/NEWS.md). Accounts, synced preferences, and leaderboards are deferred to phase two; [MVP.md](docs/MVP.md) owns the approved scope.
 
@@ -79,3 +79,17 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 - [Memory pairs](docs/MEMORY.md): the six-pair board, delayed mismatches, and attempt reset.
 - [Chess puzzles](docs/CHESS.md): original one-move puzzles, accessible coordinates, and exhaustive fixture validation.
 - [Bubble shooter](docs/BUBBLES.md): aiming, connected matches, bounded win/loss, flight cancellation, and replay.
+- [Source structure](docs/STRUCTURE.md): folder ownership, game grouping, scoped guidance, and verified foundation source discovery.
+- [Review gates](docs/REVIEW_GATES.md): reproducible validation, durable review evidence, and pinned merges.
+- [Continuous verification](docs/CI.md): free foreground self-hosted execution, exact-commit checks, and local diagnostics.
+- [Swift formatting](docs/FORMATTING.md): shared style, local commit-hook setup, and tooling checks.
+- [Autonomous delivery plan](docs/AUTONOMY.md): technical ownership, start authorization, usage guardrails, and the documentation audit.
+- [Manual news imports](docs/NEWS.md): prepare, validate, replace, and privately retain English snapshots.
+- [Installation and running](docs/INSTALL.md): verified simulator build/test/launch commands and local personal-iPhone signing steps.
+- [Private release delivery](docs/RELEASES.md): MVP publication hold, manual verified releases, and `YYYY.MM.build` versions with full source provenance.
+- [GitHub Issues](https://github.com/devofthings/sidequest/issues): tasks and dependencies.
+- [MVP board](https://github.com/users/devofthings/projects/1): current workflow status; see [task workflow](docs/WORKFLOW.md) for status definitions.
+
+</details>
+
+Sidequest is the working project name. Public naming availability has not been established.

@@ -132,22 +132,22 @@ final class FeedComposition {
               case "sample-game-chess-white": fixtureID = "queen-corner-white"
               case "sample-game-chess-black": fixtureID = "queen-corner-black"
               case .bubbleShooter where !useDemoGames:
-              let controller: BubbleShooterController
-              #if DEBUG
-                if ProcessInfo.processInfo.arguments.contains("-sidequest-bubble-slow-shot") {
-                  controller = BubbleShooterController(
-                    runtime: runtime,
-                    pause: {
-                      try await Task.sleep(for: .milliseconds(250))
-                    })
-                } else {
+                let controller: BubbleShooterController
+                #if DEBUG
+                  if ProcessInfo.processInfo.arguments.contains("-sidequest-bubble-slow-shot") {
+                    controller = BubbleShooterController(
+                      runtime: runtime,
+                      pause: {
+                        try await Task.sleep(for: .milliseconds(250))
+                      })
+                  } else {
+                    controller = BubbleShooterController(runtime: runtime)
+                  }
+                #else
                   controller = BubbleShooterController(runtime: runtime)
-                }
-              #else
-                controller = BubbleShooterController(runtime: runtime)
-              #endif
-              games[game.id] = .bubbleShooter(controller)
-            default: throw GameCompositionError.missingChessFixture(game.id.rawValue)
+                #endif
+                games[game.id] = .bubbleShooter(controller)
+              default: throw GameCompositionError.missingChessFixture(game.id.rawValue)
               }
               guard
                 let puzzle = chessPuzzles.first(where: { $0.id == fixtureID })

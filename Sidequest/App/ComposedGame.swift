@@ -8,3 +8,24 @@ enum ComposedGame {
   case memory(MemoryController)
   case chess(ChessController)
   case bubbleShooter(BubbleShooterController)
+
+  var runtime: GameRuntime {
+    switch self {
+    case .placeholder(let game): game.runtime
+    case .sudoku(let game): game.runtime
+    case .memory(let game): game.runtime
+    case .chess(let game): game.runtime
+    case .bubbleShooter(let game): game.runtime
+    }
+  }
+
+  func content() -> AnyView {
+    switch self {
+    case .placeholder(let game): AnyView(PlaceholderGameView(controller: game))
+    case .sudoku(let game): AnyView(SudokuGameView(controller: game))
+    case .memory(let game): AnyView(MemoryGameView(controller: game))
+    case .chess(let game): AnyView(ChessPuzzleView(controller: game))
+    case .bubbleShooter(let game): AnyView(BubbleShooterView(controller: game))
+    }
+  }
+}
