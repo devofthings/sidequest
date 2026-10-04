@@ -25,3 +25,7 @@ The injected delay is an explicitly main-actor, Sendable async closure. It only 
 Controller tests use a test-owned, deliberately noncooperative main-actor continuation gate. They explicitly resume every delayed callback, including an old callback during a newer attempt's pending mismatch. Tests observe public rules/phase instead of exposing a private task handle or using gameplay sleeps.
 
 Actual implementation check: Xcode 27.0/Swift 6.4 built the Debug app and passed five rule plus five controller tests on the existing ARM64 Sidequest Feed iPhone simulator, iOS 27.0. No failures, skips, or runtime warnings were reported. Three running-app Memory flows subsequently passed on that simulator, including matching, mismatch/skip-reset, completion revisit, and every tile/navigation control at the largest text size. The owning issue and live PR checks record full CI and independent merge gates; these focused checks do not certify those gates. Physical-device execution remains unverified. Retain actual result bundles and original fixture screenshots outside Git.
+
+## Frozen generated layouts #104
+
+Production generates each six-pair layout before publishing its card and injects that immutable `MemoryRules` value through the board factory. Skip/reset and a later new start reuse the same layout. Mismatch tasks remain controller-owned/cancellable. Completed rule values rehydrate in a fresh inactive controller after eviction. Legacy finite harnesses retain their original layout policy. See [ENDLESS.md](../../../docs/ENDLESS.md).

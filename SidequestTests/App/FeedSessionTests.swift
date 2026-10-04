@@ -56,7 +56,7 @@ final class FeedSessionTests: XCTestCase {
     let puzzles = try await ChessPuzzleLoader.bundled()
     let store = PausedNewsStore()
     let model = NewsImportModel(store: store)
-    let session = FeedSessionState(loadChess: { puzzles })
+    let session = FeedSessionState(useEndless: false, loadChess: { puzzles })
     let task = Task { await session.prepare(newsModel: model) }
     await store.waitForRequest(1)
     task.cancel()
@@ -73,7 +73,7 @@ final class FeedSessionTests: XCTestCase {
     let puzzles = try await ChessPuzzleLoader.bundled()
     let store = PausedNewsStore()
     let model = NewsImportModel(store: store)
-    let session = FeedSessionState(loadChess: { puzzles })
+    let session = FeedSessionState(useEndless: false, loadChess: { puzzles })
     let task = Task { await session.prepare(newsModel: model) }
     await store.waitForRequest(1)
     await store.finish(1, result: .failure(NewsImportError.unavailableStorage))
@@ -103,7 +103,7 @@ final class FeedSessionTests: XCTestCase {
     async throws
   {
     let puzzles = try await ChessPuzzleLoader.bundled()
-    let session = FeedSessionState(loadChess: { puzzles })
+    let session = FeedSessionState(useEndless: false, loadChess: { puzzles })
     let model = NewsImportModel(store: EmptyNewsStore())
     await session.prepare(newsModel: model)
     guard case .ready(let old) = session.state, let oldFeed = old.controller else {
@@ -140,7 +140,7 @@ final class FeedSessionTests: XCTestCase {
     let puzzles = try await ChessPuzzleLoader.bundled()
     let store = PausedNewsStore()
     let model = NewsImportModel(store: store)
-    let session = FeedSessionState(loadChess: { puzzles })
+    let session = FeedSessionState(useEndless: false, loadChess: { puzzles })
     let old = Task { await session.prepare(newsModel: model) }
     await store.waitForRequest(1)
     session.cancelPreparation()

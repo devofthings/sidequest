@@ -29,3 +29,7 @@ The delegated [agent-grill](../../.agents/skills/agent-grill/SKILL.md) readiness
 - Standalone `restore()` serializes with imports, checks cancellation before adoption, and leaves failed or canceled attempts retryable. The production library uses the app startup owner's adopted state rather than starting a competing restoration. Missing or intentionally empty news remains a valid empty set.
 
 Controlled offline tests prove immutable late reads cannot adopt state, failed preparation/save preserve the previous set, restoration retry and serialization work, cancellation before save preserves data, and cancellation after durable save commits once. Actual transaction test evidence belongs to the issue handoff; shared app integration remains with the composition owner.
+
+## Asynchronous replacement #104
+
+Capture the originating session/request before the first import/load await. Prepare all fallible generated-game/news state before persistence. Recheck identity after suspension, then exclusively acquire the main-actor save/adoption lease. Always release it on failure or after commit. After successful durable save, synchronously adopt news and feed even if canceled; no new check/throw/await may split that boundary. Imported stories appear once per session under the stated default. Exact initial game-ID collisions reject; later generated collisions skip that game sequence instead of banning a news-ID prefix. See [ENDLESS.md](../../docs/ENDLESS.md).

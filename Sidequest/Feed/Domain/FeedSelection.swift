@@ -1,6 +1,6 @@
 /// Selection changes never rebuild or shuffle the session's immutable deck.
 struct FeedSelection {
-  let cards: [FeedCard]
+  private(set) var cards: [FeedCard]
   private(set) var index: Int?
 
   init(cards: [FeedCard]) {
@@ -11,6 +11,11 @@ struct FeedSelection {
   var card: FeedCard? { index.map { cards[$0] } }
   var canGoBack: Bool { index.map { $0 > 0 } ?? false }
   var canGoForward: Bool { index.map { $0 + 1 < cards.count } ?? false }
+
+  mutating func append(_ additions: [FeedCard]) {
+    cards.append(contentsOf: additions)
+    if index == nil, !cards.isEmpty { index = 0 }
+  }
 
   @discardableResult
   mutating func move(by offset: Int) -> Bool {

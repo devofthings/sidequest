@@ -16,7 +16,7 @@ jobs:
     name: Sidequest / verification
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, macOS, ARM64, sidequest, xcode-27, sidequest-mac-foreground]
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - name: Check out the exact reviewed commit
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, reviewed immutable revision

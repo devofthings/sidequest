@@ -4,14 +4,19 @@ import Observation
 @MainActor
 @Observable
 final class GameRuntime {
-  private var lifecycle = GameLifecycle()
+  private var lifecycle: GameLifecycle
+  private var isRetired = false
   @ObservationIgnored private var effectHandler: ((GameLifecycleEffect) -> Void)?
   @ObservationIgnored private let makeAttemptID: () -> GameAttemptID
 
   var phase: GamePhase { lifecycle.phase }
   var isVisible: Bool { lifecycle.isVisible }
 
-  init(makeAttemptID: @escaping () -> GameAttemptID = { GameAttemptID() }) {
+  init(
+    completed: GameAttemptID? = nil,
+    makeAttemptID: @escaping () -> GameAttemptID = { GameAttemptID() }
+  ) {
+    lifecycle = GameLifecycle(completed: completed)
     self.makeAttemptID = makeAttemptID
   }
 
@@ -23,10 +28,12 @@ final class GameRuntime {
   }
 
   func setVisible(_ visible: Bool) {
+    guard !isRetired else { return }
     deliver(lifecycle.setVisible(visible))
   }
 
   func start() {
+    guard !isRetired else { return }
     precondition(effectHandler != nil, "Composition must bind game effects before interaction.")
     deliver(lifecycle.start(makeAttemptID: makeAttemptID))
   }
@@ -34,7 +41,7 @@ final class GameRuntime {
   /// Bubble-shooter replay replaces this owner's value; controllers never own a second lifecycle.
   @discardableResult
   func replay() -> Bool {
-    guard isVisible, case .completed(let old) = phase else { return false }
+    guard !isRetired, isVisible, case .completed(let old) = phase else { return false }
     let fresh = makeAttemptID()
     guard fresh != old else { return false }
     lifecycle = GameLifecycle()
@@ -46,11 +53,18 @@ final class GameRuntime {
   }
 
   func acceptsInput(from attempt: GameAttemptID) -> Bool {
-    lifecycle.acceptsInput(from: attempt)
+    !isRetired && lifecycle.acceptsInput(from: attempt)
   }
 
   func complete(attempt: GameAttemptID) {
     deliver(lifecycle.complete(attempt: attempt))
+  }
+
+  /// Evicted owners never accept visibility, replay, or input again, even through stale views.
+  func retire() {
+    guard !isRetired else { return }
+    deliver(lifecycle.setVisible(false))
+    isRetired = true
   }
 
   private func deliver(_ effect: GameLifecycleEffect?) {

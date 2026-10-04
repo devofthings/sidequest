@@ -45,6 +45,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
   private var isStopped = false
   private var suppressCompletion = false
   private var settledIndex: Int?
+  private var navigationIsAnimating = false
 
   init(controller: FeedController, content: @escaping (FeedCard) -> AnyView) {
     self.controller = controller
@@ -75,7 +76,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
     pager.frame = view.bounds
     pageHeight = pager.bounds.height
     layoutPages()
-    if changed { centerOnCommittedPage() }
+    if changed, !isMoving { centerOnCommittedPage() }
   }
 
   func update(
@@ -84,7 +85,10 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
     guard !isStopped else { return }
     self.content = content
     loadViewIfNeeded()
-    if settledIndex != controller.selectedIndex { rebuildWindow() }
+    let desired = adjacentWindow()
+    if settledIndex != controller.selectedIndex || window != desired {
+      if !isMoving { rebuildWindow() }
+    }
     for (index, page) in pages {
       page.update(content(controller.cards[index]))
       page.view.accessibilityElementsHidden = index != controller.selectedIndex
@@ -92,6 +96,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
     }
     pager.isScrollEnabled = controller.canNavigate
     if !controller.canNavigate {
+      navigationIsAnimating = false
       lastRequestID = request?.id
       centerOnCommittedPage()
     }
@@ -101,6 +106,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
       let slot = window.firstIndex(of: selected + request.step), pageHeight > 0
     else { return }
     lastRequestID = request.id
+    navigationIsAnimating = !reduceMotion
     pager.setContentOffset(CGPoint(x: 0, y: CGFloat(slot) * pageHeight), animated: !reduceMotion)
     if reduceMotion { commitSettledPage() }
   }
@@ -111,10 +117,19 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
     pager.isScrollEnabled = false
   }
 
+  private var isMoving: Bool {
+    pager.isTracking || pager.isDragging || pager.isDecelerating || navigationIsAnimating
+  }
+
+  private func adjacentWindow() -> [Int] {
+    guard let selected = controller.selectedIndex else { return [] }
+    return Array(max(0, selected - 1)...min(controller.count - 1, selected + 1))
+  }
+
   private func rebuildWindow() {
     guard let selected = controller.selectedIndex else { return }
     suppressCompletion = true
-    let nextWindow = Array(max(0, selected - 1)...min(controller.count - 1, selected + 1))
+    let nextWindow = adjacentWindow()
     for (index, page) in pages where !nextWindow.contains(index) {
       page.willMove(toParent: nil)
       page.view.removeFromSuperview()
@@ -156,6 +171,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
   }
 
   private func commitSettledPage() {
+    navigationIsAnimating = false
     guard !isStopped, !suppressCompletion, controller.canNavigate, pageHeight > 0 else { return }
     let slot = Int((pager.contentOffset.y / pageHeight).rounded())
     guard window.indices.contains(slot) else {

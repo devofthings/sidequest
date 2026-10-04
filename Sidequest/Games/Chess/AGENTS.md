@@ -34,3 +34,7 @@ No human-owned decision or spending was introduced. Rules, retained composition,
 After #87, Chess running-app tests reveal controls within the active `feed.cardScroll` and navigate through the compact Feed navigation menu. Wait for the settled position before checking reset/completion; menu dismissal alone does not prove the native animation committed. Preserve the generic feed/replacement routes' original six-card/four-demo membership alongside the seven-card production deck.
 
 `ChessPuzzleLoader.bundled(in:)` is an explicitly `@concurrent` async file/decoding adapter. Main-actor composition must await it through retained startup, then use the immutable decoded values; calling synchronous disk reads from a UI constructor violates CODING.md. In-memory `decode(_:)` remains synchronous. App startup owns cancellation, visible loading/error state, and one cached fixture set; the game adapter owns no duplicate session task.
+
+## Endless reuse policy #104
+
+The stated first implementation default reuses the two validated original White/Black puzzles. Repeated Chess cards have new card identities but do not claim generated positions. Archive solved attempts and restore them in fresh inactive controllers after eviction; fixture validation remains unchanged. See [ENDLESS.md](../../../docs/ENDLESS.md).

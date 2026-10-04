@@ -175,3 +175,7 @@ Generated output belongs in ignored `DerivedData/`, `build/`, or an external bui
 If Xcode reports no destination, check `xcrun simctl list runtimes` and `xcrun simctl list devices available`; unavailable entries with missing runtime profiles cannot run the app. Install the matching runtime rather than claiming a build or test passed. If simulator access is denied in a sandbox, run the approved build/simulator commands with their required local filesystem access.
 
 Published versions appear in the private [GitHub Releases page](https://github.com/devofthings/sidequest/releases) only after an eligible, explicitly dispatched [release workflow](RELEASES.md). Main verification alone produces no new download. Its initial asset is a simulator archive; source plus local Xcode signing remains the personal-iPhone path.
+
+## Endless source work
+
+The #104 source branch implements endless manual scrolling with local generated Sudoku, frozen Memory layouts, and bounded attainable Bubble challenges. The stated default presents each imported story once per session and reuses validated Chess puzzles. Build/run commands and local signing remain unchanged. `2026.10.14` is immutable and contains the finite MVP deck; this feature does not create a new downloadable release. See [ENDLESS.md](ENDLESS.md) for actual branch checks and pending delivery gates.

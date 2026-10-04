@@ -14,14 +14,25 @@ final class FeedSessionState {
 
   private(set) var state: State = .notStarted
   private(set) var libraryIsPresented = false
+  private let prepareBatch: GameBatchPreparation
+  private let useEndless: Bool
+  private var replacementLease: UUID?
   private let loadChess: @Sendable () async throws -> [ChessPuzzle]
 
   init(
+    useEndless: Bool = true,
+    prepareBatch: @escaping GameBatchPreparation = { id, sequence, seed, puzzles, ordered in
+      try await GeneratedGameBatch.prepare(
+        sessionID: id, sequence: sequence, seed: seed,
+        chessPuzzles: puzzles, ordered: ordered)
+    },
     loadChess: @escaping @Sendable () async throws -> [ChessPuzzle] = {
       try await ChessPuzzleLoader.bundled()
     }
   ) {
     self.loadChess = loadChess
+    self.useEndless = useEndless
+    self.prepareBatch = prepareBatch
   }
 
   func prepare(newsModel: NewsImportModel) async {
@@ -54,11 +65,13 @@ final class FeedSessionState {
       guard isCurrent(identity) else { return }
       let composition: FeedComposition
       do {
-        composition = try FeedComposition(news: news, chessPuzzles: puzzles)
+        composition = try await makeComposition(news: news, puzzles: puzzles)
       } catch GameCompositionError.reservedNewsID {
-        composition = try FeedComposition(news: [], chessPuzzles: puzzles)
+        composition = try await makeComposition(news: [], puzzles: puzzles)
         message = "Saved news contains a game ID. Import a file with different snapshot IDs."
       }
+      try Task.checkCancellation()
+      guard isCurrent(identity) else { return }
       // No suspension between validated adoption and publishing this generation.
       newsModel.adoptRestored(message == nil ? news : [], message: message)
       state = .ready(composition)
@@ -88,9 +101,70 @@ final class FeedSessionState {
     composition.controller?.setHostAvailable(!presented)
   }
 
+  private func makeComposition(news: [NewsSnapshot], puzzles: [ChessPuzzle]) async throws
+    -> FeedComposition
+  {
+    #if DEBUG
+      if ProcessInfo.processInfo.arguments.contains("-sidequest-integration-fixtures"),
+        !ProcessInfo.processInfo.arguments.contains("-sidequest-endless-fixtures")
+      {
+        return try FeedComposition(news: news, chessPuzzles: puzzles)
+      }
+      if ProcessInfo.processInfo.arguments.contains("-sidequest-endless-fixtures") {
+        return try await FeedComposition.endless(
+          news: news, chessPuzzles: puzzles,
+          sessionID: UUID(uuidString: "00000000-0000-0000-0000-000000000104") ?? UUID(), seed: 104,
+          ordered: true, prepareBatch: prepareBatch)
+      }
+    #endif
+    if useEndless {
+      return try await FeedComposition.endless(
+        news: news, chessPuzzles: puzzles, prepareBatch: prepareBatch)
+    }
+    return try FeedComposition(news: news, chessPuzzles: puzzles)
+  }
+
+  /// Capture the origin before readImport/load can suspend. One lease spans save and adoption.
+  func beginReplacement() throws -> NewsReplacementRequest {
+    guard case .ready(let origin) = state, replacementLease == nil else {
+      throw NewsImportError.unavailableStorage
+    }
+    let identity = UUID()
+    return NewsReplacementRequest { [self] news in
+      guard case .ready(let current) = state, current === origin, replacementLease == nil else {
+        throw CancellationError()
+      }
+      let candidate = try await makeComposition(news: news, puzzles: origin.chessPuzzles)
+      try Task.checkCancellation()
+      guard case .ready(let current) = state, current === origin, replacementLease == nil else {
+        candidate.controller?.retire()
+        throw CancellationError()
+      }
+      return PreparedNewsReplacement(
+        acquire: { [self] in
+          guard case .ready(let current) = state, current === origin, replacementLease == nil else {
+            throw CancellationError()
+          }
+          replacementLease = identity
+        },
+        commit: { [self] in
+          // acquire has reserved this boundary; durable success must be adopted even after cancellation.
+          origin.controller?.retire()
+          candidate.controller?.setHostAvailable(!libraryIsPresented)
+          state = .ready(candidate)
+        },
+        release: { [self] in
+          if replacementLease == identity { replacementLease = nil }
+        })
+    }
+  }
+
+  /// Legacy finite fixture/test transaction; production uses beginReplacement.
   /// Fallible preparation runs before persistence; returned commit cannot suspend or fail.
   func prepareReplacement(_ news: [NewsSnapshot]) throws -> @MainActor () -> Void {
-    guard case .ready(let current) = state else { throw NewsImportError.unavailableStorage }
+    guard !useEndless, replacementLease == nil, case .ready(let current) = state else {
+      throw NewsImportError.unavailableStorage
+    }
     let candidate: FeedComposition
     do {
       candidate = try FeedComposition(news: news, chessPuzzles: current.chessPuzzles)
@@ -99,6 +173,7 @@ final class FeedSessionState {
         "A snapshot ID is reserved for a game. Choose a different news ID.")
     }
     return { [self] in
+      guard replacementLease == nil else { return }
       if case .ready(let previous) = state { previous.controller?.retire() }
       candidate.controller?.setHostAvailable(!libraryIsPresented)
       state = .ready(candidate)
@@ -126,7 +201,7 @@ final class FeedSessionState {
     }
 
     func replaceFixtureSession() {
-      guard case .ready(let current) = state else { return }
+      guard replacementLease == nil, case .ready(let current) = state else { return }
       current.controller?.retire()
       state = .ready(FeedComposition(chessPuzzles: current.chessPuzzles))
     }
