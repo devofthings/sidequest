@@ -96,3 +96,7 @@ Follow [TESTING.md](docs/TESTING.md) for the owner-approved temporary `pre_desig
 ## PR-only routine verification #112
 
 On October 4, 2026, the owner instructed "dont do a second check on main". Use exact-head PR verification and fresh independent review as the routine delivery gate. Merging must start no automatic main test/build or publisher job; do not dispatch a manual run to replace that removed check. Preserve historical #90 proof and manual-release verification/metadata compatibility, but dispatch only when the owner explicitly authorizes publication. See [CI.md](docs/CI.md) and [RELEASES.md](docs/RELEASES.md).
+
+## Current authorized usage window
+
+On October 5, 2026, the owner personally reset included usage and authorized this run only until 90% remains (10% used). This stricter current-run checkpoint supersedes the ordinary 1% reserve: check reported usage before new tickets/reviewers and periodically while working, commit and push unfinished work to a PR or draft PR at the threshold, then stop. Do not redeem resets or purchase usage yourself.
