@@ -32,6 +32,7 @@ class OwnedCommands:
         self.canceled = None
         self.previous = {}
         self.spawning = False
+        self.tearing_down = False
 
     def __enter__(self):
         for signum in (signal.SIGINT, signal.SIGTERM):
@@ -39,11 +40,14 @@ class OwnedCommands:
         return self
 
     def __exit__(self, kind, value, traceback):
+        self.tearing_down = True
         try:
             self.drain()
         finally:
             for signum, handler in self.previous.items():
                 signal.signal(signum, handler)
+        if self.canceled is not None and kind is None:
+            raise VerificationCanceled(self.canceled)
 
     @staticmethod
     def group_is_inert(identifier):
@@ -87,7 +91,7 @@ class OwnedCommands:
         self.canceled = signum
         # A main-thread signal during Popen must let registration finish before
         # raising. Unlike masking, this does not pass blocked signals to children.
-        if self.spawning:
+        if self.spawning or self.tearing_down:
             return
         self.drain(reap=False)
         raise VerificationCanceled(signum)
@@ -186,8 +190,19 @@ def changed_paths(expected, base, event, run):
 
 
 def main():
-    with OwnedCommands() as commands:
-        verify(commands)
+    commands = OwnedCommands()
+    try:
+        with commands:
+            verify(commands)
+    finally:
+        # This outer boundary also runs when cancellation interrupts command
+        # diagnostics, summary output, or the signal-handler context teardown.
+        if commands.canceled is not None and hasattr(commands, "diagnostics"):
+            (commands.diagnostics / "verification.json").unlink(missing_ok=True)
+            (commands.diagnostics / "cancellation.json").write_text(json.dumps({
+                "signal": commands.canceled, "commit": commands.expected,
+                "cleanup_completed": not commands.active,
+            }, indent=2) + "\n")
 
 
 def verify(commands):
@@ -198,6 +213,8 @@ def verify(commands):
     attempt = os.environ["GITHUB_RUN_ATTEMPT"]
     diagnostics = Path(os.environ["RUNNER_TEMP"]).parent / "sidequest-diagnostics" / f"{run_id}-{attempt}"
     diagnostics.mkdir(parents=True, exist_ok=False)
+    commands.diagnostics = diagnostics
+    commands.expected = expected
     summary = []
     timings = []
 
@@ -299,11 +316,6 @@ def verify(commands):
             output.write(f"verification_directory={diagnostics}\n")
     finally:
         if commands.canceled is not None:
-            (diagnostics / "verification.json").unlink(missing_ok=True)
-            (diagnostics / "cancellation.json").write_text(json.dumps({
-                "signal": commands.canceled, "commit": expected,
-                "cleanup_completed": not commands.active,
-            }, indent=2) + "\n")
             summary.append(f"- CANCELED by signal {commands.canceled}; no successful verification manifest.")
         (diagnostics / "commands.json").write_text(json.dumps(timings, indent=2) + "\n")
         with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a") as output:

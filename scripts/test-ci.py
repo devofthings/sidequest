@@ -242,9 +242,10 @@ class CIBoundaryTests(unittest.TestCase):
             self.assertEqual(commands[1][-2:], [f"{head}^", head])
 
     def test_successful_main_manifest_retains_workflow_run_number(self):
-        scenarios = [("push", False, False), ("workflow_dispatch", False, False),
-                     ("push", True, False), ("workflow_dispatch", True, False), ("push", False, True)]
-        for event, inherited, cleanup_failure in scenarios:
+        scenarios = [("push", False, False, False), ("workflow_dispatch", False, False, False),
+                     ("push", True, False, False), ("workflow_dispatch", True, False, False),
+                     ("push", False, True, False), ("push", False, False, "summary"), ("push", False, False, "teardown")]
+        for event, inherited, cleanup_failure, late_cancellation in scenarios:
             with self.subTest(event=event, inherited=inherited, cleanup_failure=cleanup_failure), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 environment = {"SIDEQUEST_EXPECTED_HEAD": "a" * 40, "SIDEQUEST_BASE_REF": "main",
@@ -278,7 +279,28 @@ class CIBoundaryTests(unittest.TestCase):
                         stdout.write(output)
                     return subprocess.CompletedProcess(command, 0)
 
+                original_open = Path.open
+
+                def summary_open(path, mode="r", *args, **kwargs):
+                    if late_cancellation == "summary" and path == root / "summary" and mode == "a":
+                        # Interrupt after successful native/device cleanup and
+                        # manifest writing, before final summary output completes.
+                        self.assertTrue((root / "sidequest-diagnostics/100-2/verification.json").exists())
+                        signal.raise_signal(signal.SIGTERM)
+                    return original_open(path, mode, *args, **kwargs)
+
+                original_signal = signal.signal
+
+                def restore_signal(signum, handler):
+                    if (late_cancellation == "teardown" and signum == signal.SIGTERM and
+                            not callable(handler) and
+                            (root / "sidequest-diagnostics/100-2/verification.json").exists()):
+                        signal.raise_signal(signal.SIGTERM)
+                    return original_signal(signum, handler)
+
                 with patch.dict(os.environ, environment), patch.object(Path, "cwd", return_value=root), \
+                     patch.object(signal, "signal", restore_signal), \
+                     patch.object(Path, "open", summary_open), \
                      patch.object(ci.OwnedCommands, "run", side_effect=lambda command, output, cleanup=False: controlled(command, stdout=output)), \
                      patch.object(ci, "inherited_tests", return_value={"mode": "inherited", "gate": "pre_design_smoke", "original_head": "b" * 40, "inventory": ["original/test/case"]} if inherited else None), \
                      patch.object(ci.native_tests, "owned_execution", side_effect=nullcontext), \
@@ -287,12 +309,22 @@ class CIBoundaryTests(unittest.TestCase):
                      patch.object(ci.native_tests, "execute", return_value=({"mode": "full", "gate": "pre_design_smoke", "selected": ["SidequestTests"]}, root / "cache")) as execute:
                     (root / "scripts").mkdir()
                     (root / "scripts/native-test-inventory.json").write_text("{}")
-                    if cleanup_failure:
+                    if late_cancellation:
+                        with self.assertRaises(ci.VerificationCanceled):
+                            ci.main()
+                    elif cleanup_failure:
                         with self.assertRaisesRegex(RuntimeError, "Owned simulator cleanup failed: delete-1"):
                             ci.main()
                     else:
                         ci.main()
                 diagnostics = root / "sidequest-diagnostics/100-2"
+                if late_cancellation:
+                    self.assertFalse((diagnostics / "verification.json").exists())
+                    self.assertEqual(json.loads((diagnostics / "cancellation.json").read_text()),
+                                     {"signal": signal.SIGTERM, "commit": "a" * 40, "cleanup_completed": True})
+                    self.assertTrue((diagnostics / "commands.json").exists())
+                    self.assertEqual(json.loads((diagnostics / "commands.json").read_text())[-1]["exit"], 0)
+                    continue
                 if cleanup_failure:
                     self.assertFalse((diagnostics / "verification.json").exists())
                     commands = json.loads((diagnostics / "commands.json").read_text())
