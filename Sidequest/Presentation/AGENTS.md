@@ -7,3 +7,13 @@ This UI-only folder owns the researched semantic palette and local button press 
 `SidequestButtonStyle` keeps transforms within the control's allocated footprint. Reduce Motion changes press feedback immediately without scaling. Disabled eligibility comes from existing controls/runtime; the style never changes lifecycle. Compact header actions retain their 44-point footprint. Use semantic text styles and preserve measured game regions.
 
 The SDK's contrast and Reduce Motion environment values are read-only. FeedView passes them through the writable optional `sidequestContrast` and `sidequestReduceMotion` presentation keys into separate hosting roots. Consumers resolve an override first, then the system value for standalone/library views. These keys carry preferences; they do not own app state.
+
+## Implementation question review #123
+
+The implementation author conducted this agent-grill self-assessment; the lead's fresh readiness review confirmed the bounded scope.
+
+| Question | Kind | Answer and evidence | Verification |
+| --- | --- | --- | --- |
+| Where do shared colors/styles belong? | Delegated technical choice | A UI-only `Presentation` folder keeps feed/news/game styling reusable while preserving the inward dependencies in STRUCTURE.md. | Strict Swift lint passed; exact-head app compilation and source discovery remain with lead CI. |
+| Can system contrast and Reduce Motion be written into a hosted SwiftUI environment? | Fact and technical choice | Xcode 27.0 SwiftUICore SDK declares both preferences getter-only. Optional writable presentation keys carry the parent values, with system fallback outside feed hosting. | Lead will inspect ordinary/largest light/dark/increased-contrast surfaces and Reduce Motion behavior in the running simulator. |
+| How is the canvas preserved during native paging? | Delegated technical choice | Transparent UIKit pager/hosting roots expose the opaque SwiftUI canvas; existing gesture and scroll containment is unchanged. | Lead will verify actual light/dark paging and preview/start geometry; source review alone is not rendered evidence. |
