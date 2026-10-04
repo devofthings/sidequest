@@ -44,10 +44,10 @@ Normal launch mixes saved English news snapshots with all four real game kinds (
 | --- | ---: | ---: |
 | App | 42 | 3,488 |
 | Unit tests | 19 | 2,555 |
-| UI tests | 11 | 1,273 |
-| **Total** | **72** | **7,316** |
+| UI tests | 11 | 1,313 |
+| **Total** | **72** | **7,356** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+4,692 / −439 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+4,736 / −443 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.

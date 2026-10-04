@@ -30,9 +30,13 @@ final class IntegrationFlowTests: XCTestCase {
     }
     openLibrary(app)
     app.buttons["news.import"].tap()
-    XCTAssertTrue(pickerCancel(app).waitForExistence(timeout: 5))
-    pickerCancel(app).tap()
+    dismissNativeNewsPicker(app, doneIdentifier: "news.done")
     closeLibrary(app)
+    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 6")
+    XCTAssertTrue(app.staticTexts["Imported fixture story"].exists)
+    app.terminate()
+    app.launch()
+    XCTAssertTrue(app.staticTexts["Imported fixture story"].waitForExistence(timeout: 10))
     XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 6")
     openLibrary(app)
     importFile("Empty News", in: app)
@@ -185,11 +189,6 @@ final class IntegrationFlowTests: XCTestCase {
     XCTAssertTrue(file.waitForExistence(timeout: 5), app.debugDescription)
     file.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)).tap()
     XCTAssertTrue(app.buttons["news.import"].waitForExistence(timeout: 5))
-  }
-
-  private func pickerCancel(_ app: XCUIApplication) -> XCUIElement {
-    app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Cancel"))
-      .firstMatch
   }
 
   private func waitForMessage(_ message: String, in app: XCUIApplication) {
