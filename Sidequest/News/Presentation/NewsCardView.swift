@@ -23,6 +23,7 @@ struct NewsCardContent: View {
       }
       Text(snapshot.headline)
         .font(.title2.bold())
+        .accessibilityIdentifier("news.headline")
         .accessibilityAddTraits(.isHeader)
       Text(snapshot.excerpt)
         .font(.body)
@@ -37,10 +38,17 @@ struct NewsCardContent: View {
           .font(.caption)
       }
       Link(destination: snapshot.sourceURL) {
-        Label("Read original article", systemImage: "arrow.up.right.square")
-          .frame(minHeight: 44, alignment: .leading)
+        Label(
+          snapshot.isSample ? "Open sample placeholder" : "Read original article",
+          systemImage: "arrow.up.right.square"
+        )
+        .frame(minHeight: 44, alignment: .leading)
       }
-      .accessibilityLabel("Read original article from \(snapshot.publisher)")
+      .accessibilityLabel(
+        snapshot.isSample
+          ? "Open fictional sample placeholder from \(snapshot.publisher)"
+          : "Read original article from \(snapshot.publisher)"
+      )
       .accessibilityIdentifier("news.source")
     }
     .frame(maxWidth: .infinity, alignment: .leading)

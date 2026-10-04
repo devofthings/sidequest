@@ -52,7 +52,7 @@ final class FeedSessionState {
       let news: [NewsSnapshot]
       var message: String?
       do {
-        news = try await newsModel.loadSavedSnapshots() ?? []
+        news = try await newsModel.loadResolvedSnapshots()
       } catch is CancellationError {
         throw CancellationError()
       } catch {

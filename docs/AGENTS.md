@@ -24,3 +24,7 @@ Integration #9’s readiness PR was partial until actual selected published-tag 
 ## Demo news and cadence #106
 
 DEMO_NEWS.md owns the approved #106 cadence, fictional-data, absence/empty/error and counter-removal decisions. Update current contracts consistently, distinguish source stories from appearances, and preserve immutable finite-release and historical test evidence. See [demo news policy](DEMO_NEWS.md).
+
+## Personal iPhone Review instructions
+
+Accepted owner steering on October 4, 2026: app-change Review handoffs include concrete personal-iPhone testing instructions using a free Apple Account/Personal Team, the ignored local signing configuration, pairing/Developer Mode/Run, and seven-day reinstallation. Follow [the workflow rule](WORKFLOW.md) and [installation steps](INSTALL.md#install-on-your-own-iphone). Identify the current PR source; do not describe old simulator downloads as an iPhone installation or infer actual device verification from simulator tests. Credentials and personal signing settings stay out of Git, and paid enrollment requires separate approval.

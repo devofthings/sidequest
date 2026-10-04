@@ -9,12 +9,16 @@ final class NewsImportModel {
   private(set) var message: String?
   var canRetryRestore: Bool { !hasLoaded && !isBusy }
   private var hasLoaded = false
+  private let usesDemoWhenMissing: Bool
+  private let loadDemo: @Sendable () async throws -> [NewsSnapshot]
   private let store: (any NewsSnapshotStorage)?
   private let beginReplacement: @MainActor () throws -> NewsReplacementRequest
   private let readImport: @Sendable (URL) async throws -> ValidatedNewsImport
 
   init(
     store: (any NewsSnapshotStorage)? = NewsImportModel.defaultStore(),
+    usesDemoWhenMissing: Bool = false,
+    loadDemo: @escaping @Sendable () async throws -> [NewsSnapshot] = DemoNewsLoader.bundled,
     prepareReplacement: @escaping @MainActor ([NewsSnapshot]) throws -> (@MainActor () -> Void) = {
       _ in {}
     },
@@ -23,6 +27,8 @@ final class NewsImportModel {
       LocalNewsStore.readImport
   ) {
     self.store = store
+    self.usesDemoWhenMissing = usesDemoWhenMissing
+    self.loadDemo = loadDemo
     self.beginReplacement =
       beginReplacement ?? {
         NewsReplacementRequest { snapshots in
@@ -50,6 +56,21 @@ final class NewsImportModel {
     return try await store.load()
   }
 
+  /// One nil-only resolution policy for both initial startup and user-requested retry.
+  func loadResolvedSnapshots() async throws -> [NewsSnapshot] {
+    if let saved = try await loadSavedSnapshots() { return saved }
+    if usesDemoWhenMissing { return try await loadDemo() }
+    #if DEBUG
+      if CommandLine.arguments.contains("-sidequest-news-fixtures") {
+        guard let url = Bundle.main.url(forResource: "sample-news", withExtension: "json") else {
+          throw NewsImportError.invalid("Bundled samples are missing. Rebuild the app.")
+        }
+        return try await LocalNewsStore.samples(in: url)
+      }
+    #endif
+    return []
+  }
+
   func adoptRestored(_ snapshots: [NewsSnapshot], message: String? = nil) {
     self.snapshots = snapshots
     self.message = message
@@ -62,16 +83,7 @@ final class NewsImportModel {
     defer { isBusy = false }
     do {
       let request = try beginReplacement()
-      let saved = try await loadSavedSnapshots()
-      var restored = saved ?? []
-      #if DEBUG
-        if saved == nil && CommandLine.arguments.contains("-sidequest-news-fixtures") {
-          guard let url = Bundle.main.url(forResource: "sample-news", withExtension: "json") else {
-            throw NewsImportError.invalid("Bundled samples are missing. Rebuild the app.")
-          }
-          restored = try await LocalNewsStore.samples(in: url)
-        }
-      #endif
+      let restored = try await loadResolvedSnapshots()
       try Task.checkCancellation()
       let prepared = try await request.prepare(restored)
       try Task.checkCancellation()

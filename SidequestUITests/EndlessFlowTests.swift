@@ -4,7 +4,7 @@ import XCTest
 final class EndlessFlowTests: XCTestCase {
   func testGeneratedGamesCompleteResetAndRestoreAfterMultipleBatchesAndCanceledDrag() {
     let app = launch(extra: ["-sidequest-endless-slow-generation"])
-    XCTAssertEqual(position(app), "Card 1")
+    XCTAssertEqual(app.selectedFeedCardID, gameID(0))
     XCTAssertFalse(app.buttons["sudoku.cell.0"].exists)
     app.buttons["game.start"].tap()
     let solution = [3, 4, 1, 2, 1, 2, 3, 4, 2, 3, 4, 1, 4, 1, 2, 3]
@@ -40,12 +40,14 @@ final class EndlessFlowTests: XCTestCase {
     app.buttons["chess.square.g7"].tap()
     XCTAssertTrue(app.staticTexts["chess.completed"].exists)
     app.nextFeedCard()
+    app.nextFeedCard()
+    app.previousFeedCard()
     // This short native drag holds the finger while the off-actor replenishment finishes.
     let pager = app.scrollViews["feed.pager"]
     let origin = pager.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5))
     let nearby = pager.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.47))
     origin.press(forDuration: 5, thenDragTo: nearby, withVelocity: .slow, thenHoldForDuration: 0.3)
-    XCTAssertEqual(position(app), "Card 4")
+    XCTAssertEqual(app.selectedFeedCardID, gameID(3))
     XCTAssertTrue(app.buttons["game.start"].exists)
     app.buttons["game.start"].tap()
     reveal(app.sliders["bubble.aim"], in: app)
@@ -57,10 +59,10 @@ final class EndlessFlowTests: XCTestCase {
       evaluatedWith: app.staticTexts["bubble.outcome"])
     wait(for: [won], timeout: 10)
     for _ in 0..<21 { app.nextFeedCard() }
-    XCTAssertEqual(position(app), "Card 25")
+    XCTAssertEqual(app.selectedFeedCardID, gameID(20))
     XCTAssertTrue(app.buttons["game.start"].exists)
     for _ in 0..<24 { app.previousFeedCard() }
-    XCTAssertEqual(position(app), "Card 1")
+    XCTAssertEqual(app.selectedFeedCardID, gameID(0))
     XCTAssertEqual(app.staticTexts["sudoku.status"].label, "Sudoku solved!")
     app.nextFeedCard()
     XCTAssertTrue(app.staticTexts["memory.completed"].exists)
@@ -85,49 +87,91 @@ final class EndlessFlowTests: XCTestCase {
     app.terminate()
   }
 
-  func testEndlessNativeImportsPersistAppearOnceAndKeepHistoryAfterRejectionOrCancel() {
+  func testEndlessNativeImportsCyclePersistAndKeepHistoryAfterRejectionOrCancel() {
     let app = launch()
     openLibrary(app)
     importFile("Valid News", in: app)
     waitForMessage("Imported 1 news snapshots.", in: app)
     closeLibrary(app)
-    XCTAssertEqual(position(app), "Card 1")
+    app.waitForFeedCard(gameID(0))
+    for _ in 0..<5 { app.nextFeedCard() }
+    app.waitForFeedCard(newsID(0))
     XCTAssertTrue(app.staticTexts["Imported fixture story"].exists)
-    for _ in 0..<17 { app.nextFeedCard() }
-    XCTAssertEqual(position(app), "Card 18")
-    XCTAssertFalse(app.staticTexts["Imported fixture story"].exists)
-    for name in ["Malformed News", "Collision News"] {
-      openLibrary(app)
-      importFile(name, in: app)
-      let failed = expectation(
-        for: NSPredicate(format: "label BEGINSWITH %@", "Import failed."),
-        evaluatedWith: app.staticTexts["news.message"])
-      wait(for: [failed], timeout: 5)
-      closeLibrary(app)
-      XCTAssertEqual(position(app), "Card 18")
-    }
+    for _ in 0..<12 { app.nextFeedCard() }
+    app.waitForFeedCard(newsID(2))
+    XCTAssertTrue(app.staticTexts["Imported fixture story"].exists)
+    openLibrary(app)
+    importFile("Malformed News", in: app)
+    let failed = expectation(
+      for: NSPredicate(format: "label BEGINSWITH %@", "Import failed."),
+      evaluatedWith: app.staticTexts["news.message"])
+    wait(for: [failed], timeout: 5)
+    closeLibrary(app)
+    app.waitForFeedCard(newsID(2))
+    openLibrary(app)
+    importFile("Collision News", in: app)
+    waitForMessage("Imported 1 news snapshots.", in: app)
+    closeLibrary(app)
+    app.waitForFeedCard(gameID(0))
+    for _ in 0..<5 { app.nextFeedCard() }
+    app.waitForFeedCard(newsID(0))
+    XCTAssertTrue(app.staticTexts["Imported fixture story"].exists)
     openLibrary(app)
     app.buttons["news.import"].tap()
     dismissNativeNewsPicker(app, doneIdentifier: "news.done")
     closeLibrary(app)
-    XCTAssertEqual(position(app), "Card 18")
+    app.waitForFeedCard(newsID(0))
     app.terminate()
     app.launchArguments = ["-sidequest-integration-fixtures", "-sidequest-endless-fixtures"]
     app.launch()
-    XCTAssertTrue(app.staticTexts["Imported fixture story"].waitForExistence(timeout: 10))
-    XCTAssertEqual(position(app), "Card 1")
+    app.waitForFeedCard(gameID(0))
+    for _ in 0..<5 { app.nextFeedCard() }
+    app.waitForFeedCard(newsID(0))
+    XCTAssertTrue(app.staticTexts["Imported fixture story"].exists)
     openLibrary(app)
     importFile("Empty News", in: app)
     waitForMessage("Imported 0 news snapshots.", in: app)
     closeLibrary(app)
     XCTAssertTrue(app.buttons["game.start"].exists)
     for _ in 0..<17 { app.nextFeedCard() }
-    XCTAssertEqual(position(app), "Card 18")
+    app.waitForFeedCard(gameID(17))
+    XCTAssertFalse(app.staticTexts["news.sample"].exists)
     app.terminate()
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 10))
-    XCTAssertEqual(position(app), "Card 1")
-    XCTAssertFalse(app.staticTexts["Imported fixture story"].exists)
+    app.waitForFeedCard(gameID(0))
+    XCTAssertTrue(app.buttons["game.start"].exists)
+    for _ in 0..<5 { app.nextFeedCard() }
+    app.waitForFeedCard(gameID(5))
+    XCTAssertFalse(app.staticTexts["news.sample"].exists)
+    app.terminate()
+  }
+
+  func testFreshDemoCadenceAcrossBatchesUsesDistinctStoriesAndHasNoCounter() {
+    let app = launch()
+    var headlines = Set<String>()
+    for index in 0..<24 {
+      XCTAssertFalse(app.staticTexts["feed.position"].exists)
+      if index % 6 == 5 {
+        app.waitForFeedCard(newsID(index / 6))
+        XCTAssertTrue(app.staticTexts["news.sample"].exists)
+        XCTAssertFalse(app.buttons["game.start"].exists)
+        XCTAssertEqual(
+          app.scrollViews["feed.pager"].label,
+          app.staticTexts["news.headline"].label)
+        headlines.insert(app.staticTexts["news.headline"].label)
+        reveal(app.links["news.source"], in: app)
+        XCTAssertTrue(app.links["news.source"].label.contains("fictional sample placeholder"))
+      } else {
+        app.waitForFeedCard(gameID(index - index / 6))
+        XCTAssertTrue(app.buttons["game.start"].exists)
+        XCTAssertFalse(app.staticTexts["news.sample"].exists)
+      }
+      if index < 23 { app.nextFeedCard() }
+    }
+    XCTAssertEqual(headlines.count, 4)
+    for _ in 0..<18 { app.previousFeedCard() }
+    app.waitForFeedCard(newsID(0))
+    XCTAssertTrue(headlines.contains(app.staticTexts["news.headline"].label))
     app.terminate()
   }
 
@@ -139,8 +183,8 @@ final class EndlessFlowTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(app.buttons[identifier].frame.width + 0.001, 44)
         XCTAssertGreaterThanOrEqual(app.buttons[identifier].frame.height + 0.001, 44)
       }
-      for _ in 0..<17 { app.nextFeedCard() }
-      XCTAssertEqual(position(app), "Card 18")
+      for _ in 0..<20 { app.nextFeedCard() }
+      XCTAssertEqual(app.selectedFeedCardID, gameID(17))
       app.buttons["game.start"].tap()
       reveal(app.buttons["memory.tile.0"], in: app)
       XCTAssertTrue(app.buttons["memory.tile.0"].isHittable)
@@ -165,7 +209,12 @@ final class EndlessFlowTests: XCTestCase {
     XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 10))
     return app
   }
-  private func position(_ app: XCUIApplication) -> String { app.staticTexts["feed.position"].label }
+  private func gameID(_ sequence: Int) -> String {
+    "game-00000000-0000-0000-0000-000000000104-\(sequence)"
+  }
+  private func newsID(_ ordinal: Int) -> String {
+    "news-00000000-0000-0000-0000-000000000104-\(ordinal)"
+  }
   private func openLibrary(_ app: XCUIApplication) {
     app.buttons["feed.news"].tap()
     XCTAssertTrue(app.buttons["news.import"].waitForExistence(timeout: 5))
@@ -187,28 +236,32 @@ final class EndlessFlowTests: XCTestCase {
     let file = browser.collectionViews["File View"].cells.matching(
       NSPredicate(format: "label BEGINSWITH %@ OR identifier BEGINSWITH %@", name, name)
     ).firstMatch
-    if !file.exists {
-      if app.buttons["Browse"].exists { app.buttons["Browse"].tap() }
-      if app.buttons["Browse"].exists && !app.staticTexts["On My iPhone"].exists {
-        app.buttons["Browse"].tap()
-      }
-      if browser.cells["DOC.sidebar.item.On My iPhone"].exists {
-        browser.cells["DOC.sidebar.item.On My iPhone"].tap()
-      }
-      for folder in ["Sidequest", "Sidequest Fixtures"] {
-        if file.exists { break }
-        let cell = browser.collectionViews["File View"].cells.matching(
-          NSPredicate(
-            format: "label BEGINSWITH %@ OR identifier BEGINSWITH %@", folder + ",", folder + ",")
-        ).firstMatch
-        if cell.waitForExistence(timeout: 3) {
-          cell.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)).tap()
-        }
-      }
+    // Restored File Provider locations can reference the previous test installation.
+    // Resolve the current app container through native Locations on every import.
+    let phone = browser.cells["DOC.sidebar.item.On My iPhone"]
+    if !phone.exists {
+      let browse = app.tabBars["DOC.browsingModeTabBar"].buttons["Browse"]
+      XCTAssertTrue(browse.isHittable, app.debugDescription)
+      browse.tap()
+    }
+    XCTAssertTrue(phone.waitForExistence(timeout: 5), app.debugDescription)
+    phone.tap()
+    for folder in ["Sidequest", "Sidequest Fixtures v2"] {
+      let cell = browser.collectionViews["File View"].cells.matching(
+        NSPredicate(
+          format: "label BEGINSWITH %@ OR identifier BEGINSWITH %@", folder + ",", folder + ",")
+      ).firstMatch
+      XCTAssertTrue(cell.waitForExistence(timeout: 5), app.debugDescription)
+      cell.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)).tap()
     }
     XCTAssertTrue(file.waitForExistence(timeout: 5), app.debugDescription)
-    file.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)).tap()
-    XCTAssertTrue(app.buttons["news.import"].waitForExistence(timeout: 5))
+    let thumbnail = file.images.firstMatch
+    XCTAssertTrue(thumbnail.exists, file.debugDescription)
+    thumbnail.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+    XCTAssertTrue(browser.waitForNonExistence(timeout: 5), app.debugDescription)
+    let importer = app.buttons["news.import"]
+    XCTAssertTrue(importer.waitForExistence(timeout: 5), app.debugDescription)
+    XCTAssertTrue(importer.isHittable, app.debugDescription)
   }
   private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
     let scroll = app.scrollViews["feed.cardScroll"]

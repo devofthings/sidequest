@@ -4,19 +4,19 @@ import XCTest
 final class IntegrationFlowTests: XCTestCase {
   func testNativeImportsReplaceTheMixedDeckPersistAndRejectInvalidFiles() {
     let app = launch()
-    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 5")
+    XCTAssertEqual(app.selectedFeedCardID, "sample-game-bubbleShooter")
     XCTAssertFalse(app.staticTexts["news.sample"].exists)
     openLibrary(app)
     importFile("Valid News", in: app)
     waitForMessage("Imported 1 news snapshots.", in: app)
     closeLibrary(app)
-    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 6")
+    XCTAssertEqual(app.selectedFeedCardID, "imported-news-one")
     XCTAssertTrue(app.staticTexts["Imported fixture story"].exists)
     app.terminate()
     app.launchArguments = ["-sidequest-integration-fixtures"]
     app.launch()
     XCTAssertTrue(app.staticTexts["Imported fixture story"].waitForExistence(timeout: 10))
-    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 6")
+    XCTAssertEqual(app.selectedFeedCardID, "imported-news-one")
     for name in ["Malformed News", "Reserved News"] {
       openLibrary(app)
       importFile(name, in: app)
@@ -25,29 +25,29 @@ final class IntegrationFlowTests: XCTestCase {
         evaluatedWith: app.staticTexts["news.message"])
       wait(for: [failed], timeout: 5)
       closeLibrary(app)
-      XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 6")
+      XCTAssertEqual(app.selectedFeedCardID, "imported-news-one")
       XCTAssertTrue(app.staticTexts["Imported fixture story"].exists)
     }
     openLibrary(app)
     app.buttons["news.import"].tap()
     dismissNativeNewsPicker(app, doneIdentifier: "news.done")
     closeLibrary(app)
-    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 6")
+    XCTAssertEqual(app.selectedFeedCardID, "imported-news-one")
     XCTAssertTrue(app.staticTexts["Imported fixture story"].exists)
     app.terminate()
     app.launch()
     XCTAssertTrue(app.staticTexts["Imported fixture story"].waitForExistence(timeout: 10))
-    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 6")
+    XCTAssertEqual(app.selectedFeedCardID, "imported-news-one")
     openLibrary(app)
     importFile("Empty News", in: app)
     waitForMessage("Imported 0 news snapshots.", in: app)
     closeLibrary(app)
-    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 5")
+    XCTAssertEqual(app.selectedFeedCardID, "sample-game-bubbleShooter")
     XCTAssertTrue(app.buttons["game.start"].isEnabled)
     app.terminate()
     app.launch()
     XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 10))
-    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 5")
+    XCTAssertEqual(app.selectedFeedCardID, "sample-game-bubbleShooter")
   }
 
   func testLibraryAndBackgroundCancelPendingRealGamesAndCompletionSurvivesCancel() {
@@ -116,26 +116,26 @@ final class IntegrationFlowTests: XCTestCase {
       bottom.press(
         forDuration: 0.01, thenDragTo: top, withVelocity: .slow, thenHoldForDuration: 0.1)
       XCTAssertLessThan(source.frame.minY, before)
-      XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 6")
+      XCTAssertEqual(app.selectedFeedCardID, "imported-news-one")
       reveal(source, in: app, maximumDrags: 100)
       source.tap()
       let safari = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
       XCTAssertTrue(safari.wait(for: .runningForeground, timeout: 5))
       app.activate()
-      XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 6")
+      XCTAssertEqual(app.selectedFeedCardID, "imported-news-one")
       // Reaching an edge consumes that gesture; a NEW outward gesture pages.
       for _ in 0..<8 {
-        if app.staticTexts["feed.position"].label != "Card 1 of 6" { break }
+        if app.selectedFeedCardID != "imported-news-one" { break }
         bottom.press(
           forDuration: 0.01, thenDragTo: top, withVelocity: .slow, thenHoldForDuration: 0.2)
       }
       let second = expectation(
-        for: NSPredicate(format: "label == %@", "Card 2 of 6"),
-        evaluatedWith: app.staticTexts["feed.position"])
+        for: NSPredicate(format: "identifier == %@", "feed.selected.sample-game-bubbleShooter"),
+        evaluatedWith: app.selectedFeedCard)
       wait(for: [second], timeout: 5)
       XCTAssertTrue(app.buttons["game.start"].exists)
       app.previousFeedCard()
-      XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 6")
+      XCTAssertEqual(app.selectedFeedCardID, "imported-news-one")
       app.terminate()
     }
   }
@@ -167,28 +167,32 @@ final class IntegrationFlowTests: XCTestCase {
     let file = browser.collectionViews["File View"].cells.matching(
       NSPredicate(format: "label BEGINSWITH %@ OR identifier BEGINSWITH %@", name, name)
     ).firstMatch
-    if !file.exists {
-      if app.buttons["Browse"].exists { app.buttons["Browse"].tap() }
-      if app.buttons["Browse"].exists && !app.staticTexts["On My iPhone"].exists {
-        app.buttons["Browse"].tap()
-      }
-      if browser.cells["DOC.sidebar.item.On My iPhone"].exists {
-        browser.cells["DOC.sidebar.item.On My iPhone"].tap()
-      }
-      for folder in ["Sidequest", "Sidequest Fixtures"] {
-        if file.exists { break }
-        let item = browser.collectionViews["File View"].cells.matching(
-          NSPredicate(
-            format: "label BEGINSWITH %@ OR identifier BEGINSWITH %@", folder + ",", folder + ",")
-        ).firstMatch
-        if item.waitForExistence(timeout: 3) {
-          item.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)).tap()
-        }
-      }
+    // Restored File Provider locations can reference the previous test installation.
+    // Resolve the current app container through native Locations on every import.
+    let phone = browser.cells["DOC.sidebar.item.On My iPhone"]
+    if !phone.exists {
+      let browse = app.tabBars["DOC.browsingModeTabBar"].buttons["Browse"]
+      XCTAssertTrue(browse.isHittable, app.debugDescription)
+      browse.tap()
+    }
+    XCTAssertTrue(phone.waitForExistence(timeout: 5), app.debugDescription)
+    phone.tap()
+    for folder in ["Sidequest", "Sidequest Fixtures v2"] {
+      let cell = browser.collectionViews["File View"].cells.matching(
+        NSPredicate(
+          format: "label BEGINSWITH %@ OR identifier BEGINSWITH %@", folder + ",", folder + ",")
+      ).firstMatch
+      XCTAssertTrue(cell.waitForExistence(timeout: 5), app.debugDescription)
+      cell.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)).tap()
     }
     XCTAssertTrue(file.waitForExistence(timeout: 5), app.debugDescription)
-    file.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)).tap()
-    XCTAssertTrue(app.buttons["news.import"].waitForExistence(timeout: 5))
+    let thumbnail = file.images.firstMatch
+    XCTAssertTrue(thumbnail.exists, file.debugDescription)
+    thumbnail.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+    XCTAssertTrue(browser.waitForNonExistence(timeout: 5), app.debugDescription)
+    let importer = app.buttons["news.import"]
+    XCTAssertTrue(importer.waitForExistence(timeout: 5), app.debugDescription)
+    XCTAssertTrue(importer.isHittable, app.debugDescription)
   }
 
   private func waitForMessage(_ message: String, in app: XCUIApplication) {

@@ -1,0 +1,275 @@
+{
+  "schemaVersion": 1,
+  "snapshots": [
+    {
+      "id": "demo-news-01",
+      "headline": "Library Turns Returned Books Into a Surprise Reading Trail",
+      "excerpt": "A neighborhood library has created a reading trail using books that visitors returned with handwritten recommendations. Each shelf marker offers a short clue about a story without revealing its title, inviting readers to follow a mood rather than a familiar author.\n\nThe first trail moves from a rainy train journey to a kitchen mystery and then into a quiet adventure at sea. Staff collected the suggestions during a weekend workshop and checked every note before putting it on display. Readers can leave their own clues at the checkout desk. A new route will appear when enough recommendations arrive.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/library-surprise-reading-trail",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-02",
+      "headline": "Repair Cafe Gives Forgotten Lamps Another Evening",
+      "excerpt": "The tables at a community repair cafe were covered with lamps, tangled cords, and a surprising number of missing switches this weekend. Volunteers helped visitors identify simple faults while explaining which repairs required a qualified specialist.\n\nOne family brought a reading lamp that had spent years in a cupboard after its shade broke. A nearby craft group fitted a replacement made from leftover workshop materials. Organizers counted repaired items on a chalkboard rather than assigning prizes. Their next session will focus on fabric, with sewing machines available for torn bags and loose jacket linings.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/repair-cafe-forgotten-lamps",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-03",
+      "headline": "Commuters Map the Quietest Bicycle Routes",
+      "excerpt": "A group of bicycle commuters has started mapping routes chosen for calm riding rather than speed. Their paper map highlights shaded streets, easy crossings, and places where riders can stop without blocking a sidewalk.\n\nParticipants tested the first routes during ordinary morning journeys, recording observations afterward so nobody needed to handle a phone while moving. The notes revealed a longer path along a canal that several riders preferred to a busy shortcut. Organizers plan to keep the map beside the community noticeboard and invite corrections each month. They say the useful route is the one people feel comfortable taking regularly.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/commuters-map-quiet-bicycle-routes",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-04",
+      "headline": "A Blank Wall Becomes a Community Color Experiment",
+      "excerpt": "An empty wall beside a neighborhood workshop now carries a mural designed from colors residents noticed on their daily walks. Suggestions included the green of a weathered gate, the orange of a market awning, and a pale blue seen in puddles after rain.\n\nThe painting team arranged the colors into overlapping shapes rather than a picture of the street itself. Visitors helped with small sections during a supervised afternoon session. A board beside the wall explains where each color came from. Organizers will keep the original swatches in the workshop so future repairs can preserve the mural's unusual local palette.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/community-wall-color-experiment",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-05",
+      "headline": "Science Club Builds a Weather Station From Spare Parts",
+      "excerpt": "A small science club has installed a homemade weather station in the garden outside its meeting room. The project uses donated sensors and a reused display to show temperature, wind direction, and the amount of rain collected overnight.\n\nClub members spent several sessions comparing readings with simple manual observations before mounting the equipment. They discovered that a sunny wall made one temperature sensor report misleading results, so they moved it into a shaded shelter. The display now includes a note explaining those limits. The club plans to publish a monthly garden weather diary rather than offer forecasts.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/science-club-spare-parts-weather-station",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-06",
+      "headline": "Makerspace Opens Its Scrap Shelf to New Projects",
+      "excerpt": "The offcuts shelf at a neighborhood makerspace has become the starting point for a new monthly challenge. Participants receive a small box of clean leftover materials and propose something useful before reaching for new supplies.\n\nThe opening session produced a postcard stand, a wall organizer, and a tiny stage for puppet performances. Workshop leaders checked the materials and supervised tool use, while beginners worked with simple hand tools. Finished projects stayed on display with notes about what their creators changed along the way. The next challenge will use fabric remnants, with a sewing volunteer offering an introductory session.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/makerspace-open-scrap-shelf",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-07",
+      "headline": "Garden Volunteers Discover Their Hedgehog Visitor Has a Route",
+      "excerpt": "Volunteers at a community garden have discovered that a small nighttime visitor follows a remarkably consistent route. A borrowed wildlife camera recorded a hedgehog passing the compost area, crossing behind a water barrel, and disappearing through a gap beneath the fence.\n\nThe group moved stored pots away from the passage after reviewing several evenings of footage. They are keeping the exact garden location private and observing from a distance. A notice at the entrance asks visitors to leave wildlife undisturbed. The recordings will become part of a seasonal display about the animals that share the growing space.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/garden-hedgehog-visitor-route",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-08",
+      "headline": "Archive Volunteers Match Old Photos With Everyday Memories",
+      "excerpt": "A local archive is inviting residents to help describe a collection of photographs whose captions were lost. The images show ordinary scenes: a crowded bus stop, a shop window full of radios, and a picnic beside a narrow footbridge.\n\nVolunteers record memories separately from confirmed details so later visitors can tell the difference. Several people recognized a distinctive striped canopy, but the team is still checking when it appeared. The photographs remain available at supervised viewing sessions, with digital copies used for discussion. Organizers hope the project will preserve everyday details that rarely make it into official records.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/archive-photos-everyday-memories",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-09",
+      "headline": "Tiny Film Night Celebrates Stories Made in One Room",
+      "excerpt": "A community hall hosted a film night with an unusual restriction: every short film had to be made in a single room. The rule encouraged participants to work with sound, lighting, and small changes in perspective instead of elaborate locations.\n\nThe program included a kitchen comedy, a silent story told through sticky notes, and a miniature adventure built from cardboard scenery. Between screenings, filmmakers explained one practical problem they had solved. Audience members voted for the most inventive use of an ordinary object. Organizers are planning another session with a different creative constraint and a workshop for first-time participants.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/tiny-film-night-one-room-stories",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-10",
+      "headline": "Park Walk Adds Listening Stops Between the Benches",
+      "excerpt": "A walking group has added listening stops to its regular loop through a neighborhood park. At each stop, participants stand quietly for a minute and write down the sounds they notice before moving on.\n\nThe first outing produced a shared list that included bicycle bells, leaves brushing a railing, and a distant rehearsal from the community hall. People compared how the same location sounded beside a path and behind a hedge. Organizers marked the stops on a printable map without adding equipment to the park. The group will repeat the route in different seasons to see how its soundscape changes.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/park-walk-listening-stops",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-11",
+      "headline": "Seed Library Introduces Packets With Stories Attached",
+      "excerpt": "A community seed library has started attaching short growing stories to its donated packets. Instead of offering only a variety name, the labels describe where a plant grew, what conditions it encountered, and what the donor would try differently next time.\n\nOne packet came from beans grown along a balcony railing, while another held flowers that survived a windy garden corner. Volunteers check the labels for clarity and keep uncertain descriptions separate. Visitors can take a packet without promising a successful harvest. Organizers hope the notes will make seed sharing feel like an exchange of experience as well as plants.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/seed-library-stories-attached",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-12",
+      "headline": "An Outdoor Concert Finds Its Stage in a Courtyard",
+      "excerpt": "A neighborhood courtyard became a small concert venue on Saturday when residents arranged chairs around an improvised stage. The afternoon program paired acoustic performers with brief explanations of how each instrument produces its sound.\n\nChildren watched a percussionist turn a wooden box into several different rhythms, while a string player demonstrated the effect of changing bow pressure. Volunteers kept a quiet corner available for people who preferred listening from farther away. The event finished before the evening, and everyone helped carry the chairs back indoors. Organizers are collecting suggestions for a second concert with more opportunities to join in.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/courtyard-outdoor-concert-stage",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-13",
+      "headline": "Borrowing Cupboard Helps Neighbors Share Occasional Tools",
+      "excerpt": "A community center has opened a borrowing cupboard for objects that many households need only occasionally. The first collection includes a folding trolley, a measuring tape, a handheld magnifier, and several basic craft tools.\n\nVolunteers inspect each item between loans and keep clear instructions alongside it. The cupboard started after a workshop where residents listed useful things sitting unused at home. Items requiring specialist knowledge were excluded from the opening collection. Visitors can suggest additions, but the organizers will expand slowly so the checking routine stays manageable. A handwritten board tracks which objects are currently available.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/borrowing-cupboard-occasional-tools",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-14",
+      "headline": "Rooftop Garden Uses Shadows to Plan Its Next Season",
+      "excerpt": "Volunteers tending a shared rooftop garden have begun drawing the shadows that move across their planting beds. Their notes record how neighboring walls and rooftop equipment change the light available through the day.\n\nThe project started when two identical planters produced noticeably different growth. Rather than move everything immediately, the group observed the beds during several clear afternoons. They now have a simple paper chart showing which corners receive morning light and which remain shaded. The chart will guide next season's planting experiment, with small comparison plots kept beside the regular garden. Visitors can view the drawings during supervised open afternoons.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/rooftop-garden-shadow-planning",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-15",
+      "headline": "Puzzle Swap Gives Half-Finished Boxes a New Home",
+      "excerpt": "A weekend puzzle swap filled the community hall with boxes of landscapes, abstract patterns, and one enormous picture of a crowded railway station. Participants brought puzzles they had finished or abandoned and exchanged them using handwritten description cards.\n\nThe cards included an estimate of difficulty and an honest note when pieces might be missing. A separate table held loose pieces for collage projects so incomplete boxes could still be useful. Volunteers set up a shared puzzle near the entrance, where strangers stopped to work on small sections together. The organizers plan to repeat the swap after the next school holiday.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/puzzle-swap-half-finished-boxes",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-16",
+      "headline": "Community Kitchen Tests a Cookbook Without Photographs",
+      "excerpt": "A community kitchen is assembling a cookbook that describes dishes through texture, smell, and sound instead of photographs. Contributors write about the crackle of a pan, the feel of dough, and the moment a familiar aroma fills the room.\n\nThe first workshop focused on making those descriptions clear enough for somebody encountering the dish for the first time. Volunteers tried reading the entries aloud and marked passages that depended too much on assumed knowledge. Recipe testing remains separate from the writing sessions. Organizers will produce a small printed collection for participants, with blank pages reserved for notes from future cooking evenings.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/community-kitchen-cookbook-without-photos",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-17",
+      "headline": "Bus Stop Noticeboard Becomes a Pocket Exhibition",
+      "excerpt": "An unused noticeboard beside a neighborhood bus stop now holds a rotating exhibition of small artworks. The opening display features drawings, paper sculptures, and photographs of objects found during everyday walks.\n\nEach contributor worked within the same postcard-sized space, making the collection easy to change without rebuilding the board. Volunteers obtained permission for the display and check that transport information remains visible. A sheltered viewing panel protects the pieces from rain. The first collection will stay for a month before being replaced by work from a local drawing group. Organizers hope the changing display will make waiting a little more interesting.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/bus-stop-pocket-exhibition",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-18",
+      "headline": "Astronomy Evening Starts With a Model on the Floor",
+      "excerpt": "Clouds interrupted an astronomy group's planned observing evening, but a floor-sized model kept the session going indoors. Volunteers used colored markers to represent planets and asked visitors to walk between them to explore relative distances.\n\nThe model required a compromise: the objects could not share the same scale as the spaces between them. A sign explained that limitation, and participants discussed what would happen if everything were shrunk equally. The session ended with drawings of imaginary observing sites. The group will try the outdoor portion another evening while keeping the indoor model as an introduction for new visitors.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/astronomy-evening-floor-model",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-19",
+      "headline": "Lost-and-Found Shelf Reunites Gloves Before Winter",
+      "excerpt": "A community center has reorganized its lost-and-found collection into a visible shelf of gloves, scarves, and small everyday objects. Volunteers photographed the items against a plain background and numbered them so visitors could ask about a particular piece.\n\nWithin the first afternoon, a striped glove returned to its owner after several weeks apart from its matching partner. Staff keep identifying details private until somebody describes an item accurately. Objects that remain unclaimed follow the center's existing return process rather than disappearing into an informal giveaway. The team hopes a clearer display will reduce the number of forgotten belongings stored in boxes.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/lost-and-found-glove-shelf",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-20",
+      "headline": "Walking Club Draws Maps From Memory, Then Compares Them",
+      "excerpt": "A neighborhood walking club has added a playful exercise to its weekly outing: participants sketch the route from memory before comparing their drawings. The maps often disagree about distances while agreeing on a remarkable tree or a brightly painted doorway.\n\nThe first session revealed that several walkers used sounds and smells as landmarks instead of street names. Organizers displayed the sketches together without ranking their accuracy. On the following walk, participants looked for details they had missed the first time. The activity is intended as a conversation starter, with a conventional route map still available for anyone who needs directions.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/walking-club-memory-maps",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-21",
+      "headline": "Workshop Builds a Marble Run That Packs Into a Box",
+      "excerpt": "A makerspace workshop has built a marble run designed to come apart and fit inside a single storage box. The tracks connect with reusable clips, allowing participants to rearrange the course without cutting new pieces each time.\n\nThe team tested corners slowly and added catch trays where marbles tended to escape. One section sends a marble through a paper tunnel before returning it to an open track. The finished kit will be used at supervised family sessions, with small parts kept out of reach of younger visitors. Organizers are writing assembly cards so another group can rebuild the course independently.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/workshop-packable-marble-run",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-22",
+      "headline": "Reading Group Finds a New Format in Five-Minute Stories",
+      "excerpt": "A reading group has replaced its usual monthly book discussion with an evening of very short stories. Each participant brings something that can be read aloud in roughly five minutes, followed by a brief conversation about one memorable detail.\n\nThe format attracted several visitors who had struggled to finish a full book between meetings. The opening session moved from a comic misunderstanding to a quiet account of a long journey. Participants could listen without reading aloud themselves. Organizers will alternate the short-story evenings with their longer discussions, keeping a shared list of suggestions for people who want to explore further.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/reading-group-five-minute-stories",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-23",
+      "headline": "Canal Volunteers Count Litter Without Turning It Into a Race",
+      "excerpt": "A volunteer group cleaning a canal path has introduced a simple tally of the objects it collects. The aim is to notice repeated patterns rather than reward whoever fills the largest bag.\n\nDuring the latest outing, discarded snack wrappers appeared most often near two seating areas. Volunteers recorded the locations without naming nearby businesses or assuming where the litter originated. Sharps and unknown materials were left for the appropriate maintenance team. The group will share its observations with the path's caretakers after several more sessions. Organizers hope consistent notes will help place bins and signs where they are actually useful.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/canal-volunteers-litter-count",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-24",
+      "headline": "A Small Theater Tries Scenery Made Entirely of Paper",
+      "excerpt": "A community theater group is rehearsing a short production with scenery made from folded paper. Doors, windows, and distant rooftops emerge from lightweight panels that performers can rearrange between scenes.\n\nThe design began as a storage problem: the hall had nowhere to keep a large set after rehearsals. Volunteers experimented with folding patterns that could stand upright and flatten again quickly. They found that shadows did much of the work, making simple shapes appear more detailed under the stage lights. The group will hold an open rehearsal to explain the construction before its first performance for a small invited audience.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/small-theater-paper-scenery",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-25",
+      "headline": "Birdwatchers Make a Checklist for an Ordinary Street",
+      "excerpt": "A birdwatching group has created a checklist for a short neighborhood street rather than a distant nature reserve. Participants observe from public paths and record common birds seen around roofs, gardens, and roadside trees.\n\nThe first morning produced more variety than several newcomers expected, especially near a row of berry-bearing shrubs. Volunteers emphasize quiet observation and avoid publishing nest locations. Their checklist includes space for uncertain sightings, which members discuss afterward instead of guessing. The group will return at different times of day to compare activity. Organizers hope the exercise will make everyday wildlife easier to notice without disturbing it.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/birdwatchers-ordinary-street-checklist",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-26",
+      "headline": "Pottery Studio Opens a Shelf for Imperfect Experiments",
+      "excerpt": "A small pottery studio has opened an exhibition shelf for pieces that did not turn out as planned. The display includes a leaning bowl, a cup with an unexpected surface pattern, and a plate whose edge changed shape during firing.\n\nEach maker wrote a note about the intended result and the lesson they took from the experiment. Visitors can compare those notes with later pieces that used the same technique differently. The studio keeps the display separate from its usable tableware. Instructors say the shelf has already prompted more questions during beginner sessions, giving students something concrete to discuss when a project surprises them.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/pottery-studio-imperfect-experiments",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-27",
+      "headline": "Lantern Workshop Collects Patterns From Everyday Packaging",
+      "excerpt": "A craft group has turned clean paper packaging into a collection of decorative lantern shades. Participants looked for interesting patterns in folded cartons and printed wrappers before arranging the pieces around simple reusable frames.\n\nThe finished lanterns use enclosed battery lights, with no candles included in the workshop. Volunteers prepared materials in advance and helped visitors secure loose edges. Some designs preserved recognizable lettering, while others transformed it into stripes and geometric shapes. The lanterns will decorate the community hall for an evening gathering, then return home with their makers. Organizers are saving the construction templates for another session.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/lantern-workshop-packaging-patterns",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-28",
+      "headline": "Neighborhood Audio Project Records Objects With Familiar Sounds",
+      "excerpt": "A community audio project is collecting the sounds of everyday objects that residents think they would recognize with their eyes closed. The first recording session featured a bicycle pump, a mechanical kitchen timer, and the latch of an old toolbox.\n\nParticipants recorded each object in a quiet room and wrote a short note about where they usually heard it. No private conversations were included. Volunteers are arranging the recordings into a listening game for the next open afternoon, with answers revealed afterward. Organizers hope the project will preserve small details of daily life while giving visitors an enjoyable reason to listen closely.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/neighborhood-audio-familiar-objects",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-29",
+      "headline": "Chess Club Tries Explaining a Position Without Moving Pieces",
+      "excerpt": "A neighborhood chess club has introduced a short exercise before its regular games. Players study a position together and explain what they notice without moving any pieces for the first few minutes.\n\nBeginners can point out threats or ask why a square matters, while experienced players must describe their reasoning in ordinary language. The opening session produced several different plans from the same position. Volunteers then played the ideas out on separate boards so participants could compare the consequences. The club will keep the exercise brief, leaving plenty of time for casual games. Members say the shared discussion has made asking questions feel easier.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/chess-club-explaining-positions",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    },
+    {
+      "id": "demo-news-30",
+      "headline": "Community Hall Tests a Quiet Hour for Creative Projects",
+      "excerpt": "A community hall has introduced a quiet hour for people who want to work on a small creative project alongside others. Visitors bring sketches, knitting, model parts, or notebooks and settle at shared tables without a scheduled class.\n\nThe first session began with a brief welcome before conversation moved to a separate corner. Volunteers provided basic supplies and a visible timer so newcomers knew when the quiet period would end. Several participants stayed afterward to exchange ideas about their projects. Organizers will try the format for a few more weekends and ask whether the room layout and timing made it comfortable to use.",
+      "publisher": "Sidequest Demo",
+      "sourceURL": "https://example.com/sidequest-demo/community-hall-quiet-creative-hour",
+      "capturedAt": "2026-10-04T00:00:00Z",
+      "isSample": true
+    }
+  ]
+}

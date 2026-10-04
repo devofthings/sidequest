@@ -62,7 +62,7 @@ final class SudokuFlowTests: XCTestCase {
       app.buttons["sudoku.number.\(value)"].tap()
     }
     XCTAssertEqual(app.staticTexts["sudoku.status"].label, "Sudoku solved!")
-    XCTAssertEqual(app.staticTexts["feed.position"].label, "Card 1 of 2")
+    XCTAssertEqual(app.selectedFeedCardID, "sample-game-sudoku")
     app.nextFeedCard()
     app.previousFeedCard()
     XCTAssertEqual(app.staticTexts["sudoku.status"].label, "Sudoku solved!")

@@ -14,7 +14,7 @@ final class NewsPresentationTests: XCTestCase {
     XCTAssertTrue(app.staticTexts["news.captured"].firstMatch.exists)
     let source = app.links["news.source"].firstMatch
     XCTAssertTrue(source.exists)
-    XCTAssertEqual(source.label, "Read original article from Sidequest sample")
+    XCTAssertEqual(source.label, "Open fictional sample placeholder from Sidequest sample")
     let importer = app.buttons["news.import"]
     XCTAssertTrue(importer.exists)
     importer.tap()

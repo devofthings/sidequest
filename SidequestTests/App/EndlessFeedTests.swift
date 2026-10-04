@@ -63,7 +63,9 @@ final class EndlessFeedTests: XCTestCase {
   }
 
   func testThousandsOfAdvancesKeepStableHistoryAndAtMostThreeAdapters() async throws {
-    let composition = try await make()
+    let composition = try await FeedComposition.endless(
+      news: DemoNewsLoader.bundled(), chessPuzzles: ChessPuzzleLoader.bundled(), seed: 104,
+      ordered: true)
     let feed = try XCTUnwrap(composition.controller)
     feed.setSceneActive(true)
     let firstBatch = feed.cards
@@ -85,7 +87,7 @@ final class EndlessFeedTests: XCTestCase {
     for _ in 0..<2000 { feed.previous() }
     XCTAssertEqual(feed.selectedIndex, 0)
     XCTAssertEqual(feed.cards, allCards)
-    XCTAssertEqual(Array(feed.cards.prefix(8)), firstBatch)
+    XCTAssertEqual(Array(feed.cards.prefix(firstBatch.count)), firstBatch)
     feed.retire()
   }
 
@@ -208,31 +210,45 @@ final class EndlessFeedTests: XCTestCase {
     feed.retire()
   }
 
-  func testExactCollisionRejectedButNewsPrefixesAreNotReserved() async throws {
+  func testActualAppearanceCollisionRejectedButGameLikeSourceIDsAreAllowed() async throws {
     let puzzles = try await ChessPuzzleLoader.bundled()
     let id = UUID(uuidString: "00000000-0000-0000-0000-000000000104") ?? UUID()
     let story = try snapshot("game-\(id.uuidString.lowercased())-0")
+    let collision = try CardID("news-\(id.uuidString.lowercased())-0")
     do {
-      _ = try await FeedComposition.endless(news: [story], chessPuzzles: puzzles, sessionID: id)
-      XCTFail("Exact collision must reject")
+      _ = try await FeedComposition.endless(
+        news: [story], chessPuzzles: puzzles, sessionID: id,
+        prepareBatch: { id, sequence, seed, puzzles, ordered in
+          let batch = try await GeneratedGameBatch.prepare(
+            sessionID: id, sequence: sequence, seed: seed, chessPuzzles: puzzles, ordered: ordered)
+          var descriptors = batch.descriptors
+          let original = descriptors[0]
+          descriptors[0] = GeneratedGameDescriptor(
+            card: GameCard(id: collision, kind: original.card.kind), challenge: original.challenge)
+          return GeneratedGameBatch(descriptors: descriptors, nextSequence: batch.nextSequence)
+        })
+      XCTFail("An actual appearance collision must reject")
     } catch DeckConstructionError.duplicateCardID(let duplicate) {
-      XCTAssertEqual(duplicate, story.id)
+      XCTAssertEqual(duplicate, collision)
     }
-    let permitted = try snapshot("sample-game-memory")
     let composition = try await FeedComposition.endless(
-      news: [permitted], chessPuzzles: puzzles, ordered: true)
+      news: [story], chessPuzzles: puzzles, sessionID: id, ordered: true)
     let feed = try XCTUnwrap(composition.controller)
-    feed.setSceneActive(true)
-    for _ in 0..<25 {
-      if !feed.canGoForward { try await wait { feed.canGoForward } }
-      feed.next()
-      await Task.yield()
-    }
-    XCTAssertEqual(feed.cards.filter { $0.id == permitted.id }, [.news(permitted)])
+    XCTAssertTrue(
+      feed.cards.contains {
+        $0.id == story.id
+          && {
+            if case .game = $0 { return true }
+            return false
+          }($0)
+      })
+    guard case .news(let appearance) = feed.cards[5] else { return XCTFail("Expected news") }
+    XCTAssertEqual(appearance.snapshot, story)
+    XCTAssertNotEqual(appearance.id, story.id)
     feed.retire()
   }
 
-  func testFutureNewsCollisionSkipsSequenceWithoutRepeatingOrLosingStory() async throws {
+  func testFutureGameLikeNewsSourceDoesNotRemoveGeneratedGamesAndCyclesUnchanged() async throws {
     let id = UUID(uuidString: "00000000-0000-0000-0000-000000000104") ?? UUID()
     let story = try snapshot("game-\(id.uuidString.lowercased())-8")
     let puzzles = try await ChessPuzzleLoader.bundled()
@@ -245,7 +261,17 @@ final class EndlessFeedTests: XCTestCase {
       if !feed.canGoForward { try await wait { feed.canGoForward } }
       feed.next()
     }
-    XCTAssertEqual(feed.cards.filter { $0.id == story.id }, [.news(story)])
+    let appearances = feed.cards.compactMap { card -> FeedNewsCard? in
+      if case .news(let news) = card { return news }
+      return nil
+    }
+    XCTAssertGreaterThan(appearances.count, 4)
+    XCTAssertTrue(appearances.allSatisfy { $0.snapshot == story && $0.id != story.id })
+    XCTAssertTrue(
+      feed.cards.contains {
+        if case .game(let game) = $0 { return game.id == story.id }
+        return false
+      })
     XCTAssertEqual(Set(feed.cards.map(\.id)).count, feed.count)
     XCTAssertNil(feed.replenishmentMessage)
     feed.retire()

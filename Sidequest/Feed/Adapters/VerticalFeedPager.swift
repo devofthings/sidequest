@@ -66,6 +66,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
     pager.delaysContentTouches = false
     pager.delegate = self
     pager.accessibilityIdentifier = "feed.pager"
+    updateSelectedIdentity()
     view.addSubview(pager)
     rebuildWindow()
   }
@@ -89,6 +90,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
     if settledIndex != controller.selectedIndex || window != desired {
       if !isMoving { rebuildWindow() }
     }
+    updateSelectedIdentity()
     for (index, page) in pages {
       page.update(content(controller.cards[index]))
       page.view.accessibilityElementsHidden = index != controller.selectedIndex
@@ -145,10 +147,21 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
       pages[index] = page
     }
     window = nextWindow
+    updateSelectedIdentity()
     settledIndex = selected
     layoutPages()
     centerOnCommittedPage()
     suppressCompletion = false
+  }
+
+  private func updateSelectedIdentity() {
+    guard let card = controller.selectedCard else { return }
+    // Identifier metadata reflects committed selection; speech stays semantic, not an ID.
+    view.accessibilityIdentifier = "feed.selected.\(card.id.rawValue)"
+    switch card {
+    case .news(let news): pager.accessibilityLabel = news.snapshot.headline
+    case .game(let game): pager.accessibilityLabel = game.kind.title
+    }
   }
 
   private func layoutPages() {

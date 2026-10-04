@@ -20,6 +20,7 @@ final class FeedComposition {
   private var generationTask: Task<Void, Never>?
   private var generationRequest: UUID?
   private var knownIDs = Set<CardID>()
+  private var newsCadence: FeedNewsCadence?
 
   var cachedAdapterCount: Int { games.count }
   var generatedDescriptors: [CardID: GeneratedGameDescriptor] { descriptors }
@@ -38,22 +39,23 @@ final class FeedComposition {
   ) async throws -> FeedComposition {
     let batch = try await prepareBatch(sessionID, 0, seed, chessPuzzles, ordered)
     try Task.checkCancellation()
-    let cards = news.map(FeedCard.news) + batch.descriptors.map { FeedCard.game($0.card) }
+    let cadence = FeedNewsCadence(pool: news, sessionID: sessionID)
+    let prepared = try cadence.preparing(batch.descriptors.map(\.card))
+    let cards = prepared.cards
     var seen = Set<CardID>()
     for card in cards {
       guard seen.insert(card.id).inserted else {
         throw DeckConstructionError.duplicateCardID(card.id)
       }
     }
-    var random = ChallengeRandom(seed: seed)
-    let deck = ordered ? cards : cards.shuffled(using: &random)
     return FeedComposition(
-      cards: deck, chessPuzzles: chessPuzzles, batch: batch,
+      cards: cards, chessPuzzles: chessPuzzles, batch: batch, cadence: prepared.next,
       sessionID: sessionID, seed: seed, ordered: ordered, prepareBatch: prepareBatch)
   }
 
   private init(
     cards: [FeedCard], chessPuzzles: [ChessPuzzle], batch: GeneratedGameBatch,
+    cadence: FeedNewsCadence,
     sessionID: UUID, seed: UInt64, ordered: Bool, prepareBatch: @escaping GameBatchPreparation
   ) {
     self.chessPuzzles = chessPuzzles
@@ -61,6 +63,7 @@ final class FeedComposition {
     games = [:]
     descriptors = Dictionary(uniqueKeysWithValues: batch.descriptors.map { ($0.card.id, $0) })
     nextSequence = batch.nextSequence
+    newsCadence = cadence
     generatedSessionID = sessionID
     generationSeed = seed
     self.prepareBatch = prepareBatch
@@ -130,18 +133,23 @@ final class FeedComposition {
         guard batch.nextSequence > sequence else {
           throw BubbleGenerationError.noAttainableChallenge
         }
-        // A later generated identity may equal an imported story's literal ID. Skip that
-        // sequence, preserving the story and prior order without banning an ID prefix.
-        let fresh = batch.descriptors.filter { !knownIDs.contains($0.card.id) }
-        let additions = fresh.map { FeedCard.game($0.card) }
-        for descriptor in fresh {
-          descriptors[descriptor.card.id] = descriptor
-          knownIDs.insert(descriptor.card.id)
+        guard let cadence = newsCadence else { return }
+        let prepared = try cadence.preparing(batch.descriptors.map(\.card))
+        var additionIDs = knownIDs
+        for card in prepared.cards {
+          guard additionIDs.insert(card.id).inserted else {
+            throw DeckConstructionError.duplicateCardID(card.id)
+          }
         }
+        for descriptor in batch.descriptors {
+          descriptors[descriptor.card.id] = descriptor
+        }
+        knownIDs = additionIDs
+        newsCadence = prepared.next
         nextSequence = batch.nextSequence
         generationTask = nil
         generationRequest = nil
-        controller.append(additions)
+        controller.append(prepared.cards)
       } catch {
         guard let self, generationRequest == request else { return }
         generationTask = nil

@@ -35,7 +35,36 @@ struct LocalNewsStore: NewsSnapshotStorage {
 
   @concurrent func load() async throws -> [NewsSnapshot]? {
     try Task.checkCancellation()
-    guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
+    // Inspect each component: fileExists conflates absence, invalid paths and access errors.
+    // A dangling symlink exists and must fail loading rather than activate demo fallback.
+    var componentURL = URL(fileURLWithPath: "/")
+    for component in fileURL.pathComponents.dropFirst() {
+      componentURL.appendPathComponent(component)
+      do {
+        let attributes = try FileManager.default.attributesOfItem(atPath: componentURL.path)
+        let type = attributes[.type] as? FileAttributeType
+        if type == .typeSymbolicLink {
+          // A Boolean failure here is an error, never proof of ordinary absence.
+          guard FileManager.default.fileExists(atPath: componentURL.path) else {
+            throw NewsImportError.unavailableStorage
+          }
+        } else if componentURL != fileURL, type != .typeDirectory {
+          throw NewsImportError.unavailableStorage
+        }
+      } catch let error as NSError {
+        if error.domain == NSCocoaErrorDomain,
+          [NSFileNoSuchFileError, NSFileReadNoSuchFileError].contains(error.code)
+        {
+          // A missing ordinary component is confirmed absence. Existing symlinks are errors.
+          if (try? FileManager.default.destinationOfSymbolicLink(atPath: componentURL.path)) != nil
+          {
+            throw error
+          }
+          return nil
+        }
+        throw error
+      }
+    }
     let imported = try await Self.readImport(at: fileURL)
     return imported.snapshots
   }
