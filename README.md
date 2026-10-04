@@ -1,6 +1,6 @@
 # Sidequest
 
-[![Main verification](https://github.com/devofthings/sidequest/actions/workflows/releases.yml/badge.svg?branch=main)](https://github.com/devofthings/sidequest/actions/workflows/releases.yml)
+[![PR verification](https://github.com/devofthings/sidequest/actions/workflows/verification.yml/badge.svg?event=pull_request)](https://github.com/devofthings/sidequest/actions/workflows/verification.yml)
 ![iOS 17+ deployment target](docs/assets/readme/ios.svg)
 ![Swift 6 language mode](docs/assets/readme/swift.svg)
 
@@ -96,4 +96,4 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 
 Sidequest is the working project name. Public naming availability has not been established.
 
-Until design agreement, verification uses [all unit tests and three UI smoke cases](docs/TESTING.md) on one owned simulator, current-source Debug compilation, and proven same-gate main test inheritance. Longer UI journeys remain available explicitly. The approved 123-case PR gate passed in 3 minutes 45 seconds, and main's full-gate fallback passed in 3 minutes 41 seconds with fresh install/launch and Release verification; [recorded evidence](docs/TESTING.md#measured-temporary-gate-ci) distinguishes these from the historical broader benchmark. See [#90](https://github.com/devofthings/sidequest/issues/90) for actual workflow-token inheritance evidence. Focused checks do not replace exact-head CI.
+Until design agreement, verification uses [all unit tests and three UI smoke cases](docs/TESTING.md) on one owned simulator, current-source Debug compilation, and exact-head PR checks before merge. Merging starts no automatic main job under the owner's [PR-only decision](docs/CI.md#verification-contract). Longer UI journeys remain available explicitly. The approved 123-case PR gate passed in 3 minutes 45 seconds, and main's full-gate fallback passed in 3 minutes 41 seconds with fresh install/launch and Release verification; [recorded evidence](docs/TESTING.md#measured-temporary-gate-ci) distinguishes these from the historical broader benchmark. Historical main inheritance remains available for explicitly owner-authorized manual releases; [#90](https://github.com/devofthings/sidequest/issues/90) records its proof. Focused checks do not replace exact-head CI.

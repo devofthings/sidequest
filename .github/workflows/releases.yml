@@ -1,8 +1,6 @@
 name: Sidequest releases
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -19,7 +17,7 @@ concurrency:
 jobs:
   verification:
     name: Sidequest / verification
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: [self-hosted, macOS, ARM64, sidequest, xcode-27, sidequest-mac-foreground]
     timeout-minutes: 45
     outputs:

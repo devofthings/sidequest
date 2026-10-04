@@ -2,7 +2,7 @@
 
 ## Accepted delivery policy
 
-On October 4, 2026, the user instructed: “only release the next thing when we are done with the mvp also cleanup the older preview builds.” This supersedes automatic publication after each merged update. Main updates still receive native verification and a local unsigned Release build; **publication is held until the actual MVP integration is complete**. Spending, App Store publication, and TestFlight distribution remain separately gated. The personal-iPhone path remains source plus local Xcode signing in [INSTALL.md](INSTALL.md).
+On October 4, 2026, the user instructed: “only release the next thing when we are done with the mvp also cleanup the older preview builds.” This supersedes automatic publication after each merged update. The later #112 owner decision removes automatic main verification; the historical hold required actual MVP integration before publication. Current publication requires explicit owner authorization and its manual verification gates. Spending, App Store publication, and TestFlight distribution remain separately gated. The personal-iPhone path remains source plus local Xcode signing in [INSTALL.md](INSTALL.md).
 
 [Issue #92](https://github.com/devofthings/sidequest/issues/92) introduced the tracked publication hold with no environment bypass. Integration readiness [PR #101](https://github.com/devofthings/sidequest/pull/101) enabled `PUBLICATION_ENABLED = True` only after functional/native/source-install proof, fresh independent review, and successful exact-head CI. Its partial contribution left #9 open for actual final-tag proof. After gated merge and successful main verification, explicit manual dispatch published [2026.10.14](https://github.com/devofthings/sidequest/releases/tag/2026.10.14); [selected-source/download installation proof](INSTALL.md#verified-mvp-delivery) passed. Closing an issue or setting an environment value does not establish readiness. Automatic per-update publishing remains disabled.
 
@@ -10,9 +10,9 @@ Issue #31 established private release history. The user-authorized cleanup remov
 
 ## Verify and publish
 
-PR verification remains in `.github/workflows/verification.yml`. Every main push, including documentation changes, runs `.github/workflows/releases.yml` instead: its `Sidequest / verification` job runs the same full checks and an unsigned ARM64 Release build, and publication is skipped. The same workflow accepts an explicit `workflow_dispatch` on main, verifies that exact event SHA, and then attempts the manual publisher using the retained local output. Both use the pinned official checkout action and the unique foreground-Mac runner label. There is no duplicate main build, hosted fallback, artifact/cache upload, service, or recurring schedule.
+Routine PR verification remains in `.github/workflows/verification.yml`. Under the owner's October 4 instruction "dont do a second check on main" (#112), merging a PR starts no automatic main test/build or publisher job. `.github/workflows/releases.yml` accepts only explicit `workflow_dispatch` on main after owner publication authorization: it verifies that exact event SHA, then attempts the manual publisher using the retained local output. Do not dispatch this workflow to replace the removed automatic check. Both use the pinned official checkout action and the unique foreground-Mac runner label. There is no duplicate main build, hosted fallback, artifact/cache upload, service, or recurring schedule.
 
-Each main run uses its exact event SHA, even after newer merges arrive. The concurrency group includes that SHA and never cancels older main runs; obsolete PR checks have a separate cancellation policy. An offline runner leaves work queued. See [CI.md](CI.md) for starting, handing off, and stopping the foreground runner.
+Each authorized manual release run uses its exact event SHA, even after newer merges arrive. The concurrency group includes that SHA and never cancels older manual release runs; obsolete PR checks have a separate cancellation policy. An offline runner leaves work queued. See [CI.md](CI.md) for starting, handing off, and stopping the foreground runner.
 
 The publishing job alone receives `contents: write`; `actions: read` and `checks: read` let it validate GitHub's actual verification job/check metadata. It first requires manual main dispatch and the tracked readiness flag. Then it requires the same manual event commit, successful native `Sidequest / verification`, the same registered runner ID, and a matching local manifest. Missing output, a different host, failed checks/builds, or mismatched identity stops publication before creating release data.
 
@@ -32,9 +32,9 @@ The release is created as a draft; metadata, checksums, and archive are uploaded
 
 ## Manual publication and retries
 
-While held, do not dispatch publication or rerun historical push-release workflows: their original code predates this hold. The lead canceled the outstanding publication retry and temporarily disabled the workflow during the transition. Reenable the workflow only after the reviewed hold configuration lands, so main verification resumes safely. Reenabling the workflow does not enable publication.
+Do not rerun historical push-release workflows: their original code predates the current PR-only/manual-release policy. During the historical #92 hold transition, the lead canceled publication retries and temporarily disabled the workflow. Reenabling a workflow does not authorize publication or restore automatic main checks.
 
-After integration #9's reviewed readiness change enables the tracked flag, merge and verify main first. Then the lead can explicitly request publication:
+Integration #9's reviewed readiness change established the tracked readiness flag. After exact-head PR verification, fresh review and gated merge, the lead may dispatch publication only when the owner explicitly authorizes it. The manual workflow itself performs the required main verification:
 
 ```sh
 gh workflow run releases.yml --ref main --repo devofthings/sidequest
@@ -88,6 +88,8 @@ The plan is ready within approved scope; local offline publication and CI-handof
 
 ### Release-hold readiness self-assessment (#92)
 
+This historical #92 planning preceded the later #112 decision, which supersedes its automatic main-verification choice. Preserve the old proof without treating it as a current trigger requirement.
+
 Interviewee: `/root/review_gates_66`; agent-grill self-assessment. The user owns the accepted hold; the active lead approved the bounded source flag and manual-dispatch implementation.
 
 | Question | Kind | Answer | Evidence and rationale | Verification |
@@ -114,7 +116,7 @@ Seven older preview objects and 21 assets were deleted under the user’s explic
 
 ## Verified tests and metadata #90
 
-[TESTING.md](TESTING.md#main-inheritance) supersedes duplicate full-suite execution on every equivalent main event. The exact main/manual run still performs actual compilation, owned-simulator install/launch/process smoke, source discovery and unique ARM64 Release compilation. Tests may be inherited only with proven captured-base/sole-parent/full-tree equivalence, independent review and live successful original PR native provenance; otherwise the complete active gate runs. Publication remains manual and requires the same-attempt successful main-native check and same-runner local manifest.
+[TESTING.md](TESTING.md#main-inheritance) retains proven test inheritance for explicitly authorized manual release verification. The #112 owner decision removes automatic main runs; #90 automatic-main evidence is historical. The exact main/manual run still performs actual compilation, owned-simulator install/launch/process smoke, source discovery and unique ARM64 Release compilation. Tests may be inherited only with proven captured-base/sole-parent/full-tree equivalence, independent review and live successful original PR native provenance; otherwise the complete active gate runs. Publication remains manual and requires the same-attempt successful main-native check and same-runner local manifest.
 
 New verification/package metadata uses schema 2 with explicit full versus inherited test inventory and original run/head references, plus fresh main smoke evidence. Publication rechecks inheritance. Uploaded historical schema-1 metadata, tags and bytes stay valid and immutable for original-byte retries; schema 1 cannot authorize a new package or test inheritance. Metadata names `tests.gate = pre_design_smoke`: `full` means all unit tests and three UI smoke cases, not comprehensive UI coverage. Release notes state this temporary coverage and deferred longer journeys, and name the original test run when inherited. Incremental Debug products never substitute for Release-source compilation.
 

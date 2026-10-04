@@ -14,7 +14,7 @@ concurrency:
 jobs:
   verification:
     name: Sidequest / verification
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, macOS, ARM64, sidequest, xcode-27, sidequest-mac-foreground]
     timeout-minutes: 45
     steps:
