@@ -59,12 +59,31 @@ def main():
         for workers in ([1, 2] if args.benchmark else [1]):
             directory = args.output / f"workers-{workers}"
             directory.mkdir()
+            measured = time.monotonic()
+            worker_run = runner(directory)
             record, _ = native_tests.execute(root, directory, args.cache, destinations[:workers], selected,
-                                             runner(directory), xcode, sdk, runtime)
+                                             worker_run, xcode, sdk, runtime)
+            if args.benchmark:
+                # Measure the ordinary verification pipeline, not just XCTest wall time.
+                for script in ("check-documentation.py", "test-documentation.py", "test-ci.py",
+                               "test-release.py", "test-native-tests.py", "test-verification-provenance.py",
+                               "test-git-hooks.py", "test-agent-preflight.py", "test-review-gate.py"):
+                    worker_run(script.removesuffix(".py"), ["python3", f"scripts/{script}"])
+                worker_run("format", ["xcrun", "swift-format", "lint", "--strict", "--recursive",
+                                      "--configuration", ".swift-format", "Sidequest", "SidequestTests", "SidequestUITests"])
+                worker_run("whitespace", ["git", "diff", "--check", "HEAD"])
+                worker_run("source-discovery", ["python3", "scripts/verify-source-discovery.py",
+                                               "--destination", destinations[0]])
+                release = native_tests.command(directory / "ReleaseDerivedData", destinations[0])
+                release[release.index("Debug")] = "Release"
+                worker_run("release-build", release + ["ARCHS=arm64", "build"])
+                record["ordinary_verification_seconds"] = time.monotonic() - measured
+                record["comparison_boundary"] = "Same source/inventory; warm Debug products and booted owned devices; unique cold Release/discovery output. Device creation/toolchain inspection excluded and recorded separately."
+                (directory / "native-tests.json").write_text(json.dumps(record, indent=2)+"\n")
             if not args.required and not args.extended and not args.benchmark:
                 record["mode"] = "focused"
                 (directory / "native-tests.json").write_text(json.dumps(record, indent=2)+"\n")
-            print(json.dumps(record), flush=True)
+            print(json.dumps({key: record[key] for key in ("mode", "workers", "build_seconds", "test_seconds", "ordinary_verification_seconds") if key in record} | {"passed_cases": len(record["inventory"]), "record": str(directory / "native-tests.json")}), flush=True)
     return 0
 
 
