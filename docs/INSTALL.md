@@ -2,7 +2,11 @@
 
 ## Verified foundation
 
-`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. Normal launch mixes saved private English snapshots with playable mini Sudoku, Memory, two one-move Chess puzzles, and Bubble shooter. The feed’s News snapshots button opens native Files imports; missing/empty news leaves the five real game cards. Fictional news and generic demos are restricted to explicit Debug test routes. Integration delivery and final published-source installation proof are tracked in #9. Local simulator builds, tests, installation, and launch are verified; [Sudoku verification](SUDOKU.md#verification) records its passed delivery checks; [Memory verification](MEMORY.md#verification) records its passed focused checks and points to live PR gates. The owner chose simulator-first delivery in resolved [#79](https://github.com/devofthings/sidequest/issues/79); physical-iPhone signing and installation are deferred and unverified. The documented source-signing route requires your local Apple Account and signing configuration. [CI](CI.md) uses the same verified toolchain on a foreground self-hosted Mac runner. The retained [2026.10.7 development preview](https://github.com/devofthings/sidequest/releases/tag/2026.10.7) is an ARM64 simulator build, not the finished MVP. Older preview downloads were cleaned up at the user’s request; Git tags/source remain. Next publication is held until actual MVP readiness under [RELEASES.md](RELEASES.md).
+`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. Normal launch mixes saved private English snapshots with mini Sudoku, Memory, two one-move Chess puzzles, and Bubble shooter. **News snapshots** opens native Files imports; missing/empty news leaves the five real game cards. Fictional news and generic demos are restricted to explicit Debug test routes.
+
+The [2026.10.14 MVP](https://github.com/devofthings/sidequest/releases/tag/2026.10.14) passed 133 native tests and separate installations of freshly built tagged source and the downloaded ARM64 simulator archive. [Verified delivery](#verified-mvp-delivery) records the exact source, checksums, and evidence. [CI](CI.md) uses the same toolchain on a foreground self-hosted Mac runner. Seven older preview downloads were removed; Git tags/source remain. Main updates verify without automatic publication under [RELEASES.md](RELEASES.md).
+
+The owner chose simulator-first delivery in resolved [#79](https://github.com/devofthings/sidequest/issues/79). Physical-iPhone signing and installation are deferred and unverified. The documented source-signing route requires your local Apple Account and signing configuration; the simulator archive cannot run on a physical iPhone.
 
 | Setting | Verified value |
 | --- | --- |
@@ -14,6 +18,22 @@
 | Default app identifier | `dev.devofthings.sidequest`; personal signing overrides stay outside Git |
 
 Use this toolchain for reproducible verification. Other Xcode versions/runtimes need their own checks before being reported as supported. The minimum version avoids requiring a newer OS when the selected SwiftUI foundation needs no newer API.
+
+## Verified MVP delivery
+
+[2026.10.14](https://github.com/devofthings/sidequest/releases/tag/2026.10.14) was published October 4, 2026 at 05:19:00 UTC from `65bd39003a2a22dbb3c19f61cbb4b9e86c3c32b9`. Its manual workflow run `37178518287` was originally created at `2026-10-04T04:58:13Z`; live run number `14` establishes the calendar/build version.
+
+| Check | Actual result |
+| --- | --- |
+| [Release verification](https://github.com/devofthings/sidequest/actions/runs/37178518287/job/111366112952) | 133 tests passed: 96 unit and 37 running-app tests; zero failures, skips, or runtime warnings; Debug/ARM64 Release builds, strict lint, source discovery, and offline tooling passed |
+| [Fresh tagged-source installation](https://github.com/devofthings/sidequest/issues/9#issuecomment-5976928508) | Clean checkout of the actual published tag; ARM64 Release build, installation, and normal launch passed on the owned iOS 27 simulator |
+| [Downloaded-app installation](https://github.com/devofthings/sidequest/issues/9#issuecomment-5976928508) | All three server asset digests, both `SHA256SUMS` entries, metadata/source/run provenance, and archive safety passed; installation and normal launch passed; installed executable matched the extracted published executable |
+
+Both normal Release launches showed a real game preview with **Tap to play** and five game cards with no saved news or Debug flags. The native integration suite separately verifies mixed news imports, persistence/rejection/cancellation, all game lifecycles, larger text, source links, and actual Reduce Motion. Physical-device signing/install, device VoiceOver, and iOS 17 execution remain unverified; the tested runtime is iOS 27. Release version `2026.10.14` is the tag/metadata identity; the app bundle retains version `0.1.0`, build `1`.
+
+The archive SHA-256 is `5b613f043cd533eabfd9e4d3939dd9fcfe7d9e2f1ae1f2da727784ba7cfa8ad0`. Always verify the downloaded checksum file rather than relying on this prose alone. Fresh local source and published binaries were independently installed; bit-for-bit equality between separate builds is not claimed.
+
+The metadata’s installation URL pins the immutable release-source guide. This current guide adds post-publication proof; later documentation changes do not retarget the release or publish another app. [Issue #9](https://github.com/devofthings/sidequest/issues/9#issuecomment-5976928508) retains commands and evidence; screenshots and private captures stay outside Git.
 
 ## Get the source and tools
 
@@ -62,7 +82,7 @@ xcrun swift-format lint --strict --recursive --configuration .swift-format \
   Sidequest SidequestTests SidequestUITests
 ```
 
-The shared scheme includes foundation membership/fixture checks, shared contract, news, feed-controller, and Sudoku/Memory/Chess/bubble-shooter rule/controller tests, plus running-app tests for launch, news provenance/importer access, start, skip/reset, completion retention, independent game/navigation gestures, scene changes, empty/end states, and Sudoku/Memory/Chess gameplay. The generic feed harness uses provisional demos independently of game rules; Sudoku checks use validated original fixtures. See [SUDOKU.md](SUDOKU.md#verification) and [MEMORY.md](MEMORY.md#verification) for actual passed checks and live gate references. See [CHESS.md](CHESS.md) for exhaustive original-fixture validation and actual Chess checks. Bubble aim/fire/win/loss/replay/skip checks are described in [BUBBLES.md](BUBBLES.md). Integration #9 adds immutable startup/cancellation and atomic import tests, plus native Files replacement/rejection/empty/cancel/relaunch, modal lifecycle, and imported-news overflow/source-link/Reduce Motion checks. Final selected published-tag source installation remains pending until its actual proof. Use `-resultBundlePath /absolute/new/path.xcresult` to retain test evidence; Xcode requires a path that does not already exist.
+The shared scheme includes foundation membership/fixture checks, shared contract, news, feed-controller, and Sudoku/Memory/Chess/bubble-shooter rule/controller tests, plus running-app tests for launch, news provenance/importer access, start, skip/reset, completion retention, independent game/navigation gestures, scene changes, empty/end states, and Sudoku/Memory/Chess gameplay. The generic feed harness uses provisional demos independently of game rules; Sudoku checks use validated original fixtures. See [SUDOKU.md](SUDOKU.md#verification) and [MEMORY.md](MEMORY.md#verification) for actual passed checks and live gate references. See [CHESS.md](CHESS.md) for exhaustive original-fixture validation and actual Chess checks. Bubble aim/fire/win/loss/replay/skip checks are described in [BUBBLES.md](BUBBLES.md). Integration #9 adds immutable startup/cancellation and atomic import tests, plus native Files replacement/rejection/empty/cancel/relaunch, modal lifecycle, and imported-news overflow/source-link/Reduce Motion checks. Actual selected-release source and downloaded-app installation passed for `2026.10.14`; see [delivery evidence](#verified-mvp-delivery). Use `-resultBundlePath /absolute/new/path.xcresult` to retain test evidence; Xcode requires a path that does not already exist.
 
 For a local Release simulator build, use the same build command with `-configuration Release`. This produces a local build, not a published GitHub release.
 
@@ -98,10 +118,10 @@ Open Simulator to see the window. Normal launch shows Sidequest's shuffled news 
 
 ## Download a simulator preview
 
-Functional integration passed 133 native tests; first MVP publication still requires independent readiness review, exact-head CI, gated merge, successful main verification, and explicit manual dispatch. Local source builds remain available. For an existing download, select its exact release tag (`YYYY.MM.build` for new publisher runs, or historical `preview-<full-SHA>`) from the private [release history](https://github.com/devofthings/sidequest/releases). The ARM64 simulator archive requires an Apple-silicon Mac and the verified iOS 27.0 (24A434) runtime above. It cannot be installed directly on an iPhone.
+The verified [2026.10.14 MVP](https://github.com/devofthings/sidequest/releases/tag/2026.10.14) includes its unsigned ARM64 simulator archive, build metadata, and checksums. The download requires an Apple-silicon Mac and the verified iOS 27.0 (24A434) runtime above; it cannot be installed directly on an iPhone. Use the exact selected tag below. Older preview downloads were removed, while their Git tags/source remain available. Physical iPhone installation uses the selected source and local Xcode signing below.
 
 ```sh
-SIDEQUEST_PREVIEW_TAG='paste-exact-published-release-tag-here'
+SIDEQUEST_PREVIEW_TAG='2026.10.14'
 SIDEQUEST_PREVIEW_DIRECTORY="$(mktemp -d /private/tmp/sidequest-preview.XXXXXX)"
 gh release download "$SIDEQUEST_PREVIEW_TAG" --repo devofthings/sidequest \
   --pattern 'Sidequest-simulator-arm64.zip' --pattern 'build-metadata.json' \

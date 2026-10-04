@@ -1,6 +1,6 @@
 # Working on Sidequest
 
-Sidequest is a private iPhone MVP mixing news and quick games in one feed. The SwiftUI feed, manual news imports, and four real game kinds are implemented. Issue #9 owns final integrated delivery and published-source proof; personal testing follows the working MVP.
+Sidequest is a private iPhone MVP mixing news and quick games in one feed. The SwiftUI feed, manual news imports, and four real game kinds are implemented. The selected MVP release source and downloaded ARM64 simulator app both passed build/install/launch verification; see [delivery evidence](docs/INSTALL.md#verified-mvp-delivery). Personal testing in #10 still requires the user’s actual feedback.
 
 ## Context for new chats
 

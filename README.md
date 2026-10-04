@@ -14,13 +14,13 @@ Open `Sidequest.xcodeproj`, select the shared **Sidequest** scheme, and run on a
 
 | Delivery | Availability |
 | --- | --- |
-| Recorded development preview | [2026.10.7](https://github.com/devofthings/sidequest/releases/tag/2026.10.7), from `5dc0320e2757`, published October 3, 2026; predates the current pager |
-| Download | Unsigned ARM64 simulator archive for a Mac; select a verified version from the private [release history](https://github.com/devofthings/sidequest/releases) |
-| Next release | Functional integration passed 133 native tests; fresh review/CI and explicit manual publication remain required under [release policy](docs/RELEASES.md) |
+| Recorded MVP | [2026.10.14](https://github.com/devofthings/sidequest/releases/tag/2026.10.14), from `65bd39003a2a`, published October 4, 2026 |
+| Download | Verified unsigned ARM64 simulator archive for an Apple-silicon Mac; [download and checksum instructions](docs/INSTALL.md#download-a-simulator-preview) |
+| Publication | Explicit manual main dispatch; main updates verify without automatic publication under [release policy](docs/RELEASES.md) |
 | Your iPhone | Physical installation is deferred and unverified ([#79](https://github.com/devofthings/sidequest/issues/79)); [local source signing instructions](docs/INSTALL.md#install-on-your-own-iphone) are available |
-| Verified checks for 2026.10.7 | Debug build, unit/UI tests (16 UI tests), and ARM64 Release build passed in the [release verification job](https://github.com/devofthings/sidequest/actions/runs/37158924819/job/111308053366) |
+| Verified checks for 2026.10.14 | 133 native tests (96 unit, 37 UI), Debug/ARM64 Release builds, and source discovery passed in the [release verification job](https://github.com/devofthings/sidequest/actions/runs/37178518287/job/111366112952); fresh tagged-source and downloaded-app installation/launch [also passed](https://github.com/devofthings/sidequest/issues/9#issuecomment-5976928508) |
 
-The recorded preview and test results describe that release, rather than the latest source or a completed MVP. Main updates continue native verification without automatic publication. The workflow badge links the latest main run; open its details for actual checks. Simulator archives cannot be installed directly on an iPhone.
+The recorded MVP and test results describe that selected release. Later documentation updates do not create another download. Seven older preview releases and their 21 assets were removed; Git tags/source remain, including the `2026.10.7` statistics baseline. Main updates continue native verification without automatic publication. The workflow badge links the latest main run; open its details for actual checks. Simulator archives cannot be installed directly on an iPhone.
 
 ## What's playable?
 
@@ -35,7 +35,7 @@ Current source supports full-card native vertical paging: swipe up/down directly
 | Chess puzzles | Playable one-move mates for both colors | [Rules, accessible controls, and exhaustive fixture checks](docs/CHESS.md) |
 | Bubble shooter | Playable bounded challenge | [Rules, aiming, win/loss, and replay checks](docs/BUBBLES.md) |
 
-Normal launch mixes saved English news snapshots with all four real game kinds (five game cards, including both Chess colors). Use **News snapshots** in the feed header to import a JSON replacement set through native Files. Missing or empty news leaves games playable; rejected imports preserve saved news and the current deck. Final integration delivery and published-source installation evidence remain tracked in [#9](https://github.com/devofthings/sidequest/issues/9). See [news preparation and import](docs/NEWS.md). Accounts, synced preferences, and leaderboards are deferred to phase two; [MVP.md](docs/MVP.md) owns the approved scope.
+Normal launch mixes saved English news snapshots with all four real game kinds (five game cards, including both Chess colors). Use **News snapshots** in the feed header to import a JSON replacement set through native Files. Missing or empty news leaves games playable; rejected imports preserve saved news and the current deck. Integrated delivery and selected-release source/download installation evidence are recorded in [#9](https://github.com/devofthings/sidequest/issues/9) and the [install guide](docs/INSTALL.md#verified-mvp-delivery). The enjoyment hypothesis still needs your personal test in #10. See [news preparation and import](docs/NEWS.md). Accounts, synced preferences, and leaderboards are deferred to phase two; [MVP.md](docs/MVP.md) owns the approved scope.
 
 ## Code snapshot
 
