@@ -1,4 +1,6 @@
 import Foundation
+import SwiftUI
+import UIKit
 import XCTest
 
 @testable import Sidequest
@@ -104,6 +106,117 @@ final class FeedHostTests: XCTestCase {
     XCTAssertEqual(game.runtime.phase, .preview)
     XCTAssertTrue(game.runtime.isVisible)
     XCTAssertEqual(feed.selectedCard?.id, id)
+  }
+
+  @MainActor
+  func testSettledPageRejectsCanceledAndNonAdjacentChanges() throws {
+    let ids = try [CardID("current"), CardID("neighbor"), CardID("distant")]
+    let probes = [RuntimeProbe(), RuntimeProbe(), RuntimeProbe()]
+    let feed = FeedController(
+      cards: ids.map { .game(GameCard(id: $0, kind: .memory)) },
+      runtimes: Dictionary(uniqueKeysWithValues: zip(ids, probes.map(\.runtime))))
+    feed.setSceneActive(true)
+    probes[0].runtime.start()
+    guard case .playing(let attempt) = probes[0].runtime.phase else {
+      return XCTFail("Start failed")
+    }
+    probes[0].move(from: attempt)
+    for index in [0, -1, 2, Int.max] { feed.commitPage(at: index) }
+    XCTAssertEqual(feed.selectedIndex, 0)
+    XCTAssertEqual(probes[0].moves, 1)
+    XCTAssertEqual(probes[0].resetCount, 0)
+    probes[1].runtime.start()
+    XCTAssertTrue(probes[1].effects.isEmpty)
+    feed.commitPage(at: 1)
+    XCTAssertEqual(probes[0].resetCount, 1)
+    XCTAssertTrue(probes[0].wasIneligibleDuringReset)
+    XCTAssertTrue(probes[1].runtime.isVisible)
+    XCTAssertFalse(probes[2].runtime.isVisible)
+    feed.commitPage(at: 1)
+    XCTAssertEqual(probes[0].resetCount, 1)
+  }
+
+  @MainActor
+  func testUnavailableHostAndInactiveSceneRejectLatePageCommit() throws {
+    let ids = try [CardID("first"), CardID("second")]
+    let first = RuntimeProbe()
+    let second = RuntimeProbe()
+    let feed = FeedController(
+      cards: ids.map { .game(GameCard(id: $0, kind: .memory)) },
+      runtimes: [ids[0]: first.runtime, ids[1]: second.runtime])
+    feed.setSceneActive(true)
+    first.runtime.start()
+    feed.setHostAvailable(false)
+    XCTAssertEqual(first.resetCount, 1)
+    feed.commitPage(at: 1)
+    feed.setSceneActive(true)
+    XCTAssertFalse(feed.canNavigate)
+    XCTAssertFalse(first.runtime.isVisible)
+    feed.setSceneActive(false)
+    feed.setHostAvailable(true)
+    XCTAssertFalse(feed.canNavigate)
+    feed.commitPage(at: 1)
+    XCTAssertEqual(feed.selectedIndex, 0)
+    feed.setSceneActive(true)
+    XCTAssertTrue(first.runtime.isVisible)
+    XCTAssertEqual(first.runtime.phase, .preview)
+  }
+
+  @MainActor
+  func testRetiredSessionCannotBeReactivatedByOldSceneOrHostCallbacks() throws {
+    let id = try CardID("retired")
+    let game = RuntimeProbe()
+    let feed = FeedController(
+      cards: [.game(GameCard(id: id, kind: .memory))], runtimes: [id: game.runtime])
+    feed.setSceneActive(true)
+    game.runtime.start()
+    guard case .playing(let old) = game.runtime.phase else { return XCTFail("Start failed") }
+    feed.retire()
+    feed.setHostAvailable(true)
+    feed.setSceneActive(true)
+    feed.retire()
+    game.move(from: old)
+    game.runtime.start()
+    XCTAssertFalse(feed.canNavigate)
+    XCTAssertFalse(game.runtime.isVisible)
+    XCTAssertEqual(game.moves, 0)
+    XCTAssertEqual(game.resetCount, 1)
+  }
+
+  @MainActor
+  func testReplacementPagerRejectsOldRequestsAndStoppedCallbacks() throws {
+    let ids = try [CardID("first"), CardID("second")]
+    let cards = ids.map { FeedCard.game(GameCard(id: $0, kind: .memory)) }
+    let old = FeedController(
+      cards: cards, runtimes: Dictionary(uniqueKeysWithValues: ids.map { ($0, GameRuntime()) }))
+    let obsolete = FeedPageRequest(controller: old, step: 1)
+    old.retire()
+    let first = RuntimeProbe()
+    let second = RuntimeProbe()
+    let replacement = FeedController(
+      cards: cards, runtimes: [ids[0]: first.runtime, ids[1]: second.runtime])
+    replacement.setSceneActive(true)
+    first.runtime.start()
+    let render: (FeedCard) -> AnyView = { _ in AnyView(Text("Fixture card")) }
+    let pager = FeedPagerController(controller: replacement, content: render)
+    pager.loadViewIfNeeded()
+    pager.view.frame = CGRect(x: 0, y: 0, width: 390, height: 600)
+    pager.view.setNeedsLayout()
+    pager.view.layoutIfNeeded()
+    pager.update(content: render, request: obsolete, reduceMotion: true)
+    XCTAssertEqual(replacement.selectedIndex, 0)
+    XCTAssertEqual(first.resetCount, 0)
+    pager.update(
+      content: render, request: FeedPageRequest(controller: replacement, step: 1),
+      reduceMotion: true)
+    XCTAssertEqual(replacement.selectedIndex, 1)
+    XCTAssertEqual(first.resetCount, 1)
+    pager.stop()
+    pager.update(
+      content: render, request: FeedPageRequest(controller: replacement, step: -1),
+      reduceMotion: true)
+    pager.scrollViewDidEndScrollingAnimation(UIScrollView())
+    XCTAssertEqual(replacement.selectedIndex, 1)
   }
 
   @MainActor

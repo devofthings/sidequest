@@ -42,6 +42,7 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | Shared design baseline and wireframes after the MVP | Accepted | User deferred this work on October 3, 2026. Build the first MVP with simple, consistent UI following the confirmed product behavior; use personal-test feedback to agree on wireframes and visual direction in issue #13 afterward. Figma is a proposed tool, not a selected dependency. |
 | Sudoku, memory, chess puzzles, and a bubble shooter | Accepted | User selected four game types and clarified the ball game as a bubble shooter. |
 | Manually imported news snapshots | Accepted | User chose real snapshot content before automatic refreshing. |
+| Full-card native vertical paging | Accepted | User explicitly prioritized correction #87 on October 4, 2026. It supersedes the dedicated rail: direct continuous drag/native snap, settled selection, compact accessible navigation, and owned overflow scrolling. Follow [FEED.md](FEED.md#navigation-and-eligibility). |
 | Shuffle news and games; reset skipped unfinished games | Accepted | User chose shuffled cards and fresh attempts. |
 | Tap to play before starting each game | Accepted | User requested an explicit tap to start. Game cards show a preview until tapped; gameplay stays inside the card. See [MVP.md](MVP.md) for the start and skip behavior. |
 | Simulator and the user's own iPhone via Xcode | Accepted | User choice; TestFlight is deferred. |

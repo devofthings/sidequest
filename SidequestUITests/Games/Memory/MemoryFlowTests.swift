@@ -18,8 +18,8 @@ final class MemoryFlowTests: XCTestCase {
     XCTAssertFalse(app.buttons["memory.tile.0"].isEnabled)
     for index in 2..<12 { tapTile(index, app: app) }
     XCTAssertTrue(app.staticTexts["memory.completed"].waitForExistence(timeout: 5))
-    app.buttons["feed.next"].tap()
-    app.buttons["feed.previous"].tap()
+    app.nextFeedCard()
+    app.previousFeedCard()
     XCTAssertTrue(app.staticTexts["memory.completed"].exists)
     XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertEqual(app.staticTexts["memory.progress"].label, "6 of 6 pairs matched")
@@ -38,8 +38,8 @@ final class MemoryFlowTests: XCTestCase {
     XCTAssertEqual(third.label, "Hidden card 3")
     first.tap()
     third.tap()
-    app.buttons["feed.next"].tap()
-    app.buttons["feed.previous"].tap()
+    app.nextFeedCard()
+    app.previousFeedCard()
     XCTAssertTrue(app.buttons["game.start"].exists)
     XCTAssertFalse(app.buttons["memory.tile.0"].exists)
     app.buttons["game.start"].tap()
@@ -56,10 +56,10 @@ final class MemoryFlowTests: XCTestCase {
     XCTAssertTrue(app.staticTexts["memory.completed"].waitForExistence(timeout: 5))
     reveal(app.staticTexts["memory.completed"], app: app)
     capture(app, name: "largest-text-completed-board")
-    XCTAssertTrue(app.buttons["feed.next"].isHittable)
-    app.buttons["feed.next"].tap()
-    XCTAssertTrue(app.buttons["feed.previous"].isHittable)
-    app.buttons["feed.previous"].tap()
+    XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
+    app.nextFeedCard()
+    XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
+    app.previousFeedCard()
     XCTAssertEqual(app.staticTexts["memory.progress"].label, "6 of 6 pairs matched")
   }
 
@@ -71,7 +71,7 @@ final class MemoryFlowTests: XCTestCase {
   }
 
   private func reveal(_ element: XCUIElement, app: XCUIApplication) {
-    let scroll = app.scrollViews.firstMatch
+    let scroll = app.scrollViews["feed.cardScroll"]
     for _ in 0..<18 {
       if element.exists && element.isHittable && scroll.frame.contains(element.frame) { return }
       let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.65))
