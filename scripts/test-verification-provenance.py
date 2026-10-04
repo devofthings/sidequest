@@ -9,7 +9,7 @@ import subprocess
 import tempfile
 import unittest
 
-from verification_provenance import resolve_inherited_tests
+from verification_provenance import EvidenceError, resolve_inherited_tests, validate_inventory
 
 spec = importlib.util.spec_from_file_location("gate", Path(__file__).with_name("review-gate.py"))
 gate = importlib.util.module_from_spec(spec)
@@ -33,7 +33,7 @@ class ProvenanceTests(unittest.TestCase):
         (self.root / "scripts").mkdir()
         (self.root / "scripts/native-test-inventory.json").write_text(json.dumps({
             "active_gate": "pre_design_smoke", "pre_design_smoke": ["SidequestUITests/Feed/testTap"],
-            "required": ["SidequestUITests/Feed/testTap"], "extended": {}}))
+            "required": ["SidequestUITests/Feed/testTap"], "extended": {}, "workers": 1}))
         (self.root / "source").write_text("base")
         self.git("add", ".")
         self.git("commit", "-qm", "base")
@@ -154,8 +154,11 @@ class ProvenanceTests(unittest.TestCase):
         second.update(destination="platform=iOS Simulator,id=second",
                       tests=[tests["selected"][1]], inventory=[tests["inventory"][-1]], passed=1)
         tests.update(workers=2, worker_inventory=[first, second])
-        self.assertEqual(self.resolve()["original_workers"], 2)
+        validate_inventory(tests)
+        self.assertIsNone(self.resolve())  # Active smoke policy permits one worker.
         second.update(inventory=first["inventory"])
+        with self.assertRaises(EvidenceError):
+            validate_inventory(tests)
         self.assertIsNone(self.resolve())
 
     def test_complete_worker_record_missing_committed_unit_requires_fallback(self):
@@ -175,6 +178,7 @@ class ProvenanceTests(unittest.TestCase):
         policy_file = self.root / "scripts/native-test-inventory.json"
         policy = json.loads(policy_file.read_text())
         policy["active_gate"] = "required"
+        policy["workers"] = 2
         policy_file.write_text(json.dumps(policy))
         self.git("add", ".")
         self.git("commit", "-qm", "explicit gate activation")
@@ -189,7 +193,15 @@ class ProvenanceTests(unittest.TestCase):
         self.data[f"{self.prefix}/issues/comments/300"]["body"] = gate.audit_body(self.receipt)
         self.manifest["commit"] = original
         self.assertIsNone(self.resolve())
-        self.manifest["tests"]["gate"] = "required"
+        tests = self.manifest["tests"]
+        tests["gate"] = "required"
+        self.assertIsNone(self.resolve())  # Worker evidence must match committed policy too.
+        first = tests["worker_inventory"][0]
+        second = copy.deepcopy(first)
+        first.update(tests=["SidequestTests"], inventory=tests["inventory"][:2], passed=2)
+        second.update(destination="platform=iOS Simulator,id=second",
+                      tests=[tests["selected"][1]], inventory=[tests["inventory"][-1]], passed=1)
+        tests.update(workers=2, worker_inventory=[first, second])
         self.assertEqual(self.resolve()["gate"], "required")
 
     def test_job_and_check_have_independent_linked_identities(self):

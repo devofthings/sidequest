@@ -108,6 +108,10 @@ def validate_committed_gate(git, head, base, tests):
     policy = json.loads(git("show", f"{head}:scripts/native-test-inventory.json"))
     active = policy["active_gate"]
     require(active in ("pre_design_smoke", "required") and tests["gate"] == active)
+    require(type(policy["workers"]) is int and policy["workers"] in (1, 2) and
+            tests["workers"] == policy["workers"])
+    if active == "pre_design_smoke":
+        require(policy["workers"] == 1)
     ui = identifiers(policy[active])
     if active == "required":
         paths = git("diff", "--no-renames", "--name-only", "-z", base, head).split("\0")
