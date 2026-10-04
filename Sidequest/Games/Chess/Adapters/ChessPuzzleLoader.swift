@@ -22,10 +22,13 @@ enum ChessPuzzleLoader {
     return puzzles
   }
 
-  static func bundled(in bundle: Bundle = .main) throws -> [ChessPuzzle] {
+  @concurrent static func bundled(in bundle: Bundle = .main) async throws -> [ChessPuzzle] {
+    try Task.checkCancellation()
     guard let url = bundle.url(forResource: "chess-puzzles", withExtension: "json") else {
       throw ChessFixtureError.missingResource
     }
-    return try decode(Data(contentsOf: url))
+    let data = try Data(contentsOf: url)
+    try Task.checkCancellation()
+    return try decode(data)
   }
 }

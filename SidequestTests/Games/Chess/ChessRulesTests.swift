@@ -4,8 +4,8 @@ import XCTest
 @testable import Sidequest
 
 final class ChessRulesTests: XCTestCase {
-  func testEveryVerifiedMateSolvesAndFreezesTheCorrectBoard() throws {
-    let puzzles = try ChessPuzzleLoader.bundled(in: Bundle.main)
+  func testEveryVerifiedMateSolvesAndFreezesTheCorrectBoard() async throws {
+    let puzzles = try await ChessPuzzleLoader.bundled(in: Bundle.main)
     XCTAssertEqual(puzzles.count, 2)
     XCTAssertEqual(Set(puzzles.map(\.sideToMove)), [.white, .black])
     for puzzle in puzzles {
@@ -34,8 +34,8 @@ final class ChessRulesTests: XCTestCase {
     }
   }
 
-  func testWrongLegalMovesAndIllegalMovesPreserveThePosition() throws {
-    for puzzle in try ChessPuzzleLoader.bundled(in: Bundle.main) {
+  func testWrongLegalMovesAndIllegalMovesPreserveThePosition() async throws {
+    for puzzle in try await ChessPuzzleLoader.bundled(in: Bundle.main) {
       for move in puzzle.legalMoves.subtracting(puzzle.acceptedMoves) {
         var attempt = ChessAttempt(puzzle: puzzle)
         attempt.tap(move.origin)
@@ -60,7 +60,7 @@ final class ChessRulesTests: XCTestCase {
     }
   }
 
-  func testCoordinatesSideSelectionAndFreshAttempt() throws {
+  func testCoordinatesSideSelectionAndFreshAttempt() async throws {
     XCTAssertEqual(ChessSquare.displayOrder.count, 64)
     XCTAssertEqual(Set(ChessSquare.displayOrder).count, 64)
     XCTAssertEqual(ChessSquare.displayOrder.first?.coordinate, "a8")
@@ -73,7 +73,7 @@ final class ChessRulesTests: XCTestCase {
     }
     XCTAssertNil(ChessMove("a1a1"))
     XCTAssertNil(ChessMove("a7a8q"))
-    for puzzle in try ChessPuzzleLoader.bundled(in: Bundle.main) {
+    for puzzle in try await ChessPuzzleLoader.bundled(in: Bundle.main) {
       let own = puzzle.board.filter { $0.value.side == puzzle.sideToMove }.map(\.key)
       XCTAssertEqual(own.count, 2)
       var attempt = ChessAttempt(puzzle: puzzle)

@@ -5,8 +5,8 @@ import XCTest
 
 final class ChessControllerTests: XCTestCase {
   @MainActor
-  func testPreviewStartAndRepeatedStartDoNotMakeAMove() throws {
-    for puzzle in try ChessPuzzleLoader.bundled(in: Bundle.main) {
+  func testPreviewStartAndRepeatedStartDoNotMakeAMove() async throws {
+    for puzzle in try await ChessPuzzleLoader.bundled(in: Bundle.main) {
       let runtime = GameRuntime()
       let controller = ChessController(puzzle: puzzle, runtime: runtime)
       let queen = try queenSquare(in: puzzle)
@@ -32,8 +32,8 @@ final class ChessControllerTests: XCTestCase {
   }
 
   @MainActor
-  func testCoordinateControlsRequireExplicitSubmitAndReportWrongMoves() throws {
-    for puzzle in try ChessPuzzleLoader.bundled(in: Bundle.main) {
+  func testCoordinateControlsRequireExplicitSubmitAndReportWrongMoves() async throws {
+    for puzzle in try await ChessPuzzleLoader.bundled(in: Bundle.main) {
       let runtime = GameRuntime()
       let controller = ChessController(puzzle: puzzle, runtime: runtime)
       runtime.setVisible(true)
@@ -73,8 +73,8 @@ final class ChessControllerTests: XCTestCase {
   }
 
   @MainActor
-  func testIneligibleResetClearsSelectionCoordinatesFeedbackAndRejectsOldAttempt() throws {
-    for puzzle in try ChessPuzzleLoader.bundled(in: Bundle.main) {
+  func testIneligibleResetClearsSelectionCoordinatesFeedbackAndRejectsOldAttempt() async throws {
+    for puzzle in try await ChessPuzzleLoader.bundled(in: Bundle.main) {
       let runtime = GameRuntime()
       let controller = ChessController(puzzle: puzzle, runtime: runtime)
       runtime.setVisible(true)
@@ -107,8 +107,8 @@ final class ChessControllerTests: XCTestCase {
   }
 
   @MainActor
-  func testAllSolutionsKeepCompletedBoardAcrossRevisitsAndIgnoreLaterInput() throws {
-    for puzzle in try ChessPuzzleLoader.bundled(in: Bundle.main) {
+  func testAllSolutionsKeepCompletedBoardAcrossRevisitsAndIgnoreLaterInput() async throws {
+    for puzzle in try await ChessPuzzleLoader.bundled(in: Bundle.main) {
       for move in puzzle.acceptedMoves {
         let runtime = GameRuntime()
         let controller = ChessController(puzzle: puzzle, runtime: runtime)

@@ -2,11 +2,13 @@ import SwiftUI
 
 @MainActor
 final class FeedComposition {
+  let chessPuzzles: [ChessPuzzle]
   let session: SampleSession
   let controller: FeedController?
   private let games: [CardID: ComposedGame]
 
-  init() {
+  init(chessPuzzles: [ChessPuzzle]) {
+    self.chessPuzzles = chessPuzzles
     let useDemoGames: Bool
     #if DEBUG
       let arguments = ProcessInfo.processInfo.arguments
@@ -122,7 +124,7 @@ final class FeedComposition {
               default: throw GameCompositionError.missingChessFixture(game.id.rawValue)
               }
               guard
-                let puzzle = try ChessPuzzleLoader.bundled().first(where: { $0.id == fixtureID })
+                let puzzle = chessPuzzles.first(where: { $0.id == fixtureID })
               else {
                 throw GameCompositionError.missingChessFixture(fixtureID)
               }
