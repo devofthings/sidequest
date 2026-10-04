@@ -131,22 +131,6 @@ final class FeedComposition {
               switch game.id.rawValue {
               case "sample-game-chess-white": fixtureID = "queen-corner-white"
               case "sample-game-chess-black": fixtureID = "queen-corner-black"
-              case .bubbleShooter where !useDemoGames:
-                let controller: BubbleShooterController
-                #if DEBUG
-                  if ProcessInfo.processInfo.arguments.contains("-sidequest-bubble-slow-shot") {
-                    controller = BubbleShooterController(
-                      runtime: runtime,
-                      pause: {
-                        try await Task.sleep(for: .milliseconds(250))
-                      })
-                  } else {
-                    controller = BubbleShooterController(runtime: runtime)
-                  }
-                #else
-                  controller = BubbleShooterController(runtime: runtime)
-                #endif
-                games[game.id] = .bubbleShooter(controller)
               default: throw GameCompositionError.missingChessFixture(game.id.rawValue)
               }
               guard
@@ -155,6 +139,22 @@ final class FeedComposition {
                 throw GameCompositionError.missingChessFixture(fixtureID)
               }
               games[game.id] = .chess(ChessController(puzzle: puzzle, runtime: runtime))
+            case .bubbleShooter where !useDemoGames:
+              let controller: BubbleShooterController
+              #if DEBUG
+                if ProcessInfo.processInfo.arguments.contains("-sidequest-bubble-slow-shot") {
+                  controller = BubbleShooterController(
+                    runtime: runtime,
+                    pause: {
+                      try await Task.sleep(for: .milliseconds(250))
+                    })
+                } else {
+                  controller = BubbleShooterController(runtime: runtime)
+                }
+              #else
+                controller = BubbleShooterController(runtime: runtime)
+              #endif
+              games[game.id] = .bubbleShooter(controller)
             default:
               games[game.id] = .placeholder(PlaceholderGameController(runtime: runtime))
             }
