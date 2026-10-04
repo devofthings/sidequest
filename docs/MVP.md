@@ -21,7 +21,7 @@ The overall experience is evaluated through personal testing; a quantitative ret
 
 ## Deferred work
 
-The shared design baseline, wireframes, and visual polish follow the first MVP and personal test in [design task #13](https://github.com/devofthings/sidequest/issues/13). Use simple, consistent UI for the MVP based on the confirmed behavior above; a Figma or wireframe approval is not an MVP prerequisite.
+On October 5, 2026, the owner authorized research-led visual design and animations for the MVP pitch in [design task #13](https://github.com/devofthings/sidequest/issues/13), superseding the earlier wait for personal testing. Use a vivid, modern, cohesive direction that draws attention and supports engaging play. Research common visual and motion practices before implementation; the lead may select the direction without waiting for owner design approval. Cover all four games, news, preview/play/completion, and navigation with readable text, accessible controls, Reduce Motion, and stable board geometry. Figma remains a proposed tool; no paid dependency is authorized.
 
 Defer accounts, ads, payments, licensed game catalogs, and social-platform integrations. The user confirmed these boundaries for the first prototype. Automatic scraping and news refreshing are also deferred in favor of manual imports.
 
@@ -51,7 +51,7 @@ The owner approved more clearly fictional English articles for realistic private
 
 ## Stable gameplay correction
 
-Approved bug [#108](https://github.com/devofthings/sidequest/issues/108) keeps boards and primary controls stable during feedback/completion changes, with complete accessible text and owned overflow. See [GAME_LAYOUT.md](GAME_LAYOUT.md); this does not start the deferred design baseline.
+Approved bug [#108](https://github.com/devofthings/sidequest/issues/108) keeps boards and primary controls stable during feedback/completion changes, with complete accessible text and owned overflow. See [GAME_LAYOUT.md](GAME_LAYOUT.md); this correction predates the separately authorized design work in #13.
 
 ## Requested pocket-game follow-ups
 
