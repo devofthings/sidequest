@@ -146,6 +146,19 @@ class ProvenanceTests(unittest.TestCase):
         second.update(inventory=first["inventory"])
         self.assertIsNone(self.resolve())
 
+    def test_job_and_check_have_independent_linked_identities(self):
+        self.data[f"{self.prefix}/commits/{self.original}/check-runs"]["check_runs"][0]["id"] = 250
+        self.data[f"{self.prefix}/actions/jobs/200"]["check_run_url"] = f"https://api.github.com/{self.prefix}/check-runs/250"
+        self.assertIsNotNone(self.resolve())
+        self.data[f"{self.prefix}/actions/jobs/200"]["check_run_url"] = f"https://api.github.com/{self.prefix}/check-runs/251"
+        self.assertIsNone(self.resolve())
+
+    def test_injected_api_failure_uses_full_fallback(self):
+        def unavailable(path):
+            raise RuntimeError("Read API unavailable")
+        self.assertIsNone(resolve_inherited_tests(self.root, self.head, self.root / "diagnostics",
+                                                 read_api=unavailable))
+
     def test_equal_tree_with_wrong_parent_requires_full_verification(self):
         self.git("commit", "--allow-empty", "-qm", "extra main parent")
         new_head = self.git("rev-parse", "HEAD")

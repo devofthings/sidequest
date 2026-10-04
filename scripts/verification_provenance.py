@@ -100,7 +100,7 @@ def resolve_inherited_tests(checkout, head, diagnostics_root, *,
     try:
         return _resolve(Path(checkout), head, Path(diagnostics_root), repository,
                         runner_name, read_api or globals()["read_api"])
-    except (EvidenceError, OSError, ValueError, TypeError, KeyError, IndexError,
+    except (EvidenceError, RuntimeError, OSError, ValueError, TypeError, KeyError, IndexError,
             subprocess.SubprocessError):
         return None
 
@@ -170,7 +170,7 @@ def _resolve(checkout, head, diagnostics_root, repository, runner_name, api):
                          r"([1-9][0-9]*)/job/([1-9][0-9]*)", run_url)
     require(match is not None)
     run_id, job_id = map(int, match.groups())
-    require(positive(check["id"]) == job_id)
+    check_id = positive(check["id"])
     run = api(f"{prefix}/actions/runs/{run_id}")
     job = api(f"{prefix}/actions/jobs/{job_id}")
     attempt, run_number = positive(run["run_attempt"]), positive(run["run_number"])
@@ -184,7 +184,7 @@ def _resolve(checkout, head, diagnostics_root, repository, runner_name, api):
     require(positive(job["id"]) == job_id and positive(job["run_id"]) == run_id and
             positive(job["run_attempt"]) == attempt and job["runner_name"] == runner_name and
             job["name"] == "Sidequest / verification" and job["html_url"] == run_url and
-            job["check_run_url"] == f"https://api.github.com/{prefix}/check-runs/{job_id}")
+            job["check_run_url"] == f"https://api.github.com/{prefix}/check-runs/{check_id}")
     manifest = json.loads((diagnostics_root / f"{run_id}-{attempt}" /
                            "verification.json").read_text())
     require(type(manifest["schema"]) is int and manifest["schema"] == 2 and
