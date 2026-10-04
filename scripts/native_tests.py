@@ -64,6 +64,18 @@ def shards(selected, policy, workers):
 
 
 def cache_identity(root, xcode, sdk, runtime):
+    if isinstance(runtime, str):
+        try:
+            runtime = json.loads(runtime)
+        except ValueError:
+            pass
+    if isinstance(runtime, dict) and "runtimes" in runtime:
+        matching = [item for item in runtime["runtimes"] if item["identifier"] == RUNTIME]
+        if len(matching) != 1 or not matching[0].get("isAvailable"):
+            raise RuntimeError("The required simulator runtime is unavailable or ambiguous.")
+        # simctl includes a changing lastUsage timestamp. It is not a build boundary.
+        runtime = {name: matching[0].get(name) for name in
+                   ("identifier", "version", "buildversion", "bundlePath", "runtimeRoot")}
     boundary = {"checkout": str(root.resolve()), "xcode": xcode.strip(), "sdk": sdk.strip(),
                 "runtime": runtime, "configuration": "Debug", "project": "Sidequest.xcodeproj",
                 "scheme": "Sidequest", "settings": SETTINGS}
@@ -151,7 +163,7 @@ def execute(root, diagnostics, cache_root, destinations, selected, run, xcode, s
         def worker(index):
             bundle = diagnostics / f"Tests-{index + 1}.xcresult"
             run(f"tests-{index + 1}", command(derived, destinations[index]) + [
-                "-parallel-testing-enabled", "NO", "-resultBundlePath",
+                "-parallel-testing-enabled", "NO", "-collect-test-diagnostics", "never", "-resultBundlePath",
                 str(bundle),
                 *[f"-only-testing:{case}" for case in groups[index]], "test-without-building"])
             tree = json.loads(run(f"test-tree-{index + 1}", ["xcrun", "xcresulttool", "get", "test-results",
@@ -191,6 +203,6 @@ def devices(run, name, count):
             run(f"bootstatus-{index + 1}", ["xcrun", "simctl", "bootstatus", identifier, "-b"])
         yield [f"platform=iOS Simulator,id={identifier}" for identifier in owned]
     finally:
-        for identifier in owned:
+        for index, identifier in enumerate(owned):
             # Shutdown only these devices; retain their data for same-device repeatability.
-            subprocess.run(["xcrun", "simctl", "shutdown", identifier], capture_output=True)
+            run(f"shutdown-{index + 1}", ["xcrun", "simctl", "shutdown", identifier])

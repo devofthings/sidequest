@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Exercise queued-main/PR verification and private runner storage without networking."""
 
+from contextlib import nullcontext
 import importlib.util
 import json
 import os
@@ -26,8 +27,8 @@ installer = load("configure-ci-runner")
 
 class CIBoundaryTests(unittest.TestCase):
     def test_successful_main_manifest_retains_workflow_run_number(self):
-        for event in ("push", "workflow_dispatch"):
-            with self.subTest(event=event), tempfile.TemporaryDirectory() as directory:
+        for event, inherited in [("push", False), ("workflow_dispatch", False), ("push", True), ("workflow_dispatch", True)]:
+            with self.subTest(event=event, inherited=inherited), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 environment = {"SIDEQUEST_EXPECTED_HEAD": "a" * 40, "SIDEQUEST_BASE_REF": "main",
                                "GITHUB_RUN_ID": "100", "GITHUB_RUN_ATTEMPT": "2", "GITHUB_RUN_NUMBER": "24",
@@ -59,9 +60,10 @@ class CIBoundaryTests(unittest.TestCase):
 
                 with patch.dict(os.environ, environment), patch.object(Path, "cwd", return_value=root), \
                      patch.object(subprocess, "run", side_effect=controlled), \
-                     patch.object(ci, "inherited_tests", return_value=None), \
+                     patch.object(ci, "inherited_tests", return_value={"mode": "inherited", "original_head": "b" * 40, "inventory": ["original/test/case"]} if inherited else None), \
+                     patch.object(ci.native_tests, "owned_execution", side_effect=nullcontext), \
                      patch.object(ci.native_tests, "selection", return_value=["SidequestTests"]), \
-                     patch.object(ci.native_tests, "execute", return_value=({"mode": "full", "selected": ["SidequestTests"]}, root / "cache")):
+                     patch.object(ci.native_tests, "execute", return_value=({"mode": "full", "selected": ["SidequestTests"]}, root / "cache")) as execute:
                     (root / "scripts").mkdir()
                     (root / "scripts/native-test-inventory.json").write_text("{}")
                     ci.main()
@@ -72,7 +74,15 @@ class CIBoundaryTests(unittest.TestCase):
                 self.assertEqual(manifest["attempt"], "2")
                 self.assertTrue(manifest["all_checks_passed"])
                 self.assertEqual(manifest["schema"], 2)
-                self.assertEqual(manifest["tests"]["mode"], "full")
+                self.assertEqual(manifest["tests"]["mode"], "inherited" if inherited else "full")
+                self.assertEqual(execute.call_count, 0 if inherited else 1)
+                commands = json.loads((root / "sidequest-diagnostics/100-2/commands.json").read_text())
+                labels = [item["label"] for item in commands]
+                self.assertIn("smoke-install", labels)
+                self.assertIn("release-build", labels)
+                if inherited:
+                    self.assertIn("build-for-testing", labels)
+                    self.assertNotIn("tests-1", labels)
                 self.assertTrue(manifest["main_smoke_passed"])
                 self.assertIn("100-2", (root / "output").read_text())
 

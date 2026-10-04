@@ -22,6 +22,13 @@ class NativeTests(unittest.TestCase):
                 self.assertNotEqual(native.cache_identity(*changed)[1], key)
             with patch.object(native, "SETTINGS", ["CODE_SIGNING_ALLOWED=YES"]):
                 self.assertNotEqual(native.cache_identity(root, "Xcode A", "SDK A", {"runtime": "A"})[1], key)
+            runtime = {"runtimes": [{"identifier": native.RUNTIME, "version": "27.0", "buildversion": "A",
+                                    "isAvailable": True, "lastUsage": {"arm64": "old"}}]}
+            before = native.cache_identity(root, "xcode", "sdk", runtime)[1]
+            runtime["runtimes"][0]["lastUsage"]["arm64"] = "new"
+            self.assertEqual(native.cache_identity(root, "xcode", "sdk", runtime)[1], before)
+            runtime["runtimes"][0]["buildversion"] = "B"
+            self.assertNotEqual(native.cache_identity(root, "xcode", "sdk", runtime)[1], before)
             with native.owned_cache(root / "cache", boundary, key) as derived:
                 self.assertIn(key, str(derived))
                 with self.assertRaisesRegex(RuntimeError, "owned"):

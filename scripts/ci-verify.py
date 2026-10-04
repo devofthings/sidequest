@@ -70,7 +70,7 @@ def main():
         lines = log.read_text(errors="replace").splitlines()
         print("\n".join(lines[-80:]), flush=True)
         print("::endgroup::", flush=True)
-        summary.append(f"- {label}: {'PASS' if result.returncode == 0 else 'FAIL'} (exit {result.returncode})")
+        summary.append(f"- {label}: {'PASS' if result.returncode == 0 else 'FAIL'} (exit {result.returncode}, {time.monotonic() - started:.3f} seconds)")
         if result.returncode:
             raise RuntimeError(f"{label} failed; local diagnostics: {log}")
         return log.read_text(errors="replace")
@@ -131,6 +131,7 @@ def main():
             release = native_tests.command(diagnostics / "DerivedData", destination)
             release[release.index("Debug")] = "Release"
             run("release-build", release + ["ARCHS=arm64", "build"])
+        summary.append(f"- tests: {tests['mode']}; {len(tests.get('inventory', []))} verified cases")
         manifest = {
             "schema": 2, "commit": expected, "run_id": run_id, "attempt": attempt,
             "run_number": os.environ["GITHUB_RUN_NUMBER"],

@@ -56,6 +56,10 @@ Schema-2 verification and release metadata distinguish `full` tests from `inheri
 | How can two workers actually execute independently? | Fact and delegated choice | The scheme and old driver force serial testing. Partition selected cases between two separate serial processes, unique device IDs and result paths, sharing only read-only compiled products under one build owner. | Actual device and test inventories plus one/two timings; no policy switch without passing speedup. |
 | How can main avoid duplicate tests honestly? | Delegated choice under owner direction | Captured independent audit base, actual sole-parent/tree equality, live successful PR provenance and local coverage manifest; otherwise full fallback. | Disposable Git/API regressions, smoke-failure regressions, release legacy/retry regressions, actual main after gated merge. |
 
+Xcode verbose post-failure sysdiagnose is disabled with its documented `-collect-test-diagnostics never` option. Actual failed XCTest results, screenshots and logs remain; this changes diagnostic collection rather than assertions or test outcomes. A focused cold Files failure demonstrated an automatic collector with a 600-second timeout.
+
 ## Measurements
 
 The original serial baseline above is observed. Compact one/two-worker measurements and the complete ordinary verification duration must be recorded before claiming the 5–10-minute target is met. Exact-head CI and fresh independent review remain required before merge. Physical-device execution remains deferred under #79.
+
+Initial compact attempt: 120 unit and 19 UI cases executed; 138 passed and the native import case failed at its Locations assertion. UI time was 512.698 seconds, but this failed run cannot choose a worker policy or establish the target. A focused cold-picker attempt failed its initial provider-existence assertion in 20.759 seconds. Both failed bundles/logs remain outside Git. Targeted retest and a complete same-inventory worker comparison remain pending; the policy stays at one worker.

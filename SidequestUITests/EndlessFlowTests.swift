@@ -256,7 +256,7 @@ final class EndlessFlowTests: XCTestCase {
   private func importFile(_ name: String, in app: XCUIApplication) {
     app.buttons["news.import"].tap()
     let browser = app.otherElements["Browse View (Picker)"]
-    XCTAssertTrue(browser.waitForExistence(timeout: 5))
+    XCTAssertTrue(browser.waitForExistence(timeout: 10))
     let file = browser.collectionViews["File View"].cells.matching(
       NSPredicate(format: "label BEGINSWITH %@ OR identifier BEGINSWITH %@", name, name)
     ).firstMatch
@@ -267,6 +267,9 @@ final class EndlessFlowTests: XCTestCase {
       let browse = app.tabBars["DOC.browsingModeTabBar"].buttons["Browse"]
       XCTAssertTrue(browse.isHittable, app.debugDescription)
       browse.tap()
+      // A fresh picker opens Recents. The first tap selects Browse's provider;
+      // tapping the selected tab returns from that provider to Locations.
+      if !phone.exists { browse.tap() }
     }
     XCTAssertTrue(phone.waitForExistence(timeout: 5), app.debugDescription)
     phone.tap()
