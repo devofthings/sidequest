@@ -11,6 +11,75 @@ import native_tests as native
 
 
 class NativeTests(unittest.TestCase):
+    def test_owned_devices_are_deleted_without_touching_unrelated_devices_or_diagnostics(self):
+        for failure in (None, "body", "create-2", "boot-1", "bootstatus-1"):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                retained = [root / name for name in ("Tests.xcresult", "tests.log", "cache", "Release.app")]
+                for path in retained:
+                    path.write_bytes(b"retained evidence")
+                state = {"user-device": "Booted"}
+                calls = []
+
+                def run(label, command):
+                    calls.append((label, command))
+                    if label == failure:
+                        raise RuntimeError(failure)
+                    operation = command[2]
+                    identifier = f"owned-{label.split('-')[-1]}" if operation == "create" else command[3]
+                    if operation == "create":
+                        state[identifier] = "Shutdown"
+                        return identifier
+                    if operation in ("boot", "shutdown"):
+                        state[identifier] = "Booted" if operation == "boot" else "Shutdown"
+                    elif operation == "delete":
+                        del state[identifier]
+                    return ""
+
+                def execute():
+                    with native.devices(run, "isolated fixture", 2) as destinations:
+                        self.assertEqual(destinations, ["platform=iOS Simulator,id=owned-1",
+                                                        "platform=iOS Simulator,id=owned-2"])
+                        self.assertIn("owned-1", state)
+                        if failure == "body":
+                            raise RuntimeError("body")
+
+                if failure:
+                    with self.assertRaisesRegex(RuntimeError, failure):
+                        execute()
+                else:
+                    execute()
+                self.assertEqual(state, {"user-device": "Booted"})
+                cleanup = [(label, command) for label, command in calls if command[2] in ("shutdown", "delete")]
+                expected_count = 1 if failure in ("create-2", "boot-1", "bootstatus-1") else 2
+                self.assertEqual([label for label, _ in cleanup],
+                                 [f"{operation}-{index}" for index in range(1, expected_count + 1)
+                                  for operation in ("shutdown", "delete")])
+                self.assertTrue(all(command[3].startswith("owned-") for _, command in cleanup))
+                self.assertEqual([path.read_bytes() for path in retained], [b"retained evidence"] * 4)
+
+    def test_cleanup_failures_attempt_all_operations_and_report_owned_leftovers(self):
+        calls = []
+        state = {"user-device": "Booted"}
+
+        def run(label, command):
+            calls.append(label)
+            if label in ("shutdown-1", "delete-2"):
+                raise RuntimeError("simctl failed")
+            if command[2] == "create":
+                identifier = "owned-" + label.split("-")[-1]
+                state[identifier] = "Shutdown"
+                return identifier
+            if command[2] == "delete":
+                del state[command[3]]
+            return ""
+
+        with self.assertRaisesRegex(RuntimeError, r"shutdown-1 \(owned-1\), delete-2 \(owned-2\)"):
+            with native.devices(run, "isolated fixture", 2):
+                pass
+        self.assertEqual(calls[-4:], ["shutdown-1", "delete-1", "shutdown-2", "delete-2"])
+        self.assertEqual(state, {"user-device": "Booted", "owned-2": "Shutdown"})
+
     def test_cache_boundaries_and_exclusive_ownership(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

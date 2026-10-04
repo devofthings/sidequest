@@ -47,9 +47,21 @@ python3 scripts/run-native-tests.py --benchmark \
   --output /private/tmp/sidequest-worker-benchmark-unique
 ```
 
-The benchmark compiles once before timing, then compiles the current source again before each policy. Both policies use the same inventory, source and incremental cache. One worker runs serially on the first owned simulator; two workers run explicitly partitioned serial `xcodebuild` processes on two distinct owned simulators. The scheme stays nonparallelizable: enabling worker flags alone would not establish actual concurrency. Each worker has a unique result bundle/log and its actual test inventory/device/counts are checked with `xcresulttool`; missing, duplicate, skipped, failed or unexpected cases fail verification. All created devices are shut down on exit and retained for diagnostics; user/CI devices are preserved.
+The benchmark compiles once before timing, then compiles the current source again before each policy. Both policies use the same inventory, source and incremental cache. One worker runs serially on the first owned simulator; two workers run explicitly partitioned serial `xcodebuild` processes on two distinct owned simulators. The scheme stays nonparallelizable: enabling worker flags alone would not establish actual concurrency. Each worker has a unique result bundle/log and its actual test inventory/device/counts are checked with `xcresulttool`; missing, duplicate, skipped, failed or unexpected cases fail verification. Created devices remain available through both policies, then are shut down and deleted under #114. External diagnostics and unrelated devices are preserved.
 
 The temporary three-case UI gate uses one worker. The earlier two-worker benchmark proves speedup only for its recorded 139-case inventory and does not select workers for the smoke gate. A future worker change requires passing, faster evidence for its actual inventory. Timing and exact commands remain in local diagnostics. Release compilation uses fresh unique per-run DerivedData, independent of the Debug cache.
+
+## Owned simulator cleanup #114
+
+On October 4, 2026, the owner requested simulator reuse or cleanup. The selected cleanup option keeps a fresh isolated device per worker, preserves same-device behavior throughout each run, and removes those devices afterward. The native driver attempts shutdown and deletion for every successfully returned owned UUID after normal completion or a handled failure, including partial creation and boot failures. A failed cleanup command does not prevent attempts on the other owned devices; it fails verification and names the failed operation and owned ID. CI writes its successful manifest only after cleanup succeeds. No global simulator cleanup or persistent shared pool is introduced.
+
+Logs, result bundles, incremental Debug cache, and unique Release products remain outside simulator storage and survive device deletion. Historical shutdown-only benchmark evidence remains unchanged. Hard kills such as SIGKILL cannot execute this cleanup; interruption/process handling remains separate under #102.
+
+| Readiness question | Kind | Decision and evidence | Verification |
+| --- | --- | --- | --- |
+| Reuse or remove temporary devices? | Delegated choice within owner request | Remove the run's exact returned IDs; isolation already prevents interference, while retained shutdown devices accumulated. | Offline ownership fixtures preserve unrelated devices and external diagnostics; exact-head PR CI must confirm actual removal. |
+| What happens after partial setup or cleanup failure? | Delegated choice | Track IDs immediately after successful creation, attempt both cleanup operations for all known IDs, and reject overall success if any operation fails. | Body/create/boot failures, multiple cleanup failures, and CI success-manifest refusal are covered by offline regressions. |
+| Does this guarantee cleanup after a hard kill? | Fact and scope boundary | No; finally cannot run after SIGKILL. #102 retains interruption handling. | No hard-kill or physical-device claim is made. |
 
 ## Main inheritance
 
