@@ -32,3 +32,5 @@ The owner requested pocket-sized games and different difficulties on October 4, 
 ## Authorized MVP visual design and motion
 
 The October 5 owner instruction authorizes researched, vivid modern styling and animations for every game under #13. Research before implementation and record the chosen direction; no owner design approval wait is required. Preserve pure rules, explicit start/input gates, cancellation, stable board geometry, accessible feedback, and Reduce Motion. See [design direction](../../docs/MVP.md#deferred-work).
+
+The lead selected [DESIGN.md](../../docs/DESIGN.md) after primary-source research. Use its shared tokens and contained motion policy for #13 implementation; validate rendered states instead of treating research as implementation evidence.

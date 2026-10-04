@@ -37,3 +37,7 @@ Render the same game-owned initial board in preview and play, with gameplay disa
 ## Proposed preference-based frequency
 
 The owner's repeated-skip recommendation idea is captured in [#119](https://github.com/devofthings/sidequest/issues/119), with its pending status in [DECISIONS.md](../../docs/DECISIONS.md#pocket-game-direction-recorded-october-4-2026). Current selection/cadence stays authoritative. Implement preference weighting only after a bounded policy is approved; separate game-type preference from difficulty, define real exposures and recovery, and preserve stable existing cards and the five-game/news cadence. This proposal selects no telemetry, storage or backend service.
+
+## Selected MVP visual baseline
+
+Use the researched [DESIGN.md](../../docs/DESIGN.md) direction for approved #13 styling. Keep news still and readable, preview/play boards stable, shared start footprints, settled native paging, and Reduce Motion. Styling changes must preserve feed lifecycle and source attribution.

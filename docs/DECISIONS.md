@@ -88,3 +88,7 @@ Publisher APIs, news licensing, and game catalogs were discussed as possible inp
 ## Visible inactive game boards #88 — accepted
 
 On October 4, 2026, the owner clarified: "also tap to play should not hide the game create tickets to fix both". All four game kinds display their actual initial boards before play; Memory remains face down and answers stay hidden. Tap to play enables a fresh attempt without making a move or changing the displayed challenge. The lead selected game-owned frozen display values, one shared lifecycle, top anchoring, and a reserved start footprint to preserve stable layout. See [preview decisions and validation](GAME_PREVIEWS.md). This supersedes hidden-board and centered-preview descriptions; the required three-case UI smoke gate is unchanged.
+
+## Selected MVP design baseline October 5, 2026
+
+Under the owner’s design authorization, the lead selected bright arcade objects on calm light/dark surfaces, vivid game accents, semantic typography, and contained purposeful motion with Reduce Motion alternatives. See [DESIGN.md](DESIGN.md) and [research](research/mvp-design.md). Implementation and rendered evidence remain pending; this is a selected design direction, not verified product behavior.
