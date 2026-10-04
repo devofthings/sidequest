@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Exercise queued-main/PR verification and private runner storage without networking."""
 
+from contextlib import nullcontext
 import importlib.util
 import json
 import os
@@ -25,9 +26,52 @@ installer = load("configure-ci-runner")
 
 
 class CIBoundaryTests(unittest.TestCase):
+    def test_changed_paths_uses_real_pr_range_and_main_parent(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+
+            def git(*args):
+                return subprocess.run(["git", *args], cwd=root, text=True,
+                                      capture_output=True, check=True).stdout.strip()
+
+            git("init", "-q")
+            git("config", "core.hooksPath", "/dev/null")
+            git("config", "user.name", "CI fixture")
+            git("config", "user.email", "fixture@example.invalid")
+            for name in ("deleted.swift", "old.swift", "changed.swift"):
+                (root / name).write_text("base\n")
+            git("add", ".")
+            git("commit", "-qm", "base")
+            base = git("rev-parse", "HEAD")
+            git("update-ref", "refs/remotes/origin/main", base)
+            (root / "deleted.swift").unlink()
+            (root / "old.swift").rename(root / "renamed\nfile.swift")
+            (root / "changed.swift").write_text("changed\n")
+            git("add", "-A")
+            git("commit", "-qm", "feature changes")
+            (root / "new.swift").write_text("new\n")
+            git("add", ".")
+            git("commit", "-qm", "second feature commit")
+            head = git("rev-parse", "HEAD")
+            commands = []
+
+            def run(label, command):
+                commands.append(command)
+                return subprocess.run(command, cwd=root, text=True,
+                                      capture_output=True, check=True).stdout
+
+            self.assertEqual(set(ci.changed_paths(head, "main", "pull_request", run)),
+                             {"deleted.swift", "old.swift", "renamed\nfile.swift",
+                              "changed.swift", "new.swift"})
+            for event in ("push", "workflow_dispatch"):
+                with self.subTest(event=event):
+                    self.assertEqual(ci.changed_paths(head, "main", event, run), ["new.swift"])
+            self.assertEqual(commands[0][-1], f"origin/main...{head}")
+            self.assertEqual(commands[1][-2:], [f"{head}^", head])
+
     def test_successful_main_manifest_retains_workflow_run_number(self):
-        for event in ("push", "workflow_dispatch"):
-            with self.subTest(event=event), tempfile.TemporaryDirectory() as directory:
+        for event, inherited in [("push", False), ("workflow_dispatch", False), ("push", True), ("workflow_dispatch", True)]:
+            with self.subTest(event=event, inherited=inherited), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 environment = {"SIDEQUEST_EXPECTED_HEAD": "a" * 40, "SIDEQUEST_BASE_REF": "main",
                                "GITHUB_RUN_ID": "100", "GITHUB_RUN_ATTEMPT": "2", "GITHUB_RUN_NUMBER": "24",
@@ -35,10 +79,16 @@ class CIBoundaryTests(unittest.TestCase):
                                "RUNNER_TEMP": str(root / "_temp"), "RUNNER_NAME": "Sidequest-Mac-foreground",
                                "GITHUB_OUTPUT": str(root / "output"), "GITHUB_STEP_SUMMARY": str(root / "summary")}
 
-                def controlled(command, stdout, **kwargs):
+                def controlled(command, stdout=None, **kwargs):
                     output = ""
-                    if command == ["git", "rev-parse", "HEAD"]:
+                    if command[-2:] == ["rev-parse", "HEAD"]:
                         output = "a" * 40
+                    elif "launch" in command and "--terminate-running-process" in command:
+                        output = "dev.devofthings.sidequest: 123"
+                    elif "launchctl" in command:
+                        output = "123 0 UIKitApplication:dev.devofthings.sidequest[fixture]"
+                    elif command[:3] == ["xcrun", "simctl", "create"]:
+                        output = "owned"
                     elif command == ["xcodebuild", "-version"]:
                         output = "Xcode 27.0\nBuild version 27A266a"
                     elif command == ["xcrun", "simctl", "list", "devices", "available", "--json"]:
@@ -47,11 +97,19 @@ class CIBoundaryTests(unittest.TestCase):
                     elif command == ["xcrun", "simctl", "list", "runtimes", "--json"]:
                         output = json.dumps({"runtimes": [{"identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
                                              "version": "27.0", "buildversion": "24A434", "isAvailable": True}]})
-                    stdout.write(output)
+                    if stdout is not None:
+                        stdout.write(output)
                     return subprocess.CompletedProcess(command, 0)
 
                 with patch.dict(os.environ, environment), patch.object(Path, "cwd", return_value=root), \
-                     patch.object(subprocess, "run", side_effect=controlled):
+                     patch.object(subprocess, "run", side_effect=controlled), \
+                     patch.object(ci, "inherited_tests", return_value={"mode": "inherited", "gate": "pre_design_smoke", "original_head": "b" * 40, "inventory": ["original/test/case"]} if inherited else None), \
+                     patch.object(ci.native_tests, "owned_execution", side_effect=nullcontext), \
+                     patch.object(ci.native_tests, "selection", return_value=["SidequestTests"]), \
+                     patch.object(ci.native_tests, "inventory", return_value={"active_gate": "pre_design_smoke", "workers": 1}), \
+                     patch.object(ci.native_tests, "execute", return_value=({"mode": "full", "gate": "pre_design_smoke", "selected": ["SidequestTests"]}, root / "cache")) as execute:
+                    (root / "scripts").mkdir()
+                    (root / "scripts/native-test-inventory.json").write_text("{}")
                     ci.main()
                 manifest = json.loads((root / "sidequest-diagnostics/100-2/verification.json").read_text())
                 self.assertEqual(manifest["event"], event)
@@ -59,7 +117,68 @@ class CIBoundaryTests(unittest.TestCase):
                 self.assertEqual(manifest["run_id"], "100")
                 self.assertEqual(manifest["attempt"], "2")
                 self.assertTrue(manifest["all_checks_passed"])
+                self.assertEqual(manifest["schema"], 2)
+                self.assertEqual(manifest["tests"]["mode"], "inherited" if inherited else "full")
+                self.assertEqual(execute.call_count, 0 if inherited else 1)
+                self.assertEqual(manifest["tests"]["gate"], "pre_design_smoke")
+                if not inherited:
+                    self.assertEqual(execute.call_args.kwargs["gate"], "pre_design_smoke")
+                commands = json.loads((root / "sidequest-diagnostics/100-2/commands.json").read_text())
+                labels = [item["label"] for item in commands]
+                self.assertIn("smoke-install", labels)
+                self.assertIn("release-build", labels)
+                if inherited:
+                    self.assertIn("build-for-testing", labels)
+                    self.assertNotIn("tests-1", labels)
+                self.assertTrue(manifest["main_smoke_passed"])
                 self.assertIn("100-2", (root / "output").read_text())
+                self.assertLess(labels.index("native-source-checkout"), labels.index("create-1"))
+                self.assertLess(labels.index("release-build"), labels.index("manifest-source-checkout"))
+
+    def test_clean_checkout_rejects_real_tracked_and_untracked_native_inputs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            def git(*args):
+                return subprocess.check_output(["git", "-C", str(root), *args], text=True).strip()
+            git("init", "-q")
+            git("config", "core.hooksPath", "/dev/null")
+            git("config", "user.name", "CI fixture")
+            git("config", "user.email", "fixture@example.com")
+            (root / "Sidequest").mkdir()
+            tracked = root / "Sidequest/App.swift"
+            tracked.write_text("let fixture = 1\n")
+            git("add", ".")
+            git("commit", "-qm", "reviewed source")
+            expected = git("rev-parse", "HEAD")
+            def run(label, command):
+                return subprocess.check_output(command, text=True)
+            for phase in ("native-source", "manifest-source"):
+                ci.verify_clean_checkout(root, expected, run, phase)
+                tracked.write_text("let fixture = 2\n")
+                with self.assertRaisesRegex(RuntimeError, "clean tracked and untracked"):
+                    ci.verify_clean_checkout(root, expected, run, phase)
+                git("checkout", "--", "Sidequest/App.swift")
+                extra = root / "Sidequest/Unreviewed.swift"
+                extra.write_text("let unreviewed = 3\n")
+                with self.assertRaisesRegex(RuntimeError, "clean tracked and untracked"):
+                    ci.verify_clean_checkout(root, expected, run, phase)
+                extra.unlink()
+            git("commit", "--allow-empty", "-qm", "unreviewed head")
+            with self.assertRaisesRegex(RuntimeError, "changed from the reviewed commit"):
+                ci.verify_clean_checkout(root, expected, run, "manifest-source")
+
+    def test_main_smoke_requires_actual_launch_and_running_process(self):
+        calls = []
+        def run(label, command):
+            calls.append(label)
+            return "dev.devofthings.sidequest: 123" if label == "smoke-launch" else ""
+        with self.assertRaisesRegex(RuntimeError, "remain running"):
+            ci.smoke("platform=iOS Simulator,id=owned", Path("/owned/app"), run)
+        self.assertNotIn("smoke-terminate", calls)
+        def invalid(label, command):
+            return "launch did not start" if label == "smoke-launch" else ""
+        with self.assertRaisesRegex(RuntimeError, "process identity"):
+            ci.smoke("platform=iOS Simulator,id=owned", Path("/owned/app"), invalid)
 
     def test_older_queued_main_and_stale_pr(self):
         with tempfile.TemporaryDirectory() as directory:

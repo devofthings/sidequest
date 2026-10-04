@@ -43,7 +43,7 @@ If review cannot run or validation fails, keep the PR open and continue independ
 
 ## Included-usage boundary
 
-Apply the no-credits/no-resets rule and conservative 10% reserve in root AGENTS.md. Check all reported included windows, not just credit availability or a monthly spending allowance. A missing limit is unknown, not unlimited. Leave usage resets untouched and wait for the ordinary allowance renewal; do not switch to API-key billing, another paid provider, or credit-backed execution.
+Apply the no-credits/no-resets rule and the owner-selected 1% reserve in root AGENTS.md. On October 4, 2026, the owner instructed "lets continue and keep the hold at 1%", superseding the earlier 10% reserve so authorized work can continue with ordinary included usage. Stop when any reported included window has 1% or less remaining, a limit is reached, or the allowance cannot be verified. Check all reported included windows, not just credit availability or a monthly spending allowance. A missing limit is unknown, not unlimited. Leave usage resets untouched and wait for the ordinary allowance renewal; do not switch to API-key billing, another paid provider, or credit-backed execution.
 
 This is an operational guardrail, not a hard billing guarantee. OpenAI documents that available credits can extend usage after included limits, and limits are shared across work. A running turn or another chat can consume allowance between checks. No account billing switch was changed, and the available tools here do not set an account-wide credit-spending prohibition. Before enabling unattended scheduling, verify an account-level configuration that prevents credit fallback. [Official OpenAI pricing and usage guidance](https://learn.chatgpt.com/docs/pricing).
 

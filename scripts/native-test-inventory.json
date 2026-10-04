@@ -1,0 +1,433 @@
+{
+  "extended": {
+    "SidequestUITests/BubbleFlowTests/testSevenStraightShotsLoseAndReplayRestoresChallenge": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/BubbleFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/Games/BubbleShooter/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/BubbleFlowTests/testSkippingAnActiveShotReturnsToPreviewAndCannotCommitLate": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/BubbleFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/Games/BubbleShooter/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/BubbleFlowTests/testSystemReduceMotionKeepsPendingShotStationary": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/BubbleFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/Games/BubbleShooter/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/ChessFlowTests/testBackgroundRequiresFreshChessStart": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/ChessFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/Games/Chess/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/ChessFlowTests/testBlackFixtureWrongMovesResetAndCompletedRevisit": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/ChessFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/Games/Chess/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/ChessFlowTests/testCoordinateAlternativesHaveUsableTargetsAndAcceptEdgeTaps": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/ChessFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/Games/Chess/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/EndlessFlowTests/testEndlessNativeImportsCyclePersistAndKeepHistoryAfterRejectionOrCancel": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/EndlessFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest/Games/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/EndlessFlowTests/testFreshDemoCadenceAcrossBatchesUsesDistinctStoriesAndHasNoCounter": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/EndlessFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest/Games/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/EndlessFlowTests/testGeneratedGamesCompleteResetAndRestoreAfterMultipleBatchesAndCanceledDrag": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/EndlessFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest/Games/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/EndlessFlowTests/testLargestTextAndActualReduceMotionKeepEndlessPagingAndExplicitStartUsable": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/EndlessFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest/Games/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/FeedFlowTests/testBackgroundStopsAnUnfinishedGame": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/FeedFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/FeedFlowTests/testCompletedStateSurvivesOtherCardsAndViewRecomputation": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/FeedFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/FeedFlowTests/testEmptyAndGamesOnlySessionsHaveUsableBoundaries": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/FeedFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/FeedFlowTests/testLargestTextKeepsStartAndNavigationReachable": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/FeedFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/FeedFlowTests/testNewsCardsKeepProvenanceWhileNavigatingTheMixedFeed": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/FeedFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/FeedFlowTests/testStartConsumesNoMoveAndSkippingRequiresFreshStart": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/FeedFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/FoundationLaunchTests/testLaunchShowsAccessibleHeading": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/FoundationLaunchTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/IntegrationFlowTests/testLargestTextImportedOverflowSourceLinkAndActualReducedMotionKeepNavigation": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/IntegrationFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/IntegrationFlowTests/testLibraryAndBackgroundCancelPendingRealGamesAndCompletionSurvivesCancel": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/IntegrationFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/NewsPresentationTests/testOfflineSampleShowsSourceDateLabelAndImportPicker": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/NewsPresentationTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/PagerFlowTests/testFastFlickAndFirstLastBounds": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/PagerFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/PagerFlowTests/testHorizontalGameDragAndTapDoNotPage": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/PagerFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/SidequestApp.swift",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/SudokuFlowTests/testNormalControlsHaveFullTouchAreasAndCellCornersSelect": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/SudokuFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/Games/Sudoku/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    }
+  },
+  "required": [
+    "SidequestUITests/SudokuFlowTests/testTapStartsOnlyAndCorrectionsResetAfterSkipping",
+    "SidequestUITests/SudokuFlowTests/testSolvedBoardRemainsOnCardAndSurvivesRevisit",
+    "SidequestUITests/SudokuFlowTests/testLargestTextKeepsBoardAndInputUsable",
+    "SidequestUITests/PagerFlowTests/testDirectCardDragTracksAndCommitsThenReverseReturnsToPreview",
+    "SidequestUITests/PagerFlowTests/testLargestTextScrollsContentBeforeOutwardEdgePages",
+    "SidequestUITests/PagerFlowTests/testSystemReduceMotionKeepsMenuAndFingerPagingUsable",
+    "SidequestUITests/PagerFlowTests/testOriginalLinkOpensWithoutAdvancingTheNewsCard",
+    "SidequestUITests/PagerFlowTests/testReplacingSessionInSameViewRejectsOldRequestAndActivatesNewPreview",
+    "SidequestUITests/ChessFlowTests/testWhiteFixtureWrongMovesResetAndCompletedRevisit",
+    "SidequestUITests/ChessFlowTests/testLargestTextSupportsCoordinateSolutionAndNavigation",
+    "SidequestUITests/BubbleFlowTests/testThreeShotWinRetainsCompletionAndReplayStartsWithoutShot",
+    "SidequestUITests/BubbleFlowTests/testLargestTextAimAndFireRemainUsableWithoutNavigating",
+    "SidequestUITests/BubbleFlowTests/testNativeHorizontalAndDiagonalAimDragsDoNotPage",
+    "SidequestUITests/BubbleFlowTests/testShortBoardDragKeepsAttemptAndDirectSkipResetsPendingShot",
+    "SidequestUITests/IntegrationFlowTests/testNativeImportsReplaceTheMixedDeckPersistAndRejectInvalidFiles",
+    "SidequestUITests/EndlessFlowTests/testGeneratedPreviewInputSkipAndFirstNewsBoundary",
+    "SidequestUITests/MemoryFlowTests/testStartMakesNoFlipAndMatchingAllPairsRetainsCompletion",
+    "SidequestUITests/MemoryFlowTests/testMismatchTurnsOverAndSkippingReturnsToUnflippedPreview",
+    "SidequestUITests/MemoryFlowTests/testLargestTextKeepsEveryTileAndNavigationReachable"
+  ],
+  "schema": 1,
+  "seconds": {
+    "SidequestTests": 6.004,
+    "SidequestUITests/BubbleFlowTests/testLargestTextAimAndFireRemainUsableWithoutNavigating": 24.239722967147827,
+    "SidequestUITests/BubbleFlowTests/testNativeHorizontalAndDiagonalAimDragsDoNotPage": 16.500864028930664,
+    "SidequestUITests/BubbleFlowTests/testSevenStraightShotsLoseAndReplayRestoresChallenge": 30.700055956840515,
+    "SidequestUITests/BubbleFlowTests/testShortBoardDragKeepsAttemptAndDirectSkipResetsPendingShot": 22.68813705444336,
+    "SidequestUITests/BubbleFlowTests/testSkippingAnActiveShotReturnsToPreviewAndCannotCommitLate": 24.652408003807068,
+    "SidequestUITests/BubbleFlowTests/testSystemReduceMotionKeepsPendingShotStationary": 51.08628797531128,
+    "SidequestUITests/BubbleFlowTests/testThreeShotWinRetainsCompletionAndReplayStartsWithoutShot": 25.6723610162735,
+    "SidequestUITests/ChessFlowTests/testBackgroundRequiresFreshChessStart": 9.057078957557678,
+    "SidequestUITests/ChessFlowTests/testBlackFixtureWrongMovesResetAndCompletedRevisit": 62.44280195236206,
+    "SidequestUITests/ChessFlowTests/testCoordinateAlternativesHaveUsableTargetsAndAcceptEdgeTaps": 20.895215034484863,
+    "SidequestUITests/ChessFlowTests/testLargestTextSupportsCoordinateSolutionAndNavigation": 31.749478936195374,
+    "SidequestUITests/ChessFlowTests/testWhiteFixtureWrongMovesResetAndCompletedRevisit": 64.68886590003967,
+    "SidequestUITests/EndlessFlowTests/testEndlessNativeImportsCyclePersistAndKeepHistoryAfterRejectionOrCancel": 255.4662879705429,
+    "SidequestUITests/EndlessFlowTests/testFreshDemoCadenceAcrossBatchesUsesDistinctStoriesAndHasNoCounter": 137.15741991996765,
+    "SidequestUITests/EndlessFlowTests/testGeneratedGamesCompleteResetAndRestoreAfterMultipleBatchesAndCanceledDrag": 220.8349779844284,
+    "SidequestUITests/EndlessFlowTests/testGeneratedPreviewInputSkipAndFirstNewsBoundary": 35,
+    "SidequestUITests/EndlessFlowTests/testLargestTextAndActualReduceMotionKeepEndlessPagingAndExplicitStartUsable": 112.67539596557617,
+    "SidequestUITests/FeedFlowTests/testBackgroundStopsAnUnfinishedGame": 7.73123300075531,
+    "SidequestUITests/FeedFlowTests/testCompletedStateSurvivesOtherCardsAndViewRecomputation": 13.41782796382904,
+    "SidequestUITests/FeedFlowTests/testEmptyAndGamesOnlySessionsHaveUsableBoundaries": 35.49188196659088,
+    "SidequestUITests/FeedFlowTests/testLargestTextKeepsStartAndNavigationReachable": 12.177973985671997,
+    "SidequestUITests/FeedFlowTests/testNewsCardsKeepProvenanceWhileNavigatingTheMixedFeed": 28.03892493247986,
+    "SidequestUITests/FeedFlowTests/testStartConsumesNoMoveAndSkippingRequiresFreshStart": 27.70293092727661,
+    "SidequestUITests/FoundationLaunchTests/testLaunchShowsAccessibleHeading": 5.644127011299133,
+    "SidequestUITests/IntegrationFlowTests/testLargestTextImportedOverflowSourceLinkAndActualReducedMotionKeepNavigation": 96.96831893920898,
+    "SidequestUITests/IntegrationFlowTests/testLibraryAndBackgroundCancelPendingRealGamesAndCompletionSurvivesCancel": 62.06860899925232,
+    "SidequestUITests/IntegrationFlowTests/testNativeImportsReplaceTheMixedDeckPersistAndRejectInvalidFiles": 106.83993005752563,
+    "SidequestUITests/MemoryFlowTests/testLargestTextKeepsEveryTileAndNavigationReachable": 22.091946959495544,
+    "SidequestUITests/MemoryFlowTests/testMismatchTurnsOverAndSkippingReturnsToUnflippedPreview": 16.157047033309937,
+    "SidequestUITests/MemoryFlowTests/testStartMakesNoFlipAndMatchingAllPairsRetainsCompletion": 18.650798082351685,
+    "SidequestUITests/NewsPresentationTests/testOfflineSampleShowsSourceDateLabelAndImportPicker": 17.784078001976013,
+    "SidequestUITests/PagerFlowTests/testDirectCardDragTracksAndCommitsThenReverseReturnsToPreview": 12.801590919494629,
+    "SidequestUITests/PagerFlowTests/testFastFlickAndFirstLastBounds": 15.483782052993774,
+    "SidequestUITests/PagerFlowTests/testHorizontalGameDragAndTapDoNotPage": 7.871904015541077,
+    "SidequestUITests/PagerFlowTests/testLargestTextScrollsContentBeforeOutwardEdgePages": 16.075488924980164,
+    "SidequestUITests/PagerFlowTests/testOriginalLinkOpensWithoutAdvancingTheNewsCard": 20.54658794403076,
+    "SidequestUITests/PagerFlowTests/testReplacingSessionInSameViewRejectsOldRequestAndActivatesNewPreview": 10.631227970123291,
+    "SidequestUITests/PagerFlowTests/testSystemReduceMotionKeepsMenuAndFingerPagingUsable": 46.3997540473938,
+    "SidequestUITests/SudokuFlowTests/testLargestTextKeepsBoardAndInputUsable": 10.605195999145508,
+    "SidequestUITests/SudokuFlowTests/testNormalControlsHaveFullTouchAreasAndCellCornersSelect": 9.471691966056824,
+    "SidequestUITests/SudokuFlowTests/testSolvedBoardRemainsOnCardAndSurvivesRevisit": 17.20818793773651,
+    "SidequestUITests/SudokuFlowTests/testTapStartsOnlyAndCorrectionsResetAfterSkipping": 14.573032021522522
+  },
+  "active_gate": "pre_design_smoke",
+  "workers": 1,
+  "pre_design_smoke": [
+    "SidequestUITests/FoundationLaunchTests/testLaunchShowsAccessibleHeading",
+    "SidequestUITests/PagerFlowTests/testDirectCardDragTracksAndCommitsThenReverseReturnsToPreview",
+    "SidequestUITests/SudokuFlowTests/testTapStartsOnlyAndCorrectionsResetAfterSkipping"
+  ]
+}

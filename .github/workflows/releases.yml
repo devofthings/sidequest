@@ -7,6 +7,9 @@ on:
 
 permissions:
   contents: read
+  actions: read
+  checks: read
+  pull-requests: read
 
 concurrency:
   group: sidequest-release-${{ github.sha }}
@@ -31,6 +34,7 @@ jobs:
       - name: Verify source, documentation, build, and tests
         id: verify
         env:
+          GH_TOKEN: ${{ github.token }}
           SIDEQUEST_EXPECTED_HEAD: ${{ github.sha }}
           SIDEQUEST_BASE_REF: main
         run: python3 scripts/ci-verify.py
@@ -44,6 +48,7 @@ jobs:
       contents: write
       actions: read
       checks: read
+      pull-requests: read
     steps:
       - name: Check out the verified event commit
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, reviewed immutable revision

@@ -135,10 +135,19 @@ class ReleaseTests(unittest.TestCase):
         (self.app / "Info.plist").write_bytes(plistlib.dumps(info))
         (self.app / "Sidequest").write_bytes(b"fictional executable")
         (self.app / "Sidequest").chmod(0o755)
-        self.manifest = {"schema": 1, "commit": HEAD, "run_id": "100", "attempt": "1", "event": "workflow_dispatch",
+        self.manifest = {"schema": 2, "commit": HEAD, "run_id": "100", "attempt": "1", "event": "workflow_dispatch",
                          "ref": "refs/heads/main", "run_number": "24", "runner_name": release.RUNNER, "all_checks_passed": True,
                          "runtime": "iOS 27.0 (24A434)",
                          "xcode": "Xcode 27.0\nBuild version 27A266a", "release_app": str(self.app)}
+        self.manifest["main_smoke_passed"] = True
+        import native_tests
+        root = Path(__file__).resolve().parent.parent
+        selected = native_tests.selection(root)
+        cases = sorted(native_tests.actual_cases(root, "SidequestTests") | set(selected[1:]))
+        self.manifest["tests"] = {"mode": "full", "gate": "pre_design_smoke", "workers": 1, "selected": selected,
+                                  "inventory": cases,
+                                  "worker_inventory": [{"exit_code": 0, "passed": len(cases), "failed": 0, "skipped": 0,
+                                                        "inventory": cases}]}
         self.write_manifest()
         self.github = FakeGitHub()
         original = subprocess.check_output
@@ -167,12 +176,66 @@ class ReleaseTests(unittest.TestCase):
     def publish(self):
         return release.publish(self.github, self.environment, str(self.directory))
 
+    def test_missing_smoke_or_incomplete_native_record_prevents_writes(self):
+        original = copy.deepcopy(self.manifest)
+        reduced = []
+        for target in ("SidequestTests/", "SidequestUITests/"):
+            tests = copy.deepcopy(original["tests"])
+            tests["worker_inventory"][0]["inventory"] = list(tests["inventory"])
+            removed = next(case for case in tests["inventory"] if case.startswith(target))
+            tests["inventory"].remove(removed)
+            tests["worker_inventory"][0]["inventory"].remove(removed)
+            tests["worker_inventory"][0]["passed"] -= 1
+            reduced.append({**original, "tests": tests})
+        variants = [{**original, "schema": 1}, {**original, "main_smoke_passed": False},
+                    {**original, "tests": {"mode": "full"}},
+                    {**original, "tests": {**original["tests"], "gate": "extended_ui"}},
+                    {**original, "tests": {**original["tests"], "gate": None}},
+                    {**original, "tests": {**original["tests"], "inventory": ["unexpected"]}}, *reduced]
+        for manifest in variants:
+            with self.subTest(manifest=manifest):
+                self.manifest = manifest
+                self.write_manifest()
+                with self.assertRaises(RuntimeError):
+                    self.publish()
+                self.assertEqual(self.github.writes, [])
+        self.manifest = original
+        self.write_manifest()
+
+    def test_uploaded_legacy_metadata_retry_preserves_historical_bytes(self):
+        self.publish()
+        item = self.github.releases[0]
+        assets = {asset["name"]: asset for asset in item["assets"]}
+        metadata_asset = assets["build-metadata.json"]
+        metadata = json.loads(self.github.bytes[metadata_asset["id"]])
+        metadata["schema"] = 1
+        metadata.pop("tests")
+        metadata.pop("main_smoke_passed")
+        import hashlib
+        legacy = json.dumps(metadata, sort_keys=True).encode()
+        self.github.bytes[metadata_asset["id"]] = legacy
+        checksum_asset = assets["SHA256SUMS"]
+        self.github.bytes[checksum_asset["id"]] = (
+            f"{metadata['archive_sha256']}  Sidequest-simulator-arm64.zip\n"
+            f"{hashlib.sha256(legacy).hexdigest()}  build-metadata.json\n").encode()
+        for asset in item["assets"]:
+            asset["digest"] = "sha256:" + hashlib.sha256(self.github.bytes[asset["id"]]).hexdigest()
+        original_bytes = copy.deepcopy(self.github.bytes)
+        original_release = copy.deepcopy(item)
+        self.github.writes.clear()
+        self.publish()
+        self.assertEqual(self.github.bytes, original_bytes)
+        self.assertEqual(self.github.releases[0], original_release)
+        self.assertEqual(self.github.writes, [])
+
     def test_draft_assets_complete_before_publication_and_zip_permissions(self):
         self.publish()
         self.assertFalse(self.github.releases[0]["draft"])
         self.assertTrue(self.github.releases[0]["prerelease"])
         self.assertEqual(self.github.tags["2026.10.24"], HEAD)
         self.assertEqual(self.github.releases[0]["name"], "2026.10.24")
+        self.assertIn("all unit tests and three UI smoke cases", self.github.releases[0]["body"])
+        self.assertIn("Comprehensive UI journeys are deferred", self.github.releases[0]["body"])
         self.assertEqual([write[1] for write in self.github.writes if write[0] == "UPLOAD"],
                          ["build-metadata.json", "SHA256SUMS", "Sidequest-simulator-arm64.zip"])
         self.assertEqual(self.github.writes[-1], ("PATCH", "/releases/1"))

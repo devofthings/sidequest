@@ -73,7 +73,7 @@ When a ticket has unresolved technical choices, use the project-local [agent-gri
 
 Before any purchase, paid plan activation, billing setup, or action that may incur charges, ask the user with the service, expected cost, and proposed limit, and wait for explicit approval. This includes paid CI and usage that could exceed free quotas. Commit, push, and merge authorization does not authorize spending. Prefer local or verified free options; if zero-cost execution cannot be confirmed, keep that action pending and continue independent work.
 
-Use only included Codex usage. Never spend or purchase Codex credits, redeem usage resets, or fall back to paid API-key usage. Before starting a new issue or reviewer, check the reported included allowance. When any reported window has 10% or less remaining, a limit is reached, or included allowance cannot be verified, checkpoint and stop autonomous work until ordinary included usage is available on a later authorized run. The reserve reduces overrun risk; it is an agent rule, not an account billing lock. See [docs/AUTONOMY.md](docs/AUTONOMY.md) for the account-control limitation.
+Use only included Codex usage. Never spend or purchase Codex credits, redeem usage resets, or fall back to paid API-key usage. Before starting a new issue or reviewer, check the reported included allowance. When any reported window has 1% or less remaining, a limit is reached, or included allowance cannot be verified, checkpoint and stop autonomous work until ordinary included usage is available on a later authorized run. The owner changed the standing reserve to 1% on October 4, 2026: "lets continue and keep the hold at 1%". This supersedes the earlier 10% reserve. The reserve reduces overrun risk; it is an agent rule, not an account billing lock. See [docs/AUTONOMY.md](docs/AUTONOMY.md) for the account-control limitation.
 
 ## Verification
 
@@ -88,3 +88,7 @@ The user approved extending production beyond its finite deck on October 4, 2026
 ## Demo news and cadence #106
 
 The owner approved more fictional demo articles, an article after four or five games, and removal of the bottom counter on October 4. Follow the lead-selected five-game cadence and nil-only demo policy; preserve private captures and intentional empty imports. This supersedes the initial news-once default, not game generation or the manual release policy. See [demo news policy](docs/DEMO_NEWS.md).
+
+## Faster verification #90
+
+Follow [TESTING.md](docs/TESTING.md) for the owner-approved temporary `pre_design_smoke` gate: all unit tests plus three existing launch/paging/input-reset UI cases on one owned simulator until design agreement. Retain all longer UI journeys for explicit extended runs; ownership changes cannot silently reactivate them. Broader gate activation needs a recorded decision and reviewed source PR. Keep exclusively owned current-source Debug compilation, exact-head PR CI, proven same-gate main inheritance, fresh main install/launch and unique Release builds; missing provenance reruns the full active gate. The owner prioritizes this testing correction before further feature delivery.
