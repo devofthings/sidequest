@@ -3,6 +3,21 @@ import SwiftUI
 @MainActor
 struct MemoryGameView: View {
   let controller: MemoryController
+  @Environment(\.colorScheme) private var scheme
+  @Environment(\.colorSchemeContrast) private var systemContrast
+  @Environment(\.sidequestContrast) private var contrastOverride
+  @Environment(\.accessibilityReduceMotion) private var systemReduceMotion
+  @Environment(\.sidequestReduceMotion) private var motionOverride
+
+  private var theme: SidequestTheme {
+    SidequestTheme(scheme: scheme, contrast: contrastOverride ?? systemContrast)
+  }
+  private var reduceMotion: Bool { motionOverride ?? systemReduceMotion }
+  private var feedbackAnimation: Animation? {
+    guard !reduceMotion, controller.runtime.isVisible else { return nil }
+    if case .preview = controller.runtime.phase { return nil }
+    return .smooth(duration: 0.16)
+  }
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
   var body: some View {
@@ -41,6 +56,10 @@ struct MemoryGameView: View {
       }
     }
     .padding(.horizontal, 4)
+    .transaction { transaction in
+      if case .preview = controller.runtime.phase { transaction.disablesAnimations = true }
+      if !controller.runtime.isVisible { transaction.disablesAnimations = true }
+    }
   }
 
   private func tile(_ index: Int, board: MemoryRules) -> some View {
@@ -59,13 +78,34 @@ struct MemoryGameView: View {
       } content: {
         Image(systemName: revealed ? symbol.imageName : "questionmark")
           .font(.largeTitle)
+          // Concealing a tile removes its answer immediately, even inside an animated update.
+          .transaction {
+            $0.animation = nil
+            $0.disablesAnimations = true
+          }
       }
       .frame(maxWidth: .infinity, minHeight: 72)
-      .background(
-        .secondary.opacity(matched ? 0.2 : 0.08), in: RoundedRectangle(cornerRadius: 12)
-      )
+      .foregroundStyle(revealed && !matched ? theme.ink : SidequestTheme.darkInk)
+      .background {
+        RoundedRectangle(cornerRadius: 16)
+          .fill(matched ? SidequestTheme.lime : (revealed ? theme.surface : SidequestTheme.coral))
+          .animation(feedbackAnimation, value: revealed)
+          .animation(feedbackAnimation, value: matched)
+      }
       .overlay {
-        RoundedRectangle(cornerRadius: 12).strokeBorder(.primary.opacity(0.3))
+        RoundedRectangle(cornerRadius: 16)
+          .strokeBorder(
+            matched ? SidequestTheme.darkInk : theme.border,
+            lineWidth: matched ? 3 : theme.borderWidth
+          )
+          .animation(feedbackAnimation, value: matched)
+      }
+    }
+    .overlay(alignment: .topTrailing) {
+      if matched {
+        Image(systemName: "checkmark.circle.fill")
+          .font(.caption.bold()).foregroundStyle(SidequestTheme.darkInk)
+          .padding(6).accessibilityHidden(true).allowsHitTesting(false)
       }
     }
     .buttonStyle(.plain)

@@ -3,6 +3,21 @@ import SwiftUI
 @MainActor
 struct SudokuGameView: View {
   let controller: SudokuController
+  @Environment(\.colorScheme) private var scheme
+  @Environment(\.colorSchemeContrast) private var systemContrast
+  @Environment(\.sidequestContrast) private var contrastOverride
+  @Environment(\.accessibilityReduceMotion) private var systemReduceMotion
+  @Environment(\.sidequestReduceMotion) private var motionOverride
+
+  private var theme: SidequestTheme {
+    SidequestTheme(scheme: scheme, contrast: contrastOverride ?? systemContrast)
+  }
+  private var reduceMotion: Bool { motionOverride ?? systemReduceMotion }
+  private var feedbackAnimation: Animation? {
+    guard !reduceMotion, controller.runtime.isVisible else { return nil }
+    if case .preview = controller.runtime.phase { return nil }
+    return .smooth(duration: 0.16)
+  }
 
   var body: some View {
     let board = controller.displayedBoard
@@ -17,7 +32,7 @@ struct SudokuGameView: View {
         }
       }
       .overlay {
-        SudokuRegionDividers().stroke(.primary, lineWidth: 2)
+        SudokuRegionDividers().stroke(theme.ink.opacity(0.65), lineWidth: 2)
           .allowsHitTesting(false)
           .accessibilityHidden(true)
       }
@@ -36,7 +51,7 @@ struct SudokuGameView: View {
           .accessibilityIdentifier("sudoku.number.\(value)")
         }
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(SidequestButtonStyle(compact: true))
       .disabled(controller.selectedCell == nil || board.isComplete)
       Button {
         controller.enter(0)
@@ -45,7 +60,7 @@ struct SudokuGameView: View {
           .frame(maxWidth: .infinity, minHeight: 44)
           .contentShape(Rectangle())
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(SidequestButtonStyle(compact: true))
       .disabled(controller.selectedCell == nil || board.isComplete)
       .accessibilityIdentifier("sudoku.clear")
       StableGameRegion {
@@ -66,6 +81,10 @@ struct SudokuGameView: View {
         .accessibilityIdentifier("sudoku.status")
       }
     }
+    .transaction { transaction in
+      if case .preview = controller.runtime.phase { transaction.disablesAnimations = true }
+      if !controller.runtime.isVisible { transaction.disablesAnimations = true }
+    }
   }
 
   private func cell(_ index: Int, board: SudokuBoard) -> some View {
@@ -78,17 +97,31 @@ struct SudokuGameView: View {
     } label: {
       Text(value == 0 ? "·" : String(value))
         .font(.title3.monospacedDigit())
+        .contentTransition(.numericText())
+        .animation(feedbackAnimation, value: value)
         .fontWeight(given ? .bold : .regular)
         .lineLimit(1)
         .minimumScaleFactor(0.6)
         .frame(maxWidth: .infinity, minHeight: 44)
         .aspectRatio(1, contentMode: .fit)
-        .background(.quaternary, in: RoundedRectangle(cornerRadius: 8))
-        .overlay(
-          RoundedRectangle(cornerRadius: 8).stroke(
-            selected ? Color.primary : Color.clear, lineWidth: 3)
+        .foregroundStyle(
+          conflict
+            ? (selected || given || scheme == .light
+              ? Color(red: 0.6, green: 0.04, blue: 0.18) : SidequestTheme.coral)
+            : (selected || given ? SidequestTheme.darkInk : theme.ink)
         )
-        .foregroundStyle(conflict ? Color.red : Color.primary)
+        .background(
+          selected
+            ? SidequestTheme.lavender
+            : (given ? SidequestTheme.lavender : theme.surface),
+          in: RoundedRectangle(cornerRadius: 12)
+        )
+        .overlay(
+          RoundedRectangle(cornerRadius: 12).strokeBorder(
+            selected ? SidequestTheme.darkInk : theme.border,
+            lineWidth: selected ? 3 : theme.borderWidth)
+        )
+        .animation(feedbackAnimation, value: selected)
         .contentShape(Rectangle())
     }
     .buttonStyle(.plain)
