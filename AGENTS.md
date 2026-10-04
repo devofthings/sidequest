@@ -88,3 +88,7 @@ The user approved extending production beyond its finite deck on October 4, 2026
 ## Demo news and cadence #106
 
 The owner approved more fictional demo articles, an article after four or five games, and removal of the bottom counter on October 4. Follow the lead-selected five-game cadence and nil-only demo policy; preserve private captures and intentional empty imports. This supersedes the initial news-once default, not game generation or the manual release policy. See [demo news policy](docs/DEMO_NEWS.md).
+
+## Faster verification #90
+
+Follow [TESTING.md](docs/TESTING.md) for required native coverage, retained ownership-selected extended scenarios, exclusively owned incremental Debug compilation, measured bounded workers and proven main test inheritance. This supersedes duplicate full PR/main test execution only when actual historical reviewed-base/sole-parent/tree and live native provenance pass. Keep exact-head PR CI, fresh main install/launch and unique Release builds; missing evidence falls back to the entire suite. The owner prioritizes this testing correction before further feature delivery.

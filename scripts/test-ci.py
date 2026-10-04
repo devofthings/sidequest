@@ -35,10 +35,16 @@ class CIBoundaryTests(unittest.TestCase):
                                "RUNNER_TEMP": str(root / "_temp"), "RUNNER_NAME": "Sidequest-Mac-foreground",
                                "GITHUB_OUTPUT": str(root / "output"), "GITHUB_STEP_SUMMARY": str(root / "summary")}
 
-                def controlled(command, stdout, **kwargs):
+                def controlled(command, stdout=None, **kwargs):
                     output = ""
                     if command == ["git", "rev-parse", "HEAD"]:
                         output = "a" * 40
+                    elif "launch" in command and "--terminate-running-process" in command:
+                        output = "dev.devofthings.sidequest: 123"
+                    elif "launchctl" in command:
+                        output = "123 0 UIKitApplication:dev.devofthings.sidequest[fixture]"
+                    elif command[:3] == ["xcrun", "simctl", "create"]:
+                        output = "owned"
                     elif command == ["xcodebuild", "-version"]:
                         output = "Xcode 27.0\nBuild version 27A266a"
                     elif command == ["xcrun", "simctl", "list", "devices", "available", "--json"]:
@@ -47,11 +53,17 @@ class CIBoundaryTests(unittest.TestCase):
                     elif command == ["xcrun", "simctl", "list", "runtimes", "--json"]:
                         output = json.dumps({"runtimes": [{"identifier": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
                                              "version": "27.0", "buildversion": "24A434", "isAvailable": True}]})
-                    stdout.write(output)
+                    if stdout is not None:
+                        stdout.write(output)
                     return subprocess.CompletedProcess(command, 0)
 
                 with patch.dict(os.environ, environment), patch.object(Path, "cwd", return_value=root), \
-                     patch.object(subprocess, "run", side_effect=controlled):
+                     patch.object(subprocess, "run", side_effect=controlled), \
+                     patch.object(ci, "inherited_tests", return_value=None), \
+                     patch.object(ci.native_tests, "selection", return_value=["SidequestTests"]), \
+                     patch.object(ci.native_tests, "execute", return_value=({"mode": "full", "selected": ["SidequestTests"]}, root / "cache")):
+                    (root / "scripts").mkdir()
+                    (root / "scripts/native-test-inventory.json").write_text("{}")
                     ci.main()
                 manifest = json.loads((root / "sidequest-diagnostics/100-2/verification.json").read_text())
                 self.assertEqual(manifest["event"], event)
@@ -59,7 +71,23 @@ class CIBoundaryTests(unittest.TestCase):
                 self.assertEqual(manifest["run_id"], "100")
                 self.assertEqual(manifest["attempt"], "2")
                 self.assertTrue(manifest["all_checks_passed"])
+                self.assertEqual(manifest["schema"], 2)
+                self.assertEqual(manifest["tests"]["mode"], "full")
+                self.assertTrue(manifest["main_smoke_passed"])
                 self.assertIn("100-2", (root / "output").read_text())
+
+    def test_main_smoke_requires_actual_launch_and_running_process(self):
+        calls = []
+        def run(label, command):
+            calls.append(label)
+            return "dev.devofthings.sidequest: 123" if label == "smoke-launch" else ""
+        with self.assertRaisesRegex(RuntimeError, "remain running"):
+            ci.smoke("platform=iOS Simulator,id=owned", Path("/owned/app"), run)
+        self.assertNotIn("smoke-terminate", calls)
+        def invalid(label, command):
+            return "launch did not start" if label == "smoke-launch" else ""
+        with self.assertRaisesRegex(RuntimeError, "process identity"):
+            ci.smoke("platform=iOS Simulator,id=owned", Path("/owned/app"), invalid)
 
     def test_older_queued_main_and_stale_pr(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -44,10 +44,10 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 | --- | ---: | ---: |
 | App | 50 | 4,218 |
 | Unit tests | 23 | 3,539 |
-| UI tests | 12 | 1,622 |
-| **Total** | **85** | **9,379** |
+| UI tests | 12 | 1,646 |
+| **Total** | **85** | **9,403** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+6,786 / −470 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+6,810 / −470 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
@@ -95,3 +95,5 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 </details>
 
 Sidequest is the working project name. Public naming availability has not been established.
+
+Verification uses [required native coverage and retained extended scenarios](docs/TESTING.md), exclusively owned current-source Debug compilation, and provenance-gated main test inheritance. The ordinary 5–10-minute target requires measured evidence; focused local checks do not replace exact-head CI.

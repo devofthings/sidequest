@@ -2,6 +2,30 @@ import XCTest
 
 @MainActor
 final class EndlessFlowTests: XCTestCase {
+  func testGeneratedPreviewInputSkipAndFirstNewsBoundary() {
+    let app = launch()
+    app.waitForFeedCard(gameID(0))
+    XCTAssertFalse(app.buttons["sudoku.cell.0"].exists)
+    app.buttons["game.start"].tap()
+    app.buttons["sudoku.cell.0"].tap()
+    app.buttons["sudoku.number.3"].tap()
+    XCTAssertEqual(app.buttons["sudoku.cell.0"].value as? String, "3")
+    app.nextFeedCard()
+    app.previousFeedCard()
+    XCTAssertTrue(app.buttons["game.start"].exists)
+    app.buttons["game.start"].tap()
+    XCTAssertEqual(app.buttons["sudoku.cell.0"].value as? String, "Empty")
+    for _ in 0..<5 { app.nextFeedCard() }
+    app.waitForFeedCard(newsID(0))
+    XCTAssertTrue(app.staticTexts["news.sample"].exists)
+    XCTAssertFalse(app.buttons["game.start"].exists)
+    XCTAssertFalse(app.staticTexts["feed.position"].exists)
+    app.previousFeedCard()
+    app.waitForFeedCard(gameID(4))
+    XCTAssertTrue(app.buttons["game.start"].exists)
+    app.terminate()
+  }
+
   func testGeneratedGamesCompleteResetAndRestoreAfterMultipleBatchesAndCanceledDrag() {
     let app = launch(extra: ["-sidequest-endless-slow-generation"])
     XCTAssertEqual(app.selectedFeedCardID, gameID(0))

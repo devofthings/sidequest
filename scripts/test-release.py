@@ -135,10 +135,15 @@ class ReleaseTests(unittest.TestCase):
         (self.app / "Info.plist").write_bytes(plistlib.dumps(info))
         (self.app / "Sidequest").write_bytes(b"fictional executable")
         (self.app / "Sidequest").chmod(0o755)
-        self.manifest = {"schema": 1, "commit": HEAD, "run_id": "100", "attempt": "1", "event": "workflow_dispatch",
+        self.manifest = {"schema": 2, "commit": HEAD, "run_id": "100", "attempt": "1", "event": "workflow_dispatch",
                          "ref": "refs/heads/main", "run_number": "24", "runner_name": release.RUNNER, "all_checks_passed": True,
                          "runtime": "iOS 27.0 (24A434)",
                          "xcode": "Xcode 27.0\nBuild version 27A266a", "release_app": str(self.app)}
+        self.manifest["main_smoke_passed"] = True
+        self.manifest["tests"] = {"mode": "full", "workers": 1, "selected": ["SidequestTests/Test/testCase"],
+                                  "inventory": ["SidequestTests/Test/testCase"],
+                                  "worker_inventory": [{"exit_code": 0, "passed": 1, "failed": 0, "skipped": 0,
+                                                        "inventory": ["SidequestTests/Test/testCase"]}]}
         self.write_manifest()
         self.github = FakeGitHub()
         original = subprocess.check_output
@@ -166,6 +171,47 @@ class ReleaseTests(unittest.TestCase):
 
     def publish(self):
         return release.publish(self.github, self.environment, str(self.directory))
+
+    def test_missing_smoke_or_incomplete_native_record_prevents_writes(self):
+        original = copy.deepcopy(self.manifest)
+        variants = [{**original, "schema": 1}, {**original, "main_smoke_passed": False},
+                    {**original, "tests": {"mode": "full"}},
+                    {**original, "tests": {**original["tests"], "inventory": ["unexpected"]}}]
+        for manifest in variants:
+            with self.subTest(manifest=manifest):
+                self.manifest = manifest
+                self.write_manifest()
+                with self.assertRaises(RuntimeError):
+                    self.publish()
+                self.assertEqual(self.github.writes, [])
+        self.manifest = original
+        self.write_manifest()
+
+    def test_uploaded_legacy_metadata_retry_preserves_historical_bytes(self):
+        self.publish()
+        item = self.github.releases[0]
+        assets = {asset["name"]: asset for asset in item["assets"]}
+        metadata_asset = assets["build-metadata.json"]
+        metadata = json.loads(self.github.bytes[metadata_asset["id"]])
+        metadata["schema"] = 1
+        metadata.pop("tests")
+        metadata.pop("main_smoke_passed")
+        import hashlib
+        legacy = json.dumps(metadata, sort_keys=True).encode()
+        self.github.bytes[metadata_asset["id"]] = legacy
+        checksum_asset = assets["SHA256SUMS"]
+        self.github.bytes[checksum_asset["id"]] = (
+            f"{metadata['archive_sha256']}  Sidequest-simulator-arm64.zip\n"
+            f"{hashlib.sha256(legacy).hexdigest()}  build-metadata.json\n").encode()
+        for asset in item["assets"]:
+            asset["digest"] = "sha256:" + hashlib.sha256(self.github.bytes[asset["id"]]).hexdigest()
+        original_bytes = copy.deepcopy(self.github.bytes)
+        original_release = copy.deepcopy(item)
+        self.github.writes.clear()
+        self.publish()
+        self.assertEqual(self.github.bytes, original_bytes)
+        self.assertEqual(self.github.releases[0], original_release)
+        self.assertEqual(self.github.writes, [])
 
     def test_draft_assets_complete_before_publication_and_zip_permissions(self):
         self.publish()

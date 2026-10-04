@@ -143,7 +143,7 @@ def release_for_tag(github, tag):
 
 
 def validate_metadata(metadata, head, tag, run):
-    require(isinstance(metadata, dict) and metadata.get("schema") == 1 and
+    require(isinstance(metadata, dict) and metadata.get("schema") in (1, 2) and
             metadata.get("commit") == head and metadata.get("version") == tag and
             tag == release_version(run) and metadata.get("run_id") == str(run["id"]) and
             type(metadata.get("run_number")) is int and metadata["run_number"] == run["run_number"] and
@@ -152,6 +152,36 @@ def validate_metadata(metadata, head, tag, run):
             metadata.get("architecture") == "arm64" and metadata.get("runtime") == "iOS 27.0 (24A434)" and
             re.fullmatch(r"[0-9a-f]{64}", str(metadata.get("archive_sha256"))),
             "Release metadata conflicts with the expected source/version/asset.")
+    if metadata["schema"] == 2:
+        require(metadata.get("main_smoke_passed") is True, "Metadata lacks fresh main smoke evidence.")
+        validate_test_record(metadata.get("tests"))
+
+
+def validate_test_record(tests):
+    require(isinstance(tests, dict) and tests.get("mode") in ("full", "inherited"),
+            "Missing full or inherited test provenance.")
+    if tests["mode"] == "inherited":
+        for key in ("original_head", "reviewed_base", "tree"):
+            require(re.fullmatch(r"[0-9a-f]{40}", str(tests.get(key))), "Invalid inherited test source.")
+        require(type(tests.get("pr")) is int and tests["pr"] > 0 and
+                re.fullmatch(r"[1-9][0-9]*", str(tests.get("run_id"))) and
+                re.fullmatch(r"[1-9][0-9]*", str(tests.get("attempt"))) and
+                isinstance(tests.get("run_url"), str) and tests["run_url"].startswith(f"https://github.com/{REPO}/actions/runs/") and
+                isinstance(tests.get("receipt_url"), str) and bool(tests.get("inventory")),
+                "Missing inherited native run/audit identity.")
+    else:
+        workers = tests.get("worker_inventory")
+        require(tests.get("workers") in (1, 2) and isinstance(workers, list) and len(workers) == tests["workers"],
+                "Missing native worker evidence.")
+        cases = []
+        for worker in workers:
+            require(worker.get("exit_code") == 0 and worker.get("failed") == 0 and worker.get("skipped") == 0 and
+                    type(worker.get("passed")) is int and worker["passed"] > 0 and
+                    isinstance(worker.get("inventory"), list) and len(worker["inventory"]) == worker["passed"],
+                    "Native worker did not pass its complete inventory.")
+            cases += worker["inventory"]
+        require(len(cases) == len(set(cases)) and sorted(cases) == tests.get("inventory"),
+                "Native inventory is missing, duplicated, or inconsistent.")
 
 
 def inspect_assets(github, release, head, tag, run, scratch):
@@ -209,7 +239,7 @@ def publish(github, environment, verification_directory):
     require(directory == parent / f"{environment['GITHUB_RUN_ID']}-{environment['GITHUB_RUN_ATTEMPT']}",
             "Missing or different-host verification directory; no upload fallback is allowed.")
     manifest = json.loads((directory / "verification.json").read_text())
-    require(manifest.get("schema") == 1 and manifest.get("commit") == head and
+    require(manifest.get("schema") == 2 and manifest.get("commit") == head and
             manifest.get("all_checks_passed") is True and manifest.get("event") == "workflow_dispatch" and
             manifest.get("ref") == "refs/heads/main" and manifest.get("runner_name") == RUNNER and
             manifest.get("runtime") == "iOS 27.0 (24A434)" and
@@ -217,6 +247,12 @@ def publish(github, environment, verification_directory):
             manifest.get("run_number") == str(run["run_number"]) and
             manifest.get("attempt") == environment["GITHUB_RUN_ATTEMPT"],
             "Local verification manifest does not match this successful main event.")
+    require(manifest.get("main_smoke_passed") is True, "Fresh main install/launch smoke did not pass.")
+    validate_test_record(manifest.get("tests"))
+    if manifest["tests"]["mode"] == "inherited":
+        from verification_provenance import resolve_inherited_tests
+        current = resolve_inherited_tests(Path.cwd(), head, parent, read_api=github.request)
+        require(current == manifest["tests"], "Inherited test provenance changed or is no longer verifiable.")
     reference = github.request(f"{API}/git/ref/tags/{tag}", optional=True)
     if reference:
         require(reference["object"]["type"] == "commit" and reference["object"]["sha"] == head,
@@ -242,14 +278,15 @@ def publish(github, environment, verification_directory):
             require(Path(manifest["release_app"]).resolve() == app.resolve() and app.resolve().is_relative_to(directory),
                     "Release product is outside the verified local build.")
             archive, info = package(app, directory / "release")
-            metadata = {"schema": 1, "commit": head, "version": tag, "archive": archive.name,
+            metadata = {"schema": 2, "commit": head, "version": tag, "archive": archive.name,
                         "archive_sha256": digest(archive), "architecture": "arm64", "runtime": manifest["runtime"],
                         "minimum_ios": info["MinimumOSVersion"], "xcode": manifest["xcode"],
                         "bundle_identifier": info["CFBundleIdentifier"], "run_id": environment["GITHUB_RUN_ID"],
                         "run_number": run["run_number"], "run_created_at": run["created_at"],
                         "attempt": environment["GITHUB_RUN_ATTEMPT"], "workflow_run_url": run["html_url"],
                         "verification_job_url": job["html_url"],
-                        "installation_url": f"https://github.com/{REPO}/blob/{tag}/docs/INSTALL.md"}
+                        "installation_url": f"https://github.com/{REPO}/blob/{tag}/docs/INSTALL.md",
+                        "tests": manifest["tests"], "main_smoke_passed": True}
             validate_metadata(metadata, head, tag, run)
             metadata_path = directory / "release/build-metadata.json"
             metadata_path.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n")
@@ -264,10 +301,14 @@ def publish(github, environment, verification_directory):
                                  f"{digest(metadata_path)}  build-metadata.json\n")
         if not reference:
             github.request(f"{API}/git/refs", "POST", {"ref": "refs/tags/" + tag, "sha": head})
+        test_note = "Tests executed on this main commit." if metadata.get("tests", {}).get("mode", "full") == "full" else (
+            f"Tests inherited from PR #{metadata['tests']['pr']} at `{metadata['tests']['original_head']}` "
+            f"([original native run]({metadata['tests']['run_url']})); this main commit was freshly compiled, installed, and launched.")
         notes = (f"Private simulator preview from `{head}`.\n\n"
                  f"ARM64 Mac; {metadata['runtime']}; Xcode 27.0 (27A266a). This is a simulator `.app`, not an iPhone IPA.\n\n"
                  f"[Verified build]({metadata['verification_job_url']}) · [Workflow run]({metadata['workflow_run_url']}) · "
                  f"[Installation and source-based iPhone signing]({metadata['installation_url']})\n\n"
+                 f"{test_note}\n\n"
                  "SHA256SUMS and build-metadata.json identify the exact archived build. Personal content and signing are excluded.")
         if not release:
             release = github.request(f"{API}/releases", "POST", {"tag_name": tag, "target_commitish": head,

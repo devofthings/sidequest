@@ -105,3 +105,7 @@ This is the implementation agent's self-assessment under the project-local agent
 | Can issue links prove approval? | Fact | No; require a precise decision and lead confirmation. | WORKFLOW.md distinguishes explicit user approval from labels and issue status. | Reject missing and link-only decisions; lead checks authorization before execution. |
 | Who owns future verification? | Fact | CI once workflows exist; local tooling does not overwrite its gate. | REVIEW.md assigns CI gate ownership to issue #15. | Successful run URL/head evidence required; failed/pending checks block. |
 | Can merge be fully atomic? | Fact | Head is pinned; other state has a documented API race. | The accepted CLI merge process exposes a head-match option and separate checks. | Simulated premerge races stop merging; postmerge parent mismatch reports failure. |
+
+## Main equivalence evidence #90
+
+The exact reviewed PR head still requires successful native CI. [TESTING.md](TESTING.md#main-inheritance) allows main to inherit that full required test evidence only after historical independent audit, actual captured-base sole-parent/full-tree equality and live original successful PR run/check plus local schema-2 coverage proof. Main must freshly compile/install/launch and build its Release product. Missing evidence runs the entire suite; inherited tests remain attributed to the original head/run. The mutable merged PR base cannot replace the captured receipt base.
