@@ -106,8 +106,10 @@ class CIBoundaryTests(unittest.TestCase):
             self.assertEqual(commands[1][-2:], [f"{head}^", head])
 
     def test_successful_main_manifest_retains_workflow_run_number(self):
-        for event, inherited in [("push", False), ("workflow_dispatch", False), ("push", True), ("workflow_dispatch", True)]:
-            with self.subTest(event=event, inherited=inherited), tempfile.TemporaryDirectory() as directory:
+        scenarios = [("push", False, False), ("workflow_dispatch", False, False),
+                     ("push", True, False), ("workflow_dispatch", True, False), ("push", False, True)]
+        for event, inherited, cleanup_failure in scenarios:
+            with self.subTest(event=event, inherited=inherited, cleanup_failure=cleanup_failure), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 environment = {"SIDEQUEST_EXPECTED_HEAD": "a" * 40, "SIDEQUEST_BASE_REF": "main",
                                "GITHUB_RUN_ID": "100", "GITHUB_RUN_ATTEMPT": "2", "GITHUB_RUN_NUMBER": "24",
@@ -117,6 +119,9 @@ class CIBoundaryTests(unittest.TestCase):
 
                 def controlled(command, stdout=None, **kwargs):
                     output = ""
+                    if cleanup_failure and command[:3] == ["xcrun", "simctl", "delete"]:
+                        stdout.write("fixture deletion failed")
+                        return subprocess.CompletedProcess(command, 1)
                     if command[-2:] == ["rev-parse", "HEAD"]:
                         output = "a" * 40
                     elif "launch" in command and "--terminate-running-process" in command:
@@ -146,7 +151,19 @@ class CIBoundaryTests(unittest.TestCase):
                      patch.object(ci.native_tests, "execute", return_value=({"mode": "full", "gate": "pre_design_smoke", "selected": ["SidequestTests"]}, root / "cache")) as execute:
                     (root / "scripts").mkdir()
                     (root / "scripts/native-test-inventory.json").write_text("{}")
-                    ci.main()
+                    if cleanup_failure:
+                        with self.assertRaisesRegex(RuntimeError, "Owned simulator cleanup failed: delete-1"):
+                            ci.main()
+                    else:
+                        ci.main()
+                diagnostics = root / "sidequest-diagnostics/100-2"
+                if cleanup_failure:
+                    self.assertFalse((diagnostics / "verification.json").exists())
+                    commands = json.loads((diagnostics / "commands.json").read_text())
+                    self.assertEqual(commands[-1]["label"], "delete-1")
+                    self.assertEqual(commands[-1]["exit"], 1)
+                    self.assertEqual((diagnostics / "delete-1.log").read_text(), "fixture deletion failed")
+                    continue
                 manifest = json.loads((root / "sidequest-diagnostics/100-2/verification.json").read_text())
                 self.assertEqual(manifest["event"], event)
                 self.assertEqual(manifest["run_number"], "24")
@@ -170,6 +187,8 @@ class CIBoundaryTests(unittest.TestCase):
                 self.assertIn("100-2", (root / "output").read_text())
                 self.assertLess(labels.index("native-source-checkout"), labels.index("create-1"))
                 self.assertLess(labels.index("release-build"), labels.index("manifest-source-checkout"))
+                self.assertLess(labels.index("shutdown-1"), labels.index("delete-1"))
+                self.assertLess(labels.index("delete-1"), labels.index("manifest-source-checkout"))
 
     def test_clean_checkout_rejects_real_tracked_and_untracked_native_inputs(self):
         with tempfile.TemporaryDirectory() as directory:

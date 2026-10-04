@@ -213,6 +213,16 @@ def devices(run, name, count):
             run(f"bootstatus-{index + 1}", ["xcrun", "simctl", "bootstatus", identifier, "-b"])
         yield [f"platform=iOS Simulator,id={identifier}" for identifier in owned]
     finally:
+        failures = []
         for index, identifier in enumerate(owned):
-            # Shutdown only these devices; retain their data for same-device repeatability.
-            run(f"shutdown-{index + 1}", ["xcrun", "simctl", "shutdown", identifier])
+            # Keep each device for the whole run, then remove only returned owned IDs.
+            for operation in ("shutdown", "delete"):
+                label = f"{operation}-{index + 1}"
+                try:
+                    run(label, ["xcrun", "simctl", operation, identifier])
+                except Exception as error:
+                    # A failed cleanup must not prevent attempts on the remaining devices.
+                    failures.append((f"{label} ({identifier})", error))
+        if failures:
+            labels = ", ".join(label for label, _ in failures)
+            raise RuntimeError(f"Owned simulator cleanup failed: {labels}. See retained command logs.") from failures[0][1]
