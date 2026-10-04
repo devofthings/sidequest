@@ -49,6 +49,24 @@ class CIBoundaryTests(unittest.TestCase):
         self.assertEqual(guards, ["github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'"] * 2)
         self.assertIn("needs: verification", release)
 
+    def test_checkout_pins_preserve_exact_revision_history_and_ephemeral_credentials(self):
+        directory = Path(__file__).resolve().parent.parent / ".github/workflows"
+        expected_pin = "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+        expected_refs = {
+            "verification.yml": ["${{ github.event.pull_request.head.sha || github.sha }}"],
+            "releases.yml": ["${{ github.sha }}", "${{ github.sha }}"],
+        }
+        for name, refs in expected_refs.items():
+            source = (directory / name).read_text()
+            checkouts = re.findall(r"^        uses: (actions/checkout@[^ \n]+).*\n"
+                                   r"        with:\n((?:          [^\n]+\n)+)", source, re.MULTILINE)
+            self.assertEqual(len(checkouts), len(refs))
+            for (pin, inputs), ref in zip(checkouts, refs):
+                self.assertEqual(pin, expected_pin)
+                values = dict(re.findall(r"^          ([\w-]+): (.+)$", inputs, re.MULTILINE))
+                self.assertEqual(values, {"ref": ref, "fetch-depth": "0",
+                                          "persist-credentials": "false", "clean": "true"})
+
     def test_main_workflow_grants_exact_read_only_provenance_permissions(self):
         workflow = Path(__file__).resolve().parent.parent / ".github/workflows/releases.yml"
         source = workflow.read_text()
