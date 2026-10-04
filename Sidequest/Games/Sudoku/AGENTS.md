@@ -23,3 +23,7 @@ Place cell sizing, backgrounds, and rectangular content shapes inside Button lab
 ## Generated challenges #104
 
 Normal production generates uniquely solvable 4×4 challenges with game-owned `SudokuGenerator`: randomize a valid solved grid, then consider each clue once and remove it only if the existing solver still finds exactly one solution. Freeze the puzzle before publishing its card and reset its entries/selection without regenerating. Retain concrete controllers only for previous/current/next cards. On eviction, archive the completed board and selected cell and permanently retire the old runtime; restore completed revisits in a fresh inactive owner. Fixed fixtures and all-controller retention remain dedicated finite Debug regressions. See [ENDLESS.md](../../../docs/ENDLESS.md).
+
+## Stable status #108
+
+Reserve the natural size of all instruction, conflict, and solved status messages at the current width/font/text size. Complete status remains readable below the unchanged grid and number/clear controls. Follow [stable layout](../../../docs/GAME_LAYOUT.md) when changing copy or styles; no fixed text height or truncation belongs here.

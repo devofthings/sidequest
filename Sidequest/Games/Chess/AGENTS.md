@@ -38,3 +38,7 @@ After #87, Chess running-app tests reveal controls within the active `feed.cardS
 ## Endless reuse policy #104
 
 The stated first implementation default reuses the two validated original White/Black puzzles. Repeated Chess cards have new card identities but do not claim generated positions. Archive solved attempts and restore them in fresh inactive controllers after eviction; fixture validation remains unchanged. See [ENDLESS.md](../../../docs/ENDLESS.md).
+
+## Stable selection and completion #108
+
+Reserve all own-piece selection and feedback/result text variants with their actual styles. Retain the alternative piece and coordinate controls after checkmate, visibly disabled through the existing input gates, to preserve board/control positions and scroll extent. Read [stable layout](../../../docs/GAME_LAYOUT.md) before changing completion composition. Native regression anchors use an unselected square, not its enlarged selected outline.

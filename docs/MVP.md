@@ -48,3 +48,7 @@ On October 4, 2026, the user requested endless scrolling with automatically gene
 ## Approved follow-up: demo news cadence
 
 The owner approved more clearly fictional English articles for realistic private testing, one article after four or five games, and removal of the visible bottom card counter in [#106](https://github.com/devofthings/sidequest/issues/106). The lead chose five and a 30-story original demo pool for genuinely absent saved news; imported or intentionally empty news stays authoritative. This supersedes the initial news-once/global mixed-shuffle default. Issue #106 merged through [PR #107](https://github.com/devofthings/sidequest/pull/107) as `f3dc1620b675a0d0e90119855a55f8326609d8eb` on October 4, 2026. The immutable finite-MVP download remains unchanged; see [DEMO_NEWS.md](DEMO_NEWS.md) for current source policy.
+
+## Stable gameplay correction
+
+Approved bug [#108](https://github.com/devofthings/sidequest/issues/108) keeps boards and primary controls stable during feedback/completion changes, with complete accessible text and owned overflow. See [GAME_LAYOUT.md](GAME_LAYOUT.md); this does not start the deferred design baseline.

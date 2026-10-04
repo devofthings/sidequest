@@ -15,45 +15,95 @@ struct BubbleShooterView: View {
         .accessibilityLabel("Bubble board")
         .accessibilityValue(boardDescription)
         .accessibilityIdentifier("bubble.board")
-      Text(controller.feedback)
-        .accessibilityIdentifier("bubble.feedback")
-      Text("Shots: \(controller.game.shotsFired) of \(BubbleShooterGame.shotLimit)")
-        .accessibilityIdentifier("bubble.shots")
-      if controller.game.outcome == .playing {
-        Text("Next bubble: \(controller.game.nextColor.name), \(controller.game.nextColor.symbol)")
-        Text("Aim: \(controller.aimDegrees, specifier: "%.0f")°")
-          .accessibilityIdentifier("bubble.angle")
-        Slider(
-          value: Binding(
-            get: { (controller.aimDegrees + 60) / 120 },
-            set: { controller.aim(degrees: $0 * 120 - 60) }),
-          in: 0...1
-        )
-        .disabled(!controller.canFire)
-        .accessibilityLabel("Aim")
-        .accessibilityHint(
-          "Aim from 60 degrees left to 60 degrees right of vertical. The angle is shown above."
-        )
-        .accessibilityIdentifier("bubble.aim")
-        Button("Fire") { controller.fire() }
-          .buttonStyle(.borderedProminent)
-          .controlSize(.large)
-          .frame(minHeight: 44)
-          .disabled(!controller.canFire)
-          .accessibilityIdentifier("bubble.fire")
-      } else {
-        Text(controller.game.outcome == .won ? "You won!" : "You lost")
-          .font(.headline)
-          .accessibilityIdentifier("bubble.outcome")
-        Button("Replay") { controller.replay() }
-          .buttonStyle(.borderedProminent)
-          .controlSize(.large)
-          .frame(minHeight: 44)
-          .disabled(!controller.runtime.isVisible)
-          .accessibilityIdentifier("bubble.replay")
+      StableGameRegion {
+        ZStack {
+          ForEach(feedbackMessages, id: \.self) { Text($0) }
+        }
+      } content: {
+        Text(controller.feedback)
+          .accessibilityIdentifier("bubble.feedback")
       }
+      .monospacedDigit()
+      Text("Shots: \(controller.game.shotsFired) of \(BubbleShooterGame.shotLimit)")
+        .monospacedDigit()
+        .accessibilityIdentifier("bubble.shots")
+      StableGameRegion {
+        aimingControls.disabled(true)
+      } content: {
+        if isPlaying {
+          aimingControls
+        } else {
+          Text(controller.game.outcome == .won ? "You won!" : "You lost")
+            .font(.headline)
+            .accessibilityIdentifier("bubble.outcome")
+        }
+      }
+      Button {
+        if isPlaying { controller.fire() } else { controller.replay() }
+      } label: {
+        StableGameRegion {
+          ZStack {
+            Text("Fire")
+            Text("Replay")
+          }
+        } content: {
+          Text(isPlaying ? "Fire" : "Replay")
+        }
+      }
+      .buttonStyle(.borderedProminent)
+      .controlSize(.large)
+      .frame(minHeight: 44)
+      .disabled(isPlaying ? !controller.canFire : !controller.runtime.isVisible)
+      .accessibilityIdentifier(isPlaying ? "bubble.fire" : "bubble.replay")
     }
     .allowsHitTesting(controller.runtime.isVisible)
+  }
+
+  private var aimingControls: some View {
+    VStack(spacing: 12) {
+      StableGameRegion {
+        ZStack {
+          ForEach(BubbleColor.allCases, id: \.self) { color in
+            Text("Next bubble: \(color.name), \(color.symbol)")
+          }
+        }
+      } content: {
+        Text(
+          "Next bubble: \(controller.game.nextColor.name), \(controller.game.nextColor.symbol)")
+      }
+      StableGameRegion {
+        Text("Aim: −60°")
+      } content: {
+        Text("Aim: \(controller.aimDegrees, specifier: "%.0f")°")
+          .accessibilityIdentifier("bubble.angle")
+      }
+      .monospacedDigit()
+      Slider(
+        value: Binding(
+          get: { (controller.aimDegrees + 60) / 120 },
+          set: { controller.aim(degrees: $0 * 120 - 60) }),
+        in: 0...1
+      )
+      .disabled(!controller.canFire)
+      .accessibilityLabel("Aim")
+      .accessibilityHint(
+        "Aim from 60 degrees left to 60 degrees right of vertical. The angle is shown above."
+      )
+      .accessibilityIdentifier("bubble.aim")
+    }
+  }
+
+  private var isPlaying: Bool { controller.game.outcome == .playing }
+
+  private var feedbackMessages: [String] {
+    [
+      "Clear matching groups of three.", "Shot in flight.",
+      "Bubble attached. Try a matching group.",
+      "Cleared \(BubbleGeometry.slots.count) matching and \(BubbleGeometry.slots.count) detached bubbles.",
+      "Board cleared!", "Challenge ended. Try again.",
+      "Could not fire this shot. Adjust your aim and try again.",
+      "Could not trace this shot. Adjust your aim and try again.",
+    ]
   }
 
   private var board: some View {

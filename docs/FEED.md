@@ -44,3 +44,7 @@ This is the implementation agent's self-assessment under the project-local agent
 | What happens on backgrounding or at boundaries? | Delegated technical choice | Reset unfinished play while inactive; retain completion; bounded navigation and explicit empty/end states. | CONTRACT.md delegates scene policy to #3; MVP forbids offscreen play and automatic advancement. | Controller and UI tests cover background/return, empty/games-only sessions, and end navigation. |
 
 Verification results are recorded in the PR after actual execution. Physical-iPhone execution and completed news/game integration remain outside this ticket.
+
+## Stable game presentation
+
+Playing/completed game roots anchor at the top of the hosted page; previews retain their centered Tap to play. Game-owned measured regions preserve supported message and completion-control extents at the current width/text size. The feed keeps its existing overflow scroller and does not inspect game rules or impose fixed text heights. Read [GAME_LAYOUT.md](GAME_LAYOUT.md) before changing this presentation boundary.

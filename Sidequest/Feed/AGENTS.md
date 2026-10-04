@@ -25,3 +25,7 @@ The user approved extending production beyond its finite deck on October 4, 2026
 ## Demo news and cadence #106
 
 Interleave an available story pool after exactly five games, carrying cadence across batch boundaries and preserving history on revisits. Remove the bottom counter completely; native tests observe settled semantic card identity without hidden numeric state or raw-ID speech. Preserve native gesture and lifecycle boundaries. See [demo news policy](../../docs/DEMO_NEWS.md).
+
+## Stable playable cards #108
+
+Anchor playing/completed game content at the top of the viewport-sized host so changing text cannot re-center the game. Preserve centered previews, title/start semantics, and the existing owned scroller/pager. Game adapters reserve their supported dynamic regions to preserve overflow extent; the feed does not inspect game states or fix text heights. See [stable layout](../../docs/GAME_LAYOUT.md).

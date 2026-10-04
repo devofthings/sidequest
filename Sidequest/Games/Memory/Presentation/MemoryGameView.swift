@@ -22,13 +22,22 @@ struct MemoryGameView: View {
             tile(index, board: board)
           }
         }
-        if board.isCompleted {
-          Label("All pairs found!", systemImage: "checkmark.circle.fill")
-            .font(.title2.bold())
-            .accessibilityIdentifier("memory.completed")
-        } else if board.isResolvingMismatch {
-          Text("Try another pair when these turn over.")
-            .font(.footnote)
+        StableGameRegion {
+          ZStack {
+            Label("All pairs found!", systemImage: "checkmark.circle.fill")
+              .font(.title2.bold())
+            Text("Try another pair when these turn over.").font(.footnote)
+          }
+        } content: {
+          if board.isCompleted {
+            Label("All pairs found!", systemImage: "checkmark.circle.fill")
+              .font(.title2.bold())
+              .accessibilityIdentifier("memory.completed")
+          } else if board.isResolvingMismatch {
+            Text("Try another pair when these turn over.")
+              .font(.footnote)
+              .accessibilityIdentifier("memory.feedback")
+          }
         }
       }
       .padding(.horizontal, 4)
@@ -42,15 +51,23 @@ struct MemoryGameView: View {
     return Button {
       controller.flip(index)
     } label: {
-      Image(systemName: revealed ? symbol.imageName : "questionmark")
-        .font(.largeTitle)
-        .frame(maxWidth: .infinity, minHeight: 72)
-        .background(
-          .secondary.opacity(matched ? 0.2 : 0.08), in: RoundedRectangle(cornerRadius: 12)
-        )
-        .overlay {
-          RoundedRectangle(cornerRadius: 12).strokeBorder(.primary.opacity(0.3))
+      StableGameRegion {
+        ZStack {
+          Image(systemName: "questionmark")
+          ForEach(MemorySymbol.allCases, id: \.self) { Image(systemName: $0.imageName) }
         }
+        .font(.largeTitle)
+      } content: {
+        Image(systemName: revealed ? symbol.imageName : "questionmark")
+          .font(.largeTitle)
+      }
+      .frame(maxWidth: .infinity, minHeight: 72)
+      .background(
+        .secondary.opacity(matched ? 0.2 : 0.08), in: RoundedRectangle(cornerRadius: 12)
+      )
+      .overlay {
+        RoundedRectangle(cornerRadius: 12).strokeBorder(.primary.opacity(0.3))
+      }
     }
     .buttonStyle(.plain)
     .disabled(matched || board.isResolvingMismatch || board.isCompleted)

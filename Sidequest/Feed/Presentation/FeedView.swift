@@ -115,8 +115,10 @@ struct FeedView: View {
             gameContent(game, runtime)
           }
         }
-        .frame(maxWidth: .infinity)
         .padding(16)
+        .frame(
+          maxWidth: .infinity, maxHeight: .infinity,
+          alignment: runtime.phase == .preview ? .center : .top)
       }
     }
   }

@@ -38,3 +38,7 @@ The implementation agent reassessed #8 after merged #87: use shared UI menu-navi
 ## Generated challenges #104
 
 `BubbleChallengeGenerator` bounds candidate preparation to 16 small ceiling-connected shapes and 121 real-physics angle probes per shape. Accept only a replayed winning witness within the existing eight-shot bound, otherwise try a small varied fallback with the same bound; failure remains explicit. Freeze geometry/colors/shot sequence per card. Skip/reset and Replay restore that configuration. Completed win/loss archives include game, aim, feedback, and lifecycle identity. Rehydration binds one fresh inactive runtime; old owners retire permanently. See [ENDLESS.md](../../../docs/ENDLESS.md).
+
+## Stable feedback and Replay #108
+
+Reserve supported feedback, next-color, angle, and Fire/Replay text using the shared measured region. Use monospaced digits plus the bounded slot count for numeric feedback widths. On completion, replace the actual aiming subtree with a hidden, inaccessible, disabled reservation; opacity alone leaves native Slider accessibility alive. Keep Replay in Fire's measured position and fully readable outcome/feedback. Read [stable layout](../../../docs/GAME_LAYOUT.md) before changing these regions.
