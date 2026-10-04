@@ -422,5 +422,12 @@
     "SidequestUITests/SudokuFlowTests/testNormalControlsHaveFullTouchAreasAndCellCornersSelect": 9.471691966056824,
     "SidequestUITests/SudokuFlowTests/testSolvedBoardRemainsOnCardAndSurvivesRevisit": 17.20818793773651,
     "SidequestUITests/SudokuFlowTests/testTapStartsOnlyAndCorrectionsResetAfterSkipping": 14.573032021522522
-  }
+  },
+  "active_gate": "pre_design_smoke",
+  "workers": 1,
+  "pre_design_smoke": [
+    "SidequestUITests/FoundationLaunchTests/testLaunchShowsAccessibleHeading",
+    "SidequestUITests/PagerFlowTests/testDirectCardDragTracksAndCommitsThenReverseReturnsToPreview",
+    "SidequestUITests/SudokuFlowTests/testTapStartsOnlyAndCorrectionsResetAfterSkipping"
+  ]
 }

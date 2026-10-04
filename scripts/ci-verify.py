@@ -123,8 +123,9 @@ def main():
         changed = changed_paths(expected, base, event, run)
         selected = native_tests.selection(root, changed if event == "pull_request" else None)
         cache_root = diagnostics.parent.parent / "sidequest-debug-cache"
-        # Selected only from the recorded comparable benchmark; serial is the safe default.
-        workers = json.loads((root / "scripts/native-test-inventory.json").read_text()).get("workers", 1)
+        # The approved pre-design smoke inventory uses one owned simulator.
+        policy = native_tests.inventory(root)
+        workers = policy.get("workers", 1)
         if workers not in (1, 2):
             raise RuntimeError("Unsupported native worker policy.")
         verify_clean_checkout(root, expected, run, "native-source")
@@ -138,7 +139,7 @@ def main():
                 tests = evidence
             else:
                 tests, _ = native_tests.execute(root, diagnostics, cache_root, destinations, selected,
-                                                run, xcode, sdk, runtimes)
+                                                run, xcode, sdk, runtimes, gate=policy["active_gate"])
                 if event != "pull_request":
                     # Also prove the freshly compiled fallback main can install and launch.
                     boundary, key = native_tests.cache_identity(root, xcode, sdk, runtimes)
@@ -149,7 +150,7 @@ def main():
             release[release.index("Debug")] = "Release"
             run("release-build", release + ["ARCHS=arm64", "build"])
         verify_clean_checkout(root, expected, run, "manifest-source")
-        summary.append(f"- tests: {tests['mode']}; {len(tests.get('inventory', []))} verified cases")
+        summary.append(f"- tests: {tests['mode']}; gate {tests['gate']}; {len(tests.get('inventory', []))} verified cases")
         manifest = {
             "schema": 2, "commit": expected, "run_id": run_id, "attempt": attempt,
             "run_number": os.environ["GITHUB_RUN_NUMBER"],

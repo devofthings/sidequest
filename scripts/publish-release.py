@@ -160,6 +160,7 @@ def validate_metadata(metadata, head, tag, run):
 def validate_test_record(tests):
     require(isinstance(tests, dict) and tests.get("mode") in ("full", "inherited"),
             "Missing full or inherited test provenance.")
+    require(tests.get("gate") == "pre_design_smoke", "Missing approved pre-design smoke gate identity.")
     if tests["mode"] == "inherited":
         for key in ("original_head", "reviewed_base", "tree"):
             require(re.fullmatch(r"[0-9a-f]{40}", str(tests.get(key))), "Invalid inherited test source.")
@@ -171,7 +172,7 @@ def validate_test_record(tests):
                 "Missing inherited native run/audit identity.")
     else:
         workers = tests.get("worker_inventory")
-        require(tests.get("workers") in (1, 2) and isinstance(workers, list) and len(workers) == tests["workers"],
+        require(tests.get("workers") == 1 and isinstance(workers, list) and len(workers) == tests["workers"],
                 "Missing native worker evidence.")
         cases = []
         for worker in workers:
@@ -249,6 +250,14 @@ def publish(github, environment, verification_directory):
             "Local verification manifest does not match this successful main event.")
     require(manifest.get("main_smoke_passed") is True, "Fresh main install/launch smoke did not pass.")
     validate_test_record(manifest.get("tests"))
+    import native_tests
+    policy = native_tests.inventory(Path.cwd())
+    expected_cases = sorted(native_tests.actual_cases(Path.cwd(), "SidequestTests") | set(policy["pre_design_smoke"]))
+    require(manifest["tests"]["gate"] == policy["active_gate"] and manifest["tests"].get("inventory") == expected_cases,
+            "Manifest does not verify the full approved unit and UI smoke gate.")
+    if manifest["tests"]["mode"] == "full":
+        require(manifest["tests"].get("selected") == native_tests.selection(Path.cwd()),
+                "Manifest selection differs from the approved active gate.")
     if manifest["tests"]["mode"] == "inherited":
         from verification_provenance import resolve_inherited_tests
         current = resolve_inherited_tests(Path.cwd(), head, parent, read_api=github.request)
@@ -304,6 +313,8 @@ def publish(github, environment, verification_directory):
         test_note = "Tests executed on this main commit." if metadata.get("tests", {}).get("mode", "full") == "full" else (
             f"Tests inherited from PR #{metadata['tests']['pr']} at `{metadata['tests']['original_head']}` "
             f"([original native run]({metadata['tests']['run_url']})); this main commit was freshly compiled, installed, and launched.")
+        if metadata.get("tests", {}).get("gate") == "pre_design_smoke":
+            test_note += " Approved pre-design coverage: all unit tests and three UI smoke cases. Comprehensive UI journeys are deferred until design agreement."
         notes = (f"Private simulator preview from `{head}`.\n\n"
                  f"ARM64 Mac; {metadata['runtime']}; Xcode 27.0 (27A266a). This is a simulator `.app`, not an iPhone IPA.\n\n"
                  f"[Verified build]({metadata['verification_job_url']}) · [Workflow run]({metadata['workflow_run_url']}) · "

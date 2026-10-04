@@ -96,4 +96,4 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 
 Sidequest is the working project name. Public naming availability has not been established.
 
-Verification uses [required native coverage and retained extended scenarios](docs/TESTING.md), exclusively owned current-source Debug compilation, and provenance-gated main test inheritance. The ordinary 5–10-minute target requires measured evidence; focused local checks do not replace exact-head CI.
+Until design agreement, verification uses [all unit tests and three UI smoke cases](docs/TESTING.md) on one owned simulator, current-source Debug compilation, and proven same-gate main test inheritance. Longer UI journeys remain available explicitly. The earlier 139-case two-worker comparison took 6 minutes 38 seconds under warm conditions; final smoke-gate CI timing remains pending. Focused checks do not replace exact-head CI.

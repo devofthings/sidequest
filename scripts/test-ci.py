@@ -103,10 +103,11 @@ class CIBoundaryTests(unittest.TestCase):
 
                 with patch.dict(os.environ, environment), patch.object(Path, "cwd", return_value=root), \
                      patch.object(subprocess, "run", side_effect=controlled), \
-                     patch.object(ci, "inherited_tests", return_value={"mode": "inherited", "original_head": "b" * 40, "inventory": ["original/test/case"]} if inherited else None), \
+                     patch.object(ci, "inherited_tests", return_value={"mode": "inherited", "gate": "pre_design_smoke", "original_head": "b" * 40, "inventory": ["original/test/case"]} if inherited else None), \
                      patch.object(ci.native_tests, "owned_execution", side_effect=nullcontext), \
                      patch.object(ci.native_tests, "selection", return_value=["SidequestTests"]), \
-                     patch.object(ci.native_tests, "execute", return_value=({"mode": "full", "selected": ["SidequestTests"]}, root / "cache")) as execute:
+                     patch.object(ci.native_tests, "inventory", return_value={"active_gate": "pre_design_smoke", "workers": 1}), \
+                     patch.object(ci.native_tests, "execute", return_value=({"mode": "full", "gate": "pre_design_smoke", "selected": ["SidequestTests"]}, root / "cache")) as execute:
                     (root / "scripts").mkdir()
                     (root / "scripts/native-test-inventory.json").write_text("{}")
                     ci.main()
@@ -119,6 +120,9 @@ class CIBoundaryTests(unittest.TestCase):
                 self.assertEqual(manifest["schema"], 2)
                 self.assertEqual(manifest["tests"]["mode"], "inherited" if inherited else "full")
                 self.assertEqual(execute.call_count, 0 if inherited else 1)
+                self.assertEqual(manifest["tests"]["gate"], "pre_design_smoke")
+                if not inherited:
+                    self.assertEqual(execute.call_args.kwargs["gate"], "pre_design_smoke")
                 commands = json.loads((root / "sidequest-diagnostics/100-2/commands.json").read_text())
                 labels = [item["label"] for item in commands]
                 self.assertIn("smoke-install", labels)

@@ -92,12 +92,14 @@ class NativeTests(unittest.TestCase):
         root = Path(__file__).resolve().parent.parent
         policy = native.inventory(root)
         required = native.selection(root, [])
-        full = native.selection(root)
+        self.assertEqual(set(required), {"SidequestTests", *policy["pre_design_smoke"]})
+        self.assertEqual(native.selection(root), required)
+        full = native.selection(root, extended=True)
         self.assertTrue(set(required) < set(full))
         self.assertEqual(set(full), {"SidequestTests", *policy["required"], *policy["extended"]})
         relevant = native.selection(root, ["Sidequest/Games/Chess/Presentation/ChessController.swift"])
-        self.assertIn("SidequestUITests/ChessFlowTests/testBlackFixtureWrongMovesResetAndCompletedRevisit", relevant)
-        self.assertNotIn("SidequestUITests/BubbleFlowTests/testSevenStraightShotsLoseAndReplayRestoresChallenge", relevant)
+        self.assertEqual(relevant, required, "Ownership paths cannot restore deferred UI gates.")
+        self.assertEqual(native.selection(root, ["Sidequest/", "SidequestUITests/"]), required)
         for groups in [native.shards(full, policy, 1), native.shards(full, policy, 2)]:
             flattened = [case for group in groups for case in group]
             self.assertEqual(len(flattened), len(set(flattened)))

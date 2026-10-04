@@ -50,6 +50,11 @@ def main():
     if not selected:
         raise RuntimeError("Choose --unit, --ui, --required, --extended, or --benchmark.")
     selected = sorted(set(selected))
+    gate = "focused"
+    if args.extended:
+        gate = "extended_ui"
+    elif args.required or args.benchmark:
+        gate = native_tests.inventory(root)["active_gate"]
     with native_tests.owned_execution(), native_tests.devices(run, "Sidequest 90 " + uuid.uuid4().hex[:8], 2 if args.benchmark else 1) as destinations:
         # Compile once to warm the same canonical cache before timing either policy.
         if args.benchmark:
@@ -62,7 +67,7 @@ def main():
             measured = time.monotonic()
             worker_run = runner(directory)
             record, _ = native_tests.execute(root, directory, args.cache, destinations[:workers], selected,
-                                             worker_run, xcode, sdk, runtime)
+                                             worker_run, xcode, sdk, runtime, gate=gate)
             if args.benchmark:
                 # Measure the ordinary verification pipeline, not just XCTest wall time.
                 for script in ("check-documentation.py", "test-documentation.py", "test-ci.py",

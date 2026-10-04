@@ -140,10 +140,14 @@ class ReleaseTests(unittest.TestCase):
                          "runtime": "iOS 27.0 (24A434)",
                          "xcode": "Xcode 27.0\nBuild version 27A266a", "release_app": str(self.app)}
         self.manifest["main_smoke_passed"] = True
-        self.manifest["tests"] = {"mode": "full", "workers": 1, "selected": ["SidequestTests/Test/testCase"],
-                                  "inventory": ["SidequestTests/Test/testCase"],
-                                  "worker_inventory": [{"exit_code": 0, "passed": 1, "failed": 0, "skipped": 0,
-                                                        "inventory": ["SidequestTests/Test/testCase"]}]}
+        import native_tests
+        root = Path(__file__).resolve().parent.parent
+        selected = native_tests.selection(root)
+        cases = sorted(native_tests.actual_cases(root, "SidequestTests") | set(selected[1:]))
+        self.manifest["tests"] = {"mode": "full", "gate": "pre_design_smoke", "workers": 1, "selected": selected,
+                                  "inventory": cases,
+                                  "worker_inventory": [{"exit_code": 0, "passed": len(cases), "failed": 0, "skipped": 0,
+                                                        "inventory": cases}]}
         self.write_manifest()
         self.github = FakeGitHub()
         original = subprocess.check_output
@@ -174,9 +178,20 @@ class ReleaseTests(unittest.TestCase):
 
     def test_missing_smoke_or_incomplete_native_record_prevents_writes(self):
         original = copy.deepcopy(self.manifest)
+        reduced = []
+        for target in ("SidequestTests/", "SidequestUITests/"):
+            tests = copy.deepcopy(original["tests"])
+            tests["worker_inventory"][0]["inventory"] = list(tests["inventory"])
+            removed = next(case for case in tests["inventory"] if case.startswith(target))
+            tests["inventory"].remove(removed)
+            tests["worker_inventory"][0]["inventory"].remove(removed)
+            tests["worker_inventory"][0]["passed"] -= 1
+            reduced.append({**original, "tests": tests})
         variants = [{**original, "schema": 1}, {**original, "main_smoke_passed": False},
                     {**original, "tests": {"mode": "full"}},
-                    {**original, "tests": {**original["tests"], "inventory": ["unexpected"]}}]
+                    {**original, "tests": {**original["tests"], "gate": "extended_ui"}},
+                    {**original, "tests": {**original["tests"], "gate": None}},
+                    {**original, "tests": {**original["tests"], "inventory": ["unexpected"]}}, *reduced]
         for manifest in variants:
             with self.subTest(manifest=manifest):
                 self.manifest = manifest
@@ -219,6 +234,8 @@ class ReleaseTests(unittest.TestCase):
         self.assertTrue(self.github.releases[0]["prerelease"])
         self.assertEqual(self.github.tags["2026.10.24"], HEAD)
         self.assertEqual(self.github.releases[0]["name"], "2026.10.24")
+        self.assertIn("all unit tests and three UI smoke cases", self.github.releases[0]["body"])
+        self.assertIn("Comprehensive UI journeys are deferred", self.github.releases[0]["body"])
         self.assertEqual([write[1] for write in self.github.writes if write[0] == "UPLOAD"],
                          ["build-metadata.json", "SHA256SUMS", "Sidequest-simulator-arm64.zip"])
         self.assertEqual(self.github.writes[-1], ("PATCH", "/releases/1"))

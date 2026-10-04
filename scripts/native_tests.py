@@ -41,11 +41,20 @@ def inventory(root):
     classified = set(policy["required"]) | set(policy["extended"])
     if actual != classified or set(policy["required"]) & set(policy["extended"]):
         raise RuntimeError(f"UI coverage inventory differs: {sorted(actual ^ classified)}")
+    if policy.get("active_gate") == "pre_design_smoke":
+        smoke = policy.get("pre_design_smoke", [])
+        if len(smoke) != 3 or len(set(smoke)) != 3 or not set(smoke) <= actual or policy.get("workers") != 1:
+            raise RuntimeError("Pre-design smoke requires three classified cases and one worker.")
+    elif "active_gate" in policy:
+        raise RuntimeError("Unsupported active native gate; record a reviewed policy change first.")
     return policy
 
 
 def selection(root, changed=None, extended=False):
     policy = inventory(root)
+    if policy.get("active_gate") == "pre_design_smoke" and not extended:
+        # Owner defers broader UI gates until design; ownership changes cannot reactivate them.
+        return ["SidequestTests", *sorted(policy["pre_design_smoke"])]
     selected = list(policy["required"])
     for name, rule in policy["extended"].items():
         if extended or changed is None or any(path.startswith(tuple(rule["paths"])) for path in changed):
@@ -151,7 +160,7 @@ def result_evidence(tree, summary, destination, expected):
             "test_seconds": summary["finishTime"] - summary["startTime"]}
 
 
-def execute(root, diagnostics, cache_root, destinations, selected, run, xcode, sdk, runtime):
+def execute(root, diagnostics, cache_root, destinations, selected, run, xcode, sdk, runtime, gate="focused"):
     boundary, key = cache_identity(root, xcode, sdk, runtime)
     source = source_fingerprint(root)
     with owned_cache(cache_root, boundary, key) as derived:
@@ -183,7 +192,8 @@ def execute(root, diagnostics, cache_root, destinations, selected, run, xcode, s
                   "test_seconds": time.monotonic() - built, "workers": len(destinations),
                   "worker_inventory": evidence,
                   "inventory": sorted(case for item in evidence for case in item["inventory"]),
-                  "selected": selected, "mode": "full"}
+                  "selected": selected, "gate": gate,
+                  "mode": {"pre_design_smoke": "full", "extended_ui": "extended", "focused": "focused"}[gate]}
         if source_fingerprint(root) != source:
             raise RuntimeError("Native source changed during execution; results cannot verify the current checkout.")
         record["source_fingerprint"] = source
