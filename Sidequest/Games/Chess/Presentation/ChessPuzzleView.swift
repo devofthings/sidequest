@@ -87,6 +87,7 @@ struct ChessPuzzleView: View {
     VStack(spacing: 8) {
       Text("Choose the destination")
         .font(.headline)
+        .fixedSize(horizontal: false, vertical: true)
       Menu {
         ForEach(0..<8) { file in
           let name = String("abcdefgh".dropFirst(file).prefix(1))

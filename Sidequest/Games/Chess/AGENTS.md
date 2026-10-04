@@ -26,6 +26,8 @@ For UI verification, bring the full control frame inside the feed's scrolling vi
 
 Apply the 44-point minimum and rectangular content shape inside each alternative control's label; an outer button frame alone can leave only the text tappable. Check actual accessibility dimensions and lower-right edge actions for own-piece selection, File, Rank, and Submit move. These checks must prove the intended selection and completed move, beyond reporting a frame or hittability.
 
+Allow the destination heading to wrap to its full vertical size at accessibility text sizes. Inspect the actual largest-text screenshot for truncation as well as asserting control visibility and the completed move.
+
 No human-owned decision or spending was introduced. Rules, retained composition, both-color gameplay, and largest-text interaction have local evidence. Current exact-head CI and fresh independent review remain required; no physical-iPhone validation is claimed.
 
 After #87, Chess running-app tests reveal controls within the active `feed.cardScroll` and navigate through the compact Feed navigation menu. Wait for the settled position before checking reset/completion; menu dismissal alone does not prove the native animation committed. Preserve the generic feed/replacement routes' original six-card/four-demo membership alongside the seven-card production deck.
