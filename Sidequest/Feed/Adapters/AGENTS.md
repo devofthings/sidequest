@@ -9,3 +9,7 @@ Requests carry their originating controller identity as well as a unique action 
 ## Appended windows
 
 Compare adjacent-window membership as well as selected index on update. Rebuild/recenter only when native tracking, dragging, deceleration, and requested animation are idle; refresh after settlement. Appending cards cannot move selection or start/reset play. Keep hosted child ownership bounded to the adjacent window and verify removed hosting roots release game owners. See [ENDLESS.md](../../../docs/ENDLESS.md).
+
+## Palette hosting #123
+
+Keep the pager and hosting root backgrounds transparent so the opaque SwiftUI semantic canvas is consistent through native page movement. Appearance, contrast, and Reduce Motion are explicitly forwarded by FeedView into each separate hosting root; UIKit retains gesture and content-scroll ownership.

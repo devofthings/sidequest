@@ -8,14 +8,19 @@ struct FeedView: View {
   var openNews: (() -> Void)? = nil
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.self) private var environment
+  @Environment(\.colorSchemeContrast) private var contrast
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @State private var pageRequest: FeedPageRequest?
+
+  private var theme: SidequestTheme {
+    SidequestTheme(scheme: environment.colorScheme, contrast: contrast)
+  }
 
   var body: some View {
     VStack(spacing: 8) {
       HStack {
         Text("Sidequest")
-          .font(.title2.bold())
+          .font(.system(.title2, design: .rounded, weight: .heavy))
           .accessibilityAddTraits(.isHeader)
           .accessibilityIdentifier("foundation.title")
         Spacer(minLength: 8)
@@ -25,6 +30,7 @@ struct FeedView: View {
               .labelStyle(.iconOnly)
               .frame(minWidth: 44, minHeight: 44)
           }
+          .buttonStyle(SidequestButtonStyle(compact: true))
           .accessibilityIdentifier("feed.news")
         }
         Menu {
@@ -40,6 +46,7 @@ struct FeedView: View {
             .frame(minWidth: 44, minHeight: 44)
             .contentShape(Rectangle())
         }
+        .buttonStyle(SidequestButtonStyle(compact: true))
         .accessibilityLabel("Feed navigation")
         .accessibilityIdentifier("feed.navigation")
       }
@@ -50,8 +57,12 @@ struct FeedView: View {
           content: { card in
             AnyView(
               cardContent(card)
+                .foregroundStyle(theme.ink)
+                .background(theme.canvas)
                 .environment(\.dynamicTypeSize, environment.dynamicTypeSize)
                 .environment(\.colorScheme, environment.colorScheme)
+                .environment(\.sidequestContrast, contrast)
+                .environment(\.sidequestReduceMotion, reduceMotion)
                 .environment(\.locale, environment.locale)
                 .environment(\.layoutDirection, environment.layoutDirection))
           }
@@ -74,6 +85,8 @@ struct FeedView: View {
       }
     }
     .padding(.vertical, 8)
+    .foregroundStyle(theme.ink)
+    .background(theme.canvas)
     .onChange(of: ObjectIdentifier(controller), initial: true) { _, _ in
       pageRequest = nil
       controller.setSceneActive(scenePhase == .active)
@@ -99,7 +112,7 @@ struct FeedView: View {
       if let runtime = controller.runtimes[game.id] {
         VStack(spacing: 20) {
           Text(game.kind.title)
-            .font(.title.bold())
+            .font(.system(.title, design: .rounded, weight: .bold))
             .accessibilityAddTraits(.isHeader)
           StableGameRegion {
             startButton(runtime).disabled(true)
@@ -119,7 +132,7 @@ struct FeedView: View {
 
   private func startButton(_ runtime: GameRuntime) -> some View {
     Button("Tap to play", action: runtime.start)
-      .buttonStyle(.borderedProminent)
+      .buttonStyle(SidequestButtonStyle(prominent: true))
       .controlSize(.large)
       .accessibilityHint("Starts this game without making a move.")
       .accessibilityIdentifier("game.start")

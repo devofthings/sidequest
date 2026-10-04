@@ -13,16 +13,24 @@ struct NewsCardView: View {
 @MainActor
 struct NewsCardContent: View {
   let snapshot: NewsSnapshot
+  @Environment(\.colorScheme) private var scheme
+  @Environment(\.colorSchemeContrast) private var systemContrast
+  @Environment(\.sidequestContrast) private var contrastOverride
+
+  private var theme: SidequestTheme {
+    SidequestTheme(scheme: scheme, contrast: contrastOverride ?? systemContrast)
+  }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       if snapshot.isSample {
         Label("Fictional sample", systemImage: "info.circle")
           .font(.caption.bold())
+          .foregroundStyle(theme.secondaryInk)
           .accessibilityIdentifier("news.sample")
       }
       Text(snapshot.headline)
-        .font(.title2.bold())
+        .font(.system(.title2, design: .serif, weight: .bold))
         .accessibilityIdentifier("news.headline")
         .accessibilityAddTraits(.isHeader)
       Text(snapshot.excerpt)
@@ -32,10 +40,12 @@ struct NewsCardContent: View {
         .font(.subheadline.bold())
       Text("Captured \(snapshot.capturedAt.formatted(date: .abbreviated, time: .omitted))")
         .font(.caption)
+        .foregroundStyle(theme.secondaryInk)
         .accessibilityIdentifier("news.captured")
       if let published = snapshot.publishedAt {
         Text("Published \(published.formatted(date: .abbreviated, time: .omitted))")
           .font(.caption)
+          .foregroundStyle(theme.secondaryInk)
       }
       Link(destination: snapshot.sourceURL) {
         Label(
@@ -49,9 +59,16 @@ struct NewsCardContent: View {
           ? "Open fictional sample placeholder from \(snapshot.publisher)"
           : "Read original article from \(snapshot.publisher)"
       )
+      .buttonStyle(SidequestButtonStyle())
       .accessibilityIdentifier("news.source")
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(20)
+    .foregroundStyle(theme.ink)
+    .background(theme.surface, in: RoundedRectangle(cornerRadius: 24))
+    .overlay {
+      RoundedRectangle(cornerRadius: 24)
+        .strokeBorder(theme.border, lineWidth: theme.borderWidth)
+    }
   }
 }

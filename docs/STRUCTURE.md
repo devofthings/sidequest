@@ -9,6 +9,7 @@ Sidequest.xcodeproj/           # Foundation-owned project and shared schemes
 Sidequest/
   App/                        # Entry point and composition root
   Core/                       # Shared cards, lifecycle contracts, and small ports
+  Presentation/               # Shared SwiftUI palette and local control styling
   Feed/
     Domain/                   # Deck/session behavior using shared contracts
     Presentation/             # SwiftUI feed and visibility/action adapter
@@ -48,7 +49,7 @@ These paths describe ownership, not a requirement to create empty folders or pla
 
 Follow [ADR 0003](adr/0003-hexagonal-architecture.md) and [CODING.md](CODING.md). `Core`, `Feed/Domain`, `News/Domain`, and each game's pure `Rules` or `Domain` contain Swift behavior and import no UI, rendering, networking-client, or storage SDK. Folder boundaries express this rule; a single app module does not enforce it automatically.
 
-Presentation and adapters depend on their domain behavior and shared contracts. The feed never imports or inspects individual game rules. `App` wires concrete games and news adapters to the shared card/lifecycle contract. [Contract #2](https://github.com/devofthings/sidequest/issues/2) owns that interface and the agreed start/reset semantics; this layout does not invent its types. Time and randomness enter through small deterministic seams where behavior requires them.
+Presentation and adapters depend on their domain behavior and shared contracts. The feed never imports or inspects individual game rules. Shared `Presentation` tokens/styles contain only UI values and are consumed by feed, news, and game presentation; domain and rules remain independent of them. `App` wires concrete games and news adapters to the shared card/lifecycle contract. [Contract #2](https://github.com/devofthings/sidequest/issues/2) owns that interface and the agreed start/reset semantics; this layout does not invent its types. Time and randomness enter through small deterministic seams where behavior requires them.
 
 Keep assets and redistributable fictional samples in `Resources`. Real personal news captures remain ignored and outside Git and bundled assets. Test fixtures are explicit test resources, not production news or app resources. UI tests interact through the running app and its deterministic inputs, rather than reaching into game implementation.
 

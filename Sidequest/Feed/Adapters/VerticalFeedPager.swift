@@ -57,7 +57,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    view.backgroundColor = .systemBackground
+    view.backgroundColor = .clear
     pager.isPagingEnabled = true
     pager.isDirectionalLockEnabled = true
     pager.showsVerticalScrollIndicator = false
@@ -226,7 +226,7 @@ private final class FeedCardController: UIViewController {
     scroller.accessibilityIdentifier = "feed.cardScroll"
     view.addSubview(scroller)
     addChild(hosting)
-    hosting.view.backgroundColor = .systemBackground
+    hosting.view.backgroundColor = .clear
     hosting.view.translatesAutoresizingMaskIntoConstraints = false
     scroller.addSubview(hosting.view)
     NSLayoutConstraint.activate([
