@@ -41,12 +41,12 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | High scores and leaderboards in phase two | Accepted | User confirmed delivery alongside accounts; the private first MVP remains unchanged. |
 | English news for the first test | Accepted | User choice; documentation is also written in US English. |
 | Validate enjoyment of the mixed feed first | Accepted | User chose enjoyment and willingness to reopen as the initial hypothesis. |
-| Shared design baseline and wireframes after the MVP | Accepted | User deferred this work on October 3, 2026. Build the first MVP with simple, consistent UI following the confirmed product behavior; use personal-test feedback to agree on wireframes and visual direction in issue #13 afterward. Figma is a proposed tool, not a selected dependency. |
+| Research-led MVP design and game animations | Accepted October 5, 2026; supersedes October 3 deferral | Owner requests vivid, modern, attention-grabbing visuals and animations for all games to pitch the MVP. Research before implementation; the lead may select the direction without waiting for owner design approval or personal testing. Preserve accessibility, Reduce Motion, stable geometry, and current game/feed behavior. Issue #13 owns the baseline and bounded implementation tasks. Figma remains proposed; spending still requires approval. |
 | Sudoku, memory, chess puzzles, and a bubble shooter | Accepted | User selected four game types and clarified the ball game as a bubble shooter. |
 | Manually imported news snapshots | Accepted | User chose real snapshot content before automatic refreshing. |
 | Full-card native vertical paging | Accepted | User explicitly prioritized correction #87 on October 4, 2026. It supersedes the dedicated rail: direct continuous drag/native snap, settled selection, compact accessible navigation, and owned overflow scrolling. Follow [FEED.md](FEED.md#navigation-and-eligibility). |
 | Shuffle news and games; reset skipped unfinished games | Accepted | User chose shuffled cards and fresh attempts. |
-| Stable game positions during text and result changes | Accepted bug correction | Owner report on October 4, 2026 in [#108](https://github.com/devofthings/sidequest/issues/108). Top-anchor playable cards and reserve dynamic regions using current fonts/width/text size; preserve complete feedback, owned overflow, and stable completion controls. See [GAME_LAYOUT.md](GAME_LAYOUT.md). No deferred redesign is started. |
+| Stable game positions during text and result changes | Accepted bug correction | Owner report on October 4, 2026 in [#108](https://github.com/devofthings/sidequest/issues/108). Top-anchor playable cards and reserve dynamic regions using current fonts/width/text size; preserve complete feedback, owned overflow, and stable completion controls. See [GAME_LAYOUT.md](GAME_LAYOUT.md). This bug correction predates the separately authorized #13 design work. |
 | Tap to play before starting each game | Accepted | User requested an explicit tap to start. Game cards show a preview until tapped; gameplay stays inside the card. See [MVP.md](MVP.md) for the start and skip behavior. |
 | Simulator and the user's own iPhone via Xcode | Accepted | User choice; TestFlight is deferred. |
 | Installation and run documentation kept current | Accepted | User requested setup guidance. [INSTALL.md](INSTALL.md) records the workflow; executable commands depend on the app foundation. |
@@ -65,6 +65,16 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 | Temporary UI gate until design agreement | Accepted owner choice, October 4, 2026 | Owner selected "Tiny UI smoke suite plus all unit tests (Recommended)". Run all units plus existing launch, native direct paging/reverse preview, and Sudoku real input/skip-reset cases on one simulator. Retain longer UI journeys explicitly; ownership changes cannot reactivate them before a recorded design decision and reviewed source PR. Label full/inherited metadata `pre_design_smoke`; comprehensive UI remains deferred. See [TESTING.md](TESTING.md). |
 | Faster testing before feature delivery | Accepted owner direction, implementation #90 | Owner targets ordinary PR checks at 5–10 minutes and rejects duplicate full PR/main runs. Follow [TESTING.md](TESTING.md) for explicit coverage, current-source build reuse, measured isolated workers, captured audit-base/tree/main smoke and honest inherited provenance. Target achievement requires actual measurement. |
 
+## Pocket-game direction recorded October 4, 2026
+
+| Direction | Status | Follow-up |
+| --- | --- | --- |
+| Pocket-sized variants for every existing game, with compact Chess inspired by the owner's Pocket Chess reference | Accepted future product direction; exact variants and rollout pending | [#117](https://github.com/devofthings/sidequest/issues/117) specifies boards, mechanics, session size and accessibility. Existing small variants should be assessed before replacement; the reference does not select a reduced-board ruleset. |
+| Different difficulties across the games | Accepted future product direction; tiers, defaults and selection/progression pending | [#118](https://github.com/devofthings/sidequest/issues/118) separates challenge difficulty from game preference and phase-two scoring. |
+| Recommend a game less after repeated skips, applying this to all kinds | Requested idea; policy and implementation scope pending | [#119](https://github.com/devofthings/sidequest/issues/119) remains in Ideas. Define exposures/skips, thresholds, recovery, variety, storage and user reset before implementation; no online service is selected. |
+
+The owner's request was to capture these in tickets and Ideas. This record authorizes no unspecified mechanics or preference algorithm, changes no current challenge, and does not broaden preview correction #88. See [MVP follow-ups](MVP.md#requested-pocket-game-follow-ups).
+
 ## Research context
 
 Publisher APIs, news licensing, and game catalogs were discussed as possible inputs, not selected dependencies. Previous price examples are research snapshots and should be rechecked before purchase or integration.
@@ -78,3 +88,7 @@ Publisher APIs, news licensing, and game catalogs were discussed as possible inp
 ## Visible inactive game boards #88 — accepted
 
 On October 4, 2026, the owner clarified: "also tap to play should not hide the game create tickets to fix both". All four game kinds display their actual initial boards before play; Memory remains face down and answers stay hidden. Tap to play enables a fresh attempt without making a move or changing the displayed challenge. The lead selected game-owned frozen display values, one shared lifecycle, top anchoring, and a reserved start footprint to preserve stable layout. See [preview decisions and validation](GAME_PREVIEWS.md). This supersedes hidden-board and centered-preview descriptions; the required three-case UI smoke gate is unchanged.
+
+## Selected MVP design baseline October 5, 2026
+
+Under the owner’s design authorization, the lead selected bright arcade objects on calm light/dark surfaces, vivid game accents, semantic typography, and contained purposeful motion with Reduce Motion alternatives. See [DESIGN.md](DESIGN.md) and [research](research/mvp-design.md). Implementation and rendered evidence remain pending; this is a selected design direction, not verified product behavior.

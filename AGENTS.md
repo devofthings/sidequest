@@ -36,7 +36,7 @@ Before assigning edits in a fresh or handed-off checkout, follow [agent setup](d
 - GitHub Issues own task scope and dependencies. The GitHub Project owns workflow status. Repository docs own the product brief, vocabulary, and decisions.
 - Agents may create and address bounded bug-fix tickets and necessary subtasks within already-approved scope. New or expanded features must be captured in Ideas and receive explicit user agreement before any work beyond recording the proposal. Follow [ticket authorization](docs/WORKFLOW.md#ticket-authorization) before creating, promoting, or assigning work; spending/review rules still apply.
 - Submit every repository change, including documentation, through a PR before reporting it as delivered. Make each issue independently reviewable; link prerequisites rather than expanding the issue into neighboring work.
-- Schedule the shared design baseline and wireframes after the MVP and personal test; follow the accepted [design timing](docs/MVP.md#deferred-work) when planning UI work or dependencies for issue #13.
+- The owner authorized research-led vivid, modern MVP design and animations for all games on October 5, 2026, superseding the wait for personal testing. Research before implementing; the lead may select the direction without waiting for owner design approval. Follow [the accepted design direction](docs/MVP.md#deferred-work) and issue #13; preserve accessibility, Reduce Motion, stable geometry, and spending limits.
 - After resolving an issue or ticket, complete the chat checkpoint below before starting or assigning the next issue.
 - Check [README.md](README.md) for accuracy after each completed ticket. Update it in the same PR when project status, approved scope, source structure, setup, verification, installation/releases, or documentation entry points change. Keep it concise, link detailed guidance, and distinguish planned work from verified capabilities.
 - Follow [ADR 0003](docs/adr/0003-hexagonal-architecture.md) when adding core behavior, ports, or adapters. Keep game rules separate from presentation and introduce small interfaces at replaceable boundaries.
@@ -96,3 +96,7 @@ Follow [TESTING.md](docs/TESTING.md) for the owner-approved temporary `pre_desig
 ## PR-only routine verification #112
 
 On October 4, 2026, the owner instructed "dont do a second check on main". Use exact-head PR verification and fresh independent review as the routine delivery gate. Merging must start no automatic main test/build or publisher job; do not dispatch a manual run to replace that removed check. Preserve historical #90 proof and manual-release verification/metadata compatibility, but dispatch only when the owner explicitly authorizes publication. See [CI.md](docs/CI.md) and [RELEASES.md](docs/RELEASES.md).
+
+## Current authorized usage window
+
+On October 5, 2026, the owner personally reset included usage and authorized this run only until 90% remains (10% used). This stricter current-run checkpoint supersedes the ordinary 1% reserve: check reported usage before new tickets/reviewers and periodically while working, commit and push unfinished work to a PR or draft PR at the threshold, then stop. Do not redeem resets or purchase usage yourself.

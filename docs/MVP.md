@@ -21,7 +21,7 @@ The overall experience is evaluated through personal testing; a quantitative ret
 
 ## Deferred work
 
-The shared design baseline, wireframes, and visual polish follow the first MVP and personal test in [design task #13](https://github.com/devofthings/sidequest/issues/13). Use simple, consistent UI for the MVP based on the confirmed behavior above; a Figma or wireframe approval is not an MVP prerequisite.
+On October 5, 2026, the owner authorized research-led visual design and animations for the MVP pitch in [design task #13](https://github.com/devofthings/sidequest/issues/13), superseding the earlier wait for personal testing. Use a vivid, modern, cohesive direction that draws attention and supports engaging play. Research common visual and motion practices before implementation; the lead may select the direction without waiting for owner design approval. Cover all four games, news, preview/play/completion, and navigation with readable text, accessible controls, Reduce Motion, and stable board geometry. Figma remains a proposed tool; no paid dependency is authorized.
 
 Defer accounts, ads, payments, licensed game catalogs, and social-platform integrations. The user confirmed these boundaries for the first prototype. Automatic scraping and news refreshing are also deferred in favor of manual imports.
 
@@ -51,4 +51,10 @@ The owner approved more clearly fictional English articles for realistic private
 
 ## Stable gameplay correction
 
-Approved bug [#108](https://github.com/devofthings/sidequest/issues/108) keeps boards and primary controls stable during feedback/completion changes, with complete accessible text and owned overflow. See [GAME_LAYOUT.md](GAME_LAYOUT.md); this does not start the deferred design baseline.
+Approved bug [#108](https://github.com/devofthings/sidequest/issues/108) keeps boards and primary controls stable during feedback/completion changes, with complete accessible text and owned overflow. See [GAME_LAYOUT.md](GAME_LAYOUT.md); this correction predates the separately authorized design work in #13.
+
+## Requested pocket-game follow-ups
+
+On October 4, 2026, the owner requested pocket-sized variants for every game, Chess closer to [Pocket Chess](https://play.google.com/store/apps/details?hl=en&id=com.dkxqzbfkjt.pocketchess), and different difficulties. [#117](https://github.com/devofthings/sidequest/issues/117) owns the compact-variant specification, including Chess board/rule choices; [#118](https://github.com/devofthings/sidequest/issues/118) owns difficulty tiers and how they enter the feed. These are accepted future directions with concrete behavior and rollout still pending, not claims about the current MVP. The reference listing describes small boards focused on relevant pieces and puzzles of varying move depth; it does not select Sidequest's dimensions or rules.
+
+The owner also proposed reducing a game's future frequency after repeated skips. [#119](https://github.com/devofthings/sidequest/issues/119) records this in Ideas until signals, bounds, storage and reset behavior are specified. Keep game preference separate from difficulty and the five-game/news cadence. No recommendation algorithm, telemetry service or backend is selected. Current implementation and immutable release evidence remain as recorded above.
