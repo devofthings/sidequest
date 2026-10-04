@@ -17,3 +17,5 @@ Main verification and the publisher both require `statuses: read` to read the or
 ## PR-only routine execution #112
 
 The owner instructed "dont do a second check on main" on October 4, 2026. `verification.yml` accepts only same-repository pull requests; `releases.yml` accepts only `workflow_dispatch`, and both release jobs require that event on main. Never restore a push/schedule/workflow-run trigger or dispatch a manual run as a substitute after merging. Exact-head PR checks and fresh independent review remain required. Manual dispatch is reserved for explicitly owner-authorized publication; preserve its native/provenance and immutable metadata gates. The prior #90 automatic-main proof is historical.
+
+PR verification runs on `opened`, `synchronize`, and `reopened`, including drafts. Moving an already tested unchanged head to ready for review retains that head's successful result and triggers no duplicate run. New commits still run via `synchronize`; missing, failed, or stale exact-head checks still block the review/merge gates.

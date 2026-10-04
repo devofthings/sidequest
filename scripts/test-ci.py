@@ -36,7 +36,13 @@ class CIBoundaryTests(unittest.TestCase):
             self.assertIsNotNone(block)
             self.assertEqual(set(re.findall(r"^  ([\w-]+):", block[1], re.MULTILINE)), events)
         pr = (directory / "verification.yml").read_text()
-        self.assertIn("if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository", pr)
+        activities = re.search(r"^    types: \[([^\]]+)\]$", pr, re.MULTILINE)
+        self.assertIsNotNone(activities)
+        self.assertEqual([value.strip() for value in activities[1].split(",")],
+                         ["opened", "synchronize", "reopened"])
+        # Draft opening and commit changes run; an unchanged ready transition reuses its check.
+        self.assertEqual(re.findall(r"^    if: (.+)$", pr, re.MULTILINE), [
+            "github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository"])
         self.assertIn("ref: ${{ github.event.pull_request.head.sha || github.sha }}", pr)
         release = (directory / "releases.yml").read_text()
         guards = re.findall(r"^    if: (.+)$", release, re.MULTILINE)
