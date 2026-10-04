@@ -42,3 +42,7 @@ The implementation agent reassessed #8 after merged #87: use shared UI menu-navi
 ## Stable feedback and Replay #108
 
 Reserve supported feedback, next-color, angle, and Fire/Replay text using the shared measured region. Use monospaced digits plus the bounded slot count for numeric feedback widths. On completion, replace the actual aiming subtree with a hidden, inaccessible, disabled reservation; opacity alone leaves native Slider accessibility alive. Keep Replay in Fire's measured position and fully readable outcome/feedback. Read [stable layout](../../../docs/GAME_LAYOUT.md) before changing these regions.
+
+## Visible inactive boards #88
+
+Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../../docs/GAME_PREVIEWS.md).

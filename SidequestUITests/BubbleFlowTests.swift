@@ -52,7 +52,8 @@ final class BubbleFlowTests: XCTestCase {
     app.nextFeedCard()
     app.previousFeedCard()
     XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
-    XCTAssertFalse(app.buttons["bubble.fire"].exists)
+    XCTAssertTrue(app.buttons["bubble.fire"].exists)
+    XCTAssertFalse(app.buttons["bubble.fire"].isEnabled)
     start(app)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     // Finishing a fresh current shot also proves the old animation never commits into this attempt.
@@ -131,7 +132,8 @@ final class BubbleFlowTests: XCTestCase {
     pager.swipeDown(velocity: .fast)
     waitForPosition("sample-game-bubbleShooter", in: app)
     XCTAssertTrue(app.buttons["game.start"].exists)
-    XCTAssertFalse(app.buttons["bubble.fire"].exists)
+    XCTAssertTrue(app.buttons["bubble.fire"].exists)
+    XCTAssertFalse(app.buttons["bubble.fire"].isEnabled)
     start(app)
     fire(app, aim: 0.5, expectedShots: 1)
   }
@@ -176,7 +178,8 @@ final class BubbleFlowTests: XCTestCase {
     app.launch()
     XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
     XCTAssertTrue(app.staticTexts["Bubble shooter"].exists)
-    XCTAssertFalse(app.buttons["bubble.fire"].exists)
+    XCTAssertTrue(app.buttons["bubble.fire"].exists)
+    XCTAssertFalse(app.buttons["bubble.fire"].isEnabled)
     return app
   }
 

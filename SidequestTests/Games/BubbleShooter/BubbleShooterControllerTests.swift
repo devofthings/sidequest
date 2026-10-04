@@ -4,15 +4,21 @@ import XCTest
 
 @MainActor
 final class BubbleShooterControllerTests: XCTestCase {
-  func testPreviewAndStartDoNotFireAndAimIsBounded() {
+  func testPreviewAndStartDoNotFireAndAimIsBounded() async {
     let runtime = GameRuntime()
-    let controller = BubbleShooterController(runtime: runtime)
+    var pauses = 0
+    let controller = BubbleShooterController(runtime: runtime, pause: { pauses += 1 })
+    let initial = controller.game
     XCTAssertFalse(controller.fire())
     controller.aim(degrees: 30)
     XCTAssertEqual(controller.aimDegrees, 0)
     runtime.setVisible(true)
     XCTAssertFalse(controller.fire())
+    await Task.yield()
+    XCTAssertEqual(pauses, 0)
+    XCTAssertEqual(controller.game, initial)
     runtime.start()
+    XCTAssertEqual(controller.game, initial)
     XCTAssertEqual(controller.game.shotsFired, 0)
     XCTAssertNil(controller.flight)
     controller.aim(degrees: .nan)

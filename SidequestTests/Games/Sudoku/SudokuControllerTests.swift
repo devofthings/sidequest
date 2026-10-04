@@ -4,13 +4,15 @@ import XCTest
 
 @MainActor
 final class SudokuControllerTests: XCTestCase {
-  func testVisibilityDoesNotCreateBoardAndStartDoesNotSelectOrMove() throws {
+  func testVisibleInitialBoardHasNoAttemptAndStartDoesNotSelectOrMove() throws {
     let controller = try makeController()
     controller.selectCell(2)
     controller.enter(3)
     XCTAssertNil(controller.board)
+    XCTAssertEqual(controller.displayedBoard.cells, controller.puzzle.givens)
     controller.runtime.setVisible(true)
     XCTAssertNil(controller.board)
+    XCTAssertEqual(controller.displayedBoard.cells, controller.puzzle.givens)
     controller.runtime.start()
     XCTAssertEqual(controller.board?.cells, controller.puzzle.givens)
     XCTAssertNil(controller.selectedCell)
@@ -29,11 +31,13 @@ final class SudokuControllerTests: XCTestCase {
     controller.enter(3)
     controller.runtime.setVisible(false)
     XCTAssertNil(controller.board)
+    XCTAssertEqual(controller.displayedBoard.cells, controller.puzzle.givens)
     XCTAssertNil(controller.selectedCell)
     controller.selectCell(4)
     controller.enter(3)
     controller.runtime.setVisible(true)
     XCTAssertNil(controller.board)
+    XCTAssertEqual(controller.displayedBoard.cells, controller.puzzle.givens)
     controller.runtime.start()
     XCTAssertEqual(controller.board?.cells, controller.puzzle.givens)
     XCTAssertNil(controller.selectedCell)

@@ -450,6 +450,30 @@
         "Sidequest/App/",
         "Sidequest.xcodeproj/"
       ]
+    },
+    "SidequestUITests/GamePreviewTests/testAllInitialBoardsRejectPreviewInputAndResetAfterSkipAndBackground": {
+      "lower_layer": "Controller tests cover frozen values and input/task gates; this explicit native check proves visible initial boards, start/reset accessibility, and stable start geometry for all real adapters.",
+      "paths": [
+        "SidequestUITests/GamePreviewTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/GamePreviewTests/testLargestTextKeepsEveryInitialBoardAndStartReachableWithoutMovingTheBoard": {
+      "lower_layer": "Controller tests cover frozen values and input/task gates; this explicit native check proves visible initial boards, start/reset accessibility, and stable start geometry for all real adapters.",
+      "paths": [
+        "SidequestUITests/GamePreviewTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
     }
   },
   "required": [

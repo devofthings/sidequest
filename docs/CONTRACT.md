@@ -18,7 +18,7 @@ The finite historical Debug routes preserve their original verification contract
 
 ## Game lifecycle
 
-`GameLifecycle()` begins in `.preview`, invisible. Its read-only `phase` is `.preview`, `.playing(GameAttemptID)`, or `.completed(GameAttemptID)`. `isVisible` reports host selection. The adapter owns its rules/UI state and asynchronous work; the lifecycle owns eligibility and attempt identity.
+`GameLifecycle()` begins in `.preview`, invisible. Its read-only `phase` is `.preview`, `.playing(GameAttemptID)`, or `.completed(GameAttemptID)`. `isVisible` reports host selection. The adapter owns its rules/UI state and asynchronous work; the lifecycle owns eligibility and attempt identity. Preview displays a game-owned immutable initial board without creating a playable attempt, timer, or task. See [visible board previews](GAME_PREVIEWS.md).
 
 | Call | Result and required handling |
 | --- | --- |

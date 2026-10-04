@@ -20,3 +20,7 @@ The user approved extending production beyond its finite deck on October 4, 2026
 ## Stable presentation #108
 
 Use the shared `StableGameRegion` for state-dependent text that could change board/control geometry. Reserve every supported message at its actual font, width, and Dynamic Type size; update reservations with copy/styling changes. Keep full visible feedback, hide reservations from accessibility/input, and retain game-owned completion control footprints. Playable feed roots anchor at the top; the pager retains overflow ownership. Follow [stable layout guidance](../../docs/GAME_LAYOUT.md) for the accepted choices, actual reproduction, and verification limits.
+
+## Visible inactive boards #88
+
+Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../docs/GAME_PREVIEWS.md).

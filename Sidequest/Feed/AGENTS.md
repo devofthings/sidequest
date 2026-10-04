@@ -28,4 +28,8 @@ Interleave an available story pool after exactly five games, carrying cadence ac
 
 ## Stable playable cards #108
 
-Anchor playing/completed game content at the top of the viewport-sized host so changing text cannot re-center the game. Preserve centered previews, title/start semantics, and the existing owned scroller/pager. Game adapters reserve their supported dynamic regions to preserve overflow extent; the feed does not inspect game states or fix text heights. See [stable layout](../../docs/GAME_LAYOUT.md).
+Anchor playing/completed game content at the top of the viewport-sized host so changing text cannot re-center the game. Issue #88 makes previews top anchored with actual inactive game content and a measured start reservation. Preserve title/start semantics and the existing owned scroller/pager. Game adapters reserve their supported dynamic regions to preserve overflow extent; the feed does not inspect game states or fix text heights. See [stable layout](../../docs/GAME_LAYOUT.md).
+
+## Visible inactive boards #88
+
+Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../docs/GAME_PREVIEWS.md).

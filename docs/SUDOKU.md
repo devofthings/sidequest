@@ -28,3 +28,7 @@ Original fixtures and generated puzzles are checked for valid givens and exactly
 ## Touch-area follow-up
 
 A normal-size simulator probe found undersized number/clear actions and missed taps near editable-cell corners. The follow-up keeps the complete cell rectangle and control sizing inside Button labels, with explicit rectangular content shapes. Actual regression checks select a cell near all four corners and measure every number action and Clear at least 44×44 points. Eleven focused checks passed after the fix: seven unchanged rules/controller tests and four running-app flows, including largest text. Independent review, exact-head CI, and publication are still required; this local result is not a merged-release claim.
+
+## Visible inactive preview #88
+
+The actual initial board displays its givens before Tap to play, with every gameplay control disabled. A derived display value preserves the board while playable state remains absent. Start copies that same initial value without selecting or entering; reset returns to it. See [preview guidance](GAME_PREVIEWS.md) for ownership and validation boundaries.

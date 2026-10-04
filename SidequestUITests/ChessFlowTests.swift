@@ -63,7 +63,8 @@ final class ChessFlowTests: XCTestCase {
     color: String, queen: String, opponent: String, wrong: String, mate: String
   ) {
     let app = launch(color: color)
-    XCTAssertFalse(app.buttons["chess.square.\(queen)"].exists)
+    XCTAssertTrue(app.buttons["chess.square.\(queen)"].exists)
+    XCTAssertFalse(app.buttons["chess.square.\(queen)"].isEnabled)
     app.buttons["game.start"].tap()
     XCTAssertTrue(app.staticTexts["chess.side"].label.hasPrefix(color.capitalized))
     XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")

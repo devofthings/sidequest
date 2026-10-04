@@ -74,3 +74,7 @@ Publisher APIs, news licensing, and game catalogs were discussed as possible inp
 - [dpa WebLines](https://www.dpa.com/de/inhalte-websites-apps)
 - [Famobi game licensing](https://famobi.com/famobi-publishing-service/?locale=en)
 - [TikTok Display API](https://developers.tiktok.com/docs/en/display-api-overview)
+
+## Visible inactive game boards #88 — accepted
+
+On October 4, 2026, the owner clarified: "also tap to play should not hide the game create tickets to fix both". All four game kinds display their actual initial boards before play; Memory remains face down and answers stay hidden. Tap to play enables a fresh attempt without making a move or changing the displayed challenge. The lead selected game-owned frozen display values, one shared lifecycle, top anchoring, and a reserved start footprint to preserve stable layout. See [preview decisions and validation](GAME_PREVIEWS.md). This supersedes hidden-board and centered-preview descriptions; the required three-case UI smoke gate is unchanged.

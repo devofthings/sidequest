@@ -4,7 +4,8 @@ final class SudokuFlowTests: XCTestCase {
   @MainActor
   func testTapStartsOnlyAndCorrectionsResetAfterSkipping() {
     let app = launch()
-    XCTAssertFalse(app.buttons["sudoku.cell.2"].exists)
+    XCTAssertTrue(app.buttons["sudoku.cell.2"].exists)
+    XCTAssertFalse(app.buttons["sudoku.cell.2"].isEnabled)
     app.buttons["game.start"].tap()
     XCTAssertEqual(app.buttons["sudoku.cell.2"].value as? String, "Empty")
     XCTAssertFalse(app.buttons["sudoku.number.3"].isEnabled)

@@ -5,66 +5,65 @@ struct SudokuGameView: View {
   let controller: SudokuController
 
   var body: some View {
-    if let board = controller.board {
-      VStack(spacing: 16) {
-        Text("Each row, column, and 2×2 region needs 1–4.")
-          .font(.subheadline)
-        LazyVGrid(
-          columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8
-        ) {
-          ForEach(0..<16, id: \.self) { index in
-            cell(index, board: board)
+    let board = controller.displayedBoard
+    return VStack(spacing: 16) {
+      Text("Each row, column, and 2×2 region needs 1–4.")
+        .font(.subheadline)
+      LazyVGrid(
+        columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8
+      ) {
+        ForEach(0..<16, id: \.self) { index in
+          cell(index, board: board)
+        }
+      }
+      .overlay {
+        SudokuRegionDividers().stroke(.primary, lineWidth: 2)
+          .allowsHitTesting(false)
+          .accessibilityHidden(true)
+      }
+      HStack(spacing: 8) {
+        ForEach(1...4, id: \.self) { value in
+          Button {
+            controller.enter(value)
+          } label: {
+            Text(String(value))
+              .lineLimit(1)
+              .minimumScaleFactor(0.6)
+              .frame(maxWidth: .infinity, minHeight: 44)
+              .contentShape(Rectangle())
           }
+          .accessibilityLabel("Enter \(value)")
+          .accessibilityIdentifier("sudoku.number.\(value)")
         }
-        .overlay {
-          SudokuRegionDividers().stroke(.primary, lineWidth: 2)
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
+      }
+      .buttonStyle(.bordered)
+      .disabled(controller.selectedCell == nil || board.isComplete)
+      Button {
+        controller.enter(0)
+      } label: {
+        Text("Clear selected cell")
+          .frame(maxWidth: .infinity, minHeight: 44)
+          .contentShape(Rectangle())
+      }
+      .buttonStyle(.bordered)
+      .disabled(controller.selectedCell == nil || board.isComplete)
+      .accessibilityIdentifier("sudoku.clear")
+      StableGameRegion {
+        ZStack {
+          Text("Sudoku solved!")
+          Text("Select an empty cell, then enter a number.")
+          Text("Conflicts need correction.")
         }
-        HStack(spacing: 8) {
-          ForEach(1...4, id: \.self) { value in
-            Button {
-              controller.enter(value)
-            } label: {
-              Text(String(value))
-                .lineLimit(1)
-                .minimumScaleFactor(0.6)
-                .frame(maxWidth: .infinity, minHeight: 44)
-                .contentShape(Rectangle())
-            }
-            .accessibilityLabel("Enter \(value)")
-            .accessibilityIdentifier("sudoku.number.\(value)")
-          }
-        }
-        .buttonStyle(.bordered)
-        .disabled(controller.selectedCell == nil || board.isComplete)
-        Button {
-          controller.enter(0)
-        } label: {
-          Text("Clear selected cell")
-            .frame(maxWidth: .infinity, minHeight: 44)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.bordered)
-        .disabled(controller.selectedCell == nil || board.isComplete)
-        .accessibilityIdentifier("sudoku.clear")
-        StableGameRegion {
-          ZStack {
-            Text("Sudoku solved!")
-            Text("Select an empty cell, then enter a number.")
-            Text("Conflicts need correction.")
-          }
-          .font(.body.bold())
-        } content: {
-          Text(
-            board.isComplete
-              ? "Sudoku solved!"
-              : (board.conflicts.isEmpty
-                ? "Select an empty cell, then enter a number." : "Conflicts need correction.")
-          )
-          .font(.body.bold())
-          .accessibilityIdentifier("sudoku.status")
-        }
+        .font(.body.bold())
+      } content: {
+        Text(
+          board.isComplete
+            ? "Sudoku solved!"
+            : (board.conflicts.isEmpty
+              ? "Select an empty cell, then enter a number." : "Conflicts need correction.")
+        )
+        .font(.body.bold())
+        .accessibilityIdentifier("sudoku.status")
       }
     }
   }

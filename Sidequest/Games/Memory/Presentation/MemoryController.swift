@@ -6,9 +6,11 @@ import Observation
 final class MemoryController {
   let runtime: GameRuntime
   private(set) var rules: MemoryRules?
-  @ObservationIgnored private let makeBoard: () -> MemoryRules
+  private let initialRules: MemoryRules
   @ObservationIgnored private let delay: @MainActor @Sendable () async throws -> Void
   @ObservationIgnored private var mismatchTask: Task<Void, Never>?
+
+  var displayedRules: MemoryRules { rules ?? initialRules }
 
   init(
     runtime: GameRuntime, completedRules: MemoryRules? = nil,
@@ -22,7 +24,7 @@ final class MemoryController {
   ) {
     self.runtime = runtime
     rules = completedRules
-    self.makeBoard = makeBoard
+    initialRules = makeBoard()
     self.delay = delay
     runtime.installEffectHandler { [weak self] effect in self?.apply(effect) }
   }
@@ -47,7 +49,7 @@ final class MemoryController {
     mismatchTask?.cancel()
     mismatchTask = nil
     switch effect {
-    case .start: rules = makeBoard()
+    case .start: rules = initialRules
     case .reset: rules = nil
     case .stop: break
     }

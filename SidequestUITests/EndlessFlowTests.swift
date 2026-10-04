@@ -5,7 +5,8 @@ final class EndlessFlowTests: XCTestCase {
   func testGeneratedPreviewInputSkipAndFirstNewsBoundary() {
     let app = launch()
     app.waitForFeedCard(gameID(0))
-    XCTAssertFalse(app.buttons["sudoku.cell.0"].exists)
+    XCTAssertTrue(app.buttons["sudoku.cell.0"].exists)
+    XCTAssertFalse(app.buttons["sudoku.cell.0"].isEnabled)
     app.buttons["game.start"].tap()
     app.buttons["sudoku.cell.0"].tap()
     app.buttons["sudoku.number.3"].tap()
@@ -29,7 +30,8 @@ final class EndlessFlowTests: XCTestCase {
   func testGeneratedGamesCompleteResetAndRestoreAfterMultipleBatchesAndCanceledDrag() {
     let app = launch(extra: ["-sidequest-endless-slow-generation"])
     XCTAssertEqual(app.selectedFeedCardID, gameID(0))
-    XCTAssertFalse(app.buttons["sudoku.cell.0"].exists)
+    XCTAssertTrue(app.buttons["sudoku.cell.0"].exists)
+    XCTAssertFalse(app.buttons["sudoku.cell.0"].isEnabled)
     app.buttons["game.start"].tap()
     let solution = [3, 4, 1, 2, 1, 2, 3, 4, 2, 3, 4, 1, 4, 1, 2, 3]
     let givens = [4, 5, 8, 15]

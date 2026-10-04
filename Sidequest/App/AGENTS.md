@@ -33,3 +33,7 @@ The user approved extending production beyond its finite deck on October 4, 2026
 Normal startup resolves genuinely absent saved news to the original demo pool; empty, valid, corrupt and unavailable documents retain distinct outcomes. Never auto-save demos. Prepare five-game/news cadence and unique appearances before publishing; commit cursor state only with accepted current appends or safe session replacement. See [demo news policy](../../docs/DEMO_NEWS.md).
 
 For #106, DEBUG integration fixtures use the new `Sidequest Fixtures v2` folder and skip writes when existing bytes match. Actual native probes showed identical newly named JSON imported while cached rewritten filenames remained inert across app installations; stable file identity avoids that provider race. Preserve the historical folder and all private captures. The v2 fixture contents retain the original valid/empty/malformed/reserved/collision cases; Release includes no fixture preparation. Current native helpers resolve the v2 container through Locations and require picker dismissal plus exact outcomes. See [demo verification](../../docs/DEMO_NEWS.md#verification-and-handoff).
+
+## Visible inactive boards #88
+
+Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../docs/GAME_PREVIEWS.md).
