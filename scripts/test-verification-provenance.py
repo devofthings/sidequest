@@ -170,6 +170,8 @@ class ProvenanceTests(unittest.TestCase):
     def test_changed_main_tree_requires_full_verification(self):
         (self.root / "source").write_text("unreviewed")
         self.git("commit", "-qam", "different main")
+        self.git("reset", "--soft", self.base)
+        self.git("commit", "-qm", "different squash tree")
         new_head = self.git("rev-parse", "HEAD")
         self.data[f"{self.prefix}/commits/{new_head}/pulls"] = self.data.pop(f"{self.prefix}/commits/{self.head}/pulls")
         self.head = new_head
