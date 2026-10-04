@@ -16,7 +16,7 @@ Open `Sidequest.xcodeproj`, select the shared **Sidequest** scheme, and run on a
 | --- | --- |
 | Recorded development preview | [2026.10.7](https://github.com/devofthings/sidequest/releases/tag/2026.10.7), from `5dc0320e2757`, published October 3, 2026; predates the current pager |
 | Download | Unsigned ARM64 simulator archive for a Mac; select a verified version from the private [release history](https://github.com/devofthings/sidequest/releases) |
-| Next release | Held until reviewed MVP integration readiness; afterward, explicit manual dispatch under [release policy](docs/RELEASES.md) |
+| Next release | Functional integration passed 133 native tests; fresh review/CI and explicit manual publication remain required under [release policy](docs/RELEASES.md) |
 | Your iPhone | Physical installation is deferred and unverified ([#79](https://github.com/devofthings/sidequest/issues/79)); [local source signing instructions](docs/INSTALL.md#install-on-your-own-iphone) are available |
 | Verified checks for 2026.10.7 | Debug build, unit/UI tests (16 UI tests), and ARM64 Release build passed in the [release verification job](https://github.com/devofthings/sidequest/actions/runs/37158924819/job/111308053366) |
 
@@ -35,19 +35,19 @@ Current source supports full-card native vertical paging: swipe up/down directly
 | Chess puzzles | Playable one-move mates for both colors | [Rules, accessible controls, and exhaustive fixture checks](docs/CHESS.md) |
 | Bubble shooter | Playable bounded challenge | [Rules, aiming, win/loss, and replay checks](docs/BUBBLES.md) |
 
-The feed currently uses clearly labeled fictional news. Manual English snapshot imports are implemented in a standalone Debug preview; connecting saved imports to the mixed feed is pending [#9](https://github.com/devofthings/sidequest/issues/9). See [news preparation and import](docs/NEWS.md). Accounts, synced preferences, and leaderboards are deferred to phase two; [MVP.md](docs/MVP.md) owns the approved scope.
+Normal launch mixes saved English news snapshots with all four real game kinds (five game cards, including both Chess colors). Use **News snapshots** in the feed header to import a JSON replacement set through native Files. Missing or empty news leaves games playable; rejected imports preserve saved news and the current deck. Final integration delivery and published-source installation evidence remain tracked in [#9](https://github.com/devofthings/sidequest/issues/9). See [news preparation and import](docs/NEWS.md). Accounts, synced preferences, and leaderboards are deferred to phase two; [MVP.md](docs/MVP.md) owns the approved scope.
 
 ## Code snapshot
 
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 40 | 3,133 |
-| Unit tests | 17 | 1,955 |
-| UI tests | 10 | 1,056 |
-| **Total** | **67** | **6,144** |
+| App | 42 | 3,488 |
+| Unit tests | 19 | 2,555 |
+| UI tests | 11 | 1,313 |
+| **Total** | **72** | **7,356** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+3,287 / −206 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+4,736 / −443 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.

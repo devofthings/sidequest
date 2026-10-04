@@ -1,6 +1,6 @@
 # Working on Sidequest
 
-Sidequest is a private iPhone MVP mixing news and quick games in one feed. The SwiftUI foundation and simulator verification exist; feed, news, and games follow their owning issues.
+Sidequest is a private iPhone MVP mixing news and quick games in one feed. The SwiftUI feed, manual news imports, and four real game kinds are implemented. Issue #9 owns final integrated delivery and published-source proof; personal testing follows the working MVP.
 
 ## Context for new chats
 
@@ -79,4 +79,4 @@ Use only included Codex usage. Never spend or purchase Codex credits, redeem usa
 
 Implement features without a TDD or test-first workflow, then add or update meaningful unit tests for game rules and feed lifecycle and deterministic end-to-end tests for critical integrated app flows. Cover news actions, explicit tap-to-play, game interaction, and skip/reset through the running app as those flows become available. Applicable tests must pass before merging under [docs/REVIEW.md](docs/REVIEW.md). This is the user's accepted [testing decision](docs/DECISIONS.md); documentation-only changes still use proportionate documentation checks.
 
-Follow [INSTALL.md](docs/INSTALL.md) for the verified Xcode project, shared scheme, simulator build/test/launch commands, source-discovery checks, and local signing workflow. [Application guidance](Sidequest/AGENTS.md) owns foundation isolation and target-membership choices; scoped test guidance owns fixtures. Run applicable app tests and strict Swift lint before merging. For hook and installer changes, run the [tooling checks](docs/FORMATTING.md#verify-tooling-changes). [CI.md](docs/CI.md) owns verified free foreground self-hosted execution and exact-commit verification. Physical-device execution, gameplay tests, and releases remain unverified or pending until their owning tasks provide actual evidence.
+Follow [INSTALL.md](docs/INSTALL.md) for the verified Xcode project, shared scheme, simulator build/test/launch commands, source-discovery checks, and local signing workflow. [Application guidance](Sidequest/AGENTS.md) owns foundation isolation and target-membership choices; scoped test guidance owns fixtures. Run applicable app tests and strict Swift lint before merging. For hook and installer changes, run the [tooling checks](docs/FORMATTING.md#verify-tooling-changes). [CI.md](docs/CI.md) owns verified free foreground self-hosted execution and exact-commit verification. Report gameplay and release results from actual issue/check evidence. Physical-device execution remains deferred and unverified under #79.

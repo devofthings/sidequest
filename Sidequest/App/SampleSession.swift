@@ -5,42 +5,45 @@ enum SampleSession {
   case loaded([FeedCard])
   case failed(String)
 
-  static func make(includeChessVariants: Bool = true) -> Self {
-    do {
-      guard let gardenURL = URL(string: "https://example.com/garden"),
-        let libraryURL = URL(string: "https://example.com/library")
-      else { throw CardValidationError.invalidSourceURL }
-      let timestamp = Date(timeIntervalSince1970: 1_704_067_200)
-      var cards = try [
-        FeedCard.news(
-          NewsSnapshot(
-            id: CardID("sample-news-garden"), headline: "Sample: A neighborhood garden opens",
-            excerpt:
-              "This fictional sample introduces a community garden. It is not a real news report.",
-            publisher: "Sidequest sample", sourceURL: gardenURL,
-            capturedAt: timestamp, isSample: true)),
-        FeedCard.news(
-          NewsSnapshot(
-            id: CardID("sample-news-library"),
-            headline: "Sample: A library hosts a puzzle afternoon",
-            excerpt:
-              "This fictional sample describes a library event. It is not a real news report.",
-            publisher: "Sidequest sample", sourceURL: libraryURL,
-            capturedAt: timestamp, isSample: true)),
-      ]
-      for kind in GameKind.allCases {
-        if kind == .chess, includeChessVariants {
-          cards += try ["white", "black"].map { side in
-            .game(GameCard(id: try CardID("sample-game-chess-\(side)"), kind: .chess))
+  #if DEBUG
+    static func make(includeChessVariants: Bool = true) -> Self {
+      do {
+        guard let gardenURL = URL(string: "https://example.com/garden"),
+          let libraryURL = URL(string: "https://example.com/library")
+        else { throw CardValidationError.invalidSourceURL }
+        let timestamp = Date(timeIntervalSince1970: 1_704_067_200)
+        var cards = try [
+          FeedCard.news(
+            NewsSnapshot(
+              id: CardID("sample-news-garden"), headline: "Sample: A neighborhood garden opens",
+              excerpt:
+                "This fictional sample introduces a community garden. It is not a real news report.",
+              publisher: "Sidequest sample", sourceURL: gardenURL,
+              capturedAt: timestamp, isSample: true)),
+          FeedCard.news(
+            NewsSnapshot(
+              id: CardID("sample-news-library"),
+              headline: "Sample: A library hosts a puzzle afternoon",
+              excerpt:
+                "This fictional sample describes a library event. It is not a real news report.",
+              publisher: "Sidequest sample", sourceURL: libraryURL,
+              capturedAt: timestamp, isSample: true)),
+        ]
+        for kind in GameKind.allCases {
+          if kind == .chess, includeChessVariants {
+            cards += try ["white", "black"].map { side in
+              .game(GameCard(id: try CardID("sample-game-chess-\(side)"), kind: .chess))
+            }
+          } else {
+            cards.append(
+              .game(GameCard(id: try CardID("sample-game-\(kind.rawValue)"), kind: kind)))
           }
-        } else {
-          cards.append(.game(GameCard(id: try CardID("sample-game-\(kind.rawValue)"), kind: kind)))
         }
+        var random = SystemRandomNumberGenerator()
+        return .loaded(try DeckBuilder.shuffled(cards, using: &random))
+      } catch {
+        return .failed(error.localizedDescription)
       }
-      var random = SystemRandomNumberGenerator()
-      return .loaded(try DeckBuilder.shuffled(cards, using: &random))
-    } catch {
-      return .failed(error.localizedDescription)
     }
-  }
+  #endif
 }

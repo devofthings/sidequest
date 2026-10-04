@@ -7,11 +7,21 @@ final class ChessStartupTests: XCTestCase {
   func testLoadsOnceBeforeCompositionAndReplacementReusesImmutableFixtures() async throws {
     let puzzles = try await ChessPuzzleLoader.bundled()
     let gate = FixtureGate()
-    let startup = FeedStartup(loadChess: { try await gate.load() })
-    let loading = Task { await startup.prepare() }
+    let startup = FeedSessionState(loadChess: { try await gate.load() })
+    let loading = Task {
+      await startup.prepare(
+        newsModel: NewsImportModel(
+          store: LocalNewsStore(
+            directory: FileManager.default.temporaryDirectory.appendingPathComponent(
+              "StartupTest-\(UUID().uuidString)"))))
+    }
     await gate.waitForRequest(1)
     guard case .loading = startup.state else { return XCTFail("Composition must await fixtures") }
-    await startup.prepare()
+    await startup.prepare(
+      newsModel: NewsImportModel(
+        store: LocalNewsStore(
+          directory: FileManager.default.temporaryDirectory.appendingPathComponent(
+            "StartupTest-\(UUID().uuidString)"))))
     XCTAssertEqual(gate.count, 1)
     gate.finish(1, with: puzzles)
     await loading.value
@@ -19,7 +29,11 @@ final class ChessStartupTests: XCTestCase {
     XCTAssertNotNil(original.controller)
     XCTAssertEqual(original.chessPuzzles.map(\.id), puzzles.map(\.id))
     let originalCards = original.controller?.cards.map(\.id)
-    await startup.prepare()
+    await startup.prepare(
+      newsModel: NewsImportModel(
+        store: LocalNewsStore(
+          directory: FileManager.default.temporaryDirectory.appendingPathComponent(
+            "StartupTest-\(UUID().uuidString)"))))
     startup.cancelPreparation()
     guard case .ready(let retained) = startup.state else { return XCTFail("Keep loaded feed") }
     XCTAssertTrue(retained === original)
@@ -36,12 +50,24 @@ final class ChessStartupTests: XCTestCase {
   func testLateCanceledLoadCannotOverwriteAReplacementStartup() async throws {
     let puzzles = try await ChessPuzzleLoader.bundled()
     let gate = FixtureGate()
-    let startup = FeedStartup(loadChess: { try await gate.load() })
-    let old = Task { await startup.prepare() }
+    let startup = FeedSessionState(loadChess: { try await gate.load() })
+    let old = Task {
+      await startup.prepare(
+        newsModel: NewsImportModel(
+          store: LocalNewsStore(
+            directory: FileManager.default.temporaryDirectory.appendingPathComponent(
+              "StartupTest-\(UUID().uuidString)"))))
+    }
     await gate.waitForRequest(1)
     startup.cancelPreparation()
     // A dependency can finish despite appearance invalidation; identity must stand alone.
-    let current = Task { await startup.prepare() }
+    let current = Task {
+      await startup.prepare(
+        newsModel: NewsImportModel(
+          store: LocalNewsStore(
+            directory: FileManager.default.temporaryDirectory.appendingPathComponent(
+              "StartupTest-\(UUID().uuidString)"))))
+    }
     await gate.waitForRequest(2)
     gate.finish(2, with: puzzles)
     await current.value
@@ -61,8 +87,14 @@ final class ChessStartupTests: XCTestCase {
   func testCooperativeTaskCancellationReturnsToNotStartedAndCanRetry() async throws {
     let puzzles = try await ChessPuzzleLoader.bundled()
     let gate = FixtureGate()
-    let startup = FeedStartup(loadChess: { try await gate.load() })
-    let canceled = Task { await startup.prepare() }
+    let startup = FeedSessionState(loadChess: { try await gate.load() })
+    let canceled = Task {
+      await startup.prepare(
+        newsModel: NewsImportModel(
+          store: LocalNewsStore(
+            directory: FileManager.default.temporaryDirectory.appendingPathComponent(
+              "StartupTest-\(UUID().uuidString)"))))
+    }
     await gate.waitForRequest(1)
     canceled.cancel()
     gate.finish(1, with: puzzles)
@@ -70,7 +102,13 @@ final class ChessStartupTests: XCTestCase {
     guard case .notStarted = startup.state else {
       return XCTFail("Cancellation must allow a new appearance")
     }
-    let retry = Task { await startup.prepare() }
+    let retry = Task {
+      await startup.prepare(
+        newsModel: NewsImportModel(
+          store: LocalNewsStore(
+            directory: FileManager.default.temporaryDirectory.appendingPathComponent(
+              "StartupTest-\(UUID().uuidString)"))))
+    }
     await gate.waitForRequest(2)
     gate.finish(2, with: puzzles)
     await retry.value
@@ -79,13 +117,21 @@ final class ChessStartupTests: XCTestCase {
   }
 
   func testLoaderFailureRemainsVisibleWithoutPublishingAFeed() async {
-    let startup = FeedStartup(loadChess: { throw ChessFixtureError.missingResource })
-    await startup.prepare()
+    let startup = FeedSessionState(loadChess: { throw ChessFixtureError.missingResource })
+    await startup.prepare(
+      newsModel: NewsImportModel(
+        store: LocalNewsStore(
+          directory: FileManager.default.temporaryDirectory.appendingPathComponent(
+            "StartupTest-\(UUID().uuidString)"))))
     guard case .failed(let message) = startup.state else {
       return XCTFail("Expected visible failure")
     }
     XCTAssertTrue(message.contains("Could not prepare games:"))
-    await startup.prepare()
+    await startup.prepare(
+      newsModel: NewsImportModel(
+        store: LocalNewsStore(
+          directory: FileManager.default.temporaryDirectory.appendingPathComponent(
+            "StartupTest-\(UUID().uuidString)"))))
     guard case .failed = startup.state else {
       return XCTFail("Do not silently retry or fabricate a feed")
     }

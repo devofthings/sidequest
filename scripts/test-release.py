@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test the tracked hold and controlled future-enabled manual publication offline."""
+"""Test readiness, held-source denial, and verified manual publication offline."""
 
 import copy
 import importlib.util
@@ -20,22 +20,23 @@ HEAD = "a" * 40
 
 
 class PublicationHoldTests(unittest.TestCase):
-    def test_tracked_hold_blocks_manual_dispatch_without_external_access_or_env_bypass(self):
-        self.assertFalse(release.PUBLICATION_ENABLED)
+    def test_disabled_source_blocks_manual_dispatch_without_external_access_or_env_bypass(self):
         environment = {"GITHUB_EVENT_NAME": "workflow_dispatch", "GITHUB_REF": "refs/heads/main",
                        "GITHUB_REPOSITORY": release.REPO, "RUNNER_NAME": release.RUNNER,
                        "PUBLICATION_ENABLED": "true", "SIDEQUEST_PUBLICATION_ENABLED": "true"}
         github = FakeGitHub()
-        with patch.object(github, "request", side_effect=AssertionError("No network allowed")), \
+        with patch.object(release, "PUBLICATION_ENABLED", False), \
+             patch.object(github, "request", side_effect=AssertionError("No network allowed")), \
              patch.object(subprocess, "check_output", side_effect=AssertionError("No source access allowed")):
             with self.assertRaisesRegex(RuntimeError, "held until the MVP"):
                 release.publish(github, environment, "")
 
-    def test_push_pr_and_non_main_dispatch_cannot_publish_even_after_future_enablement(self):
+    def test_readiness_flag_is_enabled_but_tracked_source_rejects_automatic_or_non_main_publication(self):
+        self.assertTrue(release.PUBLICATION_ENABLED)
         github = FakeGitHub()
         for event, ref in [("push", "refs/heads/main"), ("pull_request", "refs/pull/1/merge"),
                            ("workflow_dispatch", "refs/heads/feature"), ("workflow_dispatch", "refs/tags/2026.10.24")]:
-            with self.subTest(event=event, ref=ref), patch.object(release, "PUBLICATION_ENABLED", True), \
+            with self.subTest(event=event, ref=ref), \
                  patch.object(github, "request", side_effect=AssertionError("No network allowed")):
                 environment = {"GITHUB_EVENT_NAME": event, "GITHUB_REF": ref,
                                "GITHUB_REPOSITORY": release.REPO, "RUNNER_NAME": release.RUNNER}
