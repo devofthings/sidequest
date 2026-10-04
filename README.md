@@ -32,7 +32,7 @@ Current source supports full-card native vertical paging: swipe up/down directly
 | --- | --- | --- |
 | Mini Sudoku | Playable 4×4 puzzle | [Rules, controls, and checks](docs/SUDOKU.md) |
 | Memory pairs | Playable six-pair board | [Rules, controls, and checks](docs/MEMORY.md) |
-| Chess puzzles | Provisional demo | Playable one-move puzzles pending [#7](https://github.com/devofthings/sidequest/issues/7) |
+| Chess puzzles | Playable one-move mates for both colors | [Rules, accessible controls, and exhaustive fixture checks](docs/CHESS.md) |
 | Bubble shooter | Provisional demo | Playable shooting/matching pending [#8](https://github.com/devofthings/sidequest/issues/8) |
 
 The feed currently uses clearly labeled fictional news. Manual English snapshot imports are implemented in a standalone Debug preview; connecting saved imports to the mixed feed is pending [#9](https://github.com/devofthings/sidequest/issues/9). See [news preparation and import](docs/NEWS.md). Accounts, synced preferences, and leaderboards are deferred to phase two; [MVP.md](docs/MVP.md) owns the approved scope.
@@ -42,12 +42,12 @@ The feed currently uses clearly labeled fictional news. Manual English snapshot 
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 29 | 1,954 |
-| Unit tests | 10 | 1,105 |
-| UI tests | 8 | 622 |
-| **Total** | **47** | **3,681** |
+| App | 36 | 2,546 |
+| Unit tests | 14 | 1,545 |
+| UI tests | 9 | 823 |
+| **Total** | **59** | **4,914** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+800 / −182 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+2,057 / −206 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
@@ -77,6 +77,7 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 - [Feed presentation](docs/FEED.md): manual navigation, retained game runtimes, scene handling, and injected card surfaces.
 - [Mini Sudoku](docs/SUDOKU.md): the 4×4 board, controls, fixture validation, and lifecycle behavior.
 - [Memory pairs](docs/MEMORY.md): the six-pair board, delayed mismatches, and attempt reset.
+- [Chess puzzles](docs/CHESS.md): original one-move puzzles, accessible coordinates, and exhaustive fixture validation.
 - [Source structure](docs/STRUCTURE.md): folder ownership, game grouping, scoped guidance, and verified foundation source discovery.
 - [Review gates](docs/REVIEW_GATES.md): reproducible validation, durable review evidence, and pinned merges.
 - [Continuous verification](docs/CI.md): free foreground self-hosted execution, exact-commit checks, and local diagnostics.
