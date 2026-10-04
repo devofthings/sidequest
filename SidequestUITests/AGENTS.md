@@ -33,3 +33,5 @@ Fresh native pickers may initially show Recents: the first Browse tap selects it
 ## Stable game geometry #108
 
 `StableGameLayoutTests` compares actual running-app board/control frames across text, feedback, completion, and Bubble replay at normal/largest text. Reveal required controls before each baseline; do not scroll between that baseline, action, and comparison. Assert the same selected card and viewport, complete state/message outcomes, disabled/removed completed inputs, and fully visible feedback afterward. Use an unselected Chess square as the anchor because its selected decorative outline enlarges its AX frame. Keep temporary probes/offset metadata outside final sources and preserve failed native evidence.
+
+Keep all eight geometry cases in the native inventory’s explicit extended coverage. The temporary pre-design merge gate remains all unit tests plus its three UI smoke cases; adding a geometry regression does not broaden that gate. See [TESTING.md](../docs/TESTING.md).
