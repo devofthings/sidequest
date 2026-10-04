@@ -5,6 +5,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -120,12 +121,23 @@ class CIBoundaryTests(unittest.TestCase):
             symlink.symlink_to(repo, target_is_directory=True)
             with self.assertRaisesRegex(RuntimeError, "outside every Git"):
                 installer.validate_directory((symlink / "runner").resolve())
+            hooks = root / "fixture-hooks"
+            hooks.mkdir()
+            marker = root / "post-checkout-ran"
+            hook = hooks / "post-checkout"
+            hook.write_text("#!/bin/sh\n: > " + shlex.quote(str(marker)) + "\nexit 71\n")
+            hook.chmod(0o755)
+            subprocess.run(["git", "-C", str(repo), "config", "core.hooksPath", str(hooks)],
+                           check=True)
             subprocess.run(["git", "-C", str(repo), "-c", "core.hooksPath=/dev/null",
                             "-c", "user.name=CI fixture", "-c", "user.email=fixture@example.com",
                             "commit", "--allow-empty", "-qm", "fixture"], check=True)
             worktree = root / "worktree"
-            subprocess.run(["git", "-C", str(repo), "worktree", "add", "--detach", "-q", str(worktree)],
+            # Worktree creation runs post-checkout, even in a disposable fixture.
+            subprocess.run(["git", "-C", str(repo), "-c", "core.hooksPath=/dev/null",
+                            "worktree", "add", "--detach", "-q", str(worktree)],
                            check=True)
+            self.assertFalse(marker.exists(), "Disposable fixtures must not execute inherited hooks.")
             with self.assertRaisesRegex(RuntimeError, "outside every Git"):
                 installer.validate_directory(worktree / "runner")
             installer.validate_directory(root / "safe-runner")
