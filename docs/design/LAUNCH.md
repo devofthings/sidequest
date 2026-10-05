@@ -12,7 +12,7 @@ Apple's [launching guidance](https://developer.apple.com/design/human-interface-
 
 ## Preserved introduction behavior
 
-The retained App owner still permits an 80 ms visible phase and 350 ms contained opacity/scale fade, once per cold process. Preparation runs independently. Reduce Motion omits the decoration; background, disappearance, and cancellation finish it permanently. Retry/import/foreground cannot replay it. The image remains accessibility hidden and never captures input, starts a game, or sends haptics. `StartupIntroduction` and its existing model/UI assertions are unchanged.
+The owner approved a smoother fade in [#192](https://github.com/devofthings/sidequest/issues/192) on October 5, 2026: a 150 ms visible phase followed by a 450 ms ease-in-out opacity fade without zoom, once per cold process (600 ms nominal total). This supersedes #91's 80/350 ms ease-out opacity/scale treatment. The longer hold and gradual fade onset address the owner-reported abrupt transition; rendered smoothness still requires native/device observation. Preparation runs independently. Reduce Motion omits the decoration; background, disappearance, and cancellation finish it permanently. Retry/import/foreground cannot replay it. The image remains accessibility hidden and never captures input, starts a game, or sends haptics. The deterministic model assertions track the new durations; existing lifecycle and running-app checks remain applicable.
 
 ## Verification and handoff
 

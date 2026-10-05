@@ -26,10 +26,10 @@ final class StartupIntroduction {
     phase = .visible
     defer { dismiss() }
     do {
-      try await pause(.milliseconds(80))
+      try await pause(.milliseconds(150))
       guard !Task.isCancelled, phase == .visible else { return }
       phase = .fading
-      try await pause(.milliseconds(350))
+      try await pause(.milliseconds(450))
       guard !Task.isCancelled, phase == .fading else { return }
       dismiss()
     } catch {

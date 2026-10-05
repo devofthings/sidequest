@@ -110,7 +110,10 @@ Under the owner’s design authorization, the lead selected bright arcade object
 
 The owner authorized a logo startup animation after selected logo integration. With original Card S integrated under #14/PR133, the lead selects a native decorative overlay lasting 80 ms plus 350 ms fade, nominal 430 ms total, with restrained opacity and scale (0.96→1). It is noninteractive and hidden from accessibility; real loading/error/feed semantics remain available and startup preparation runs independently. System Reduce Motion omits the introduction immediately. An App-retained owner accepts once per cold process launch; background, disappearance or cancellation permanently dismisses it, and Retry/import/foreground cannot replay. Reuse byte-identical selected artwork in a normal logo imageset. Implementation is independent of the parallel game work; actual motion/startup/CI and fresh review remain required before delivery.
 
+On October 5, 2026, the owner accepted the smoother transition in [#192](https://github.com/devofthings/sidequest/issues/192): 150 ms hold, 450 ms ease-in-out opacity fade, and no simultaneous zoom (600 ms nominal total). This supersedes the original timing/curve/scale above. Preserve independent preparation/input, once-per-process ownership, cancellation, and immediate Reduce Motion omission. Acceptance authorizes this refinement; native appearance and merge verification remain pending.
+
 For standard-Sudoku child #170, the lead accepted a maximum12 editable-cell production baseline, complete9×9 overview and44point coordinate/entry alternatives. This is a bounded implementation choice under #162, not a difficulty tier. Standard randomness is isolated by stable seed/index arithmetic while historical mini draws preserve neighboring challenges. Normal/largest-text native flows passed at source49b3db9, with actual opaque clues/readable controls inspected; [PR #172](https://github.com/devofthings/sidequest/pull/172) is merged. See [Sudoku guidance](../Sidequest/Games/Sudoku/AGENTS.md).
+
 
 ## Selected first-pass difficulty criteria #118
 

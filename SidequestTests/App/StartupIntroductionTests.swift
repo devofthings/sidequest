@@ -11,11 +11,11 @@ final class StartupIntroductionTests: XCTestCase {
     await gate.waitForArrival(1)
     XCTAssertEqual(model.phase, .visible)
     await model.present(reduceMotion: false)
-    XCTAssertEqual(gate.durations, [.milliseconds(80)])
+    XCTAssertEqual(gate.durations, [.milliseconds(150)])
     gate.resume()
     await gate.waitForArrival(2)
     XCTAssertEqual(model.phase, .fading)
-    XCTAssertEqual(gate.durations, [.milliseconds(80), .milliseconds(350)])
+    XCTAssertEqual(gate.durations, [.milliseconds(150), .milliseconds(450)])
     gate.resume()
     await task.value
     XCTAssertTrue(model.isFinished)
