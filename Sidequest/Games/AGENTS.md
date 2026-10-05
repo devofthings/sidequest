@@ -40,3 +40,7 @@ The lead selected [DESIGN.md](../../docs/DESIGN.md) after primary-source researc
 ## Successful completion feedback #86
 
 The owner approved a brief nonblocking celebration and short success haptic for each successfully completed attempt. Emit it only for a current visible success, once per attempt; a Bubble loss, skipped/stale completion, completed revisit, or foreground event must not replay it. Keep effects outside pure game rules, cancel pending presentation on hide/background, preserve manual navigation and stable layout, and provide a restrained Reduce Motion alternative. See [the accepted decision](../../docs/DECISIONS.md). Actual iPhone vibration is unverified until device testing; simulator evidence cannot certify physical feedback.
+
+## Pocket interaction correction #135
+
+The owner requires all four games to be pocket-sized. Follow [the accepted compact-interaction scope](../../docs/POCKET_BUBBLE.md): verify board and primary controls together at normal text, retain complete reachable content at accessibility sizes, preserve stable geometry and lifecycle. Do not infer rendered fit from grid dimensions. Bubble's previous one-shot default is superseded as a future implementation requirement; current source remains unchanged until #135 is reviewed and verified.
