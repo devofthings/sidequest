@@ -45,13 +45,13 @@ Use the researched [DESIGN.md](../../docs/DESIGN.md) direction for approved #13 
 
 Use [shared presentation tokens](../Presentation/AGENTS.md) for the calm canvas, rounded headings, and explicit lime start action. Keep preview and play on the same top-anchored layout with the same measured start reservation. Transparent UIKit hosting backgrounds expose the opaque SwiftUI canvas; forward color-scheme contrast and Reduce Motion into separate hosting roots alongside Dynamic Type and appearance. Shared styling owns neither paging nor runtime eligibility.
 
-## Success feedback reservation #86
+## Centered success feedback #193
 
-Render the shared success badge in the viewport-owned header title slot after an accepted successful attempt. Reserve both app title and badge footprints from the first render; transient visual title replacement cannot resize the header or card viewport. Keep the badge outside the card-owned scroller so it remains visible when game controls are scrolled into view. The runtime owns whether it is present; the feed does not inspect rules or emit haptics on appearance/rendering. Preserve both the header and start reservations, board geometry, manual paging, and propagated Reduce Motion. The badge is noninteractive and readable beyond color, while game-owned completion text remains authoritative after it expires.
+Render the shared success celebration as a noninteractive overlay centered on the native pager viewport. The app title stays visible; overlay appearance cannot change header, board, or scroller geometry. The runtime owns eligibility, lifetime, and cancellation, so hidden/revisited completed cards stay quiet. This owner-approved refinement supersedes #86's header title replacement. See [presentation guidance](../Games/Presentation/AGENTS.md).
 
 ## Pocket viewport budget #142
 
-The lead's agent-grill accepts one presentation-only context from `FeedCardController`'s actual positive native card bounds. Retain it across content updates and publish only real size changes; never derive it from UIScreen, hosting intrinsic height, scroll offset or game phase. Feed game-card presentation subtracts independently measured stable title/reserved-start chrome and padding/gaps, exposing the remaining game-content budget. This seam is groundwork for Bubble #138, which consumes it after #142. Keep the fixed success header and single owned content scroller unchanged. Root's normal375×667 probe measured579-point card height: Sudoku/Memory fit, while both Chess control stacks overflow. Leave Sudoku/Memory sources unchanged. Native/CI results remain pending.
+The lead's agent-grill accepts one presentation-only context from `FeedCardController`'s actual positive native card bounds. Retain it across content updates and publish only real size changes; never derive it from UIScreen, hosting intrinsic height, scroll offset or game phase. Feed game-card presentation subtracts independently measured stable title/reserved-start chrome and padding/gaps, exposing the remaining game-content budget. This seam is groundwork for Bubble #138, which consumes it after #142. Keep the fixed header and single owned content scroller unchanged; #193 moves only success decoration into a viewport overlay. Root's normal375×667 probe measured579-point card height: Sudoku/Memory fit, while both Chess control stacks overflow. Leave Sudoku/Memory sources unchanged. Native/CI results remain pending.
 
 ## Historical informational start hint #160
 
@@ -59,7 +59,7 @@ Historically, #160 superseded the earlier explicit lime start-button styling; #1
 
 ## Selected shared chrome #182
 
-Use leading heavy rounded game headings and vivid existing-token fills for the existing header actions. Shared styling leaves the prior start cue unchanged; the owner's selected first-game-interaction start behavior is separately owned by [#185](https://github.com/devofthings/sidequest/issues/185). Do not add a new button row, resize the header/success slot, or alter the game-content budget when styling. Game adapters own their board/control geometry.
+Use leading heavy rounded game headings and vivid existing-token fills for the existing header actions. Shared styling leaves the prior start cue unchanged; the owner's selected first-game-interaction start behavior is separately owned by [#185](https://github.com/devofthings/sidequest/issues/185). Do not add a new button row, resize the header, or alter the game-content budget when styling. Game adapters own their board/control geometry.
 ## First meaningful interaction #185
 
 The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.

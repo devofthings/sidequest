@@ -185,9 +185,10 @@ final class ChessFlowTests: XCTestCase {
     XCTAssertTrue(badge.waitForExistence(timeout: 5))
     let badgeFrame = badge.frame
     XCTAssertTrue(app.frame.contains(badgeFrame), "The whole celebration must be on screen.")
-    XCTAssertLessThanOrEqual(
-      badgeFrame.maxY, app.scrollViews["feed.cardScroll"].frame.minY + 1,
-      "Celebration stays in the fixed header after scrolling to Chess controls.")
+    let viewport = app.scrollViews["feed.cardScroll"].frame
+    XCTAssertEqual(badgeFrame.midX, viewport.midX, accuracy: 2)
+    XCTAssertEqual(badgeFrame.midY, viewport.midY, accuracy: 2)
+    XCTAssertTrue(app.staticTexts["foundation.title"].exists)
     XCTAssertTrue(badge.label.contains("Chess puzzle completed"))
   }
 

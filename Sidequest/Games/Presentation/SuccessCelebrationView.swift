@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Reserves the badge footprint even when quiet, in the viewport-owned header title slot.
+/// Viewport-owned decoration: it never changes game geometry or intercepts input.
 struct SuccessCelebrationView: View {
   let runtime: GameRuntime?
   let gameTitle: String
@@ -10,32 +10,57 @@ struct SuccessCelebrationView: View {
   private var reduceMotion: Bool { reduceMotionOverride ?? systemReduceMotion }
 
   var body: some View {
-    ZStack(alignment: .leading) {
-      badge.hidden().accessibilityHidden(true)
+    ZStack {
       if runtime?.celebrationAttempt != nil {
-        badge
-          .accessibilityLabel("Sidequest. \(gameTitle) completed. Well done.")
-          .accessibilityAddTraits(.isHeader)
-          .accessibilityIdentifier("game.successCelebration")
-          .transition(reduceMotion ? .identity : .scale(scale: 0.85).combined(with: .opacity))
+        celebration
+          .transition(reduceMotion ? .opacity : .scale(scale: 0.7).combined(with: .opacity))
       }
     }
     .allowsHitTesting(false)
     .animation(
-      runtime?.isVisible == true && !reduceMotion ? .smooth(duration: 0.18) : nil,
+      runtime?.isVisible == true
+        ? (reduceMotion ? .easeOut(duration: 0.15) : .spring(duration: 0.28, bounce: 0.25))
+        : nil,
       value: runtime?.celebrationAttempt
     )
     .transaction { transaction in
-      if runtime?.isVisible != true || reduceMotion { transaction.disablesAnimations = true }
+      if runtime?.isVisible != true { transaction.disablesAnimations = true }
     }
   }
 
-  private var badge: some View {
+  private var celebration: some View {
     Text("✓ Nice!")
-      .font(.headline)
+      .font(.system(.largeTitle, design: .rounded, weight: .heavy))
+      .multilineTextAlignment(.center)
       .foregroundStyle(SidequestTheme.darkInk)
-      .padding(.horizontal, 16)
-      .padding(.vertical, 10)
+      .padding(.horizontal, 28)
+      .padding(.vertical, 18)
       .background(SidequestTheme.lime, in: Capsule())
+      .overlay {
+        Capsule().strokeBorder(SidequestTheme.darkInk, lineWidth: 2)
+      }
+      .shadow(color: SidequestTheme.darkInk.opacity(0.2), radius: 12, y: 6)
+      .background {
+        if !reduceMotion {
+          GeometryReader { geometry in
+            ForEach(0..<6) { index in
+              Image(systemName: "sparkle")
+                .font(.system(size: index.isMultiple(of: 2) ? 24 : 16, weight: .bold))
+                .foregroundStyle(
+                  index.isMultiple(of: 2) ? SidequestTheme.cyan : SidequestTheme.coral
+                )
+                .position(
+                  x: geometry.size.width / 2
+                    + cos(Double(index) * .pi / 3) * (geometry.size.width / 2 + 18),
+                  y: geometry.size.height / 2
+                    + sin(Double(index) * .pi / 3) * (geometry.size.height / 2 + 24)
+                )
+            }
+          }
+          .accessibilityHidden(true)
+        }
+      }
+      .accessibilityLabel("\(gameTitle) completed. Well done.")
+      .accessibilityIdentifier("game.successCelebration")
   }
 }
