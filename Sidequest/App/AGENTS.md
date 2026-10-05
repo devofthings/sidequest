@@ -91,3 +91,5 @@ The lead accepted a bounded main-actor reconstruction closure at the real fallib
 | Does any choice need new owner approval? | Fact | No. | #118 already accepts mixed labeled tiers; #201 records bounded integration and no new Ideas or spending. | Fresh review and exact-head free CI remain delivery gates. |
 
 The plan is ready within delegated scope; these answers establish implementation choices, not passing native evidence or independent review.
+
+Restored Bubble aim validates the controller’s exact closed degree range [-60,60]. Converting the radians limit back into degrees rounds slightly below60 and rejects legitimate endpoint witnesses, preventing completed reverse navigation. Preserve exact endpoint acceptance and reject nonfinite/out-of-range archives; the regression exercises reconstruction and Replay, not weakened navigation assertions.

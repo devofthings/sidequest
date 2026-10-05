@@ -59,7 +59,7 @@ enum PreparedGameReconstruction {
     case (.bubble(let challenge), .bubble(let game, let aim, _)):
       valid =
         game.outcome != .playing && aim.isFinite
-        && abs(aim) <= BubbleGeometry.maximumAngle * 180 / .pi
+        && (-60...60).contains(aim)
         && game.hasSameChallenge(as: challenge.game)
     default: valid = false
     }

@@ -296,6 +296,41 @@ final class MixedDifficultyTests: XCTestCase {
     restored.runtime.retire()
   }
 
+  func testCompletedBubbleAimEndpointsRestoreAndReplayWithoutLosingTier() throws {
+    var random = ChallengeRandom(seed: 201)
+    let challenge = try BubbleChallengeGenerator.generate(difficulty: .hard, using: &random)
+    var solved = challenge.game
+    for angle in challenge.winningAngles { _ = try solved.fire(angleRadians: angle * .pi / 180) }
+    XCTAssertEqual(solved.outcome, .won)
+    let descriptor = GeneratedGameDescriptor(
+      card: GameCard(id: try CardID("bubble-endpoints"), kind: .bubbleShooter, difficulty: .hard),
+      challenge: .bubble(challenge))
+    for aim in [-60.0, 60.0] {
+      let completed = CompletedGameState(
+        attempt: GameAttemptID(),
+        result: .bubble(solved, aim: aim, feedback: "Board cleared!"))
+      let restored = try ComposedGame.generated(descriptor, completed: completed)
+      guard case .bubbleShooter(let controller) = restored else {
+        return XCTFail("Expected Bubble")
+      }
+      XCTAssertEqual(controller.aimDegrees, aim)
+      XCTAssertEqual(controller.game.outcome, .won)
+      XCTAssertEqual(controller.runtime.phase, .completed(completed.attempt))
+      controller.runtime.setVisible(true)
+      XCTAssertTrue(controller.replay())
+      XCTAssertEqual(controller.game.difficulty, .hard)
+      XCTAssertTrue(controller.game.hasSameChallenge(as: challenge.game))
+      XCTAssertEqual(controller.game.shotsFired, 0)
+      controller.runtime.retire()
+    }
+    for aim in [-60.000001, 60.000001, Double.nan, Double.infinity] {
+      let invalid = CompletedGameState(
+        attempt: GameAttemptID(),
+        result: .bubble(solved, aim: aim, feedback: "Board cleared!"))
+      XCTAssertThrowsError(try ComposedGame.generated(descriptor, completed: invalid))
+    }
+  }
+
   func testRejectedWindowKeepsSelectionOwnersAndAllowsSameNavigationRetry() throws {
     let cards = try (0..<4).map { index in
       FeedCard.game(GameCard(id: try CardID("transaction-\(index)"), kind: .memory))
@@ -307,7 +342,9 @@ final class MixedDifficultyTests: XCTestCase {
     feed.windowDidChange = { _ in
       reject ? .failure(.preparationFailed) : .success([cards[0].id: first])
     }
-    first.start()
+    let memory = try MemoryController(
+      runtime: first, challenge: MemoryChallenge(difficulty: .easy, seed: 201))
+    memory.flip(0)
     let phase = first.phase
     feed.next()
     XCTAssertEqual(feed.selectedIndex, 0)
