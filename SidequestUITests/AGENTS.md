@@ -121,3 +121,7 @@ For #194, the required Foundation launch case must exercise unflagged normal pro
 ## Mixed difficulty checks #201
 
 MixedDifficultyTests covers actual classified generation, all-tier scheduling, legacy shuffle identity, incompatible archives, completed eviction/Replay, and rejected-window retry. MixedDifficultyFlowTests uses the same production opt-in with a dedicated owned fictional-news test store, deterministic ordered seed201, all12 game/tier combinations and hardest largest-text controls. Keep these two UI cases extended; all units plus exactly three smoke cases remain the routine gate. Root alone owns actual native proof.
+
+## Largest-text celebration metric #203
+
+Memory's largest-text centering check observes the accessible text ink, not the surrounding decorative capsule. Actual #197 execution measured a 2.17-point horizontal ink offset despite a visually centered capsule. Use a named 3-point horizontal ink tolerance only; retain 2-point vertical tolerance, full containment, and unchanged board/control geometry. Await the real center condition with an XCTest predicate instead of sampling an unfinished spring or inserting sleeps. Actual rerun and exact-head gates remain required; the original failed run stays failed.

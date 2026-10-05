@@ -108,9 +108,20 @@ final class MemoryFlowTests: XCTestCase {
     tapTile(11, app: app)
     let badge = app.staticTexts["game.successCelebration"]
     XCTAssertTrue(badge.waitForExistence(timeout: 5))
+    // AX measures text ink, not the capsule: the actual largest-text glyph offset was 2.17 pt.
+    let horizontalTextInkTolerance: CGFloat = 3
+    let centered = XCTNSPredicateExpectation(
+      predicate: NSPredicate { _, _ in
+        guard badge.exists else { return false }
+        let frame = badge.frame
+        return app.frame.contains(frame)
+          && abs(frame.midX - viewport.midX) <= horizontalTextInkTolerance
+          && abs(frame.midY - viewport.midY) <= 2
+      }, object: badge)
+    XCTAssertEqual(XCTWaiter.wait(for: [centered], timeout: 5), .completed)
     XCTAssertTrue(
       app.frame.contains(badge.frame), "Largest-text celebration must be fully visible.")
-    XCTAssertEqual(badge.frame.midX, viewport.midX, accuracy: 2)
+    XCTAssertEqual(badge.frame.midX, viewport.midX, accuracy: horizontalTextInkTolerance)
     XCTAssertEqual(badge.frame.midY, viewport.midY, accuracy: 2)
     XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewport)
     XCTAssertEqual(lastTile.frame, tileFrame)
