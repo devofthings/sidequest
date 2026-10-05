@@ -23,3 +23,7 @@ PR verification runs on `opened`, `synchronize`, and `reopened`, including draft
 ## Checkout runtime #120
 
 Use the reviewed immutable Node 24 checkout revision recorded in [CI.md](../../docs/CI.md#checkout-runtime-120). Verify official action metadata and runner compatibility before changing its pin; preserve every caller's exact-ref, full-history, cleanup, and unpersisted-credential inputs. Run the checkout contract regression in `scripts/test-ci.py`, then obtain actual exact-head PR CI without the deprecated runtime annotation. Historical run evidence retains its original action revision.
+
+## Verification cancellation #140
+
+Both PR and manual-release verification steps replace the shell using `exec python3 scripts/ci-verify.py`, followed by an `always()` run-specific simulator finalizer with the same expected commit and the verifier's actual step outcome. Finalization uses only durable returned UUIDs; no hosted fallback, extra test gate, upload, trigger, or publisher action is introduced. The release verification job must complete successful recovery before its dependent publisher is eligible. Follow [the bounded recovery contract](../../docs/CI.md#shell-cancellation-recovery-140).

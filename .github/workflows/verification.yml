@@ -26,7 +26,14 @@ jobs:
           persist-credentials: false
           clean: true
       - name: Verify source, documentation, build, and tests
+        id: verify
         env:
           SIDEQUEST_EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
           SIDEQUEST_BASE_REF: ${{ github.event.pull_request.base.ref || 'main' }}
-        run: python3 scripts/ci-verify.py
+        run: exec python3 scripts/ci-verify.py
+      - name: Recover owned simulators after verification
+        if: always()
+        env:
+          SIDEQUEST_EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          SIDEQUEST_VERIFICATION_OUTCOME: ${{ steps.verify.outcome }}
+        run: exec python3 scripts/ci_devices.py

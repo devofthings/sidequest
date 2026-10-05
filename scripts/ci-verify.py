@@ -12,6 +12,7 @@ import sys
 import time
 
 import native_tests
+import ci_devices
 
 
 class VerificationCanceled(BaseException):
@@ -215,6 +216,7 @@ def verify(commands):
     diagnostics.mkdir(parents=True, exist_ok=False)
     commands.diagnostics = diagnostics
     commands.expected = expected
+    devices = ci_devices.Registry(diagnostics, os.environ)
     summary = []
     timings = []
 
@@ -254,6 +256,7 @@ def verify(commands):
         run("documentation", ["python3", "scripts/check-documentation.py"])
         run("documentation-tests", ["python3", "scripts/test-documentation.py"])
         run("ci-tests", ["python3", "scripts/test-ci.py"])
+        run("ci-device-tests", ["python3", "scripts/test-ci-devices.py"])
         if Path("scripts/test-release.py").is_file():
             run("release-tests", ["python3", "scripts/test-release.py"])
         run("format", ["xcrun", "swift-format", "lint", "--strict", "--recursive",
@@ -279,7 +282,7 @@ def verify(commands):
         if workers not in (1, 2):
             raise RuntimeError("Unsupported native worker policy.")
         verify_clean_checkout(root, expected, run, "native-source")
-        with native_tests.owned_execution(), native_tests.devices(run, f"Sidequest CI {run_id}-{attempt}", 1 if evidence else workers) as destinations:
+        with native_tests.owned_execution(), native_tests.devices(run, f"Sidequest CI {run_id}-{attempt}", 1 if evidence else workers, created=devices.created) as destinations:
             destination = destinations[0]
             if evidence:
                 boundary, key = native_tests.cache_identity(root, xcode, sdk, runtimes)

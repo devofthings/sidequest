@@ -266,7 +266,7 @@ class CIBoundaryTests(unittest.TestCase):
                     elif "launchctl" in command:
                         output = "123 0 UIKitApplication:dev.devofthings.sidequest[fixture]"
                     elif command[:3] == ["xcrun", "simctl", "create"]:
-                        output = "owned"
+                        output = "00000000-0000-0000-0000-000000000001"
                     elif command == ["xcodebuild", "-version"]:
                         output = "Xcode 27.0\nBuild version 27A266a"
                     elif command == ["xcrun", "simctl", "list", "devices", "available", "--json"]:
