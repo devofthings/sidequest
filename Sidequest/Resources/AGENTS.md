@@ -9,3 +9,7 @@ Keep only original assets and fictional, redistributable samples here. `sample-n
 ## Selected app icon #14
 
 `Assets.xcassets/AppIcon.appiconset` owns the original Card S selected by the owner on October 5, 2026. [Identity guidance](../../docs/logo-concepts/README.md) links approval, editable SVG, provenance, and the local rendering command. Keep its 1024-pixel Any PNG opaque and unmasked; dark/tinted styles use Apple's automatic system treatment. Preserve the app's `AppIcon` build-setting name, signing configuration, and target membership. Actual Home Screen checks for light/dark/tinted are a merge requirement, not established by the bitmap proof.
+
+## Startup logo #91
+
+`Assets.xcassets/StartupLogo.imageset/CardS.png` is a byte-identical copy of the selected `AppIcon.appiconset/AppIcon.png`, exposed as a normal image for the brief decorative startup introduction. Preserve that provenance when changing the selected artwork; do not redesign or rerender it independently. [App guidance](../App/AGENTS.md) owns introduction timing, cancellation, accessibility, and Reduce Motion behavior.
