@@ -41,3 +41,7 @@ Bundle 30 original clearly fictional demo stories separately from the legacy two
 ## Shared MVP style #123
 
 Use the [shared presentation palette](../Presentation/AGENTS.md), an opaque rounded reading surface, semantic serif headline, and regular system body text. Keep every attribution, date, fictional label, source URL/action, and text-selection behavior. Local source-action press feedback follows Reduce Motion; article text stays still. Feed content remains unwrapped so the feed owns its existing content scroller.
+
+## Selected reading hierarchy #182
+
+The accepted private News reference is translated into a static coral fictional-sample badge, system-serif headline, compact publisher/date group, lavender reading separator, and full-width existing source action. Badge and separator are noninteractive; preserve every attribution, timestamp, source URL, sample-placeholder wording, and selectable excerpt. Reuse existing semantic colors/text styles and the card-owned overflow scroller. Never replace the sample-placeholder link with a fabricated original article or import the drawing's illustrative article into production.

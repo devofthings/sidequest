@@ -46,7 +46,7 @@ struct FeedView: View {
               .labelStyle(.iconOnly)
               .frame(minWidth: 44, minHeight: 44)
           }
-          .buttonStyle(SidequestButtonStyle(compact: true))
+          .buttonStyle(SidequestButtonStyle(compact: true, accent: SidequestTheme.cyan))
           .accessibilityIdentifier("feed.news")
         }
         Menu {
@@ -62,7 +62,7 @@ struct FeedView: View {
             .frame(minWidth: 44, minHeight: 44)
             .contentShape(Rectangle())
         }
-        .buttonStyle(SidequestButtonStyle(compact: true))
+        .buttonStyle(SidequestButtonStyle(compact: true, accent: SidequestTheme.lavender))
         .accessibilityLabel("Feed navigation")
         .accessibilityIdentifier("feed.navigation")
       }

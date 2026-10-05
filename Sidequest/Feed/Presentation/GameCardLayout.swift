@@ -18,10 +18,11 @@ struct GameCardLayout<Start: View, Content: View>: View {
 
   var body: some View {
     VStack(spacing: 20) {
-      VStack(spacing: 20) {
+      VStack(alignment: .leading, spacing: 20) {
         Text(title)
-          .font(.system(.title, design: .rounded, weight: .bold))
+          .font(.system(.title, design: .rounded, weight: .heavy))
           .accessibilityAddTraits(.isHeader)
+          .frame(maxWidth: .infinity, alignment: .leading)
         start
       }
       .onGeometryChange(for: CGFloat.self) { geometry in

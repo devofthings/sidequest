@@ -29,6 +29,7 @@ struct SidequestTheme {
 struct SidequestButtonStyle: ButtonStyle {
   var prominent = false
   var compact = false
+  var accent: Color? = nil
   @Environment(\.colorScheme) private var scheme
   @Environment(\.colorSchemeContrast) private var systemContrast
   @Environment(\.sidequestContrast) private var contrastOverride
@@ -40,18 +41,19 @@ struct SidequestButtonStyle: ButtonStyle {
     let contrast = contrastOverride ?? systemContrast
     let reduceMotion = motionOverride ?? systemReduceMotion
     let theme = SidequestTheme(scheme: scheme, contrast: contrast)
+    let usesAccent = prominent || accent != nil
     configuration.label
       .font(.headline)
       .padding(.horizontal, compact ? 0 : (prominent ? 20 : 12))
       .padding(.vertical, compact ? 0 : (prominent ? 12 : 8))
       .frame(minHeight: 44)
-      .foregroundStyle(prominent ? SidequestTheme.darkInk : theme.ink)
-      .background(prominent ? SidequestTheme.lime : theme.surface)
+      .foregroundStyle(usesAccent ? SidequestTheme.darkInk : theme.ink)
+      .background(accent ?? (prominent ? SidequestTheme.lime : theme.surface))
       .clipShape(RoundedRectangle(cornerRadius: 16))
       .overlay {
         RoundedRectangle(cornerRadius: 16)
           .strokeBorder(
-            prominent ? SidequestTheme.darkInk : theme.border, lineWidth: theme.borderWidth)
+            usesAccent ? SidequestTheme.darkInk : theme.border, lineWidth: theme.borderWidth)
       }
       .brightness(configuration.isPressed ? -0.06 : 0)
       .scaleEffect(configuration.isPressed && !reduceMotion ? 0.98 : 1)

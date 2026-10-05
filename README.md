@@ -48,12 +48,12 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 72 | 6,242 |
+| App | 72 | 6,255 |
 | Unit tests | 34 | 4,704 |
 | UI tests | 17 | 2,953 |
-| **Total** | **123** | **13,899** |
+| **Total** | **123** | **13,912** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+11,461 / −625 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+11,466 / −617 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
@@ -112,7 +112,7 @@ The [design baseline](https://github.com/devofthings/sidequest/issues/13) guides
 
 The initial [compact-game and harder Bubble follow-up](docs/POCKET_BUBBLE.md), [#135](https://github.com/devofthings/sidequest/issues/135), is complete: harder generation (#137), compact Chess/viewport controls (#142), and direct Bubble controls plus the all-game fit audit (#138 / [PR #144](https://github.com/devofthings/sidequest/pull/144)) are merged with actual native evidence. The current [#163 horizontal aiming refinement](docs/BUBBLES.md#simplified-horizontal-aiming-163) removes visible numeric angle text; its corrected native check, fresh independent review, and exact-head CI passed before [PR #165](https://github.com/devofthings/sidequest/pull/165) merged. These source changes do not alter the immutable `2026.10.14` download.
 
-The [private Figma refinement](docs/design/PRIVATE_FIGMA.md) contains proposed game/news state boards and motion/accessibility storyboards from #157. It is a visual proposal following personal-test feedback, with editable links and actual Figma screenshots; it adds no application behavior or verified animation.
+The [private Figma refinement](docs/design/PRIVATE_FIGMA.md) preserves original #157 state boards and actual browser screenshots. The owner selected its shared visual direction for #182: vivid header actions, rounded game hierarchy, and a quiet reading surface with clear provenance. Source refinements are prepared; actual native rendering and exact-head verification remain pending. Logo/startup integration is merged through [PR #184](https://github.com/devofthings/sidequest/pull/184); its [launch guidance](docs/design/LAUNCH.md) records the bounded implementation.
 
 [Proposed icon family](docs/design/ICONS.md) includes original Chess pieces, Memory artwork, and existing app-action examples in private Figma. The lead selected Memory and current Chess artwork for bounded #171 implementation under the existing autonomous design authorization; native Memory and current Chess adoption is merged through PR173, with [actual simulator/review/CI evidence](docs/INSTALL.md#verified-source-refinements-october-5).
 

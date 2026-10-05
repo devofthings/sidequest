@@ -24,3 +24,7 @@ Shared UI-only layout values carry actual native card viewport and the remaining
 
 
 For #138, the shared native control marker carries touch ownership only. It lets both feed pans exclude a dedicated game input without importing game rules; it does not own gestures, game state, or eligibility. Bubble consumes the existing rectangular budget directly for its 10:12 board; the square-grid minimum is not a Bubble touch-target rule.
+
+## Selected private design translation #182
+
+The owner's October 5 request selects the saved private Foundations/News visual direction for bounded native refinement; see [the adoption record](../../docs/design/PRIVATE_FIGMA.md#selected-shared-native-refinement-182). `SidequestButtonStyle` accepts an optional accent fill from existing tokens. Its default remains unchanged for all existing game controls; accent fills use dark ink and an outline in both appearances, without changing eligibility, target size, or motion. Preserve existing palette values and the 44-point header controls. Native rendering remains a separate verification gate.
