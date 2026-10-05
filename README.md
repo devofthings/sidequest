@@ -44,10 +44,10 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 | --- | ---: | ---: |
 | App | 56 | 4,799 |
 | Unit tests | 25 | 3,866 |
-| UI tests | 14 | 2,247 |
-| **Total** | **95** | **10,912** |
+| UI tests | 14 | 2,266 |
+| **Total** | **95** | **10,931** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+8,409 / −560 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+8,428 / −560 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.

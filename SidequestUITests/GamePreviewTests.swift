@@ -36,18 +36,33 @@ final class GamePreviewTests: XCTestCase {
   func testLargestTextKeepsEveryInitialBoardAndStartReachableWithoutMovingTheBoard() {
     for fixture in Fixture.allCases {
       let app = launch(fixture, largeText: true)
-      assertPreview(app, fixture: fixture)
+      assertPreview(app, fixture: fixture, allowBoardOverflow: true)
       let before = snapshot(app, fixture: fixture)
-      capture(app, name: "preview-\(fixture.rawValue)-largest-top")
-      let frame = anchor(app, fixture: fixture).frame
+      let first = anchor(app, fixture: fixture)
+      let last = lastBoardElement(app, fixture: fixture)
+      reveal(first, in: app)
+      XCTAssertTrue(app.scrollViews["feed.cardScroll"].frame.contains(first.frame))
+      XCTAssertFalse(first.isEnabled)
+      capture(app, name: "preview-\(fixture.rawValue)-largest-board-top")
+      reveal(last, in: app)
+      XCTAssertTrue(app.scrollViews["feed.cardScroll"].frame.contains(last.frame))
+      XCTAssertFalse(last.isEnabled)
+      if fixture == .memory { XCTAssertEqual(last.label, "Hidden card 12") }
+      XCTAssertEqual(snapshot(app, fixture: fixture), before)
+      capture(app, name: "preview-\(fixture.rawValue)-largest-board-bottom-before-start")
+      // Establish the start baseline only after restoring its viewport; tapping must not auto-scroll.
+      reveal(app.buttons["game.start"], in: app)
+      let viewport = app.scrollViews["feed.cardScroll"].frame
+      let frame = first.frame
       app.buttons["game.start"].tap()
       XCTAssertEqual(snapshot(app, fixture: fixture), before)
-      XCTAssertEqual(anchor(app, fixture: fixture).frame, frame)
+      XCTAssertEqual(first.frame, frame)
+      XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewport)
       reveal(lastBoardElement(app, fixture: fixture), in: app)
       capture(app, name: "started-\(fixture.rawValue)-largest-board-bottom")
       app.nextFeedCard()
       app.previousFeedCard()
-      assertPreview(app, fixture: fixture)
+      assertPreview(app, fixture: fixture, allowBoardOverflow: true)
       reveal(lastBoardElement(app, fixture: fixture), in: app)
       capture(app, name: "preview-\(fixture.rawValue)-largest-board-bottom")
       XCTAssertFalse(lastBoardElement(app, fixture: fixture).isEnabled)
@@ -75,7 +90,9 @@ final class GamePreviewTests: XCTestCase {
     }
   }
 
-  private func assertPreview(_ app: XCUIApplication, fixture: Fixture) {
+  private func assertPreview(
+    _ app: XCUIApplication, fixture: Fixture, allowBoardOverflow: Bool = false
+  ) {
     reveal(app.buttons["game.start"], in: app)
     XCTAssertTrue(app.buttons["game.start"].isEnabled)
     XCTAssertTrue(app.buttons["game.start"].isHittable)
@@ -83,7 +100,9 @@ final class GamePreviewTests: XCTestCase {
     let element = anchor(app, fixture: fixture)
     XCTAssertTrue(element.exists)
     XCTAssertGreaterThan(element.frame.height, 0)
-    XCTAssertTrue(app.scrollViews["feed.cardScroll"].frame.intersects(element.frame))
+    if !allowBoardOverflow {
+      XCTAssertTrue(app.scrollViews["feed.cardScroll"].frame.intersects(element.frame))
+    }
     if fixture != .bubble { XCTAssertFalse(element.isEnabled) }
     switch fixture {
     case .sudoku:
