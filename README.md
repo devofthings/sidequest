@@ -50,10 +50,10 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 | --- | ---: | ---: |
 | App | 67 | 5,661 |
 | Unit tests | 31 | 4,396 |
-| UI tests | 16 | 2,796 |
-| **Total** | **114** | **12,853** |
+| UI tests | 16 | 2,804 |
+| **Total** | **114** | **12,861** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+10,403 / −613 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+10,411 / −613 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
@@ -109,7 +109,7 @@ Until design agreement, verification uses [all unit tests and three UI smoke cas
 
 The [design baseline](https://github.com/devofthings/sidequest/issues/13) guides vivid, modern visuals and animations for a pitch-ready MVP. The [researched baseline](docs/DESIGN.md) is selected. Shared feed/news styling is implemented; #124 adds vivid game surfaces and contained motion, with actual verification recorded in its PR. The owner selected the [pocket-game specification](docs/pocket-games/README.md): Chess uses fixed 4×4 focus windows with standard 8×8 rules and full-board coordinate controls; current Sudoku/Memory configurations remain. Difficulty remains a separate specification.
 
-The owner-authorized [compact-game and harder Bubble follow-up](docs/POCKET_BUBBLE.md) is tracked in [#135](https://github.com/devofthings/sidequest/issues/135); harder multi-shot Bubble generation (#137) and compact Chess/viewport controls (#142) are merged with actual native evidence. Direct Bubble aiming/compact controls (#138) and the parent all-game fit audit remain under verification; see [Bubble guidance](docs/BUBBLES.md#compact-direct-aiming-138).
+The initial [compact-game and harder Bubble follow-up](docs/POCKET_BUBBLE.md), [#135](https://github.com/devofthings/sidequest/issues/135), is complete: harder generation (#137), compact Chess/viewport controls (#142), and direct Bubble controls plus the all-game fit audit (#138 / [PR #144](https://github.com/devofthings/sidequest/pull/144)) are merged with actual native evidence. The current [#163 horizontal aiming refinement](docs/BUBBLES.md#simplified-horizontal-aiming-163) removes visible numeric angle text; its corrected native check, fresh review and exact-head CI remain pending. These source changes do not alter the immutable `2026.10.14` download.
 
 The [private Figma refinement](docs/design/PRIVATE_FIGMA.md) contains proposed game/news state boards and motion/accessibility storyboards from #157. It is a visual proposal following personal-test feedback, with editable links and actual Figma screenshots; it adds no application behavior or verified animation.
 

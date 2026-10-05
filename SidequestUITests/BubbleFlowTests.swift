@@ -182,13 +182,21 @@ final class BubbleFlowTests: XCTestCase {
     waitForShots(1, in: app)
     XCTAssertEqual(app.selectedFeedCardID, position)
     XCTAssertEqual([board.frame, aim.frame, slider.frame, fire.frame, viewport.frame], frames)
-    // A full settled swipe above the dedicated control still pages and resets the unfinished game.
-    app.scrollViews["feed.pager"].coordinate(withNormalizedOffset: CGVector(dx: 0.05, dy: 0.85))
-      .press(
-        forDuration: 0.01,
-        thenDragTo: app.scrollViews["feed.pager"].coordinate(
-          withNormalizedOffset: CGVector(dx: 0.05, dy: 0.05)), withVelocity: .fast,
-        thenHoldForDuration: 0.1)
+    // Page through measured card padding, outside both native aiming controls. A fixed 5% x
+    // can intersect the full-width Slider after the simplified chrome changes its vertical position.
+    let pager = app.scrollViews["feed.pager"]
+    let x = max(pager.frame.minX + 4, min(aim.frame.minX, slider.frame.minX, fire.frame.minX) - 8)
+    let startPoint = CGPoint(x: x, y: pager.frame.minY + pager.frame.height * 0.85)
+    XCTAssertTrue(pager.frame.contains(startPoint))
+    XCTAssertFalse(aim.frame.contains(startPoint))
+    XCTAssertFalse(slider.frame.contains(startPoint))
+    XCTAssertFalse(fire.frame.contains(startPoint))
+    let origin = pager.coordinate(withNormalizedOffset: .zero)
+    origin.withOffset(CGVector(dx: x - pager.frame.minX, dy: pager.frame.height * 0.85)).press(
+      forDuration: 0.01,
+      thenDragTo: origin.withOffset(
+        CGVector(dx: x - pager.frame.minX, dy: pager.frame.height * 0.05)),
+      withVelocity: .fast, thenHoldForDuration: 0.1)
     waitForPosition("sample-news-garden", in: app)
     app.previousFeedCard()
     XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
