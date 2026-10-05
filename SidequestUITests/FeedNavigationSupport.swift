@@ -5,6 +5,17 @@ extension XCUIApplication {
   func nextFeedCard() { navigateFeed(using: "feed.next") }
   func previousFeedCard() { navigateFeed(using: "feed.previous") }
 
+  func openNewsLibrary(file: StaticString = #filePath, line: UInt = #line) {
+    let menu = buttons["feed.navigation"]
+    XCTAssertTrue(menu.waitForExistence(timeout: 5), file: file, line: line)
+    menu.tap()
+    let news = buttons["feed.news"]
+    XCTAssertTrue(news.waitForExistence(timeout: 5), file: file, line: line)
+    XCTAssertTrue(news.isEnabled, file: file, line: line)
+    news.tap()
+    XCTAssertTrue(buttons["news.import"].waitForExistence(timeout: 5), file: file, line: line)
+  }
+
   var selectedFeedCard: XCUIElement {
     otherElements.matching(NSPredicate(format: "identifier BEGINSWITH %@", "feed.selected."))
       .firstMatch

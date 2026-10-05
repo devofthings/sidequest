@@ -189,7 +189,7 @@ final class EndlessFlowTests: XCTestCase {
   func testLargestTextAndActualReduceMotionKeepEndlessPagingAndExplicitStartUsable() {
     SystemAccessibilitySupport.withReduceMotion {
       let app = launch(extra: ["-sidequest-large-text"])
-      for identifier in ["feed.news", "feed.navigation"] {
+      for identifier in ["feed.navigation"] {
         XCTAssertTrue(app.buttons[identifier].isHittable)
         XCTAssertGreaterThanOrEqual(app.buttons[identifier].frame.width + 0.001, 44)
         XCTAssertGreaterThanOrEqual(app.buttons[identifier].frame.height + 0.001, 44)
@@ -306,12 +306,12 @@ final class EndlessFlowTests: XCTestCase {
     "news-00000000-0000-0000-0000-000000000104-\(ordinal)"
   }
   private func openLibrary(_ app: XCUIApplication) {
-    app.buttons["feed.news"].tap()
-    XCTAssertTrue(app.buttons["news.import"].waitForExistence(timeout: 5))
+    app.openNewsLibrary()
   }
   private func closeLibrary(_ app: XCUIApplication) {
     app.buttons["news.done"].tap()
-    XCTAssertTrue(app.buttons["feed.news"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["feed.navigation"].waitForExistence(timeout: 5))
+    XCTAssertFalse(app.buttons["feed.news"].exists)
   }
   private func waitForMessage(_ text: String, in app: XCUIApplication) {
     let message = expectation(

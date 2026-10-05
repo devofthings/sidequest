@@ -392,6 +392,15 @@
         "Sidequest/Resources/"
       ]
     },
+    "SidequestUITests/IntegrationFlowTests/testNewsMenuAtNormalAndLargestTextResetsUnfinishedGame": {
+      "lower_layer": "Existing feed/runtime tests cover modal reset ordering; this native case verifies the actual normal/largest-text menu route and frozen reset.",
+      "paths": [
+        "SidequestUITests/IntegrationFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/App/"
+      ]
+    },
     "SidequestUITests/MemoryFlowTests/testSuccessWithSystemReduceMotionDoesNotRepeatAfterBackground": {
       "lower_layer": "GameSuccessFeedbackTests cover once-per-attempt, cancellation, failed/stale completion, restored state, and replay. This focused native case verifies actual system Reduce Motion and background cancellation of visible successful Memory feedback.",
       "paths": [

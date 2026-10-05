@@ -30,7 +30,7 @@ Current #91 source adds a brief Card S introduction on cold launch while prepara
 
 Current Bubble source uses left/right dragging in the lower-board aiming area and a dotted trajectory, with no visible numeric angle. Releasing a drag does not shoot; **Fire** stays explicit. A native 44-point Slider remains available for assistive and keyboard precision. See [the refinement and verification status](docs/BUBBLES.md#simplified-horizontal-aiming-163).
 
-Current source supports full-card native vertical paging: swipe up/down directly on a card or use the compact **Feed navigation** menu. Overflowing content scrolls within its card; a new outward gesture at its top/bottom edge changes cards. See [feed navigation](docs/FEED.md#navigation-and-eligibility). Game boards and primary controls retain their geometry when feedback or results change; [stable layout](docs/GAME_LAYOUT.md) describes the current source correction and verification.
+Current source supports full-card native vertical paging: swipe up/down directly on a card or use the compact **More options** menu. Overflowing content scrolls within its card; a new outward gesture at its top/bottom edge changes cards. The same menu opens **News snapshots** for manual importing. See [feed navigation](docs/FEED.md#navigation-and-eligibility). Game boards and primary controls retain their geometry when feedback or results change; [stable layout](docs/GAME_LAYOUT.md) describes the current source correction and verification.
 
 | Game | Merged implementation | Details / next step |
 | --- | --- | --- |

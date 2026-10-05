@@ -95,7 +95,7 @@ final class IntegrationFlowTests: XCTestCase {
   func testLargestTextImportedOverflowSourceLinkAndActualReducedMotionKeepNavigation() {
     SystemAccessibilitySupport.withReduceMotion {
       let app = launch(extra: ["-sidequest-large-text"])
-      for identifier in ["feed.news", "feed.navigation"] {
+      for identifier in ["feed.navigation"] {
         XCTAssertTrue(app.buttons[identifier].isHittable)
         XCTAssertGreaterThanOrEqual(app.buttons[identifier].frame.width + 0.001, 44)
         XCTAssertGreaterThanOrEqual(app.buttons[identifier].frame.height + 0.001, 44)
@@ -136,6 +136,36 @@ final class IntegrationFlowTests: XCTestCase {
     }
   }
 
+  func testNewsMenuAtNormalAndLargestTextResetsUnfinishedGame() {
+    for extra in [[], ["-sidequest-large-text"]] {
+      let app = launch(extra: extra)
+      let menu = app.buttons["feed.navigation"]
+      XCTAssertEqual(menu.label, "More options")
+      XCTAssertTrue(menu.isHittable)
+      XCTAssertGreaterThanOrEqual(menu.frame.width + 0.001, 44)
+      XCTAssertGreaterThanOrEqual(menu.frame.height + 0.001, 44)
+      XCTAssertFalse(app.buttons["feed.news"].exists)
+      let headerFrame = menu.frame
+      let selected = app.selectedFeedCardID
+      reveal(app.sliders["bubble.aim"], in: app)
+      app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: 0.65)
+      let changedAim = app.sliders["bubble.aim"].value as? String ?? ""
+      XCTAssertFalse(changedAim.isEmpty)
+      XCTAssertNotEqual(changedAim.filter { !$0.isWhitespace }, "50%")
+      openLibrary(app)
+      XCTAssertTrue(app.buttons["news.import"].isHittable)
+      closeLibrary(app)
+      XCTAssertEqual(app.selectedFeedCardID, selected)
+      XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
+      let aimValue = app.sliders["bubble.aim"].value as? String ?? ""
+      XCTAssertEqual(aimValue.filter { !$0.isWhitespace }, "50%")
+      XCTAssertEqual(menu.frame, headerFrame)
+      XCTAssertTrue(menu.isHittable)
+      XCTAssertFalse(app.buttons["feed.news"].exists)
+      app.terminate()
+    }
+  }
+
   private func launch(extra: [String] = []) -> XCUIApplication {
     continueAfterFailure = false
     let app = XCUIApplication()
@@ -147,13 +177,13 @@ final class IntegrationFlowTests: XCTestCase {
   }
 
   private func openLibrary(_ app: XCUIApplication) {
-    app.buttons["feed.news"].tap()
-    XCTAssertTrue(app.buttons["news.import"].waitForExistence(timeout: 5))
+    app.openNewsLibrary()
   }
 
   private func closeLibrary(_ app: XCUIApplication) {
     app.buttons["news.done"].tap()
-    XCTAssertTrue(app.buttons["feed.news"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["feed.navigation"].waitForExistence(timeout: 5))
+    XCTAssertFalse(app.buttons["feed.news"].exists)
   }
 
   private func importFile(_ name: String, in app: XCUIApplication) {
