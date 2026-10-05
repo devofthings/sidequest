@@ -18,9 +18,8 @@ struct StartupIntroductionView<Content: View>: View {
             .scaledToFit()
             .frame(width: 120, height: 120)
             .clipShape(RoundedRectangle(cornerRadius: 26))
-            .scaleEffect(introduction.phase == .visible ? 0.96 : 1)
             .opacity(introduction.phase == .visible ? 1 : 0)
-            .animation(.easeOut(duration: 0.35), value: introduction.phase)
+            .animation(.easeInOut(duration: 0.45), value: introduction.phase)
             .allowsHitTesting(false)
             .accessibilityHidden(true)
         }
