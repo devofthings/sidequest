@@ -13,3 +13,7 @@ Owner-approved #163 supersedes Bubble's visible numeric-angle treatment. Follow 
 ## Selected native game artwork #171
 
 Under the owner’s autonomous #13 design authority, the lead selects #159’s six original Memory contours and current both-side King/Queen silhouettes for bounded native implementation. Follow [NATIVE_GAME_ART.md](NATIVE_GAME_ART.md) for exact provenance and accepted translation boundaries. Other Figma samples remain proposals. Original Shapes reuse the native palette and existing game geometry/semantic labels; artwork selection does not change rules or establish rendered evidence. Native adoption through PR173 passed final focused simulator checks, fresh review and exact-head CI; [delivery evidence](../INSTALL.md#verified-source-refinements-october-5) records exact sources and historical coverage. Keep physical-device claims separate; the static Figma board remains Proposed.
+
+## Integrated launch identity #181
+
+The owner approved logo, splash, and design integration on October 5. [LAUNCH.md](LAUNCH.md) owns the bounded static launch background and existing decorative Card S introduction. This accepts launch integration without promoting historical Figma proposals or changing game rules. Actual native appearance and transitions require root-owned verification.

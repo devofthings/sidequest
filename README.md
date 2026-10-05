@@ -26,7 +26,7 @@ The recorded MVP and test results describe that selected release. Later document
 
 Game cards show their actual inactive boards with a lightweight **Tap to play** hint; tap the preview game surface or activate its accessible Start game action. Memory stays face down. Starting enables play without moving or reshuffling the board. Skipping or backgrounding resets unfinished attempts; completed results survive revisits during the session. Current source requests one system success haptic and briefly shows a readable celebration after a solved/won attempt; Bubble losses and completed revisits stay quiet. Physical vibration remains unverified pending your iPhone test.
 
-Current #91 source adds a brief Card S introduction on cold launch while preparation and app access continue; Reduce Motion omits it. [Startup checks](docs/INSTALL.md#cold-launch-logo-introduction-91) distinguish the policy from pending native verification.
+Current #91 source adds a brief Card S introduction on cold launch while preparation and app access continue; Reduce Motion omits it. The #181 [launch canvas](docs/design/LAUNCH.md) matches the static system background to the app in light and dark appearances; native verification is pending. [Startup checks](docs/INSTALL.md#cold-launch-logo-introduction-91) distinguish the policy from pending native verification.
 
 Current Bubble source uses left/right dragging in the lower-board aiming area and a dotted trajectory, with no visible numeric angle. Releasing a drag does not shoot; **Fire** stays explicit. A native 44-point Slider remains available for assistive and keyboard precision. See [the refinement and verification status](docs/BUBBLES.md#simplified-horizontal-aiming-163).
 
@@ -48,12 +48,12 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 72 | 6,240 |
+| App | 72 | 6,242 |
 | Unit tests | 34 | 4,704 |
 | UI tests | 17 | 2,953 |
-| **Total** | **123** | **13,897** |
+| **Total** | **123** | **13,899** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+11,459 / −625 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+11,461 / −625 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.

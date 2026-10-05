@@ -85,7 +85,7 @@ struct SidequestApp: App {
       case .notStarted, .loading:
         VStack(spacing: 16) {
           Text("Sidequest")
-            .font(.largeTitle.bold())
+            .font(.system(.largeTitle, design: .rounded, weight: .bold))
             .accessibilityAddTraits(.isHeader)
             .accessibilityIdentifier("foundation.title")
           ProgressView("Preparing news and games")
@@ -94,14 +94,14 @@ struct SidequestApp: App {
         .padding(24)
       case .failed(let message):
         VStack(spacing: 16) {
-          Text("Sidequest").font(.largeTitle.bold())
+          Text("Sidequest").font(.system(.largeTitle, design: .rounded, weight: .bold))
             .accessibilityIdentifier("foundation.title")
           Text(message).accessibilityIdentifier("foundation.error")
           Button("Retry") {
             session.retryPreparation()
             startupRetry += 1
           }
-          .frame(minHeight: 44)
+          .buttonStyle(SidequestButtonStyle(prominent: true))
         }.padding(24)
       case .ready(let composition):
         content(composition)
