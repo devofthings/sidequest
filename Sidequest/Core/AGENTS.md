@@ -13,3 +13,7 @@ These choices were resolved through the agent-grill interview for #2. Pure value
 ## Demo news and cadence #106
 
 Distinguish immutable story identity from feed appearance identity. A repeated news appearance has its own CardID and retains its unchanged NewsSnapshot. Pure cadence owns game count, news cursor and ordinal; presentation and persistence stay outside it. Finite historical routes can default appearance IDs to snapshot IDs. See [demo news policy](../../docs/DEMO_NEWS.md).
+
+## Immutable challenge difficulty #177
+
+`GameDifficulty` is the shared raw-string Codable, Hashable, Sendable classification (`easy`, `medium`, `hard`). Each game validates its own immutable measurements and proxy; this enum owns no selection policy, user setting, or claim of human calibration. Presentation and feed integration consume validated configuration rather than reclassifying an attempt.

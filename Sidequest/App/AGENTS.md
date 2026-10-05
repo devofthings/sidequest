@@ -61,3 +61,7 @@ Owner-approved #181 keeps the selected Card S introduction and its #91 lifetime 
 ## First meaningful interaction #185
 
 The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.
+
+## Varied Chess validation #177
+
+DEBUG-only `-sidequest-chess-catalog <id>` paired with an existing `-sidequest-chess-white-fixture` or `-sidequest-chess-black-fixture` route loads the separate immutable original catalog off the UI actor and selects that exact puzzle for the same composed Chess controller. Reject missing IDs, unknown IDs, or color mismatches through the ordinary fixture failure path. This route supplies real rendered 3×3/5×5 verification without changing normal startup, historical fixtures, production selection, or Release loading. Example: `-sidequest-chess-black-fixture -sidequest-chess-catalog hard-five-black -sidequest-large-text`. Rules, move tables, timing, feedback, and lifecycle remain real; no injected win or test-only game behavior.

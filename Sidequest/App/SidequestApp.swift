@@ -12,7 +12,16 @@ struct SidequestApp: App {
   @State private var newsModel: NewsImportModel
 
   init() {
-    let session = FeedSessionState()
+    #if DEBUG
+      let session = FeedSessionState(loadChess: {
+        if CommandLine.arguments.contains("-sidequest-chess-catalog") {
+          return try await ChessPuzzleLoader.bundledCatalog()
+        }
+        return try await ChessPuzzleLoader.bundled()
+      })
+    #else
+      let session = FeedSessionState()
+    #endif
     _session = State(initialValue: session)
     #if DEBUG
       let store = IntegrationFixtures.newsStore()

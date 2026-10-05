@@ -105,3 +105,7 @@ The owner selected first interaction starts and applies the same action, superse
 ## News menu #191
 
 Open the real-feed library through `openNewsLibrary()` in FeedNavigationSupport, which selects News snapshots from More options. Assert the dedicated `feed.news` control is absent when the menu is closed; use `feed.navigation` for fixed-header geometry. Preserve standalone `foundation.news` fixtures. Keep the normal/largest-text menu reset regression classified as extended, with the three required smoke cases unchanged.
+
+## Varied Chess validation #177
+
+`VariedChessFlowTests` selects original catalog IDs through the narrow DEBUG route and the real composed controller. Under accepted #185 policy, verify both-color 3×3 previews where the first own-piece tap starts and selects that piece in one action, with frozen skip/reset and real completion/revisit. Exclude the selected square’s decorative AX outline when comparing stable board frames. No dedicated Start control is expected. Both-color 5×5 flows require the entire board and 44-point primary controls together without scrolling, exercise legal nonmates outside the crop through full coordinates, and complete normally. Largest-text Black 5×5 uses owned scrolling from the left eight-point padding, full-target containment, real coordinate input, and completed revisit. Keep screenshots for actual visual inspection. These three cases remain extended; the required smoke suite is unchanged. Root alone runs native tests and records actual results before completion.

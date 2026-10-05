@@ -6,6 +6,12 @@ struct ChessBoardWindow: Equatable, Sendable {
   static let fullBoard = ChessBoardWindow(files: 0..<8, ranks: 0..<8)
 
   init(puzzle: ChessPuzzle) {
+    if let focus = puzzle.challenge?.focus {
+      self.init(
+        files: focus.fileStart..<(focus.fileStart + focus.size),
+        ranks: focus.rankStart..<(focus.rankStart + focus.size))
+      return
+    }
     let candidate: ChessBoardWindow
     switch (puzzle.id, puzzle.fen) {
     case ("queen-corner-white", "7k/5K2/6Q1/8/8/8/8/8 w - - 0 1"):

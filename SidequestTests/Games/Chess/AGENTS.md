@@ -7,3 +7,11 @@ Controller and app-flow tests cover preview/start with no selected piece, input 
 Await the real off-UI bundled loader in rule/controller tests. Startup tests suspend an injected loader to verify composition ordering, single load/cache reuse, visible failures, and cancellation plus late completion after replacement; never bypass loading with a fabricated success.
 
 For #132, verify immutable White e5–h8 / Black a1–d4 window ordering, all pieces/mates and defending-king neighbors, unchanged standard-board nonmates outside the crop, and full-board fallback for unknown IDs, changed FENs, or accepted destinations outside the crop. The window owns presentation only; canonical move-table validation remains separate.
+
+## Varied original catalog #177
+
+`ChessChallengeTests` exercises the separate metadata-required catalog, both sides in each band, independent3/4/5 crops, every accepted mate, off-crop legal nonmates and frozen configuration through skip/reset/completed revisit. Negative decoding covers proxy mismatches, accepted/duplicate checking moves, missing metadata and malformed/clipping windows. Complete legal/checking/mating evidence belongs to the development-only validator, not a duplicated Swift rules engine. The historical two-fixture tests stay unchanged. Root owns native execution.
+
+After #185, the varied catalog lifecycle test activates through the first own-piece tap and asserts that the same action selects it, rather than calling runtime Start first. Invisible input remains inert; skip resets the attempt while metadata/window remain frozen; completed input remains rejected on revisit.
+
+Construct catalog first-action lifecycle tests with `GameRuntime(activationPolicy: .firstInteraction)`, matching real App composition. The default runtime intentionally retains `.explicitStart` for historical pure harnesses; removing explicit starts without selecting the intended policy leaves those tests inactive. Preserve the failed native evidence and require a root-owned rerun.

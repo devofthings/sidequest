@@ -3,6 +3,7 @@ enum ChessFixtureError: Error, Equatable {
   case unsupportedObjective
   case invalidMoves
   case duplicateID
+  case invalidChallenge
   case missingResource
 }
 
@@ -14,10 +15,11 @@ struct ChessPuzzle: Sendable {
   let board: [ChessSquare: ChessPiece]
   let legalMoves: Set<ChessMove>
   let acceptedMoves: Set<ChessMove>
+  let challenge: ChessChallengeMetadata?
 
   init(
     id: String, fen: String, sideToMove: ChessSide, objective: String,
-    legalMoves: [String], acceptedMoves: [String]
+    legalMoves: [String], acceptedMoves: [String], challenge: ChessChallengeMetadata? = nil
   ) throws {
     guard !id.isEmpty, !id.allSatisfy({ $0.isWhitespace }) else {
       throw ChessFixtureError.invalidPosition
@@ -73,6 +75,11 @@ struct ChessPuzzle: Sendable {
           && board[move.destination]?.kind != .king
       })
     else { throw ChessFixtureError.invalidMoves }
+    if let challenge {
+      try challenge.validate(
+        board: board, sideToMove: sideToMove, legalMoves: Set(legal), acceptedMoves: Set(accepted))
+    }
+    self.challenge = challenge
     self.id = id
     self.fen = fen
     self.sideToMove = sideToMove
