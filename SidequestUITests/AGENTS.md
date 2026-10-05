@@ -101,3 +101,7 @@ Largest-text standard Sudoku now also reaches the full-width Clear action, verif
 ## First meaningful interaction #185
 
 The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.
+
+## News menu #191
+
+Open the real-feed library through `openNewsLibrary()` in FeedNavigationSupport, which selects News snapshots from More options. Assert the dedicated `feed.news` control is absent when the menu is closed; use `feed.navigation` for fixed-header geometry. Preserve standalone `foundation.news` fixtures. Keep the normal/largest-text menu reset regression classified as extended, with the three required smoke cases unchanged.

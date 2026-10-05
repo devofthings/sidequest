@@ -42,3 +42,7 @@ No human-owned product or spending choice is open for this bounded presentation 
 ## Success feedback #86
 
 Successful game attempts request one standard native success haptic and show a brief readable checkmark/“Nice!” badge within the fixed viewport header title slot. A 180 ms contained scale/opacity transition supplies emphasis; Reduce Motion uses immediate appearance/removal. The decoration lasts 1.5 seconds, never advances the feed, never obscures a board or scrolls away with game controls, and does not replace the game-owned completed result. Hiding/backgrounding or replay cancels it immediately. Bubble losses, stale completions, and restored/revisited results stay quiet. Runtime/controller verification and fresh PR gates remain required; physical vibration is unverified pending device testing.
+
+## Header simplification #191
+
+The owner removes the dedicated newspaper button. Keep app/success identity and the vivid 44-point More options control in the header; News snapshots is a conditional action inside that existing menu. Remove the old button footprint, preserve the success reservation and game geometry, and retain the same import coordinator and source links. The [accepted decision](DECISIONS.md#news-access-191) owns this behavior; native rendering and interaction proof remain PR-specific.

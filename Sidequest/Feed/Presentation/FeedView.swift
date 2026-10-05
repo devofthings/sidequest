@@ -40,16 +40,13 @@ struct FeedView: View {
             runtime: selectedRuntime, gameTitle: selectedGame?.kind.title ?? "Game")
         }
         Spacer(minLength: 8)
-        if let openNews {
-          Button(action: openNews) {
-            Label("News snapshots", systemImage: "newspaper")
-              .labelStyle(.iconOnly)
-              .frame(minWidth: 44, minHeight: 44)
-          }
-          .buttonStyle(SidequestButtonStyle(compact: true, accent: SidequestTheme.cyan))
-          .accessibilityIdentifier("feed.news")
-        }
         Menu {
+          if let openNews {
+            Button(action: openNews) {
+              Label("News snapshots", systemImage: "newspaper")
+            }
+            .accessibilityIdentifier("feed.news")
+          }
           Button("Previous card") { requestPage(-1) }
             .disabled(!controller.canGoBack || !controller.canNavigate)
             .accessibilityIdentifier("feed.previous")
@@ -57,13 +54,13 @@ struct FeedView: View {
             .disabled(!controller.canGoForward || !controller.canNavigate)
             .accessibilityIdentifier("feed.next")
         } label: {
-          Label("Feed navigation", systemImage: "ellipsis.circle")
+          Label("More options", systemImage: "ellipsis.circle")
             .labelStyle(.iconOnly)
             .frame(minWidth: 44, minHeight: 44)
             .contentShape(Rectangle())
         }
         .buttonStyle(SidequestButtonStyle(compact: true, accent: SidequestTheme.lavender))
-        .accessibilityLabel("Feed navigation")
+        .accessibilityLabel("More options")
         .accessibilityIdentifier("feed.navigation")
       }
       .padding(.horizontal, 16)

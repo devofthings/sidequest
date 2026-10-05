@@ -121,3 +121,11 @@ The lead also selected Memory workload tiers of3/4/6 distinct pairs for Easy/Med
 ## First meaningful interaction starts and applies #185
 
 Accepted October 5: "The first game interaction also starts it." Remove the production hint/intercept surface and let game-owned valid input synchronously request runtime start, then apply the same action. Read [the authoritative preview policy](GAME_PREVIEWS.md). This replaces the initiating-tap-only requirement, preserving manual settled paging, frozen challenges, inactive appearance, unfinished reset and quiet completion. The lead selects a fixed empty 44-point reservation so removing the cue does not shift games between phases. No historical real-game fixture bypass is added. Explicit `GameRuntime.start()` remains a supported manual lifecycle API; only the preexisting DEBUG placeholder demo uses its explicit policy. All real fixtures and normal app composition use first interaction. Native execution, review and CI remain pending.
+
+## News access #191
+
+Accepted October 5, 2026: the owner said “we dont need the news button.” Remove the dedicated feed-header newspaper button and expose News snapshots through the existing More options menu. Preserve manual importing, source links, news cards, and the coordinator’s modal reset/eligibility behavior. The menu retains `feed.navigation`; its conditional News snapshots action retains `feed.news`. This simplifies the header without expanding destinations or changing cadence. Native proof belongs to the owning PR.
+
+### Implementation readiness
+
+Agent-grill self-assessment: the existing `openNews` callback is a main-actor action owned by composition (fact: `FeedView` and the app coordinator). Relocating that callback preserves modal lifecycle ownership. More options is the selected technical label because the menu now contains navigation and news importing. Planned verification covers normal/largest text menu access, absence of the header news action, and reset of an unfinished game on library presentation. No product or spending question remains open.

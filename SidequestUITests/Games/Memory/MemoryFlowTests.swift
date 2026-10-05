@@ -37,12 +37,11 @@ final class MemoryFlowTests: XCTestCase {
       XCTAssertTrue(badge.waitForExistence(timeout: 5))
       let appFrame = app.frame
       let badgeFrame = badge.frame
-      let newsFrame = app.buttons["feed.news"].frame
       let navigationFrame = app.buttons["feed.navigation"].frame
       let scrollFrame = app.scrollViews["feed.cardScroll"].frame
       let frames = XCTAttachment(
         string:
-          "app: \(appFrame)\nbadge: \(badgeFrame)\nnews: \(newsFrame)\nnavigation: \(navigationFrame)\ncardScroll: \(scrollFrame)"
+          "app: \(appFrame)\nbadge: \(badgeFrame)\nnavigation: \(navigationFrame)\ncardScroll: \(scrollFrame)"
       )
       frames.name = "memory-reduced-motion-header-viewport-frames"
       frames.lifetime = .keepAlways
@@ -53,7 +52,7 @@ final class MemoryFlowTests: XCTestCase {
       add(screen)
       capture(app, name: "memory-success-system-reduce-motion-app-element")
       for (name, frame) in [
-        ("badge", badgeFrame), ("news", newsFrame), ("navigation", navigationFrame),
+        ("badge", badgeFrame), ("navigation", navigationFrame),
       ] {
         XCTAssertFalse(frame.isEmpty, "\(name) needs a real visible footprint.")
         XCTAssertTrue(
@@ -62,7 +61,7 @@ final class MemoryFlowTests: XCTestCase {
           frame.maxY, scrollFrame.minY + 1,
           "\(name) remains in the fixed header above the card scroller.")
       }
-      XCTAssertTrue(app.buttons["feed.news"].isHittable)
+      XCTAssertFalse(app.buttons["feed.news"].exists)
       XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
       XCUIDevice.shared.press(.home)
       app.activate()

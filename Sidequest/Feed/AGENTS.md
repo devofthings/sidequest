@@ -16,7 +16,7 @@ Forward public Dynamic Type, color scheme, locale, and layout-direction values i
 
 Bind every native navigation request to its originating controller identity. `FeedView` clears obsolete request state and applies the current scene phase when that identity changes, even if the outer view identity stays the same. Deliberate replacement owns retiring the previous controller; the fresh pager rejects old-session requests before moving.
 
-Integration #9 adds an optional accessible 44-point News action to the existing header; its root coordinator owns the library modal and synchronously sets host availability before presentation. Keep the same outer FeedView identity during imported-news replacement. Apply current scene eligibility on controller identity change as #87 requires; the coordinator retires old sessions and supplies the fresh retained adapters. News/game/source actions do not request pages. Retain one owned content scroller per page and full control containment at largest text.
+Owner-approved #191 places the optional News snapshots action inside the existing 44-point More options menu, preserving `feed.news` as the menu action identifier and `feed.navigation` as the menu identifier; its root coordinator owns the library modal and synchronously sets host availability before presentation. Keep the same outer FeedView identity during imported-news replacement. Apply current scene eligibility on controller identity change as #87 requires; the coordinator retires old sessions and supplies the fresh retained adapters. News/game/source actions do not request pages. Retain one owned content scroller per page and full control containment at largest text.
 
 ## Endless feed #104
 
@@ -67,3 +67,7 @@ The owner selected first interaction starts and applies the same action, superse
 ## Visible completed controls #185
 
 The feed-wide disabled gate rejects hidden cards and explicit-policy preview input only. A visible completed subtree remains eligible for game-owned actions such as Bubble Replay; `GameRuntime.canInteract` is the move gate and must not globally disable completed controls. Each adapter retains its own completed move rejection, and Replay still requires the shared visible-completed lifecycle gate. The actual #185 completed-win/revisit native flow exposed this distinction when the broader move gate disabled Replay; retain its enabled-control and frozen reset assertions.
+
+## News access #191
+
+Keep the header limited to app/success identity and More options, with no reserved newspaper-button footprint. The menu invokes the existing `openNews` callback; composition retains modal eligibility/reset ownership. Source links and news cards stay unchanged. See [the accepted decision](../../docs/DECISIONS.md#news-access-191).
