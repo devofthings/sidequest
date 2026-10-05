@@ -99,7 +99,7 @@ final class ChessChallengeTests: XCTestCase {
     for puzzle in try await ChessPuzzleLoader.bundledCatalog(in: Bundle.main) {
       let metadata = puzzle.challenge
       let window = ChessBoardWindow(puzzle: puzzle)
-      let runtime = GameRuntime()
+      let runtime = GameRuntime(activationPolicy: .firstInteraction)
       let controller = ChessController(puzzle: puzzle, runtime: runtime)
       let move = try XCTUnwrap(puzzle.acceptedMoves.sorted { $0.notation < $1.notation }.first)
       controller.tap(move.origin)
