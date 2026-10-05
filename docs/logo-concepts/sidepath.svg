@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">Sidequest concept B: Sidepath</title>
+  <desc id="desc">A chunky lime branching route and coral destination on purple.</desc>
+  <rect width="1024" height="1024" fill="#653BE8"/>
+  <path d="M350 760 V610 C350 545 394 512 454 512 H555 C618 512 656 474 656 410 V274" fill="none" stroke="#D9FF63" stroke-width="148" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M350 610 V285" fill="none" stroke="#D9FF63" stroke-width="148" stroke-linecap="round"/>
+  <circle cx="656" cy="274" r="108" fill="#FF8C83"/>
+  <circle cx="656" cy="274" r="34" fill="#653BE8"/>
+</svg>
