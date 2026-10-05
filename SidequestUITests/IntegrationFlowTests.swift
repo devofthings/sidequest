@@ -43,16 +43,15 @@ final class IntegrationFlowTests: XCTestCase {
     waitForMessage("Imported 0 news snapshots.", in: app)
     closeLibrary(app)
     XCTAssertEqual(app.selectedFeedCardID, "sample-game-bubbleShooter")
-    XCTAssertTrue(app.buttons["game.start"].isEnabled)
+    XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
     app.terminate()
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 10))
+    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 10))
     XCTAssertEqual(app.selectedFeedCardID, "sample-game-bubbleShooter")
   }
 
   func testLibraryAndBackgroundCancelPendingRealGamesAndCompletionSurvivesCancel() {
     let app = launch(extra: ["-sidequest-bubble-slow-shot"])
-    app.buttons["game.start"].tap()
     reveal(app.buttons["bubble.fire"], in: app)
     app.buttons["bubble.fire"].tap()
     XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
@@ -61,8 +60,7 @@ final class IntegrationFlowTests: XCTestCase {
     app.activate()
     XCTAssertTrue(app.buttons["news.done"].waitForExistence(timeout: 5))
     closeLibrary(app)
-    XCTAssertTrue(app.buttons["game.start"].exists)
-    app.buttons["game.start"].tap()
+    XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     for (index, aim) in [0.5, 0.5, 0.65].enumerated() {
       reveal(app.sliders["bubble.aim"], in: app)
@@ -80,20 +78,18 @@ final class IntegrationFlowTests: XCTestCase {
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
     for _ in 0..<3 { app.nextFeedCard() }
     XCTAssertTrue(app.staticTexts["Memory"].exists)
-    XCTAssertTrue(app.buttons["game.start"].exists)
-    app.buttons["game.start"].tap()
+    XCTAssertFalse(app.buttons["game.start"].exists)
     app.buttons["memory.tile.0"].tap()
     app.buttons["memory.tile.2"].tap()
     XCTAssertTrue(app.buttons["memory.tile.0"].label.hasPrefix("Revealed"))
     openLibrary(app)
     closeLibrary(app)
-    XCTAssertTrue(app.buttons["game.start"].exists)
-    app.buttons["game.start"].tap()
+    XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertEqual(app.buttons["memory.tile.0"].label, "Hidden card 1")
     XCTAssertEqual(app.staticTexts["memory.progress"].label, "0 of 6 pairs matched")
     app.nextFeedCard()
     app.previousFeedCard()
-    XCTAssertTrue(app.buttons["game.start"].exists)
+    XCTAssertFalse(app.buttons["game.start"].exists)
   }
 
   func testLargestTextImportedOverflowSourceLinkAndActualReducedMotionKeepNavigation() {
@@ -133,7 +129,7 @@ final class IntegrationFlowTests: XCTestCase {
         for: NSPredicate(format: "identifier == %@", "feed.selected.sample-game-bubbleShooter"),
         evaluatedWith: app.selectedFeedCard)
       wait(for: [second], timeout: 5)
-      XCTAssertTrue(app.buttons["game.start"].exists)
+      XCTAssertFalse(app.buttons["game.start"].exists)
       app.previousFeedCard()
       XCTAssertEqual(app.selectedFeedCardID, "imported-news-one")
       app.terminate()
@@ -146,7 +142,7 @@ final class IntegrationFlowTests: XCTestCase {
     app.launchArguments =
       ["-sidequest-integration-fixtures", "-sidequest-integration-reset"] + extra
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 10))
+    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 10))
     return app
   }
 

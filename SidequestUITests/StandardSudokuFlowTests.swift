@@ -19,7 +19,8 @@ final class StandardSudokuFlowTests: XCTestCase {
     }
     let initial = board.frame
     app.buttons["sudoku.cell.8"].tap()
-    XCTAssertFalse(app.buttons["sudoku.number.9"].isEnabled, "First tap only starts")
+    XCTAssertTrue(app.buttons["sudoku.cell.8"].isSelected)
+    XCTAssertTrue(app.buttons["sudoku.number.9"].isEnabled, "First interaction selects the cell")
     XCTAssertEqual(board.frame, initial)
     select(row: 1, column: 9, in: app)
     app.buttons["sudoku.number.1"].tap()
@@ -41,7 +42,6 @@ final class StandardSudokuFlowTests: XCTestCase {
   @MainActor
   func testStandardRealCompletionRetainsTheNineByNineBoard() {
     let app = launch()
-    app.buttons["game.start"].tap()
     let board = app.otherElements["sudoku.board"]
     let initial = board.frame
     for column in 1...9 {
@@ -65,8 +65,6 @@ final class StandardSudokuFlowTests: XCTestCase {
   @MainActor
   func testLargestTextCoordinatesAndNineRemainReachableWithStableFeedback() {
     let app = launch(large: true)
-    reveal(app.buttons["game.start"], in: app, upward: false)
-    app.buttons["game.start"].tap()
     reveal(app.buttons["sudoku.column"], in: app, upward: true)
     select(row: 1, column: 9, in: app)
     reveal(app.buttons["sudoku.number.9"], in: app, upward: true)
@@ -135,7 +133,7 @@ final class StandardSudokuFlowTests: XCTestCase {
     app.launchArguments =
       ["-sidequest-standard-sudoku-test"] + (large ? ["-sidequest-large-text"] : [])
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["sudoku.cell.8"].waitForExistence(timeout: 5))
     return app
   }
 

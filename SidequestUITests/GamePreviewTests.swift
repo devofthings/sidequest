@@ -2,27 +2,24 @@ import XCTest
 
 @MainActor
 final class GamePreviewTests: XCTestCase {
-  func testAllInitialBoardsRejectPreviewInputAndResetAfterSkipAndBackground() {
+  func testAllInitialBoardsAcceptFirstInputAndResetAfterSkipAndBackground() {
     for fixture in Fixture.allCases {
       let app = launch(fixture)
       assertPreview(app, fixture: fixture)
       let before = snapshot(app, fixture: fixture)
       capture(app, name: "preview-\(fixture.rawValue)-normal")
       let frame = anchor(app, fixture: fixture).frame
-      app.buttons["game.start"].tap()
       XCTAssertFalse(app.buttons["game.start"].exists)
-      XCTAssertEqual(snapshot(app, fixture: fixture), before)
-      XCTAssertEqual(anchor(app, fixture: fixture).frame, frame)
       makeMove(app, fixture: fixture)
+      XCTAssertEqual(anchor(app, fixture: fixture).frame, frame)
       app.nextFeedCard()
       app.previousFeedCard()
       assertPreview(app, fixture: fixture)
       XCTAssertEqual(snapshot(app, fixture: fixture), before)
-      app.buttons["game.start"].tap()
       makeMove(app, fixture: fixture)
       XCUIDevice.shared.press(.home)
       app.activate()
-      XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+      XCTAssertTrue(anchor(app, fixture: fixture).waitForExistence(timeout: 5))
       assertPreview(app, fixture: fixture)
       XCTAssertEqual(snapshot(app, fixture: fixture), before)
       capture(app, name: "reset-preview-\(fixture.rawValue)-normal")
@@ -30,7 +27,7 @@ final class GamePreviewTests: XCTestCase {
     }
   }
 
-  func testLargestTextKeepsEveryInitialBoardAndStartReachableWithoutMovingTheBoard() {
+  func testLargestTextKeepsEveryInitialBoardAndFirstInputReachableWithoutMovingTheBoard() {
     for fixture in Fixture.allCases {
       let app = launch(fixture, largeText: true)
       assertPreview(app, fixture: fixture, allowBoardOverflow: true)
@@ -39,20 +36,19 @@ final class GamePreviewTests: XCTestCase {
       let last = lastBoardElement(app, fixture: fixture)
       reveal(first, in: app)
       XCTAssertTrue(app.scrollViews["feed.cardScroll"].frame.contains(first.frame))
-      if fixture != .bubble { XCTAssertFalse(first.isEnabled) }
+      if fixture == .sudoku || fixture == .memory { XCTAssertTrue(first.isEnabled) }
       capture(app, name: "preview-\(fixture.rawValue)-largest-board-top")
       reveal(last, in: app)
       XCTAssertTrue(app.scrollViews["feed.cardScroll"].frame.contains(last.frame))
-      XCTAssertFalse(last.isEnabled)
+      if fixture == .memory || fixture == .bubble { XCTAssertTrue(last.isEnabled) }
       if fixture == .memory { XCTAssertEqual(last.label, "Hidden card 12") }
       XCTAssertEqual(snapshot(app, fixture: fixture), before)
       capture(app, name: "preview-\(fixture.rawValue)-largest-board-bottom-before-start")
       // Establish the start baseline only after restoring its viewport; tapping must not auto-scroll.
-      reveal(app.buttons["game.start"], in: app)
+      reveal(firstActionTarget(app, fixture: fixture), in: app)
       let viewport = app.scrollViews["feed.cardScroll"].frame
       let frame = first.frame
-      app.buttons["game.start"].tap()
-      XCTAssertEqual(snapshot(app, fixture: fixture), before)
+      makeMove(app, fixture: fixture)
       XCTAssertEqual(first.frame, frame)
       XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewport)
       reveal(lastBoardElement(app, fixture: fixture), in: app)
@@ -62,12 +58,14 @@ final class GamePreviewTests: XCTestCase {
       assertPreview(app, fixture: fixture, allowBoardOverflow: true)
       reveal(lastBoardElement(app, fixture: fixture), in: app)
       capture(app, name: "preview-\(fixture.rawValue)-largest-board-bottom")
-      XCTAssertFalse(lastBoardElement(app, fixture: fixture).isEnabled)
+      if fixture == .memory || fixture == .bubble {
+        XCTAssertTrue(lastBoardElement(app, fixture: fixture).isEnabled)
+      }
       if fixture == .memory {
         XCTAssertEqual(lastBoardElement(app, fixture: fixture).label, "Hidden card 12")
       }
-      reveal(app.buttons["game.start"], in: app)
-      XCTAssertTrue(app.buttons["game.start"].isHittable)
+      reveal(firstActionTarget(app, fixture: fixture), in: app)
+      XCTAssertTrue(firstActionTarget(app, fixture: fixture).isHittable)
       XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
       app.terminate()
     }
@@ -79,7 +77,7 @@ final class GamePreviewTests: XCTestCase {
       let viewport = app.scrollViews["feed.cardScroll"]
       let board = completeBoard(app, fixture: fixture)
       let controls = primaryControls(app, fixture: fixture)
-      let start = app.buttons["game.start"]
+      let start = firstActionTarget(app, fixture: fixture)
       // Wait for viewport/chrome measurements to settle, without scrolling or changing the fixture.
       let contained = expectation(
         for: NSPredicate { _, _ in
@@ -98,17 +96,20 @@ final class GamePreviewTests: XCTestCase {
         for cell in board {
           XCTAssertGreaterThanOrEqual(cell.frame.width + 0.001, 44, cell.identifier)
           XCTAssertGreaterThanOrEqual(cell.frame.height + 0.001, 44, cell.identifier)
-          XCTAssertFalse(cell.isEnabled)
+          if fixture == .memory { XCTAssertTrue(cell.isEnabled) }
         }
       }
-      let frozen = board.map { "\($0.label)|\(String(describing: $0.value))" }
-      let frames = board.map(\.frame)
+      // Selected Chess decoration changes its accessibility outline, so compare unselected squares.
+      let stableBoard = board.filter {
+        $0.identifier != "chess.square.g6" && $0.identifier != "chess.square.b3"
+      }
+      let frames = stableBoard.map(\.frame)
       let controlFrames = controls.map(\.frame)
       let viewportFrame = viewport.frame
-      start.tap()
-      XCTAssertFalse(start.exists)
-      XCTAssertEqual(board.map { "\($0.label)|\(String(describing: $0.value))" }, frozen)
-      XCTAssertEqual(board.map(\.frame), frames, "Start must not reposition any board target.")
+      makeMove(app, fixture: fixture)
+      XCTAssertFalse(app.buttons["game.start"].exists)
+      XCTAssertEqual(
+        stableBoard.map(\.frame), frames, "First input must not reposition board targets.")
       XCTAssertEqual(controls.map(\.frame), controlFrames)
       XCTAssertEqual(viewport.frame, viewportFrame)
       assertContained(board + controls, in: viewport, app: app)
@@ -183,17 +184,14 @@ final class GamePreviewTests: XCTestCase {
   private func assertPreview(
     _ app: XCUIApplication, fixture: Fixture, allowBoardOverflow: Bool = false
   ) {
-    reveal(app.buttons["game.start"], in: app)
-    XCTAssertTrue(app.buttons["game.start"].isEnabled)
-    XCTAssertTrue(app.buttons["game.start"].isHittable)
-    XCTAssertGreaterThanOrEqual(app.buttons["game.start"].frame.height + 0.001, 44)
+    XCTAssertFalse(app.buttons["game.start"].exists)
     let element = anchor(app, fixture: fixture)
     XCTAssertTrue(element.exists)
     XCTAssertGreaterThan(element.frame.height, 0)
     if !allowBoardOverflow {
       XCTAssertTrue(app.scrollViews["feed.cardScroll"].frame.intersects(element.frame))
     }
-    if fixture != .bubble { XCTAssertFalse(element.isEnabled) }
+    if fixture == .sudoku || fixture == .memory { XCTAssertTrue(element.isEnabled) }
     switch fixture {
     case .sudoku:
       XCTAssertFalse(app.buttons["sudoku.number.3"].isEnabled)
@@ -207,8 +205,8 @@ final class GamePreviewTests: XCTestCase {
       XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
       XCTAssertFalse(app.buttons["chess.submit"].isEnabled)
     case .bubble:
-      XCTAssertFalse(app.buttons["bubble.fire"].isEnabled)
-      XCTAssertFalse(app.sliders["bubble.aim"].isEnabled)
+      XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
+      XCTAssertTrue(app.sliders["bubble.aim"].isEnabled)
       XCTAssertEqual(app.otherElements["bubble.directAim"].value as? String, "Aim: 0 degrees")
       XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
       XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Clear matching groups of three.")
@@ -249,25 +247,40 @@ final class GamePreviewTests: XCTestCase {
     }
   }
 
+  private func firstActionTarget(_ app: XCUIApplication, fixture: Fixture) -> XCUIElement {
+    switch fixture {
+    case .sudoku: app.buttons["sudoku.cell.2"]
+    case .memory: app.buttons["memory.tile.0"]
+    case .chessWhite: app.buttons["chess.piece.g6"]
+    case .chessBlack: app.buttons["chess.piece.b3"]
+    case .bubble: app.otherElements["bubble.directAim"]
+    }
+  }
+
   private func makeMove(_ app: XCUIApplication, fixture: Fixture) {
     let element: XCUIElement
     switch fixture {
     case .sudoku: element = app.buttons["sudoku.cell.2"]
     case .memory: element = app.buttons["memory.tile.0"]
-    case .chessWhite: element = app.buttons["chess.square.g6"]
-    case .chessBlack: element = app.buttons["chess.square.b3"]
-    case .bubble: element = app.buttons["bubble.fire"]
+    case .chessWhite: element = app.buttons["chess.piece.g6"]
+    case .chessBlack: element = app.buttons["chess.piece.b3"]
+    case .bubble: element = app.otherElements["bubble.directAim"]
     }
     reveal(element, in: app)
     XCTAssertTrue(element.isEnabled)
-    element.tap()
+    if fixture == .bubble {
+      element.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.2)).tap()
+    } else {
+      element.tap()
+    }
     switch fixture {
     case .sudoku: XCTAssertTrue(element.isSelected)
     case .memory: XCTAssertEqual(element.label, "Revealed star, card 1")
     case .chessWhite: XCTAssertTrue(app.staticTexts["chess.selection"].label.contains("g6"))
     case .chessBlack: XCTAssertTrue(app.staticTexts["chess.selection"].label.contains("b3"))
     case .bubble:
-      XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
+      XCTAssertNotEqual(element.value as? String, "Aim: 0 degrees")
+      XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     }
   }
 
@@ -306,7 +319,7 @@ final class GamePreviewTests: XCTestCase {
       + (largeText ? ["-sidequest-large-text"] : [])
       + (fixture == .bubble ? ["-sidequest-bubble-slow-shot"] : [])
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    XCTAssertTrue(anchor(app, fixture: fixture).waitForExistence(timeout: 5))
     return app
   }
 }

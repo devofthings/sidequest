@@ -2,12 +2,11 @@ import XCTest
 
 @MainActor
 final class MemoryFlowTests: XCTestCase {
-  func testStartMakesNoFlipAndMatchingAllPairsRetainsCompletion() {
+  func testFirstFlipStartsAndMatchingAllPairsRetainsCompletion() {
     let app = launch(successFeedback: true)
-    XCTAssertTrue(app.buttons["game.start"].exists)
+    XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertTrue(app.buttons["memory.tile.0"].exists)
-    XCTAssertFalse(app.buttons["memory.tile.0"].isEnabled)
-    app.buttons["game.start"].tap()
+    XCTAssertTrue(app.buttons["memory.tile.0"].isEnabled)
     capture(app, name: "normal-started-board")
     XCTAssertEqual(app.buttons["memory.tile.0"].label, "Hidden card 1")
     XCTAssertEqual(app.staticTexts["memory.progress"].label, "0 of 6 pairs matched")
@@ -33,7 +32,6 @@ final class MemoryFlowTests: XCTestCase {
     continueAfterFailure = false
     SystemAccessibilitySupport.withReduceMotion {
       let app = launch(successFeedback: true)
-      app.buttons["game.start"].tap()
       for index in 0..<12 { tapTile(index, app: app) }
       let badge = app.staticTexts["game.successCelebration"]
       XCTAssertTrue(badge.waitForExistence(timeout: 5))
@@ -77,7 +75,6 @@ final class MemoryFlowTests: XCTestCase {
 
   func testMismatchTurnsOverAndSkippingReturnsToUnflippedPreview() {
     let app = launch()
-    app.buttons["game.start"].tap()
     app.buttons["memory.tile.0"].tap()
     app.buttons["memory.tile.2"].tap()
     let first = app.buttons["memory.tile.0"]
@@ -90,10 +87,9 @@ final class MemoryFlowTests: XCTestCase {
     third.tap()
     app.nextFeedCard()
     app.previousFeedCard()
-    XCTAssertTrue(app.buttons["game.start"].exists)
+    XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertTrue(app.buttons["memory.tile.0"].exists)
-    XCTAssertFalse(app.buttons["memory.tile.0"].isEnabled)
-    app.buttons["game.start"].tap()
+    XCTAssertTrue(app.buttons["memory.tile.0"].isEnabled)
     XCTAssertEqual(app.buttons["memory.tile.0"].label, "Hidden card 1")
     XCTAssertEqual(app.buttons["memory.tile.2"].label, "Hidden card 3")
     XCTAssertEqual(app.staticTexts["memory.progress"].label, "0 of 6 pairs matched")
@@ -101,8 +97,7 @@ final class MemoryFlowTests: XCTestCase {
 
   func testLargestTextKeepsEveryTileAndNavigationReachable() {
     let app = launch(largeText: true, successFeedback: true)
-    XCTAssertTrue(app.buttons["game.start"].isHittable)
-    app.buttons["game.start"].tap()
+    XCTAssertTrue(app.buttons["memory.tile.0"].isHittable)
     for index in 0..<11 { tapTile(index, app: app) }
     let lastTile = app.buttons["memory.tile.11"]
     reveal(lastTile, app: app)
@@ -161,7 +156,7 @@ final class MemoryFlowTests: XCTestCase {
       + (largeText ? ["-sidequest-large-text"] : [])
       + (successFeedback ? ["-sidequest-success-feedback-test"] : [])
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["memory.tile.0"].waitForExistence(timeout: 5))
     return app
   }
 }
