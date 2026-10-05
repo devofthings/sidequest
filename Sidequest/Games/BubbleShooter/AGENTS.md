@@ -103,3 +103,7 @@ The lead accepted the agent-grill interview. Retain the actual 44-point native S
 | Does releasing a drag shoot or page? | Accepted fact | Explicit Fire remains selected in #163. Existing leases and narrow native pan exclusion remain unchanged. | Real drag/release with zero shots and unchanged card/frames; explicit Fire commit, reset/completion/Replay and largest-text checks. |
 
 Author source/format/offline checks are separate from Root-owned native verification and fresh independent review. The private Figma proposal's old visible numeric angle is superseded; shared design guidance must mark it obsolete until a revised actual board is saved. Do not claim an unedited proposal or an unexecuted native test is verified.
+
+## Authoritative pop feedback #161
+
+After an eligible shot commits, only matched/detached removal with a still-playing outcome requests the shared interaction haptic. Attached-only shots, aim gestures, failed/stale shots, and losses stay quiet; the final clear uses existing success feedback exclusively. Render actual removed bubbles with a contained 160 ms scale-to-0.6/opacity transition inside a clipped rounded board. Reduce Motion removes immediately; preview, reset, and offscreen transactions remain nonanimated. No animation completion controls rules or shooting eligibility and no extra removal task/state is introduced. Lead-owned running-app checks and physical iPhone vibration remain pending until actually verified.
