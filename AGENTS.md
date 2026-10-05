@@ -1,6 +1,6 @@
 # Working on Sidequest
 
-Sidequest is a private iPhone MVP mixing news and quick games in one feed. The SwiftUI feed, manual news imports, and four real game kinds are implemented. The selected MVP release source and downloaded ARM64 simulator app both passed build/install/launch verification; see [delivery evidence](docs/INSTALL.md#verified-mvp-delivery). Personal testing in #10 still requires the user’s actual feedback.
+Sidequest is a private iPhone MVP mixing news and quick games in one feed. The SwiftUI feed, manual news imports, and four real game kinds are implemented. The selected MVP release source and downloaded ARM64 simulator app both passed build/install/launch verification; see [delivery evidence](docs/INSTALL.md#verified-mvp-delivery). The owner completed installation, basic play, and product feedback in #10 on October 5, 2026; see [the personal-test outcome](docs/MVP.md#personal-test-outcome).
 
 ## Context for new chats
 
@@ -79,7 +79,7 @@ Use only included Codex usage. Never spend or purchase Codex credits, redeem usa
 
 Implement features without a TDD or test-first workflow, then add or update meaningful unit tests for game rules and feed lifecycle and deterministic end-to-end tests for critical integrated app flows. Cover news actions, explicit tap-to-play, game interaction, and skip/reset through the running app as those flows become available. Applicable tests must pass before merging under [docs/REVIEW.md](docs/REVIEW.md). This is the user's accepted [testing decision](docs/DECISIONS.md); documentation-only changes still use proportionate documentation checks.
 
-Follow [INSTALL.md](docs/INSTALL.md) for the verified Xcode project, shared scheme, simulator build/test/launch commands, source-discovery checks, and local signing workflow. [Application guidance](Sidequest/AGENTS.md) owns foundation isolation and target-membership choices; scoped test guidance owns fixtures. Run applicable app tests and strict Swift lint before merging. For hook and installer changes, run the [tooling checks](docs/FORMATTING.md#verify-tooling-changes). [CI.md](docs/CI.md) owns verified free foreground self-hosted execution and exact-commit verification. Report gameplay and release results from actual issue/check evidence. Physical-device execution remains deferred and unverified under #79.
+Follow [INSTALL.md](docs/INSTALL.md) for the verified Xcode project, shared scheme, simulator build/test/launch commands, source-discovery checks, and local signing workflow. [Application guidance](Sidequest/AGENTS.md) owns foundation isolation and target-membership choices; scoped test guidance owns fixtures. Run applicable app tests and strict Swift lint before merging. For hook and installer changes, run the [tooling checks](docs/FORMATTING.md#verify-tooling-changes). [CI.md](docs/CI.md) owns verified free foreground self-hosted execution and exact-commit verification. Report gameplay and release results from actual issue/check evidence. The owner reports successful physical-iPhone installation and basic play in #10; exact device/build metadata, detailed flows, and device accessibility remain unknown. Preserve the separately recorded simulator evidence; see [the owner report](docs/INSTALL.md#owner-reported-iphone-test).
 
 ## Endless feed #104
 
@@ -100,3 +100,7 @@ On October 4, 2026, the owner instructed "dont do a second check on main". Use e
 ## Current authorized usage window
 
 On October 5, 2026, the owner personally reset included usage and authorized this run only until 85% remains (15% used), extending the initially selected 90% checkpoint. This stricter current-run checkpoint supersedes the ordinary 1% reserve: check reported usage before new tickets/reviewers and periodically while working, commit and push unfinished work to a PR or draft PR at the threshold, then stop. Do not redeem resets or purchase usage yourself.
+
+## Personal-test feedback #10
+
+Before selecting product refinements, read [the October 5 personal-test outcome](docs/MVP.md#personal-test-outcome). Prioritize coherent design, animations, and fun within the existing accepted #13 direction; #13 is closed and its merged baseline remains delivered. Keep adaptive frequency #119, geographic news #146, Snake #147, and original microgames #148 in Ideas until explicit approval; recording feedback authorizes no research or implementation of those proposals. Preserve manual paging, explicit tap-to-play, and the current five-game/news cadence until a bounded replacement is accepted.
