@@ -1,6 +1,6 @@
-# Mini Sudoku
+# Sudoku
 
-Own pure 4×4 rules with 2×2 regions and this game's presentation adapter. Follow [common game guidance](../AGENTS.md) and [card contract](../../../docs/CONTRACT.md).
+Own pure Sudoku rules and this game's presentation adapter. Production and historical Debug routes still use 4×4 boards with 2×2 regions; the standard-format foundation below is not yet wired into gameplay. Follow [common game guidance](../AGENTS.md) and [card contract](../../../docs/CONTRACT.md).
 
 ## Historical finite Debug policy from issue #5
 
@@ -41,3 +41,14 @@ Agent-grill self-assessment: Selection and numeric entry is a delegated presenta
 ## Success feedback routing #86
 
 Mark runtime completion successful only after the board reports isComplete. Consume the shared runtime feedback boundary in [common game guidance](../AGENTS.md); keep rules, timing, retained results, and reset semantics unchanged. Appearance or restored completed values never emit success.
+
+
+## Standard-format foundation #162 — partial delivery
+
+The owner approved standard 9×9 boards, digits 1–9, nine 3×3 regions, and meaningful difficulty levels. This compatible pure-rule slice supports explicit `SudokuConfiguration.standard`; `.mini` remains the default for existing constructors, generated production cards, presentation, and finite smoke fixtures. Do not pass a standard puzzle to the current hardcoded mini view. Full game exposure, 44-point coordinate entry with a readable overview, native usability proof, and #118's tier/distribution decisions remain pending. This slice does not complete #162 or select a difficulty.
+
+Agent-grill self-assessment with lead `/root`: Format is a fact-owned configuration on the immutable puzzle, so board/reset/completed-result values preserve it without changing shared feed contracts. The default mini generator keeps its existing random operations and clue-removal order; explicit mini generation delegates to it, preserving the production random stream. Standard generation permutes a valid original solved grid, attempts each clue removal once, retains at least 40 clues, and accepts removal only with an exhaustive uniqueness proof. Forty clues is a bounded-work safeguard, not evidence of human difficulty. No puzzle catalog or external service is introduced.
+
+Use minimum-remaining-values search with row/column/region masks, capped at two solutions and 100,000 visited nodes for puzzle validation. Reject an exhausted node budget with `searchLimitReached`; never accept a partial single solution as a uniqueness proof. Standard generation limits each removal search to 10,000 nodes and keeps the clue when a proof is incomplete. Check cancellation before standard generation and between clue attempts; the existing `GeneratedGameBatch.prepare` boundary runs production preparation away from the UI actor. A synchronous rule call does not itself establish thread placement. UI and tier work must record native verification before delivery.
+
+Verification planned: deterministic generated standard puzzles, independent row/column/region checks, immutable givens and digit 9 correction/completion/reset, ambiguous/conflicting/invalid formats, incomplete search with and without a found solution, unchanged mini random stream, existing mini/endless/Bubble witness regressions. Formatting and offline checks are not native gameplay or performance evidence.
