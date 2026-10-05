@@ -7,3 +7,5 @@ These pure tests establish no 9×9 UI fit, accessibility, difficulty classificat
 ## Certified challenges #187
 
 Native tier tests must execute the existing exhaustive Swift solver against original12/13/20-blank examples, actual persisted-candidate classification, invalid/ambiguous/exhausted inputs, seeded transformed givens, and first-action/reset/completed controller restoration. Seeds isolate the opt-in generator from historical random streams. These tests certify technique/workload proxies, not human difficulty or production labels. Root owns actual native execution.
+
+Keep one XCTestCase class per source file: the exact-case native inventory maps file test methods to its class, so separate rule and controller classes to preserve inventory validation. Do not weaken inventory checks to accommodate mixed classes.
