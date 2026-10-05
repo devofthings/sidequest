@@ -1,6 +1,6 @@
 # Play memory pairs
 
-Memory has six distinct symbols, each appearing twice on a shuffled twelve-card board. Flip cards to find all six pairs. The board uses three columns normally and two at accessibility text sizes; scroll inside the game surface to reach every card. Symbols have different shapes and spoken names rather than relying on color.
+Current production Memory has six distinct symbols, each appearing twice on a shuffled twelve-card board. Flip cards to find all six pairs. The board uses three columns normally and two at accessibility text sizes; scroll inside the game surface to reach every card. Symbols have different shapes and spoken names rather than relying on color.
 
 ## Controls and feedback
 
@@ -22,3 +22,9 @@ The DEBUG-only `-sidequest-memory-fixtures` route places Memory before one news 
 Ten targeted simulator unit tests passed: five pure-rule tests and five retained-controller tests. They cover deterministic pairs/shuffling, invalid boards, repeated/matched/out-of-range input, mismatch input locking, all-pairs completion, start without a flip, skip/reset, completed revisit, and an old noncooperative callback resuming during a newer mismatch. A controlled unexpected delay failure also verifies recovery without permanently locking input. These tests use explicit continuations rather than gameplay sleeps.
 
 Three running-app flows passed for matching/completion retention, mismatch/skip-reset, and largest-text tile/navigation reachability. The checks reached and matched all twelve tiles at the largest text size without changing global simulator settings. Normal and largest-text fixture screenshots are retained outside Git for visual inspection. The owning issue and live PR checks record full-suite/Release verification and the independent merge gates; focused results here do not certify those gates. Physical-iPhone/iOS 17 runtime execution remains unverified. The first UI invocation stalled after its runner exited and was interrupted with diagnostics preserved; the complete retry passed.
+
+## Configurable workload foundation #178
+
+Approved #178 adds validated three/four/six-pair configurations, classified Easy/Medium/Hard as an objective workload proxy rather than a demonstrated human difficulty rating. The default production board and six-pair fixtures remain compatible. Mixed labeled feed integration is separate; this foundation does not expose a difficulty selector or new production distribution.
+
+A frozen `MemoryChallenge` carries seed, workload, and original shuffled layout. Its opt-in controller initializer preserves that configuration through start/reset and accepts only completed results with the identical layout for restoration. Instructions and progress use each board's actual pair count. The source includes deterministic seed sweeps, invalid arrangements, exact legacy shuffle/random-consumption checks, and all-workload reset/completion/restoration tests. Native/CI execution remains root-owned and pending until the PR records actual results.

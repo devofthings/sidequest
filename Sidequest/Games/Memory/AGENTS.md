@@ -1,6 +1,6 @@
 # Memory pairs
 
-Issue #6 owns this short, six-pair challenge. Keep `Rules` independent of UI and time; its presentation adapter consumes the retained `GameRuntime` established by #3. Composition owns one controller per card ID and binds its runtime once. No scores, persistence, replay, or additional game modes belong to this issue.
+Issue #6 establishes the compatible six-pair default; approved #178 adds three/four/six-pair configurations. Keep `Rules` independent of UI and time; its presentation adapter consumes the retained `GameRuntime` established by #3. Composition owns one controller per card ID and binds its runtime once. No scores, persistence, replay, or additional game modes belong to this issue.
 
 ## Implementation question review
 
@@ -63,3 +63,13 @@ Use the local opaque-label board ButtonStyle to retain full artwork and coordina
 ## First meaningful interaction #185
 
 The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.
+
+## Validated workload configurations #178
+
+Owner #118 selects mixed difficulties with a label per game; actual feed integration is a separate ticket. This game-owned foundation maps Easy/Medium/Hard to three/four/six pairs as an objective workload proxy, not validated human difficulty. Production and existing fixture composition remain six pairs until that integration. Do not add settings, progression, or feed labels in this area.
+
+`MemoryRules` accepts only three, four, or six distinct symbols appearing exactly twice. Its default random constructor preserves the former six-pair shuffle and random consumption. Requested smaller workloads select an original subset of the existing six symbols and shuffle its pairs. Derive actual count and workload from validated rules; unsupported layouts are rejected rather than labeled Hard. Presentation instructions/progress use the actual pair count, preserving all existing artwork, hit targets, delays, motion, and feedback gates.
+
+`MemoryChallenge(difficulty:seed:)` freezes the requested workload, seed, and initial symbol layout together using `ChallengeRandom`. The opt-in throwing controller initializer retains that challenge and copies its frozen rules on start/reset. Its completed-result argument must be completed and have the same ordered symbols; reject unrelated/incomplete restoration. Preserve the legacy initializer for existing callers and archived results. Composition must retain the challenge alongside a card when adopting the new path; reset/revisit must never generate or reclassify it.
+
+Agent-grill self-assessment: pair counts and mixed-feed direction are accepted issue178 choices. Rule validation is a fact established by existing exactly-six constructors; generalizing only3/4/6 maintains bounded original symbols. Keeping a compatible default and an opt-in frozen challenge avoids changing shared production RNG/lifecycle ownership. Planned root-owned native tests cover all workloads, malformed contracts, deterministic seed sweeps, exact legacy RNG compatibility, reset/completion/restoration; strict formatting is source validation, not native gameplay evidence. No native or CI result is claimed by this author.

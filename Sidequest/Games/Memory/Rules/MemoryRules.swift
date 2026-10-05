@@ -3,7 +3,7 @@ enum MemorySymbol: String, CaseIterable, Sendable {
 }
 
 enum MemoryBoardError: Error, Equatable {
-  case invalidPairs
+  case invalidPairs, invalidRestoration
 }
 
 enum MemoryTurn: Equatable, Sendable {
@@ -22,16 +22,33 @@ struct MemoryRules: Equatable, Sendable {
   private(set) var matchedIndices = Set<Int>()
   private(set) var turn: MemoryTurn = .choosing(first: nil)
 
-  init<R: RandomNumberGenerator>(using random: inout R) {
-    let pairs = MemorySymbol.allCases + MemorySymbol.allCases
-    symbols = pairs.shuffled(using: &random)
+  init<R: RandomNumberGenerator>(using random: inout R, difficulty: GameDifficulty = .hard) {
+    let selected: [MemorySymbol]
+    switch difficulty {
+    case .easy: selected = Array(MemorySymbol.allCases.shuffled(using: &random).prefix(3))
+    case .medium: selected = Array(MemorySymbol.allCases.shuffled(using: &random).prefix(4))
+    case .hard: selected = MemorySymbol.allCases
+    }
+    symbols = (selected + selected).shuffled(using: &random)
   }
 
   init(symbols: [MemorySymbol]) throws {
-    guard symbols.count == 12,
-      MemorySymbol.allCases.allSatisfy({ symbol in symbols.filter { $0 == symbol }.count == 2 })
+    let distinct = Set(symbols)
+    guard [3, 4, 6].contains(distinct.count), symbols.count == distinct.count * 2,
+      distinct.allSatisfy({ symbol in symbols.filter { $0 == symbol }.count == 2 })
     else { throw MemoryBoardError.invalidPairs }
     self.symbols = symbols
+  }
+
+  var pairCount: Int { symbols.count / 2 }
+
+  /// Workload classification follows the validated pair count, not a human difficulty rating.
+  var difficulty: GameDifficulty {
+    switch pairCount {
+    case 3: return .easy
+    case 4: return .medium
+    default: return .hard  // Both constructors guarantee only three, four, or six pairs.
+    }
   }
 
   var matchedPairCount: Int { matchedIndices.count / 2 }
