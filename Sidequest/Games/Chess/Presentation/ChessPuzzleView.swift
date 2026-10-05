@@ -24,10 +24,13 @@ struct ChessPuzzleView: View {
 
   private var window: ChessBoardWindow { ChessBoardWindow(puzzle: controller.puzzle) }
 
-  private var compact: Bool { !dynamicTypeSize.isAccessibilitySize && window.files.count == 4 }
+  private var compact: Bool {
+    !dynamicTypeSize.isAccessibilitySize && (3...5).contains(window.files.count)
+  }
   private var spacing: CGFloat { compact ? 8 : 16 }
   private var boardExtent: CGFloat {
-    layoutBudget?.squareBoardExtent(chromeHeight: chromeHeight, columns: 4) ?? 176
+    layoutBudget?.squareBoardExtent(chromeHeight: chromeHeight, columns: window.files.count)
+      ?? CGFloat(window.files.count * 44)
   }
 
   var body: some View {
@@ -146,16 +149,24 @@ struct ChessPuzzleView: View {
               }
             }
             .frame(
-              width: compact ? min(40, boardExtent / 4 - 20) : (window.files.count == 4 ? 40 : 26),
-              height: compact ? min(40, boardExtent / 4 - 20) : (window.files.count == 4 ? 40 : 26)
+              width: compact
+                ? min(40, boardExtent / CGFloat(window.files.count) - 20)
+                : ((3...5).contains(window.files.count) ? 40 : 26),
+              height: compact
+                ? min(40, boardExtent / CGFloat(window.files.count) - 20)
+                : ((3...5).contains(window.files.count) ? 40 : 26)
             )
             .accessibilityHidden(true)
             .scaleEffect(destination && !reduceMotion ? 1.12 : 1)
             .animation(feedbackAnimation, value: destination)
-            Text(square.coordinate).font(.system(size: window.files.count == 4 ? 13 : 10))
+            Text(square.coordinate).font(
+              .system(size: (3...5).contains(window.files.count) ? 13 : 10))
           }
           .frame(maxWidth: .infinity)
-          .frame(width: compact ? boardExtent / 4 : nil, height: compact ? boardExtent / 4 : nil)
+          .frame(
+            width: compact ? boardExtent / CGFloat(window.files.count) : nil,
+            height: compact ? boardExtent / CGFloat(window.files.count) : nil
+          )
           .aspectRatio(1, contentMode: .fit)
           .contentShape(Rectangle())
           .foregroundStyle(SidequestTheme.darkInk)

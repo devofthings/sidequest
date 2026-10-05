@@ -1,0 +1,476 @@
+[
+  {
+    "id": "hard-three-white",
+    "fen": "8/8/8/8/8/2K5/2Q5/k7 w - - 0 1",
+    "sideToMove": "white",
+    "objective": "checkmate-in-one",
+    "legalMoves": [
+      "c2a2",
+      "c2a4",
+      "c2b1",
+      "c2b2",
+      "c2b3",
+      "c2c1",
+      "c2d1",
+      "c2d2",
+      "c2d3",
+      "c2e2",
+      "c2e4",
+      "c2f2",
+      "c2f5",
+      "c2g2",
+      "c2g6",
+      "c2h2",
+      "c2h7",
+      "c3b3",
+      "c3b4",
+      "c3c4",
+      "c3d2",
+      "c3d3",
+      "c3d4"
+    ],
+    "acceptedMoves": [
+      "c2b2"
+    ],
+    "challenge": {
+      "difficulty": "hard",
+      "checkingNonmates": [
+        "c2a2",
+        "c2a4",
+        "c2b1",
+        "c2c1",
+        "c2d1"
+      ],
+      "focus": {
+        "fileStart": 0,
+        "rankStart": 0,
+        "size": 3
+      }
+    }
+  },
+  {
+    "id": "hard-three-black",
+    "fen": "K7/2q5/2k5/8/8/8/8/8 b - - 0 1",
+    "sideToMove": "black",
+    "objective": "checkmate-in-one",
+    "legalMoves": [
+      "c6b5",
+      "c6b6",
+      "c6c5",
+      "c6d5",
+      "c6d6",
+      "c6d7",
+      "c7a5",
+      "c7a7",
+      "c7b6",
+      "c7b7",
+      "c7b8",
+      "c7c8",
+      "c7d6",
+      "c7d7",
+      "c7d8",
+      "c7e5",
+      "c7e7",
+      "c7f4",
+      "c7f7",
+      "c7g3",
+      "c7g7",
+      "c7h2",
+      "c7h7"
+    ],
+    "acceptedMoves": [
+      "c7b7"
+    ],
+    "challenge": {
+      "difficulty": "hard",
+      "checkingNonmates": [
+        "c7a5",
+        "c7a7",
+        "c7b8",
+        "c7c8",
+        "c7d8"
+      ],
+      "focus": {
+        "fileStart": 0,
+        "rankStart": 5,
+        "size": 3
+      }
+    }
+  },
+  {
+    "id": "hard-four-white",
+    "fen": "8/8/8/8/8/8/8/k1KQ4 w - - 0 1",
+    "sideToMove": "white",
+    "objective": "checkmate-in-one",
+    "legalMoves": [
+      "c1c2",
+      "c1d2",
+      "d1a4",
+      "d1b3",
+      "d1c2",
+      "d1d2",
+      "d1d3",
+      "d1d4",
+      "d1d5",
+      "d1d6",
+      "d1d7",
+      "d1d8",
+      "d1e1",
+      "d1e2",
+      "d1f1",
+      "d1f3",
+      "d1g1",
+      "d1g4",
+      "d1h1",
+      "d1h5"
+    ],
+    "acceptedMoves": [
+      "d1a4"
+    ],
+    "challenge": {
+      "difficulty": "hard",
+      "checkingNonmates": [
+        "c1c2",
+        "c1d2",
+        "d1d4"
+      ],
+      "focus": {
+        "fileStart": 0,
+        "rankStart": 0,
+        "size": 4
+      }
+    }
+  },
+  {
+    "id": "hard-four-black",
+    "fen": "K1kq4/8/8/8/8/8/8/8 b - - 0 1",
+    "sideToMove": "black",
+    "objective": "checkmate-in-one",
+    "legalMoves": [
+      "c8c7",
+      "c8d7",
+      "d8a5",
+      "d8b6",
+      "d8c7",
+      "d8d1",
+      "d8d2",
+      "d8d3",
+      "d8d4",
+      "d8d5",
+      "d8d6",
+      "d8d7",
+      "d8e7",
+      "d8e8",
+      "d8f6",
+      "d8f8",
+      "d8g5",
+      "d8g8",
+      "d8h4",
+      "d8h8"
+    ],
+    "acceptedMoves": [
+      "d8a5"
+    ],
+    "challenge": {
+      "difficulty": "hard",
+      "checkingNonmates": [
+        "c8c7",
+        "c8d7",
+        "d8d5"
+      ],
+      "focus": {
+        "fileStart": 0,
+        "rankStart": 4,
+        "size": 4
+      }
+    }
+  },
+  {
+    "id": "hard-five-white",
+    "fen": "8/8/8/8/8/8/8/k1K1Q3 w - - 0 1",
+    "sideToMove": "white",
+    "objective": "checkmate-in-one",
+    "legalMoves": [
+      "c1c2",
+      "c1d1",
+      "c1d2",
+      "e1a5",
+      "e1b4",
+      "e1c3",
+      "e1d1",
+      "e1d2",
+      "e1e2",
+      "e1e3",
+      "e1e4",
+      "e1e5",
+      "e1e6",
+      "e1e7",
+      "e1e8",
+      "e1f1",
+      "e1f2",
+      "e1g1",
+      "e1g3",
+      "e1h1",
+      "e1h4"
+    ],
+    "acceptedMoves": [
+      "e1a5"
+    ],
+    "challenge": {
+      "difficulty": "hard",
+      "checkingNonmates": [
+        "c1c2",
+        "c1d2",
+        "e1c3",
+        "e1e5"
+      ],
+      "focus": {
+        "fileStart": 0,
+        "rankStart": 0,
+        "size": 5
+      }
+    }
+  },
+  {
+    "id": "hard-five-black",
+    "fen": "K1k1q3/8/8/8/8/8/8/8 b - - 0 1",
+    "sideToMove": "black",
+    "objective": "checkmate-in-one",
+    "legalMoves": [
+      "c8c7",
+      "c8d7",
+      "c8d8",
+      "e8a4",
+      "e8b5",
+      "e8c6",
+      "e8d7",
+      "e8d8",
+      "e8e1",
+      "e8e2",
+      "e8e3",
+      "e8e4",
+      "e8e5",
+      "e8e6",
+      "e8e7",
+      "e8f7",
+      "e8f8",
+      "e8g6",
+      "e8g8",
+      "e8h5",
+      "e8h8"
+    ],
+    "acceptedMoves": [
+      "e8a4"
+    ],
+    "challenge": {
+      "difficulty": "hard",
+      "checkingNonmates": [
+        "c8c7",
+        "c8d7",
+        "e8c6",
+        "e8e4"
+      ],
+      "focus": {
+        "fileStart": 0,
+        "rankStart": 3,
+        "size": 5
+      }
+    }
+  },
+  {
+    "id": "easy-four-white",
+    "fen": "8/8/8/8/8/8/2Q5/k1K5 w - - 0 1",
+    "sideToMove": "white",
+    "objective": "checkmate-in-one",
+    "legalMoves": [
+      "c1d1",
+      "c1d2",
+      "c2a2",
+      "c2a4",
+      "c2b1",
+      "c2b2",
+      "c2b3",
+      "c2c3",
+      "c2c4",
+      "c2c5",
+      "c2c6",
+      "c2c7",
+      "c2c8",
+      "c2d1",
+      "c2d2",
+      "c2d3",
+      "c2e2",
+      "c2e4",
+      "c2f2",
+      "c2f5",
+      "c2g2",
+      "c2g6",
+      "c2h2",
+      "c2h7"
+    ],
+    "acceptedMoves": [
+      "c2a4",
+      "c2b1",
+      "c2b2"
+    ],
+    "challenge": {
+      "difficulty": "easy",
+      "checkingNonmates": [
+        "c2a2",
+        "c2c3"
+      ],
+      "focus": {
+        "fileStart": 0,
+        "rankStart": 0,
+        "size": 4
+      }
+    }
+  },
+  {
+    "id": "easy-four-black",
+    "fen": "K1k5/2q5/8/8/8/8/8/8 b - - 0 1",
+    "sideToMove": "black",
+    "objective": "checkmate-in-one",
+    "legalMoves": [
+      "c7a5",
+      "c7a7",
+      "c7b6",
+      "c7b7",
+      "c7b8",
+      "c7c1",
+      "c7c2",
+      "c7c3",
+      "c7c4",
+      "c7c5",
+      "c7c6",
+      "c7d6",
+      "c7d7",
+      "c7d8",
+      "c7e5",
+      "c7e7",
+      "c7f4",
+      "c7f7",
+      "c7g3",
+      "c7g7",
+      "c7h2",
+      "c7h7",
+      "c8d7",
+      "c8d8"
+    ],
+    "acceptedMoves": [
+      "c7a5",
+      "c7b7",
+      "c7b8"
+    ],
+    "challenge": {
+      "difficulty": "easy",
+      "checkingNonmates": [
+        "c7a7",
+        "c7c6"
+      ],
+      "focus": {
+        "fileStart": 0,
+        "rankStart": 4,
+        "size": 4
+      }
+    }
+  },
+  {
+    "id": "medium-five-white",
+    "fen": "8/8/8/8/8/8/3Q4/k1K5 w - - 0 1",
+    "sideToMove": "white",
+    "objective": "checkmate-in-one",
+    "legalMoves": [
+      "c1c2",
+      "c1d1",
+      "d2a2",
+      "d2a5",
+      "d2b2",
+      "d2b4",
+      "d2c2",
+      "d2c3",
+      "d2d1",
+      "d2d3",
+      "d2d4",
+      "d2d5",
+      "d2d6",
+      "d2d7",
+      "d2d8",
+      "d2e1",
+      "d2e2",
+      "d2e3",
+      "d2f2",
+      "d2f4",
+      "d2g2",
+      "d2g5",
+      "d2h2",
+      "d2h6"
+    ],
+    "acceptedMoves": [
+      "d2a5",
+      "d2b2"
+    ],
+    "challenge": {
+      "difficulty": "medium",
+      "checkingNonmates": [
+        "d2a2",
+        "d2c3",
+        "d2d4"
+      ],
+      "focus": {
+        "fileStart": 0,
+        "rankStart": 0,
+        "size": 5
+      }
+    }
+  },
+  {
+    "id": "medium-five-black",
+    "fen": "K1k5/3q4/8/8/8/8/8/8 b - - 0 1",
+    "sideToMove": "black",
+    "objective": "checkmate-in-one",
+    "legalMoves": [
+      "c8c7",
+      "c8d8",
+      "d7a4",
+      "d7a7",
+      "d7b5",
+      "d7b7",
+      "d7c6",
+      "d7c7",
+      "d7d1",
+      "d7d2",
+      "d7d3",
+      "d7d4",
+      "d7d5",
+      "d7d6",
+      "d7d8",
+      "d7e6",
+      "d7e7",
+      "d7e8",
+      "d7f5",
+      "d7f7",
+      "d7g4",
+      "d7g7",
+      "d7h3",
+      "d7h7"
+    ],
+    "acceptedMoves": [
+      "d7a4",
+      "d7b7"
+    ],
+    "challenge": {
+      "difficulty": "medium",
+      "checkingNonmates": [
+        "d7a7",
+        "d7c6",
+        "d7d5"
+      ],
+      "focus": {
+        "fileStart": 0,
+        "rankStart": 3,
+        "size": 5
+      }
+    }
+  }
+]
