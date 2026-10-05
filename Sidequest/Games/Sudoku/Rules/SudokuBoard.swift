@@ -7,12 +7,14 @@ struct SudokuBoard: Equatable, Sendable {
     cells = puzzle.givens
   }
 
-  var conflicts: Set<Int> { SudokuGrid.conflicts(in: cells) }
+  var conflicts: Set<Int> { SudokuGrid.conflicts(in: cells, configuration: puzzle.configuration) }
   var isComplete: Bool { !cells.contains(0) && conflicts.isEmpty }
 
   @discardableResult
   mutating func setValue(_ value: Int, at index: Int) -> Bool {
-    guard cells.indices.contains(index), (0...4).contains(value), puzzle.givens[index] == 0 else {
+    guard cells.indices.contains(index), (0...puzzle.configuration.size).contains(value),
+      puzzle.givens[index] == 0
+    else {
       return false
     }
     cells[index] = value

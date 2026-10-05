@@ -32,3 +32,12 @@ A normal-size simulator probe found undersized number/clear actions and missed t
 ## Visible inactive preview #88
 
 The actual initial board displays its givens before Tap to play, with every gameplay control disabled. A derived display value preserves the board while playable state remains absent. Start copies that same initial value without selecting or entering; reset returns to it. See [preview guidance](GAME_PREVIEWS.md) for ownership and validation boundaries.
+
+
+## Standard-format foundation #162 — partial source support
+
+The owner approved standard 9×9 Sudoku with digits 1–9 and difficulty support. The compatible pure-rule foundation distinguishes mini and standard formats explicitly, validates all nine 3×3 regions, and verifies exactly one solution with a bounded minimum-remaining-values search. Original standard challenges use deterministic rule-preserving permutations and uniquely verified clue removal. A 40-clue floor limits generation work; it does not classify puzzle difficulty.
+
+Production generation and the current playable view remain mini Sudoku. Standard puzzles are not yet exposed in the feed. Difficulty classification and distribution remain pending in [#118](https://github.com/devofthings/sidequest/issues/118); readable pocket controls, complete 1–9 entry, surface-start integration, and actual native 9×9 verification remain open in [#162](https://github.com/devofthings/sidequest/issues/162). This partial slice changes no release or physical-device claim.
+
+See [game guidance](../Sidequest/Games/Sudoku/AGENTS.md#standard-format-foundation-162--partial-delivery) for the configuration, work-budget, cancellation, compatibility, and planned verification decisions. Existing mini delivery evidence above remains historical proof; standard-format tests require their own actual results before any delivery claim.
