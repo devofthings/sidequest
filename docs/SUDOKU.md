@@ -1,4 +1,10 @@
-# Play mini Sudoku
+# Play pocket Sudoku
+
+Current source adds standard9×9 presentation under #170 to the reviewed format-specific foundation #162. Production generated cards use digits1–9, nine3×3 regions and at most12 editable cells. This is a short-session technical baseline, not a difficulty classification. Row and Column menus provide full-size selection alternatives to the compact overview; enter1–9 or Clear. Givens remain immutable, conflicts are correctable, starting is inert, skipping resets unfinished entries, and completed revisits remain quiet. Actual normal375-point and largest-text checks are pending root execution until recorded in the PR.
+
+Standard overview uses216–300point measured normal geometry and300point accessibility geometry; its secondary24–33point cells are supplemented by44point coordinate/entry controls. Surrounding large text scrolls inside the card. The DEBUG-only `-sidequest-standard-sudoku-test` route selects an original12-blank standard fixture plus news; Release ignores it. Production generation freezes the standard format per card and isolates its seed from historical neighboring game/shuffle draws. Difficulty tiers and feed selection remain unresolved under #118; #162 is not closed by this presentation child.
+
+## Historical mini Sudoku
 
 Sudoku is a 4×4 challenge with four 2×2 regions. Each row, column, and region must contain the numbers 1–4 exactly once. Production generates a uniquely solvable puzzle locally before publishing each card and freezes it for that card. Rendering and resetting the card preserve its puzzle. The finite Debug routes keep the two original validated fixtures; see [ENDLESS.md](ENDLESS.md) for generation and ownership.
 
@@ -41,3 +47,5 @@ The owner approved standard 9×9 Sudoku with digits 1–9 and difficulty support
 Production generation and the current playable view remain mini Sudoku. Standard puzzles are not yet exposed in the feed. Difficulty classification and distribution remain pending in [#118](https://github.com/devofthings/sidequest/issues/118); readable pocket controls, complete 1–9 entry, surface-start integration, and actual native 9×9 verification remain open in [#162](https://github.com/devofthings/sidequest/issues/162). This partial slice changes no release or physical-device claim.
 
 See [game guidance](../Sidequest/Games/Sudoku/AGENTS.md#standard-format-foundation-162--partial-delivery) for the configuration, work-budget, cancellation, compatibility, and planned verification decisions. Existing mini delivery evidence above remains historical proof; standard-format tests require their own actual results before any delivery claim.
+
+GameGenerationComposition explicitly selects mini only for the existing DEBUG endless fixture route, preserving its historical4×4 completion assertions. GeneratedGameBatch takes an explicit configuration with standard as its default; normal/Release production uses standard. The new standard route exercises the same9×9 rules/controller/view through deterministic original input.

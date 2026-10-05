@@ -89,3 +89,7 @@ Completed Bubble win/loss/revisit checks retain full running-app hierarchy and a
 
 
 The first actual #163 focused run passed all direct aim changes, native Slider gestures, largest-text controls and both real three-shot routes, but the direct case's final page gesture began inside the native Slider: the recorded pager frame `(0,122,402,710)` mapped normalized `(0.05,0.85)` to `(20.1,725.5)`, within its allocated `(16,725.3,262,44)` row. The native pager correctly excluded a Slider-origin pan. Derive the next outside-control swipe from measured left card padding outside the dedicated controls, explicitly asserting the origin lies in the pager and outside direct aim/Slider/Fire. Keep the actual settled next-card and unfinished reset assertions; this harness correction establishes no production paging defect. Root-owned rerun, fresh review and exact-head CI remain required.
+
+## Standard Sudoku #170
+
+StandardSudokuFlowTests uses the original DEBUG9×9 twelve-blank fixture through real coordinate menus and digits1–9. Verify normal375-point whole-board/all44point primary controls without scrolling, inert initiating tap, stable conflict/correction/completion, frozen skip/reset/revisit and largest-text owned scrolling. These three cases are extended; the routine three-case smoke gate is unchanged. Overview secondary cell dimensions are deliberately below44points; actual primary alternatives must meet44points.

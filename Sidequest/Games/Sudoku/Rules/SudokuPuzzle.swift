@@ -30,6 +30,16 @@ struct SudokuPuzzle: Equatable, Sendable {
     self.solution = solution
   }
 
+  #if DEBUG
+    static func standardFixture() throws -> Self {
+      var givens = (0..<9).flatMap { row in
+        (0..<9).map { column in (row * 3 + row / 3 + column) % 9 + 1 }
+      }
+      for index in Array(0..<9) + [9, 18, 27] { givens[index] = 0 }
+      return try Self(givens: givens, configuration: .standard)
+    }
+  #endif
+
   static func fixtures() throws -> [Self] {
     try [
       [1, 2, 0, 4, 0, 4, 1, 0, 0, 1, 4, 0, 4, 0, 0, 1],

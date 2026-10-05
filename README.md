@@ -118,3 +118,5 @@ The [private Figma refinement](docs/design/PRIVATE_FIGMA.md) contains proposed g
 Committed game feedback adds restrained interaction haptics for Sudoku entries, Memory matches, and Bubble clears, with contained Bubble pop motion. Final actions use existing success feedback, including one-move Chess. See [event and lifecycle guidance](Sidequest/Games/Presentation/AGENTS.md#committed-interaction-feedback-161); native verification is pending, and physical iPhone vibration needs separate owner testing.
 
 Original Memory faces and both-side King/Queen silhouettes are selected for the native refinement in [game artwork guidance](docs/design/NATIVE_GAME_ART.md). Focused native appearance and interaction verification remains pending in #171; the private Figma sheet alone does not verify app rendering.
+
+Current source follow-up #170 exposes standard9×9 Sudoku with digits1–9, compact overview and full-size coordinate alternatives; generated cards use at most12 editable cells as a bounded baseline, without difficulty labels. Historical mini fixtures and release evidence remain unchanged. Native verification is pending; see [Sudoku](docs/SUDOKU.md).

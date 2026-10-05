@@ -22,7 +22,7 @@ struct GeneratedGameBatch: Sendable {
   /// Value generation explicitly runs off the UI actor and has bounded work per card.
   @concurrent static func prepare(
     sessionID: UUID, sequence: Int, seed: UInt64, chessPuzzles: [ChessPuzzle],
-    ordered: Bool = false
+    ordered: Bool = false, sudokuConfiguration: SudokuConfiguration = .standard
   ) async throws -> GeneratedGameBatch {
     #if DEBUG
       if sequence > 0,
@@ -44,7 +44,17 @@ struct GeneratedGameBatch: Sendable {
       switch offset % 4 {
       case 0:
         kind = .sudoku
-        challenge = .sudoku(try SudokuGenerator.generate(using: &random))
+        // Preserve neighboring challenges and shuffle draws from the historical batch stream.
+        let mini = try SudokuGenerator.generate(using: &random)
+        var sudokuRandom = ChallengeRandom(
+          seed: seed &+ UInt64(index) &* 0x9E37_79B9_7F4A_7C15 &+ 0x5355_444F_4B55)
+        if sudokuConfiguration == .mini {
+          challenge = .sudoku(mini)
+        } else {
+          challenge = .sudoku(
+            try SudokuGenerator.generate(
+              configuration: .standard, maximumEmptyCells: 12, using: &sudokuRandom))
+        }
       case 1:
         kind = .memory
         challenge = .memory(MemoryRules(using: &random))
