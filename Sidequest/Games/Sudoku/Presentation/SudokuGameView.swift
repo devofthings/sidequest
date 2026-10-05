@@ -20,6 +20,14 @@ struct SudokuGameView: View {
   }
 
   var body: some View {
+    if controller.puzzle.configuration == .standard {
+      StandardSudokuView(controller: controller)
+    } else {
+      miniBody
+    }
+  }
+
+  private var miniBody: some View {
     let board = controller.displayedBoard
     return VStack(spacing: 16) {
       Text("Each row, column, and 2×2 region needs 1–4.")

@@ -22,7 +22,7 @@ final class FeedSessionState {
   init(
     useEndless: Bool = true,
     prepareBatch: @escaping GameBatchPreparation = { id, sequence, seed, puzzles, ordered in
-      try await GeneratedGameBatch.prepare(
+      try await GameGenerationComposition.prepare(
         sessionID: id, sequence: sequence, seed: seed,
         chessPuzzles: puzzles, ordered: ordered)
     },
@@ -195,7 +195,8 @@ final class FeedSessionState {
       return [
         "-sidequest-news-preview", "-sidequest-feed-test", "-sidequest-feed-empty",
         "-sidequest-feed-games-only", "-sidequest-feed-replacement-test", "-sidequest-sudoku-test",
-        "-sidequest-memory-fixtures", "-sidequest-chess-white-fixture",
+        "-sidequest-standard-sudoku-test", "-sidequest-memory-fixtures",
+        "-sidequest-chess-white-fixture",
         "-sidequest-chess-black-fixture", "-sidequest-bubble-fixtures",
       ].contains(where: arguments.contains)
     }

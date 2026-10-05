@@ -1,11 +1,12 @@
 enum SudokuGenerator {
-  /// Mini remains the existing production default and consumes the same random draws.
+  /// Explicit formats retain the historical mini random draw sequence.
   static func generate<R: RandomNumberGenerator>(
-    configuration: SudokuConfiguration, using random: inout R
+    configuration: SudokuConfiguration, maximumEmptyCells: Int = 41, using random: inout R
   ) throws -> SudokuPuzzle {
     switch configuration {
     case .mini: return try generate(using: &random)
-    case .standard: return try generateStandard(using: &random)
+    case .standard:
+      return try generateStandard(maximumEmptyCells: maximumEmptyCells, using: &random)
     }
   }
 
@@ -29,7 +30,7 @@ enum SudokuGenerator {
   /// Original standard grids use only rule-preserving permutations; each accepted removal
   /// has an exhaustive uniqueness proof. The clue floor is a work bound, not a difficulty tier.
   private static func generateStandard<R: RandomNumberGenerator>(
-    using random: inout R
+    maximumEmptyCells: Int, using random: inout R
   ) throws -> SudokuPuzzle {
     try Task.checkCancellation()
     let digits = Array(1...9).shuffled(using: &random)
@@ -47,7 +48,7 @@ enum SudokuGenerator {
     var clues = givens.count
     for index in Array(givens.indices).shuffled(using: &random) {
       try Task.checkCancellation()
-      guard clues > 40 else { break }
+      guard givens.count - clues < max(0, min(41, maximumEmptyCells)) else { break }
       let previous = givens[index]
       givens[index] = 0
       let search = SudokuGrid.search(for: givens, configuration: .standard, nodeLimit: 10_000)

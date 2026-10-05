@@ -9,3 +9,7 @@ Use production `FeedSessionState`, throwing `FeedComposition`, and the News stor
 ## Cold-launch introduction #91
 
 `StartupIntroductionTests` uses controlled named pause arrivals to verify the 80 ms visible/350 ms fading policy, one cold presentation, cancellation during fading, permanently consumed dismissal, late noncooperative callbacks, immediate Reduce Motion omission, and delay failure. Keep these tests independent of real clock timing and preparation; native recordings and running-app checks own rendered timing and accessible gameplay evidence.
+
+## Standard Sudoku #170
+
+StandardSudokuGenerationTests compares actual generated standard cards and legacy-stream Memory/Bubble neighbors at sequences0,8,16 and seed104. Keep deterministic neighbor/shuffle compatibility; production standard uses at most12 blanks without difficulty claims.

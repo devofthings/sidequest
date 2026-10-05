@@ -8,6 +8,8 @@ final class SudokuController {
   private let initialBoard: SudokuBoard
   private(set) var board: SudokuBoard?
   private(set) var selectedCell: Int?
+  private(set) var coordinateRow = 0
+  private(set) var coordinateColumn = 0
 
   var displayedBoard: SudokuBoard { board ?? initialBoard }
 
@@ -20,6 +22,10 @@ final class SudokuController {
     initialBoard = SudokuBoard(puzzle: puzzle)
     board = completedBoard
     self.selectedCell = selectedCell
+    if let selectedCell {
+      coordinateRow = selectedCell / puzzle.configuration.size
+      coordinateColumn = selectedCell % puzzle.configuration.size
+    }
     runtime.installEffectHandler { [weak self] effect in self?.apply(effect) }
   }
 
@@ -28,6 +34,27 @@ final class SudokuController {
       case .playing(let attempt) = runtime.phase, runtime.acceptsInput(from: attempt)
     else { return }
     selectedCell = index
+    coordinateRow = index / puzzle.configuration.size
+    coordinateColumn = index % puzzle.configuration.size
+  }
+
+  func selectRow(_ row: Int) {
+    selectCoordinate(row: row, column: coordinateColumn)
+  }
+
+  func selectColumn(_ column: Int) {
+    selectCoordinate(row: coordinateRow, column: column)
+  }
+
+  private func selectCoordinate(row: Int, column: Int) {
+    let size = puzzle.configuration.size
+    guard (0..<size).contains(row), (0..<size).contains(column), board != nil,
+      case .playing(let attempt) = runtime.phase, runtime.acceptsInput(from: attempt)
+    else { return }
+    coordinateRow = row
+    coordinateColumn = column
+    let index = row * size + column
+    selectedCell = puzzle.givens[index] == 0 ? index : nil
   }
 
   func enter(_ value: Int) {
@@ -49,9 +76,13 @@ final class SudokuController {
     case .start:
       board = initialBoard
       selectedCell = nil
+      coordinateRow = 0
+      coordinateColumn = 0
     case .reset:
       board = nil
       selectedCell = nil
+      coordinateRow = 0
+      coordinateColumn = 0
     case .stop:
       break
     }

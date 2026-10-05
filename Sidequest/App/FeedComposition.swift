@@ -13,7 +13,7 @@ final class FeedComposition {
   private var generationSeed: UInt64 = 0
   private var orderedGeneration = false
   private var prepareBatch: GameBatchPreparation = { id, sequence, seed, puzzles, ordered in
-    try await GeneratedGameBatch.prepare(
+    try await GameGenerationComposition.prepare(
       sessionID: id, sequence: sequence, seed: seed,
       chessPuzzles: puzzles, ordered: ordered)
   }
@@ -32,7 +32,7 @@ final class FeedComposition {
     sessionID: UUID = UUID(), seed: UInt64 = UInt64.random(in: .min ... .max),
     ordered: Bool = false,
     prepareBatch: @escaping GameBatchPreparation = { id, sequence, seed, puzzles, ordered in
-      try await GeneratedGameBatch.prepare(
+      try await GameGenerationComposition.prepare(
         sessionID: id, sequence: sequence, seed: seed,
         chessPuzzles: puzzles, ordered: ordered)
     }
@@ -234,7 +234,16 @@ final class FeedComposition {
           #else
             index = Int.random(in: puzzles.indices)
           #endif
-          let puzzle = puzzles[index]
+          let puzzle: SudokuPuzzle
+          #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("-sidequest-standard-sudoku-test") {
+              puzzle = try SudokuPuzzle.standardFixture()
+            } else {
+              puzzle = puzzles[index]
+            }
+          #else
+            puzzle = puzzles[index]
+          #endif
           games[game.id] = .sudoku(SudokuController(puzzle: puzzle, runtime: runtime))
         case .memory:
           #if DEBUG
@@ -327,7 +336,9 @@ final class FeedComposition {
               return false
             }.prefix(1)
             session = .loaded(chess + news)
-          } else if arguments.contains("-sidequest-sudoku-test") {
+          } else if arguments.contains("-sidequest-sudoku-test")
+            || arguments.contains("-sidequest-standard-sudoku-test")
+          {
             let sudoku = cards.filter { card in
               if case .game(let game) = card { return game.kind == .sudoku }
               return false
