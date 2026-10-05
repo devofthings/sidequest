@@ -33,6 +33,16 @@ class RecoveryTests(unittest.TestCase):
             {"udid": item["udid"], "name": item["name"], "deviceTypeIdentifier": item["device_type"], "state": "Booted"}
             for item in registry.record["devices"]]}}
 
+    def finalizer_command(self):
+        # Exercise the real CLI entry/log adapter with fake xcrun, while never
+        # competing for the lead's native execution lock during offline tests.
+        source = Path(devices.__file__).resolve()
+        bootstrap = (f"import runpy,sys; sys.path.insert(0, {str(source.parent)!r}); "
+                     "from contextlib import nullcontext; import native_tests; "
+                     "native_tests.owned_execution=nullcontext; "
+                     f"runpy.run_path({str(source)!r}, run_name='__main__')")
+        return [sys.executable, "-c", bootstrap]
+
     def test_recovery_is_durable_exact_and_idempotent(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -216,7 +226,7 @@ class RecoveryTests(unittest.TestCase):
             environment = {**os.environ, **self.environment, "RUNNER_TEMP": str(root / "_temp"),
                            "SIDEQUEST_VERIFICATION_OUTCOME": "cancelled", "FIXTURE_ROOT": str(root),
                            "PATH": str(binary) + os.pathsep + os.environ["PATH"]}
-            child = subprocess.Popen([sys.executable, str(Path(devices.__file__).resolve())], env=environment,
+            child = subprocess.Popen(self.finalizer_command(), env=environment,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             try:
                 deadline = time.monotonic() + 5
@@ -237,6 +247,56 @@ class RecoveryTests(unittest.TestCase):
                 if child.poll() is None:
                     child.kill()
                     child.communicate()
+
+    def test_finalizer_cli_repeat_and_failed_delete_retry_use_current_inventory(self):
+        for failed_delete in (False, True):
+            with self.subTest(failed_delete=failed_delete), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                diagnostics = root / "sidequest-diagnostics/123-1"
+                diagnostics.mkdir(parents=True)
+                registry = self.prepare(diagnostics, 1)
+                state = self.live(registry)
+                unrelated = {"udid": self.identifiers[1], "name": "personal", "state": "Booted"}
+                state["devices"][native_tests.RUNTIME].append(unrelated)
+                (root / "state.json").write_text(json.dumps(state))
+                manifest = diagnostics / "verification.json"
+                manifest.write_text("passing original verification")
+                binary = root / "bin"
+                binary.mkdir()
+                fake = binary / "xcrun"
+                fake.write_text(f"#!{sys.executable}\n" +
+                                "import json,os,pathlib,sys\n" +
+                                "root=pathlib.Path(os.environ['FIXTURE_ROOT']); path=root/'state.json'; state=json.loads(path.read_text())\n" +
+                                "with (root/'calls').open('a') as out: out.write(json.dumps(sys.argv[1:])+'\\n')\n" +
+                                "if sys.argv[2]=='list': print(json.dumps(state))\n" +
+                                "elif sys.argv[2]=='shutdown':\n    for entries in state['devices'].values():\n        for item in entries:\n            if item['udid']==sys.argv[3]: item['state']='Shutdown'\n    path.write_text(json.dumps(state))\n" +
+                                "elif sys.argv[2]=='delete':\n    if (root/'fail-delete').exists():\n        (root/'fail-delete').unlink(); print('retained failed deletion', flush=True); raise SystemExit(9)\n    for key in state['devices']: state['devices'][key]=[item for item in state['devices'][key] if item['udid']!=sys.argv[3]]\n    path.write_text(json.dumps(state)); print('deleted owned device')\n")
+                fake.chmod(0o700)
+                if failed_delete:
+                    (root / "fail-delete").touch()
+                environment = {**os.environ, **self.environment, "RUNNER_TEMP": str(root / "_temp"),
+                               "SIDEQUEST_VERIFICATION_OUTCOME": "success", "FIXTURE_ROOT": str(root),
+                               "PATH": str(binary) + os.pathsep + os.environ["PATH"]}
+                command = self.finalizer_command()
+                first = subprocess.run(command, env=environment, capture_output=True, text=True, timeout=5)
+                self.assertEqual(first.returncode, 1 if failed_delete else 0, first.stderr)
+                self.assertEqual(manifest.exists(), not failed_delete)
+                first_log = (diagnostics / "recovery-devices.log").read_text()
+                second = subprocess.run(command, env=environment, capture_output=True, text=True, timeout=5)
+                self.assertEqual(second.returncode, 0, second.stderr)
+                self.assertTrue(json.loads((diagnostics / "device-recovery.json").read_text())["cleanup_completed"])
+                self.assertTrue((diagnostics / "recovery-devices.log").read_text().startswith(first_log))
+                self.assertGreater((diagnostics / "recovery-devices.log").stat().st_size, len(first_log))
+                self.assertEqual(manifest.exists(), not failed_delete)  # Recovery cannot recreate failed provenance.
+                self.assertEqual(json.loads((root / "state.json").read_text())["devices"][native_tests.RUNTIME], [unrelated])
+                calls = [json.loads(line) for line in (root / "calls").read_text().splitlines()]
+                expected = [["simctl", "list", "devices", "--json"],
+                            ["simctl", "shutdown", self.identifiers[0]], ["simctl", "delete", self.identifiers[0]],
+                            ["simctl", "list", "devices", "--json"]]
+                if failed_delete:
+                    expected.append(["simctl", "delete", self.identifiers[0]])
+                    self.assertIn("retained failed deletion", (diagnostics / "recovery-delete-1.log").read_text())
+                self.assertEqual(calls, expected)
 
     def test_actual_exec_shell_delivers_repeated_runner_signals_to_python(self):
         # Use the exact workflow entry command, substituting only the fixture driver.

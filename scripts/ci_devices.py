@@ -133,10 +133,13 @@ def main():
             (diagnostics / "verification.json").unlink(missing_ok=True)
 
         def run(label, command):
-            with (diagnostics / f"recovery-{label}.log").open("a") as output:
+            with (diagnostics / f"recovery-{label}.log").open("a+") as output:
+                start = output.tell()
                 subprocess.run(command, stdout=output, stderr=subprocess.STDOUT,
                                timeout=30, check=True)
-            return (diagnostics / f"recovery-{label}.log").read_text()
+                # Retain earlier diagnostics without decoding them as this result.
+                output.seek(start)
+                return output.read()
 
         with native_tests.owned_execution():
             recover(diagnostics, expected, run)
