@@ -494,6 +494,15 @@
         "Sidequest/App/GeneratedGameBatch.swift",
         "Sidequest/Feed/"
       ]
+    },
+    "SidequestUITests/ChessFlowTests/testNormalPocketBoardAndAllMoveControlsFitTogether": {
+      "lower_layer": "GameLayoutBudgetTests verify independent budget and target floor; real app asserts complete board plus all coordinate actions and Start together at normal text, preserving exact start geometry.",
+      "paths": [
+        "SidequestUITests/ChessFlowTests.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Presentation/GameLayoutBudget.swift",
+        "Sidequest/Games/Chess/"
+      ]
     }
   },
   "required": [

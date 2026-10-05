@@ -126,24 +126,15 @@ struct FeedView: View {
     case .news(let news): newsContent(news.snapshot)
     case .game(let game):
       if let runtime = controller.runtimes[game.id] {
-        VStack(spacing: 20) {
-          Text(game.kind.title)
-            .font(.system(.title, design: .rounded, weight: .bold))
-            .accessibilityAddTraits(.isHeader)
-          StableGameRegion {
+        GameCardLayout(
+          title: game.kind.title,
+          start: StableGameRegion {
             startButton(runtime).disabled(true)
           } content: {
-            if runtime.phase == .preview {
-              startButton(runtime)
-            }
-          }
-          gameContent(game, runtime)
-            .disabled(runtime.phase == .preview)
-        }
-        .padding(16)
-        .frame(
-          maxWidth: .infinity, maxHeight: .infinity,
-          alignment: .top)
+            if runtime.phase == .preview { startButton(runtime) }
+          },
+          content: gameContent(game, runtime).disabled(runtime.phase == .preview)
+        )
       }
     }
   }
