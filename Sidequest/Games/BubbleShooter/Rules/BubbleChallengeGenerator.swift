@@ -8,60 +8,65 @@ struct BubbleChallenge: Equatable, Sendable {
 enum BubbleGenerationError: Error { case noAttainableChallenge }
 
 enum BubbleChallengeGenerator {
-  static let attemptLimit = 16
-  static let anglesPerAttempt = 121
+  static let attemptLimit = 4
+  static let witnessShotsPerAttempt = 3
 
-  /// Small ceiling-connected shapes stay quick. Accept only a replayed winning shot.
-  /// Different geometry, colors, and frozen shot sequences produce fresh configurations.
+  /// Three differently colored ceiling anchors require three clearing actions even when lower
+  /// bubbles detach. Every constructive witness is replayed through the actual rules before use.
   static func generate<R: RandomNumberGenerator>(using random: inout R) throws -> BubbleChallenge {
     for _ in 0..<attemptLimit {
-      let color = BubbleColor.allCases.randomElement(using: &random) ?? .red
-      let count = Int.random(in: 2...4, using: &random)
-      let start = Int.random(in: 0...(5 - count), using: &random)
-      var board: [BubbleSlot: BubbleColor] = [:]
-      for column in start..<(start + count) { board[BubbleSlot(row: 0, column: column)] = color }
-      // Optional connected second-row bubbles either match or detach when the ceiling clears.
-      for column in max(0, start - 1)...min(3, start + count - 1) {
-        if Bool.random(using: &random) {
-          board[BubbleSlot(row: 1, column: column)] =
-            BubbleColor.allCases.randomElement(using: &random) ?? color
-        }
-      }
-      let colors =
-        [color]
-        + (0..<7).map { _ in
-          BubbleColor.allCases.randomElement(using: &random) ?? color
-        }
-      let game = try BubbleShooterGame(board: board, shotColors: colors)
-      if let angle = winningAngle(for: game) {
-        return BubbleChallenge(game: game, winningAngles: [angle])
+      if let challenge = try candidate(
+        pattern: Int.random(in: 0..<8, using: &random), using: &random)
+      {
+        return challenge
       }
     }
     return try fallback(using: &random)
   }
 
-  /// Also bounded and validated; callers may choose the small fallback directly.
+  /// The fallback has the same three required color groups, never a trivial single-shot clear.
   static func fallback<R: RandomNumberGenerator>(using random: inout R) throws -> BubbleChallenge {
-    // The small fallback varies by color and shot sequence.
-    let color = BubbleColor.allCases.randomElement(using: &random) ?? .red
-    let game = try BubbleShooterGame(
-      board: [BubbleSlot(row: 0, column: 2): color, BubbleSlot(row: 0, column: 3): color],
-      shotColors: [color] + BubbleColor.allCases.shuffled(using: &random))
-    guard let angle = winningAngle(for: game) else {
+    guard let challenge = try candidate(pattern: 7, using: &random) else {
       throw BubbleGenerationError.noAttainableChallenge
     }
-    return BubbleChallenge(game: game, winningAngles: [angle])
+    return challenge
   }
 
-  private static func winningAngle(for game: BubbleShooterGame) -> Double? {
-    for degrees in -60...60 {
-      var candidate = game
-      if let result = try? candidate.fire(angleRadians: Double(degrees) * .pi / 180),
-        result.outcome == .won, candidate.shotsFired <= BubbleShooterGame.shotLimit
-      {
-        return Double(degrees)
-      }
+  private static func candidate<R: RandomNumberGenerator>(pattern: Int, using random: inout R)
+    throws -> BubbleChallenge?
+  {
+    let colors = BubbleColor.allCases.shuffled(using: &random)
+    let reflected = Bool.random(using: &random)
+    var board: [BubbleSlot: BubbleColor] = [:]
+    for column in 0..<5 {
+      board[BubbleSlot(row: 0, column: reflected ? 4 - column : column)] =
+        colors[min(column / 2, 2)]
     }
-    return nil
+    board[BubbleSlot(row: 1, column: reflected ? 0 : 3)] = colors[2]
+    for column in 0..<3 where pattern & (1 << column) != 0 {
+      board[BubbleSlot(row: 1, column: reflected ? 3 - column : column)] =
+        colors[column < 2 ? 0 : 1]
+    }
+    let shotColors =
+      colors
+      + (0..<5).map { _ in
+        BubbleColor.allCases.randomElement(using: &random) ?? colors[0]
+      }
+    let game = try BubbleShooterGame(board: board, shotColors: shotColors)
+    // Original pattern witnesses were independently replayed; reflection also reflects each angle.
+    let witnesses: [[Double]] = [
+      [-45, -51, -60], [-45, -51, -60], [-51, -51, -60], [-51, -51, -60],
+      [-45, -60, -60], [-45, -60, -60], [-55, -60, -60], [-55, -60, -60],
+    ]
+    let angles = witnesses[pattern].map { reflected ? -$0 : $0 }
+    var replay = game
+    for (index, angle) in angles.enumerated() {
+      guard replay.outcome == .playing,
+        let result = try? replay.fire(angleRadians: angle * .pi / 180), result.matched.count >= 3,
+        !replay.board.values.contains(colors[index])
+      else { return nil }
+    }
+    guard replay.outcome == .won, replay.shotsFired == witnessShotsPerAttempt else { return nil }
+    return BubbleChallenge(game: game, winningAngles: angles)
   }
 }

@@ -76,14 +76,7 @@ final class EndlessFlowTests: XCTestCase {
     XCTAssertEqual(app.selectedFeedCardID, gameID(3))
     XCTAssertTrue(app.buttons["game.start"].exists)
     app.buttons["game.start"].tap()
-    reveal(app.sliders["bubble.aim"], in: app)
-    app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: 0)
-    reveal(app.buttons["bubble.fire"], in: app)
-    app.buttons["bubble.fire"].tap()
-    let won = expectation(
-      for: NSPredicate(format: "label == %@", "You won!"),
-      evaluatedWith: app.staticTexts["bubble.outcome"])
-    wait(for: [won], timeout: 10)
+    solveGeneratedBubble(app)
     for _ in 0..<21 { app.nextFeedCard() }
     XCTAssertEqual(app.selectedFeedCardID, gameID(20))
     XCTAssertTrue(app.buttons["game.start"].exists)
@@ -223,14 +216,83 @@ final class EndlessFlowTests: XCTestCase {
     }
   }
 
-  private func launch(extra: [String] = []) -> XCUIApplication {
+  func testGeneratedBubbleNeedsThreeShotsAndResetRestoresTheChallenge() {
+    let app = launch(slowShot: false)
+    for _ in 0..<3 { app.nextFeedCard() }
+    app.waitForFeedCard(gameID(3))
+    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
+    app.buttons["game.start"].tap()
+    reveal(app.buttons["bubble.fire"], in: app)
+    app.buttons["bubble.fire"].tap()
+    waitForBubbleShots(1, in: app)
+    XCTAssertFalse(app.staticTexts["bubble.outcome"].exists)
+    app.nextFeedCard()
+    app.previousFeedCard()
+    app.waitForFeedCard(gameID(3))
+    XCTAssertTrue(app.buttons["game.start"].exists)
+    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
+    app.buttons["game.start"].tap()
+    solveGeneratedBubble(app)
+    let attachment = XCTAttachment(screenshot: app.screenshot())
+    attachment.name = "generated-bubble-three-shot-completion"
+    attachment.lifetime = .keepAlways
+    add(attachment)
+    app.nextFeedCard()
+    app.previousFeedCard()
+    app.waitForFeedCard(gameID(3))
+    XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
+    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 3 of 8")
+  }
+
+  private func solveGeneratedBubble(_ app: XCUIApplication) {
+    // Alternate real route for seed104 avoids narrow endpoint aiming: 0°,0°, then a broad left window.
+    for (index, degrees) in [0, 0, -24].enumerated() {
+      let slider = app.sliders["bubble.aim"]
+      reveal(slider, in: app)
+      if degrees == -24 { slider.adjust(toNormalizedSliderPosition: 0.3) }
+      captureBubbleAim(app, name: "shot-\(index + 1)")
+      let actualLabel = app.staticTexts["bubble.angle"].label
+      if degrees == 0 {
+        XCTAssertEqual(
+          actualLabel, "Aim: 0°", "Reset/default aim must remain unchanged before Fire.")
+      } else {
+        let actual = Int(actualLabel.filter { $0.isNumber || $0 == "-" })
+        XCTAssertTrue(
+          actual.map { (-35 ... -12).contains($0) } ?? false,
+          "The final real aim must reach the audited broad winning window; observed \(actualLabel)."
+        )
+      }
+      XCTAssertEqual(app.selectedFeedCardID, gameID(3))
+      reveal(app.buttons["bubble.fire"], in: app)
+      app.buttons["bubble.fire"].tap()
+      waitForBubbleShots(index + 1, in: app)
+      if index < 2 { XCTAssertFalse(app.staticTexts["bubble.outcome"].exists) }
+    }
+    XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
+  }
+
+  private func captureBubbleAim(_ app: XCUIApplication, name: String) {
+    let attachment = XCTAttachment(screenshot: app.screenshot())
+    attachment.name = "generated-bubble-actual-aim-\(name)"
+    attachment.lifetime = .keepAlways
+    add(attachment)
+  }
+
+  private func waitForBubbleShots(_ count: Int, in app: XCUIApplication) {
+    let committed = expectation(
+      for: NSPredicate(format: "label == %@", "Shots: \(count) of 8"),
+      evaluatedWith: app.staticTexts["bubble.shots"])
+    wait(for: [committed], timeout: 10)
+  }
+
+  private func launch(extra: [String] = [], slowShot: Bool = true) -> XCUIApplication {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launchArguments =
       [
         "-sidequest-integration-fixtures", "-sidequest-integration-reset",
-        "-sidequest-endless-fixtures", "-sidequest-bubble-slow-shot",
-      ] + extra
+        "-sidequest-endless-fixtures",
+      ] + (slowShot ? ["-sidequest-bubble-slow-shot"] : []) + extra
     app.launch()
     XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 10))
     return app

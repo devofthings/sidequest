@@ -37,7 +37,7 @@ The implementation agent reassessed #8 after merged #87: use shared UI menu-navi
 
 ## Generated challenges #104
 
-`BubbleChallengeGenerator` bounds candidate preparation to 16 small ceiling-connected shapes and 121 real-physics angle probes per shape. Accept only a replayed winning witness within the existing eight-shot bound, otherwise try a small varied fallback with the same bound; failure remains explicit. Freeze geometry/colors/shot sequence per card. Skip/reset and Replay restore that configuration. Completed win/loss archives include game, aim, feedback, and lifecycle identity. Rehydration binds one fresh inactive runtime; old owners retire permanently. See [ENDLESS.md](../../../docs/ENDLESS.md).
+The initial #104 one-shot generation policy is superseded by harder compact generation #137 below. Accept only replayed three-shot witnesses within the existing eight-shot bound; failure remains explicit. Freeze geometry/colors/shot sequence per card. Skip/reset and Replay restore that configuration. Completed win/loss archives include game, aim, feedback, and lifecycle identity. Rehydration binds one fresh inactive runtime; old owners retire permanently. See [ENDLESS.md](../../../docs/ENDLESS.md).
 
 ## Stable feedback and Replay #108
 
@@ -60,3 +60,11 @@ Mark runtime completion successful only for won; terminal lost still completes s
 ## Better controls and harder compact play #135
 
 The owner authorized improved aiming controls and more difficult compact Bubble challenges on October 5. Follow [the bounded outcome](../../../docs/POCKET_BUBBLE.md). Keep existing explicit Fire until changed shooting semantics are agreed. Replace one-shot-only production generation with bounded, real-rule-validated multi-shot challenges; a longer witness alone cannot establish difficulty. Preserve the eight-shot rules, frozen replay, single-flight cancellation, manual paging and Reduce Motion. Resolve exact control/generation choices through agent-grill before code; no implementation or verification is claimed by this decision.
+
+## Harder compact generation #137
+
+The owner's October 5 request for harder pocket Bubble play authorizes #137 under #135, superseding the easy one-shot production default. Keep the same geometry/eight-shot rules and explicit Fire. This slice owns generation, not new controls or difficulty tiers.
+
+Agent-grill self-assessment: Three distinct colors have independent ceiling anchors, so matching one color cannot detach the other ceiling colors. At least three color-clearing actions are required; a longer witness alone is insufficient evidence. Construct eight original two-row patterns by retaining five ceiling bubbles (two/two/one color groups), one required partner for the single-bubble group, and three optional same-group lower bubbles. Color permutations and horizontal reflection vary challenges without adding rows. Derive fixed three-shot witnesses from a bounded offline real-rule audit, then replay every selected witness during production preparation; retry at most four candidates and use the independently replayed full-pattern fallback. Each candidate requires only three shot evaluations, no recursive search. Failure remains explicit. Freeze the result per card; reset/Replay restore it unchanged.
+
+The author pure-rule probe on October 5 solved all eight unreflected base patterns in three shots. All reflected/color variants, structural lower bound, fallback, deterministic diversity and actual native production play require further verification before delivery. The historical fixed Debug fixture remains unchanged. All pending native/app verification belongs to the lead.
