@@ -89,3 +89,5 @@ Review correction #194: keep the selected game heading accessible and visible du
 ## Transactional classified windows #201
 
 Stage adjacent selection and window reconstruction before committing navigation. A rejected window preserves current selection and owners and exposes the existing retry notice. Shared persistent title/subtitle geometry is measured against every tier at the current width and Dynamic Type, independently of selected tier or phase. Native paging and first-action ownership remain unchanged.
+
+For #201, the header consumes the shared GameHeading with the settled card’s optional certified tier. Measure every game/app title and every difficulty subtitle independently of selection or phase; legacy/news omit the visible and spoken subtitle but preserve its footprint. Preserve #194’s single heading and #193’s viewport-owned celebration, which cannot cover the heading or difficulty. No duplicate in-card title or removed real-game start reservation returns.
