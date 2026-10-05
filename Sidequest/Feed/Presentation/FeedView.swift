@@ -46,7 +46,7 @@ struct FeedView: View {
               .labelStyle(.iconOnly)
               .frame(minWidth: 44, minHeight: 44)
           }
-          .buttonStyle(SidequestButtonStyle(compact: true))
+          .buttonStyle(SidequestButtonStyle(compact: true, accent: SidequestTheme.cyan))
           .accessibilityIdentifier("feed.news")
         }
         Menu {
@@ -62,7 +62,7 @@ struct FeedView: View {
             .frame(minWidth: 44, minHeight: 44)
             .contentShape(Rectangle())
         }
-        .buttonStyle(SidequestButtonStyle(compact: true))
+        .buttonStyle(SidequestButtonStyle(compact: true, accent: SidequestTheme.lavender))
         .accessibilityLabel("Feed navigation")
         .accessibilityIdentifier("feed.navigation")
       }
@@ -147,9 +147,9 @@ struct FeedView: View {
 
   private func startHint(_ runtime: GameRuntime) -> some View {
     Button(action: runtime.start) {
-      Text("Tap to play")
+      Label("Tap to play", systemImage: "hand.tap")
         .font(.subheadline.weight(.semibold))
-        .foregroundStyle(theme.secondaryInk)
+        .foregroundStyle(theme.ink)
         .frame(maxWidth: .infinity, minHeight: 44)
         .contentShape(Rectangle())
     }

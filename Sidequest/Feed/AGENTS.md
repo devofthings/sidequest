@@ -56,3 +56,7 @@ The lead's agent-grill accepts one presentation-only context from `FeedCardContr
 ## Informational start hint #160
 
 The owner's surface-start direction supersedes the earlier explicit lime start-button styling. Feed composition renders a plain top-row Tap to play hint with semantic Start game activation and a transparent preview tap surface confined to game content; news and viewport navigation remain outside it. Retain the measured hint row in every phase, disabled actual initial boards, and one native content scroller. Existing native pans win over start taps. See [preview policy](../../docs/GAME_PREVIEWS.md).
+
+## Selected shared chrome #182
+
+Use leading heavy rounded game headings, vivid existing-token fills for the existing header actions, and a text-plus-hand Tap to play cue. The cue remains informational within the same 44-point reservation and retains Start game semantics. Do not add a new button row, resize the header/success slot, or alter the game-content budget when styling. The saved drawings' dedicated start button remains superseded by #160; game adapters own their board/control geometry.

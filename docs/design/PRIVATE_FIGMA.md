@@ -56,3 +56,13 @@ Independent review round 1 found shifting Chess/Bubble primary actions. The desi
 ![Actual proposed Sudoku board in private Figma](figma-157/sudoku.jpg)
 
 ![Actual proposed news board in private Figma](figma-157/news.jpg)
+
+## Selected shared native refinement #182
+
+On October 5, 2026, the owner requested adding the logo, splash screen, and design to the app. This selects the saved private Foundations and App & News direction for [#182](https://github.com/devofthings/sidequest/issues/182); logo/startup adoption is separately owned by [#181](https://github.com/devofthings/sidequest/issues/181). The author inspected the actual browser screenshots and original SVG geometry above. The company Figma connector remains excluded.
+
+The bounded source translation refines the already delivered #123 baseline: leading heavy rounded game headings, cyan/lavender existing header actions, a hand-plus-text informational start cue in its existing reservation, and a reading surface with coral sample badge, compact provenance before the excerpt, lavender separator and source action. Existing system rounded/serif/body fonts translate Inter/Noto references without paid or bundled fonts. Opaque theme colors, contrast borders, 44-point controls, and existing press/Reduce Motion behavior remain authoritative. All game-owned boards, current Memory/Chess art, rules, cadence, and stable chrome measurements stay unchanged.
+
+The drawings remain historical artifacts: their start button, 4×4-only Sudoku, numeric Bubble angle, combined coordinate illustrations, and completed replay examples are not adopted requirements. Current surface-start, standard 9×9 entry, horizontal aiming, native assistive alternatives, and completed revisits take precedence. This selection adds no navigation, game mechanic, sound, reward, or personalization.
+
+Source implementation is prepared in a feature PR; actual small/large-device rendering, normal/largest text, dark/increased-contrast appearance, lifecycle checks, fresh review, and exact-head CI remain pending. Static browser screenshots establish reference appearance only. Physical-device appearance and feedback require separate owner testing; no release is published by this task.

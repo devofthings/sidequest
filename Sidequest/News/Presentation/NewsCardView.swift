@@ -26,40 +26,50 @@ struct NewsCardContent: View {
       if snapshot.isSample {
         Label("Fictional sample", systemImage: "info.circle")
           .font(.caption.bold())
-          .foregroundStyle(theme.secondaryInk)
+          .foregroundStyle(SidequestTheme.darkInk)
+          .padding(.horizontal, 10)
+          .padding(.vertical, 6)
+          .background(SidequestTheme.coral, in: Capsule())
           .accessibilityIdentifier("news.sample")
       }
       Text(snapshot.headline)
-        .font(.system(.title2, design: .serif, weight: .bold))
+        .font(.system(.title2, design: .serif, weight: .heavy))
         .accessibilityIdentifier("news.headline")
         .accessibilityAddTraits(.isHeader)
-      Text(snapshot.excerpt)
-        .font(.body)
-        .textSelection(.enabled)
-      Text(snapshot.publisher)
-        .font(.subheadline.bold())
-      Text("Captured \(snapshot.capturedAt.formatted(date: .abbreviated, time: .omitted))")
-        .font(.caption)
-        .foregroundStyle(theme.secondaryInk)
-        .accessibilityIdentifier("news.captured")
-      if let published = snapshot.publishedAt {
-        Text("Published \(published.formatted(date: .abbreviated, time: .omitted))")
+      VStack(alignment: .leading, spacing: 4) {
+        Text(snapshot.publisher)
+          .font(.subheadline.bold())
+        Text("Captured \(snapshot.capturedAt.formatted(date: .abbreviated, time: .omitted))")
           .font(.caption)
           .foregroundStyle(theme.secondaryInk)
+          .accessibilityIdentifier("news.captured")
+        if let published = snapshot.publishedAt {
+          Text("Published \(published.formatted(date: .abbreviated, time: .omitted))")
+            .font(.caption)
+            .foregroundStyle(theme.secondaryInk)
+        }
       }
+      Rectangle()
+        .fill(SidequestTheme.lavender)
+        .frame(height: theme.borderWidth + 1)
+        .accessibilityHidden(true)
+      Text(snapshot.excerpt)
+        .font(.body)
+        .lineSpacing(3)
+        .textSelection(.enabled)
       Link(destination: snapshot.sourceURL) {
         Label(
           snapshot.isSample ? "Open sample placeholder" : "Read original article",
           systemImage: "arrow.up.right.square"
         )
-        .frame(minHeight: 44, alignment: .leading)
+        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
       }
       .accessibilityLabel(
         snapshot.isSample
           ? "Open fictional sample placeholder from \(snapshot.publisher)"
           : "Read original article from \(snapshot.publisher)"
       )
-      .buttonStyle(SidequestButtonStyle())
+      .buttonStyle(SidequestButtonStyle(accent: SidequestTheme.lavender))
       .accessibilityIdentifier("news.source")
     }
     .frame(maxWidth: .infinity, alignment: .leading)

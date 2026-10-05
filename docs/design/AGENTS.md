@@ -17,3 +17,7 @@ Under the owner’s autonomous #13 design authority, the lead selects #159’s s
 ## Integrated launch identity #181
 
 The owner approved logo, splash, and design integration on October 5. [LAUNCH.md](LAUNCH.md) owns the bounded static launch background and existing decorative Card S introduction. This accepts launch integration without promoting historical Figma proposals or changing game rules. Actual native appearance and transitions require root-owned verification.
+
+## Selected shared implementation #182
+
+The owner selected native adoption of the private visual direction on October 5. [PRIVATE_FIGMA.md](PRIVATE_FIGMA.md#selected-shared-native-refinement-182) records the bounded translation and superseded mock interactions. Preserve original SVG/browser proof as historical artifacts; selection does not relabel them as native screenshots. Shared source styling remains separate from #181 logo/startup and game-owned art/configuration. Tie completed rendering claims to actual target-bound verification rather than static drawings.
