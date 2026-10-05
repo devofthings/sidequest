@@ -19,12 +19,18 @@ struct ChessPuzzleView: View {
     return .smooth(duration: 0.16)
   }
 
+  private var window: ChessBoardWindow { ChessBoardWindow(puzzle: controller.puzzle) }
+
   var body: some View {
     VStack(spacing: 16) {
       Text("\(controller.puzzle.sideToMove.name) to move")
         .font(.headline)
         .accessibilityIdentifier("chess.side")
       Text("Find checkmate in one move.")
+      Text("Focus area \(window.coordinateRange) · Standard 8×8 rules")
+        .font(.subheadline)
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityIdentifier("chess.focus")
       board
       StableGameRegion {
         ZStack {
@@ -67,8 +73,11 @@ struct ChessPuzzleView: View {
   }
 
   private var board: some View {
-    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 8), spacing: 0) {
-      ForEach(ChessSquare.displayOrder, id: \.self) { square in
+    LazyVGrid(
+      columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: window.files.count),
+      spacing: 0
+    ) {
+      ForEach(window.displayOrder, id: \.self) { square in
         let displayedBoard = controller.attempt?.board ?? controller.puzzle.board
         let piece = displayedBoard[square]
         let selected = controller.attempt?.selectedSquare == square
@@ -77,10 +86,12 @@ struct ChessPuzzleView: View {
           controller.tap(square)
         } label: {
           VStack(spacing: 0) {
-            Text(symbol(piece)).font(.system(size: 26, weight: .semibold))
-              .scaleEffect(destination && !reduceMotion ? 1.12 : 1)
-              .animation(feedbackAnimation, value: destination)
-            Text(square.coordinate).font(.system(size: 10))
+            Text(symbol(piece)).font(
+              .system(size: window.files.count == 4 ? 40 : 26, weight: .semibold)
+            )
+            .scaleEffect(destination && !reduceMotion ? 1.12 : 1)
+            .animation(feedbackAnimation, value: destination)
+            Text(square.coordinate).font(.system(size: window.files.count == 4 ? 13 : 10))
           }
           .frame(maxWidth: .infinity)
           .aspectRatio(1, contentMode: .fit)
@@ -112,7 +123,7 @@ struct ChessPuzzleView: View {
         .allowsHitTesting(false)
     }
     .accessibilityElement(children: .contain)
-    .accessibilityLabel("Chessboard, a1 at bottom left")
+    .accessibilityLabel("Chessboard focus area \(window.coordinateRange), standard 8 by 8 rules")
   }
 
   private var movingSquares: [ChessSquare] {

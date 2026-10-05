@@ -97,7 +97,7 @@ final class StableGameLayoutTests: XCTestCase {
   private func checkChess(largeText: Bool) {
     let app = launch("-sidequest-chess-white-fixture", largeText: largeText)
     // An unselected square avoids measuring the selected square's decorative outline.
-    let board = app.buttons["chess.square.a8"]
+    let board = app.buttons["chess.square.e8"]
     let file = app.buttons["chess.file"]
     let submit = app.buttons["chess.submit"]
     let queen = app.buttons["chess.square.g6"]

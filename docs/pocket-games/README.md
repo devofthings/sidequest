@@ -1,14 +1,14 @@
-# Proposed pocket-sized games
+# Selected pocket-sized games
 
-Status: proposed first revision for [#117](https://github.com/devofthings/sidequest/issues/117), researched on October 5, 2026 against source commit `449bfab29c96dd360a2a3978f5dc7ceb8be48e76`. The owner approved pocket-sized games as a direction. These dimensions, session targets, and Chess presentation choices still need the owner's selection. This document changes no game implementation and does not complete #117.
+Status: accepted first revision for [#117](https://github.com/devofthings/sidequest/issues/117) on October 5, 2026. After the lead's pending-choice handoff, the owner replied “go ahead,” selecting the recommended standard-board Chess focus windows and retention of current Sudoku/Memory/Bubble configurations. [The approval record](https://github.com/devofthings/sidequest/issues/117#issuecomment-5990514369) defines the bounded scope; [#132](https://github.com/devofthings/sidequest/issues/132) implements Chess. The source audit below used commit `449bfab29c96dd360a2a3978f5dc7ceb8be48e76`. Session ranges remain unmeasured usability targets, not timers.
 
-## Recommendation for the first revision
+## Selected first revision
 
 Keep the already compact Sudoku, Memory, and Bubble configurations. Give Chess a fixed 4×4 focus window over its existing standard-board fixtures, preserving standard legality and all coordinate controls. This produces a smaller visual puzzle without introducing a new chess engine or opponent. Treat difficulty [#118](https://github.com/devofthings/sidequest/issues/118) separately; adaptive frequency [#119](https://github.com/devofthings/sidequest/issues/119) remains an Idea.
 
-Target roughly 15–90 seconds of active play per card. The game-specific ranges below are proposed usability targets, not measured completion times, timers, pass/fail limits, or retention claims. Evaluate them through personal testing in [#10](https://github.com/devofthings/sidequest/issues/10).
+Target roughly 15–90 seconds of active play per card. The game-specific ranges below are selected usability targets, not measured completion times, timers, pass/fail limits, or retention claims. Evaluate them through personal testing in [#10](https://github.com/devofthings/sidequest/issues/10).
 
-| Game | Current configuration | Proposed first revision | Proposed active-play target |
+| Game | Current configuration | Selected first revision | Active-play target (unmeasured) |
 | --- | --- | --- | --- |
 | Sudoku | 4×4 grid, digits 1–4, four 2×2 regions; generated puzzles require one solution. | Retain the existing puzzle and uniqueness policy. | 30–90 seconds |
 | Memory | Six symbols, exactly two of each, 12 tiles; three columns normally, two at accessibility text sizes. | Retain six pairs and the existing 700 ms mismatch delay. | 30–90 seconds |
@@ -48,7 +48,7 @@ Using zero-based row-major tile indices, matching pairs are `(0,7), (1,9), (2,6)
 
 ### Chess: focused standard-board mate in one
 
-The [original fixtures](../../Sidequest/Resources/chess-puzzles.json) already contain only three pieces. Proposed windows are fixed by fixture metadata, before any selection or attempt; they never follow the solution or selected destination.
+The [original fixtures](../../Sidequest/Resources/chess-puzzles.json) already contain only three pieces. Selected windows are fixed by fixture metadata, before any selection or attempt; they never follow the solution or selected destination.
 
 ```text
 White to move: focus e5–h8       Black to move: focus a1–d4
@@ -73,13 +73,13 @@ An existing valid small shape has two red bubbles at zero-based slots `(row:0,co
 
 | Choice | Rules and content implications | Recommendation |
 | --- | --- | --- |
-| Fixed 4×4 focus over standard 8×8 positions | Reuse validated fixtures and original coordinates. Keep outside destinations available through coordinate controls; explain that the focus window is not a wall. | Proposed first revision. Small presentation change with unchanged puzzle validity. |
+| Fixed 4×4 focus over standard 8×8 positions | Reuse validated fixtures and original coordinates. Keep outside destinations available through coordinate controls; explain that the focus window is not a wall. | Selected first revision. Small presentation change with unchanged puzzle validity. |
 | Genuine 4×4 ruleset | Requires an agreed ruleset: four-file/rank coordinates or original-coordinate subsets, board-edge behavior, legal king adjacency/check/escape, sliding ranges, and independent complete move/mate enumeration. Existing FEN/table validation assumes 8×8. | Defer until the owner prefers changed rules over a focused standard-board puzzle. |
 | Mate in two or more with an opponent reply | Requires a full solution tree or validated reply policy, move-depth accounting, branching legal nonmates, stateful intermediate positions, failure/retry behavior, and opponent timing/reset cancellation. The current one-move attempt is insufficient. | Defer to a separately agreed revision rather than bundle into compact presentation. |
 
 For a genuine reduced board, a plausible *proposal* is a 4×4 board with two kings plus one queen, one attacking move, no pawns, and no special moves. Kings would have to remain nonadjacent and may not enter check; checkmate would require checking every legal defender escape within the new board. Those new edges can turn existing nonmates into mates, so existing answers cannot certify the variant. Pawns would additionally require explicit movement direction, starting ranks, double-step policy, promotion edge and pieces, and en passant policy. None of these choices is selected here.
 
-The owner's reference, [Pocket Chess's official listing](https://play.google.com/store/apps/details?hl=en&id=com.dkxqzbfkjt.pocketchess), describes small, simple boards and mate-in-two through mate-in-four content. It does not specify a board size, pawn rules, or whether displayed boundaries redefine legality. The proposed standard-board focus is our bounded interpretation for Sidequest, not a claim about Pocket Chess's engine. No competitor puzzles or artwork are copied.
+The owner's reference, [Pocket Chess's official listing](https://play.google.com/store/apps/details?hl=en&id=com.dkxqzbfkjt.pocketchess), describes small, simple boards and mate-in-two through mate-in-four content. It does not specify a board size, pawn rules, or whether displayed boundaries redefine legality. The selected standard-board focus is our bounded interpretation for Sidequest, not a claim about Pocket Chess's engine. No competitor puzzles or artwork are copied.
 
 ## Layout, accessibility, and lifecycle validation plan
 
@@ -89,13 +89,13 @@ At normal text sizes, four Chess columns make a 44-point cell feasible at a cont
 
 Verify light/dark and increased contrast, color-independent selection/error/result labels, Reduce Motion, usable corner taps, all required controls, and meaningful accessibility labels. Chess announces original square, piece, and side; empty cells announce their square; Memory hidden labels disclose no symbol. Device VoiceOver and physical performance need actual device evidence before being claimed. Apple recommends Dynamic Type and suitable interaction sizing in its [accessibility guidance](https://developer.apple.com/design/human-interface-guidelines/accessibility).
 
-After selection, planned implementation checks are:
+Implementation checks for #132 are:
 
 - Pure fixture/window checks for exact coordinates, all pieces and all accepted destinations, orientation, unsupported windows, and no dependence on selected moves. Revalidate complete standard-board legal/mate tables with the pinned development tool.
 - Running-app checks for both Chess sides, every equivalent mate, a legal nonmate and illegal destination, coordinate submission outside the window, explicit start, skip/reset, background interruption, completed revisit, and largest-text reachability. Assert stable board geometry across selection/status/start/completion/reset.
 - Preserve existing Sudoku uniqueness, Memory pair/mismatch cancellation, Bubble winning-witness/flight/reset, and endless frozen-challenge behavior. Use all unit tests and the three routine UI smoke cases, plus bounded relevant focused checks; preserve [the testing policy](../TESTING.md).
 
-## Evidence gathered for this proposal
+## Evidence gathered before selection
 
 On October 5, 2026, the existing pinned `chess` 1.11.2 environment ran `scripts/validate-chess-fixtures.py` against unchanged canonical JSON: both positions valid, 26 legal moves and four accepted mates each. A separate read-only crop check confirmed all initial pieces, all accepted move endpoints, and all adjacent defending-king squares fit the two proposed windows. This validates the examples' standard-board answers, not a reduced-board engine or a rendered interface. Reproduction of the independent validator is documented in [CHESS.md](../CHESS.md#reproduce-fixture-validation).
 
@@ -103,4 +103,4 @@ A disposable host-only Swift probe compiled the unchanged `SudokuPuzzle`, `Memor
 
 ## Owner selection and handoff
 
-The remaining product choice is concrete: select the proposed focused standard-board first revision, or request a genuinely reduced-board ruleset instead. Also accept or adjust the proposed session ranges and retention of current Sudoku/Memory/Bubble configurations. After the owner agrees, record the selected policy in the authoritative decisions and game-owned AGENTS.md files, then create small game-owned implementation tickets linked to #117. Keep #117 open until the specification is agreed and those follow-up scopes are recorded.
+The owner selected the focused standard-board first revision on October 5, 2026, with current Sudoku/Memory/Bubble configurations retained. Genuine reduced-board rules, new catalogs, and multiple-move puzzles remain deferred. The active-play ranges are accepted usability targets with no measured-time claim or enforced timer. Chess implementation belongs to #132; difficulty #118 remains a separate decision and adaptive frequency #119 remains an Idea.

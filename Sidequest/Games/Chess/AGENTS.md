@@ -6,7 +6,7 @@ Canonical bundled `Sidequest/Resources/chess-puzzles.json` records each FEN, mov
 
 Keep rules as pure Swift values. Parsing validates structural fixture requirements; the external validator establishes legal-position and complete-solution correctness. Wrong or illegal moves leave the starting position intact for another attempt. Selecting another moving-side piece changes selection; selecting the same piece clears it. A correct move updates the displayed board and freezes the solved attempt.
 
-Always display White's coordinates: a1 at bottom left and h8 at top right. Label the moving color and checkmate objective explicitly, including for Black. Board cells have accessible piece/color/square labels; provide usable coordinate controls if eight columns cannot maintain 44-point targets on an iPhone. Verify actual layouts and both fixture solutions in the simulator before delivery.
+Always retain White-oriented standard coordinates, with files increasing left to right and ranks increasing bottom to top. Label the moving color and checkmate objective explicitly, including for Black. Board cells have accessible piece/color/square labels; provide usable coordinate controls if eight columns cannot maintain 44-point targets on an iPhone. Verify actual layouts and both fixture solutions in the simulator before delivery.
 
 `ChessController(puzzle:runtime:)` uses the single retained GameRuntime established by #3. Composition retains one controller per card and binds its runtime exactly once; the controller's synchronous effect handler captures it weakly. Start creates a fresh attempt without making a move; reset clears the attempt and destination choices; completion preserves the solved board. Every board tap, coordinate choice, and submission is rejected before start, offscreen, or after completion. There are no tasks or timers.
 
@@ -56,3 +56,17 @@ Agent-grill self-assessment: Selection and accepted destination is a delegated p
 ## Success feedback routing #86
 
 Mark runtime completion successful only after an accepted mating move solves the attempt. Consume the shared runtime feedback boundary in [common game guidance](../AGENTS.md); keep rules, timing, retained results, and reset semantics unchanged. Appearance or restored completed values never emit success.
+
+## Selected pocket focus #132
+
+The owner's October 5 “go ahead” selects [the first pocket revision](../../../docs/pocket-games/README.md). Display White's original fixture in e5–h8 and Black's in a1–d4, both fixed 4×4 windows. Keep the immutable full-board puzzle and legal/accepted move sets authoritative. A window edge is not a wall; all eight destination files/ranks remain available through existing controls. Explain the displayed range and standard 8×8 rules in visible and accessible copy. Never follow a selection or move by shifting the window.
+
+Agent-grill self-assessment (implementation readiness, not verification):
+
+| Question | Kind | Answer and evidence | Verification needed |
+| --- | --- | --- | --- |
+| Can all existing pieces and mates fit? | Fact | Original JSON and the selected specification place all three pieces, every accepted endpoint, and defending-king neighbors in the stated windows. | Pure mapping/containment tests and both-color rendered checks. |
+| Who owns the window? | Delegated technical choice | A pure immutable `ChessBoardWindow` derives from the original puzzle, never attempt state. Only the two original fixture IDs/FENs receive the compact mapping; unsupported content falls back to full-board presentation to avoid clipping. No rule or fixture changes. | Unknown/changed fixture fallback and unchanged-window checks after wrong and accepted moves. |
+| Are off-window moves still usable? | Fact and technical choice | Existing coordinate menus and controller validate all eight files/ranks against the full-board tables. Retain these unchanged. | Both-color off-window legal nonmate submissions, input/reset/completion regressions, normal/largest text and Reduce Motion checks. |
+
+Keep board dimensions constant across preview, selection, wrong moves, completion, and reset. Retain the existing start, selection, and feedback regions, disabled completed controls, success routing, and contained motion. Lead-owned native checks and exact-head CI remain pending until actually recorded; source inspection does not establish layout usability or physical-device behavior.

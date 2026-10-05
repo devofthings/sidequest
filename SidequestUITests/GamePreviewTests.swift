@@ -110,7 +110,8 @@ final class GamePreviewTests: XCTestCase {
     switch fixture {
     case .sudoku: app.buttons["sudoku.cell.2"]
     case .memory: app.buttons["memory.tile.0"]
-    case .chessWhite, .chessBlack: app.buttons["chess.square.a8"]
+    case .chessWhite: app.buttons["chess.square.e8"]
+    case .chessBlack: app.buttons["chess.square.a4"]
     case .bubble: app.otherElements["bubble.board"]
     }
   }
@@ -119,7 +120,8 @@ final class GamePreviewTests: XCTestCase {
     switch fixture {
     case .sudoku: app.buttons["sudoku.cell.15"]
     case .memory: app.buttons["memory.tile.11"]
-    case .chessWhite, .chessBlack: app.buttons["chess.square.h1"]
+    case .chessWhite: app.buttons["chess.square.h5"]
+    case .chessBlack: app.buttons["chess.square.d1"]
     case .bubble: app.buttons["bubble.fire"]
     }
   }

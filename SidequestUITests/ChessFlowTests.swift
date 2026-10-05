@@ -57,6 +57,7 @@ final class ChessFlowTests: XCTestCase {
   @MainActor
   func testLargestTextSupportsCoordinateSolutionAndNavigation() {
     let app = launch(color: "black", largeText: true)
+    assertWindow(app, color: "black")
     XCTAssertTrue(app.buttons["game.start"].isHittable)
     XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
     app.buttons["game.start"].tap()
@@ -79,6 +80,7 @@ final class ChessFlowTests: XCTestCase {
     color: String, queen: String, opponent: String, wrong: String, mate: String
   ) {
     let app = launch(color: color)
+    assertWindow(app, color: color)
     XCTAssertTrue(app.buttons["chess.square.\(queen)"].exists)
     XCTAssertFalse(app.buttons["chess.square.\(queen)"].isEnabled)
     app.buttons["game.start"].tap()
@@ -98,6 +100,12 @@ final class ChessFlowTests: XCTestCase {
     XCTAssertTrue(app.buttons["chess.square.\(queen)"].label.contains("queen"))
     reveal(app.buttons["chess.square.\(wrong)"], in: app)
     XCTAssertTrue(app.buttons["chess.square.\(wrong)"].label.contains("Empty square"))
+    let outside = color == "white" ? "a6" : "h3"
+    XCTAssertFalse(app.buttons["chess.square.\(outside)"].exists)
+    submit(app, queen: queen, destination: outside)
+    reveal(app.staticTexts["chess.feedback"], in: app)
+    XCTAssertTrue(app.staticTexts["chess.feedback"].label.contains("not checkmate"))
+    assertWindow(app, color: color)
     submit(app, queen: queen, destination: queen)
     reveal(app.staticTexts["chess.feedback"], in: app)
     XCTAssertTrue(app.staticTexts["chess.feedback"].label.contains("not legal"))
@@ -126,6 +134,20 @@ final class ChessFlowTests: XCTestCase {
     reveal(app.buttons["chess.square.\(mate)"], in: app)
     XCTAssertTrue(app.buttons["chess.square.\(mate)"].label.contains("queen"))
     XCTAssertFalse(app.buttons["game.start"].exists)
+    assertWindow(app, color: color)
+  }
+
+  @MainActor
+  private func assertWindow(_ app: XCUIApplication, color: String) {
+    let range = color == "white" ? "e5–h8" : "a1–d4"
+    XCTAssertTrue(app.staticTexts["chess.focus"].label.contains(range))
+    XCTAssertTrue(app.staticTexts["chess.focus"].label.contains("Standard 8×8 rules"))
+    let corners = color == "white" ? ["e8", "h8", "e5", "h5"] : ["a4", "d4", "a1", "d1"]
+    for corner in corners { XCTAssertTrue(app.buttons["chess.square.\(corner)"].exists) }
+    XCTAssertEqual(
+      app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "chess.square.")).count,
+      16)
+    XCTAssertFalse(app.buttons["chess.square.\(color == "white" ? "a1" : "h8")"].exists)
   }
 
   @MainActor
