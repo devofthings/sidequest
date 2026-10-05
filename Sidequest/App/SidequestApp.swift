@@ -12,16 +12,31 @@ struct SidequestApp: App {
   @State private var newsModel: NewsImportModel
 
   init() {
-    #if DEBUG
-      let session = FeedSessionState(loadChess: {
-        if CommandLine.arguments.contains("-sidequest-chess-catalog") {
-          return try await ChessPuzzleLoader.bundledCatalog()
-        }
-        return try await ChessPuzzleLoader.bundled()
+    let session = FeedSessionState(
+      prepareBatch: { id, sequence, seed, puzzles, ordered in
+        let mixed: Bool
+        #if DEBUG
+          mixed = !FeedSessionState.usesHistoricalGeneration
+        #else
+          mixed = true
+        #endif
+        return try await GameGenerationComposition.prepare(
+          sessionID: id, sequence: sequence, seed: seed, chessPuzzles: puzzles,
+          ordered: ordered, mixedDifficulties: mixed)
+      },
+      loadChess: {
+        #if DEBUG
+          if CommandLine.arguments.contains("-sidequest-chess-catalog") {
+            return try await ChessPuzzleLoader.bundledCatalog()
+          }
+          if FeedSessionState.usesHistoricalGeneration {
+            return try await ChessPuzzleLoader.bundled()
+          }
+        #endif
+        let historical = try await ChessPuzzleLoader.bundled()
+        let catalog = try await ChessPuzzleLoader.bundledCatalog()
+        return historical + catalog
       })
-    #else
-      let session = FeedSessionState()
-    #endif
     _session = State(initialValue: session)
     #if DEBUG
       let store = IntegrationFixtures.newsStore()

@@ -8,6 +8,13 @@ enum GameKind: String, CaseIterable, Codable, Sendable {
 struct GameCard: Equatable, Codable, Sendable {
   let id: CardID
   let kind: GameKind
+  let difficulty: GameDifficulty?
+
+  init(id: CardID, kind: GameKind, difficulty: GameDifficulty? = nil) {
+    self.id = id
+    self.kind = kind
+    self.difficulty = difficulty
+  }
 }
 
 /// An appearance can repeat a source story without changing its imported identity.

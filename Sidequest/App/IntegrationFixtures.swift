@@ -4,7 +4,10 @@
   /// Original fictional files exercise the native picker; Release has no fixture/reset path.
   enum IntegrationFixtures {
     static func newsStore() -> LocalNewsStore? {
-      guard CommandLine.arguments.contains("-sidequest-integration-fixtures") else {
+      guard
+        CommandLine.arguments.contains("-sidequest-integration-fixtures")
+          || CommandLine.arguments.contains("-sidequest-mixed-difficulties-test")
+      else {
         return try? LocalNewsStore.applicationStore()
       }
       guard
@@ -12,13 +15,26 @@
           for: .applicationSupportDirectory, in: .userDomainMask
         ).first
       else { return nil }
-      let folder =
-        CommandLine.arguments.contains("-sidequest-endless-fixtures")
-        ? "EndlessNewsTests" : "IntegrationNewsTests"
+      let folder: String
+      if CommandLine.arguments.contains("-sidequest-mixed-difficulties-test") {
+        folder = "MixedDifficultyNewsTests"
+      } else {
+        folder =
+          CommandLine.arguments.contains("-sidequest-endless-fixtures")
+          ? "EndlessNewsTests" : "IntegrationNewsTests"
+      }
       return LocalNewsStore(directory: support.appendingPathComponent(folder))
     }
 
     @concurrent static func prepare() async throws {
+      if CommandLine.arguments.contains("-sidequest-mixed-difficulties-test") {
+        guard let store = newsStore() else { throw NewsImportError.unavailableStorage }
+        try Task.checkCancellation()
+        if FileManager.default.fileExists(atPath: store.directory.path) {
+          try FileManager.default.removeItem(at: store.directory)
+        }
+        return
+      }
       guard CommandLine.arguments.contains("-sidequest-integration-fixtures"),
         let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
           .first,

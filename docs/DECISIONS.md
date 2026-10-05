@@ -144,3 +144,11 @@ Owner-approved October 5, 2026: make the Nice! animation more prominent in the m
 ## Current-game header #194 — accepted October 5, 2026
 
 The owner approved a PR replacing Sidequest in the top bar with the settled game's name, removing the duplicate card headline and using that space for gameplay. Existing instructions precede each board; game-owned feedback remains in stable reservations. News keeps its article headline and the Sidequest top-bar fallback. Legacy explicit-start Debug controls remain; real games reclaim their empty start row. Scope excludes the news-button change (#191). Implementation/native evidence belongs to #194's PR; no release is authorized.
+
+## Mixed difficulty rollout #201
+
+Agent-grill self-assessment: game-owned challenge APIs certify immutable tiers; legacy descriptors and generators remain supported. Normal app composition explicitly opts into mixed generation. Each game occurrence cycles Easy/Medium/Hard using a session-seeded per-kind offset; challenge RNG uses isolated streams while historical generation draws and batch shuffle order are retained. Load the separate Chess catalog once with startup fixtures and retain it through imports/replenishment.
+
+Reconstruction validates descriptor kind/tier and completed archive compatibility before creating invisible adapters. Window preparation stages replacements and archives before retiring existing owners; navigation stages selection before accepting a fallible window. Failure keeps the current selection, owners, descriptors, and completion, and exposes Retry games. Initial preparation/import must reject invalid descriptors before persistence. No fallback may silently discard completion or claim an uncertified tier. Native compilation, actual mixed-tier journeys, and exact-head CI remain pending in the owning PR.
+
+Readiness evidence: GeneratedGameBatch preserves legacy RNG; MemoryController's typed restoration throws on mismatched completed layout; FeedSelection is a value and supports staged navigation; game metadata is immutable. Planned verification covers all tiers, retry/cancellation, completed eviction/restoration, unchanged cadence, and normal/largest label geometry. No human-owned behavior or spending question remains.

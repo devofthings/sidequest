@@ -29,20 +29,7 @@ struct FeedView: View {
   var body: some View {
     VStack(spacing: 8) {
       HStack {
-        ZStack(alignment: .leading) {
-          // Measure every possible heading at this width so paging cannot resize the viewport.
-          ZStack(alignment: .leading) {
-            ForEach(["Sidequest"] + GameKind.allCases.map(\.title), id: \.self) { title in
-              Text(title)
-            }
-          }
-          .font(.system(.title2, design: .rounded, weight: .heavy))
-          .hidden().accessibilityHidden(true)
-          Text(selectedGame?.kind.title ?? "Sidequest")
-            .font(.system(.title2, design: .rounded, weight: .heavy))
-            .accessibilityAddTraits(.isHeader)
-            .accessibilityIdentifier("foundation.title")
-        }
+        GameHeading(kind: selectedGame?.kind, difficulty: selectedGame?.difficulty)
         Spacer(minLength: 8)
         Menu {
           if let openNews {

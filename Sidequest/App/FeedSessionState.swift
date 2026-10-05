@@ -105,6 +105,12 @@ final class FeedSessionState {
     -> FeedComposition
   {
     #if DEBUG
+      if ProcessInfo.processInfo.arguments.contains("-sidequest-mixed-difficulties-test") {
+        return try await FeedComposition.endless(
+          news: news, chessPuzzles: puzzles,
+          sessionID: UUID(uuidString: "00000000-0000-0000-0000-000000000201") ?? UUID(),
+          seed: 201, ordered: true, prepareBatch: prepareBatch)
+      }
       if ProcessInfo.processInfo.arguments.contains("-sidequest-integration-fixtures"),
         !ProcessInfo.processInfo.arguments.contains("-sidequest-endless-fixtures")
       {
@@ -190,7 +196,14 @@ final class FeedSessionState {
       state = .failed("Could not prepare test files. Check local storage and retry.")
     }
 
-    static var usesLegacyHarness: Bool {
+    nonisolated static var usesHistoricalGeneration: Bool {
+      let arguments = ProcessInfo.processInfo.arguments
+      return arguments.contains("-sidequest-endless-fixtures")
+        || arguments.contains("-sidequest-integration-fixtures")
+        || usesLegacyHarness
+    }
+
+    nonisolated static var usesLegacyHarness: Bool {
       let arguments = ProcessInfo.processInfo.arguments
       return [
         "-sidequest-news-preview", "-sidequest-feed-test", "-sidequest-feed-empty",

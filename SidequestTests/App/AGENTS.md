@@ -13,3 +13,7 @@ Use production `FeedSessionState`, throwing `FeedComposition`, and the News stor
 ## Standard Sudoku #170
 
 StandardSudokuGenerationTests compares actual generated standard cards and legacy-stream Memory/Bubble neighbors at sequences0,8,16 and seed104. Keep deterministic neighbor/shuffle compatibility; production standard uses at most12 blanks without difficulty claims.
+
+## Mixed difficulty checks #201
+
+MixedDifficultyTests covers actual classified generation, all-tier scheduling, legacy shuffle identity, incompatible archives, completed eviction/Replay, and rejected-window retry. MixedDifficultyFlowTests uses the same production opt-in with a dedicated owned fictional-news test store, deterministic ordered seed201, all12 game/tier combinations and hardest largest-text controls. Keep these two UI cases extended; all units plus exactly three smoke cases remain the routine gate. Root alone owns actual native proof.

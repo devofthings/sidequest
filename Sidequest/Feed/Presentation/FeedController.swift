@@ -10,7 +10,8 @@ final class FeedController {
   private(set) var runtimes: [CardID: GameRuntime]
   let isEndless: Bool
   var replenishmentMessage: String?
-  @ObservationIgnored var windowDidChange: (([FeedCard]) -> [CardID: GameRuntime])?
+  @ObservationIgnored var windowDidChange:
+    (([FeedCard]) -> Result<[CardID: GameRuntime], FeedWindowError>)?
   @ObservationIgnored var demandDidChange: (() -> Void)?
   @ObservationIgnored var retryReplenishment: (() -> Void)?
 
@@ -55,17 +56,32 @@ final class FeedController {
   }
 
   /// Prepared descriptors have been validated before this synchronous append.
-  func append(_ cards: [FeedCard]) {
-    guard !isRetired else { return }
-    selection.append(cards)
-    reconcileWindow()
+  @discardableResult
+  func append(_ cards: [FeedCard]) -> Bool {
+    guard !isRetired else { return false }
+    var candidate = selection
+    candidate.append(cards)
+    guard adoptWindow(candidate) else { return false }
+    selection = candidate
     updateVisibility()
+    return true
   }
 
-  func reconcileWindow() {
-    guard let index = selectedIndex, let windowDidChange else { return }
-    let window = Array(cards[max(0, index - 1)...min(count - 1, index + 1)])
-    runtimes = windowDidChange(window)
+  @discardableResult
+  func reconcileWindow() -> Bool { adoptWindow(selection) }
+
+  private func adoptWindow(_ candidate: FeedSelection) -> Bool {
+    guard let index = candidate.index, let windowDidChange else { return true }
+    let window = Array(
+      candidate.cards[max(0, index - 1)...min(candidate.cards.count - 1, index + 1)])
+    switch windowDidChange(window) {
+    case .success(let prepared):
+      runtimes = prepared
+      return true
+    case .failure:
+      replenishmentMessage = "Could not prepare this game. Retry games, then swipe again."
+      return false
+    }
   }
 
   func commitPage(at index: Int) {
@@ -79,8 +95,10 @@ final class FeedController {
   func previous() { move(by: -1) }
 
   private func move(by offset: Int) {
-    guard canNavigate, selection.move(by: offset) else { return }
-    reconcileWindow()
+    guard canNavigate else { return }
+    var candidate = selection
+    guard candidate.move(by: offset), adoptWindow(candidate) else { return }
+    selection = candidate
     updateVisibility()
   }
 
@@ -99,3 +117,6 @@ final class FeedController {
     demandDidChange?()
   }
 }
+
+/// Feed presentation knows only whether an adjacent game window can be prepared.
+enum FeedWindowError: Error { case preparationFailed }
