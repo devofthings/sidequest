@@ -137,11 +137,18 @@ struct ChessPuzzleView: View {
           controller.tap(square)
         } label: {
           VStack(spacing: 0) {
-            Text(symbol(piece)).font(
-              .system(
-                size: compact ? min(40, boardExtent / 4 - 20) : (window.files.count == 4 ? 40 : 26),
-                weight: .semibold)
+            Group {
+              if let piece {
+                ChessPieceArtwork(piece: piece, increasedContrast: theme.contrast == .increased)
+              } else {
+                Color.clear
+              }
+            }
+            .frame(
+              width: compact ? min(40, boardExtent / 4 - 20) : (window.files.count == 4 ? 40 : 26),
+              height: compact ? min(40, boardExtent / 4 - 20) : (window.files.count == 4 ? 40 : 26)
             )
+            .accessibilityHidden(true)
             .scaleEffect(destination && !reduceMotion ? 1.12 : 1)
             .animation(feedbackAnimation, value: destination)
             Text(square.coordinate).font(.system(size: window.files.count == 4 ? 13 : 10))
@@ -296,16 +303,6 @@ struct ChessPuzzleView: View {
     case .illegalMove: "That move is not legal. Try another move."
     case .notCheckmate: "That move is legal, but it is not checkmate. Try again."
     case .checkmate: "Checkmate!"
-    }
-  }
-
-  private func symbol(_ piece: ChessPiece?) -> String {
-    guard let piece else { return "·" }
-    return switch (piece.side, piece.kind) {
-    case (.white, .king): "♔"
-    case (.white, .queen): "♕"
-    case (.black, .king): "♚"
-    case (.black, .queen): "♛"
     }
   }
 }

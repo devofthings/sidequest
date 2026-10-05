@@ -48,12 +48,12 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 68 | 5,706 |
+| App | 70 | 5,898 |
 | Unit tests | 32 | 4,559 |
 | UI tests | 16 | 2,804 |
-| **Total** | **116** | **13,069** |
+| **Total** | **118** | **13,261** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+10,620 / −614 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+10,825 / −627 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
@@ -116,3 +116,5 @@ The [private Figma refinement](docs/design/PRIVATE_FIGMA.md) contains proposed g
 [Proposed icon family](docs/design/ICONS.md) includes original Chess pieces, Memory artwork, and existing app-action examples in private Figma. The lead selected Memory and current Chess artwork for bounded #171 implementation under the existing autonomous design authorization; native adoption remains pending.
 
 Committed game feedback adds restrained interaction haptics for Sudoku entries, Memory matches, and Bubble clears, with contained Bubble pop motion. Final actions use existing success feedback, including one-move Chess. See [event and lifecycle guidance](Sidequest/Games/Presentation/AGENTS.md#committed-interaction-feedback-161); native verification is pending, and physical iPhone vibration needs separate owner testing.
+
+Original Memory faces and both-side King/Queen silhouettes are selected for the native refinement in [game artwork guidance](docs/design/NATIVE_GAME_ART.md). Focused native appearance and interaction verification remains pending in #171; the private Figma sheet alone does not verify app rendering.
