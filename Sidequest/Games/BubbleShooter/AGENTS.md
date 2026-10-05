@@ -88,3 +88,18 @@ The larger #138 run established that hiding only native direct-control accessibi
 
 
 Completed direct aiming uses a persistent metadata-free native touch-exclusion region with the actual aiming UIControl removed on win/loss. Cancel its lease before removal; Replay creates the real control again inside the same bounds. Keep the region's FeedPanExcludingControl conformance while completed and keep the disabled real control during preview/pending flight so lower-board touches never become feed pans. The larger r3 run still found the identified native control after both UIKit and SwiftUI accessibility hiding; structural removal avoids retaining an obsolete input's accessibility metadata without changing geometry or touch ownership. This is a source correction awaiting native verification, not a VoiceOver claim.
+
+
+## Horizontal aiming without visible degrees #163
+
+The owner's October 5 feedback removes visible numeric aim-angle clutter. This supersedes #138's ray-to-touch mapping and displayed degree label, preserving the same lower-board touch region and explicit Fire. Map the finite in-bounds horizontal position absolutely: left edge −60°, center 0°, right edge +60°. Vertical motion within the region preserves aim; horizontal dragging on the launcher height is valid. Out-of-bounds/nonfinite input produces no update. Keep the originating lease, disabled/removed completed controls, real reflected dotted trace, physics, generation and lifecycle unchanged. Releasing a drag never shoots.
+
+The lead accepted the agent-grill interview. Retain the actual 44-point native Slider as the assistive/keyboard precision alternative; its native range semantics remain intact. Direct-control accessibility value supplies named aim degrees without decorative on-screen text. Update the Slider hint to describe the dotted guide rather than a removed visible angle. Reserve next-color/results, complete feedback and Fire/Replay normally; changing aim must not move the board or controls. Larger accessibility text retains owned overflow. No rules, difficulty tiers, release or new Idea is introduced.
+
+| Question | Kind | Answer and evidence | Verification needed |
+| --- | --- | --- | --- |
+| How should left/right dragging behave at launcher height? | Delegated technical choice | Absolute horizontal mapping over the existing region; #163 requests horizontal motion, while #138's upward-ray mapping rejected launcher-height gestures. Independent of vertical position and board scale. | Deterministic mapping/invalid-input tests and real horizontal launcher gestures. |
+| Should every secondary aiming control disappear? | Delegated technical choice | Retain native Slider for accessible/keyboard precision; #163 explicitly allows it and requires assistive aiming. Remove visible degrees and stale hint text. | Native range/44-point frame, observed direct-control values and absence of visible angle text. |
+| Does releasing a drag shoot or page? | Accepted fact | Explicit Fire remains selected in #163. Existing leases and narrow native pan exclusion remain unchanged. | Real drag/release with zero shots and unchanged card/frames; explicit Fire commit, reset/completion/Replay and largest-text checks. |
+
+Author source/format/offline checks are separate from Root-owned native verification and fresh independent review. The private Figma proposal's old visible numeric angle is superseded; shared design guidance must mark it obsolete until a revised actual board is saved. Do not claim an unedited proposal or an unexecuted native test is verified.

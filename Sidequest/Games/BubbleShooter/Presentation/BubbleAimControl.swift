@@ -74,7 +74,7 @@ final class BubbleAimTouchControl: UIControl, FeedPanExcludingControl {
     accessibilityIdentifier = "bubble.directAim"
     accessibilityLabel = "Touch aiming area"
     accessibilityHint =
-      "Drag above the launcher to aim. Use the Aim slider for precise adjustment. Fire shoots the bubble."
+      "Drag left or right to aim. Use the Aim slider for precise adjustment. Fire shoots the bubble."
     accessibilityTraits = [.allowsDirectInteraction]
     update(controller: controller)
   }
@@ -99,14 +99,14 @@ final class BubbleAimTouchControl: UIControl, FeedPanExcludingControl {
     cancelAim()
     guard let lease = controller.beginAimDrag() else { return false }
     self.lease = lease
-    // A finger may begin on the launcher. Acquire ownership now and wait for a valid upward ray.
+    // Launcher-height horizontal gestures are valid; only the touch's x position sets aim.
     if let degrees = mapped(touch) { controller.updateAimDrag(lease, degrees: degrees) }
     return true
   }
 
   override func continueTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
     guard let lease else { return false }
-    // Invalid/downward points preserve the last accepted angle without reversing the guide.
+    // Out-of-area/nonfinite points preserve the last accepted angle.
     guard let degrees = mapped(touch) else { return true }
     guard controller.updateAimDrag(lease, degrees: degrees) else {
       cancelAim()

@@ -115,32 +115,16 @@ struct BubbleShooterView: View {
   private var playingStatus: some View {
     StableGameRegion {
       ZStack {
-        nextAndAngle(reservation: true)
+        nextColor(reservation: true)
         Text("You won!").font(.headline)
         Text("You lost").font(.headline)
       }
     } content: {
       if isPlaying {
-        nextAndAngle(reservation: false)
+        nextColor(reservation: false)
       } else {
         Text(controller.game.outcome == .won ? "You won!" : "You lost")
           .font(.headline).accessibilityIdentifier("bubble.outcome")
-      }
-    }
-  }
-
-  private func nextAndAngle(reservation: Bool) -> some View {
-    Group {
-      if compact {
-        HStack(spacing: 12) {
-          nextColor(reservation: reservation)
-          angle(reservation: reservation)
-        }
-      } else {
-        VStack(spacing: 12) {
-          nextColor(reservation: reservation)
-          angle(reservation: reservation)
-        }
       }
     }
   }
@@ -158,21 +142,6 @@ struct BubbleShooterView: View {
         .accessibilityLabel("Next bubble: \(color.name), \(color.symbol)")
         .accessibilityIdentifier(reservation ? "" : "bubble.next")
     }
-  }
-
-  private func angle(reservation: Bool) -> some View {
-    StableGameRegion {
-      Text(compact ? "−60°" : "Aim: −60°")
-    } content: {
-      Text(
-        compact
-          ? "\(Int(controller.aimDegrees.rounded()))°"
-          : "Aim: \(Int(controller.aimDegrees.rounded()))°"
-      )
-      .accessibilityLabel("Aim: \(Int(controller.aimDegrees.rounded()))°")
-      .accessibilityIdentifier(reservation ? "" : "bubble.angle")
-    }
-    .monospacedDigit()
   }
 
   private var actionControls: some View {
