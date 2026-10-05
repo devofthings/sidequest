@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="840" viewBox="0 0 960 840"><rect width="960" height="840" fill="#F7F5FF"/>
+<text x="32" y="42" font-family="Inter,Arial,sans-serif" font-size="28" font-weight="800" fill="#25243A">PROPOSED · A bolder Sidequest icon family</text>
+<text x="32" y="72" font-family="Inter,Arial,sans-serif" font-size="16" font-weight="500" fill="#25243A">Original editable vectors · familiar silhouettes · poppy color · no game-rule changes</text>
+<text x="32" y="112" font-family="Inter,Arial,sans-serif" font-size="16" font-weight="800" fill="#25243A">MEMORY · SIX DISTINCT SHAPES</text>
+<rect x="32" y="130" width="166" height="96" rx="18" fill="#FFFFFF" stroke="#25243A" stroke-width="2"/>
+<rect x="32" y="130" width="166" height="96" rx="18" fill="none" stroke="#25243A" stroke-width="4"/>
+<g id="memory-star-89-139" transform="translate(89,139) scale(0.8125)" fill="#CBF36B" stroke="#25243A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M32 5 L40 23 L60 25 L45 39 L49 59 L32 49 L15 59 L19 39 L4 25 L24 23 Z"/></g>
+<text x="48" y="210" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Star · selected</text>
+<rect x="214" y="130" width="166" height="96" rx="18" fill="#FFFFFF" stroke="#25243A" stroke-width="2"/>
+<g id="memory-heart-271-139" transform="translate(271,139) scale(0.8125)" fill="#FF8E91" stroke="#25243A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M32 56 C23 49 6 37 6 23 C6 6 25 3 32 17 C39 3 58 6 58 23 C58 37 41 49 32 56 Z"/></g>
+<text x="230" y="210" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Heart</text>
+<rect x="396" y="130" width="166" height="96" rx="18" fill="#CBF36B" stroke="#25243A" stroke-width="2"/>
+<g id="memory-moon-453-139" transform="translate(453,139) scale(0.8125)" fill="#C7B7FF" stroke="#25243A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M48 8 C38 10 30 19 30 31 C30 42 39 50 51 50 C45 60 30 61 19 54 C3 43 3 23 16 12 C25 4 37 2 48 8 Z"/></g>
+<path d="M529 147 l5 5 l9 -10" fill="none" stroke="#25243A" stroke-width="3" stroke-linecap="round"/>
+<text x="412" y="210" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Moon · matched</text>
+<rect x="32" y="242" width="166" height="96" rx="18" fill="#FFFFFF" stroke="#25243A" stroke-width="2"/>
+<g id="memory-sun-89-251" transform="translate(89,251) scale(0.8125)" fill="#FF8E91" stroke="#25243A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><circle cx="32" cy="32" r="15"/><path d="M32 3 V8 M32 56 V61 M3 32 H8 M56 32 H61 M11 11 L15 15 M49 49 L53 53 M11 53 L15 49 M49 15 L53 11" fill="none"/></g>
+<text x="48" y="322" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Sun</text>
+<rect x="214" y="242" width="166" height="96" rx="18" fill="#FFFFFF" stroke="#25243A" stroke-width="2"/>
+<g opacity="0.55">
+<g id="memory-leaf-271-251" transform="translate(271,251) scale(0.8125)" fill="#CBF36B" stroke="#25243A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M53 7 C25 5 9 20 10 39 C11 53 25 59 38 49 C51 39 53 20 53 7 Z"/><path d="M12 56 L40 26" fill="none"/></g>
+</g>
+<text x="230" y="322" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Leaf · disabled</text>
+<rect x="396" y="242" width="166" height="96" rx="18" fill="#FFFFFF" stroke="#25243A" stroke-width="2"/>
+<g id="memory-bolt-453-251" transform="translate(453,251) scale(0.8125)" fill="#77D9EE" stroke="#25243A" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M36 4 L10 35 H28 L23 60 L54 25 H35 Z"/></g>
+<text x="412" y="322" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Bolt</text>
+<text x="624" y="112" font-family="Inter,Arial,sans-serif" font-size="16" font-weight="800" fill="#25243A">CHESS · BOTH SIDES</text>
+<rect x="624" y="130" width="132" height="96" rx="18" fill="#C7B7FF" stroke="#25243A" stroke-width="2"/>
+<g id="chess-white-king-662-134" transform="translate(662,134) scale(0.875)" fill="#FFFFFF" stroke="#25243A" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><path d="M18 24 Q15 14 25 14 H39 Q49 14 46 24 Z"/><path d="M32 3 V15 M26 8 H38" fill="none"/><path d="M20 24 H44 L40 38 L44 49 H20 L24 38 Z"/><rect x="14" y="49" width="36" height="10" rx="4"/><path d="M26 30 H38" fill="none"/></g>
+<text x="635" y="211" font-family="Inter,Arial,sans-serif" font-size="12" font-weight="500" fill="#25243A">White King</text>
+<rect x="772" y="130" width="132" height="96" rx="18" fill="#C7B7FF" stroke="#25243A" stroke-width="2"/>
+<g id="chess-white-queen-810-134" transform="translate(810,134) scale(0.875)" fill="#FFFFFF" stroke="#25243A" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><path d="M18 24 L13 10 L25 18 L32 6 L39 18 L51 10 L46 24 Z"/><path d="M20 24 H44 L40 38 L44 49 H20 L24 38 Z"/><rect x="14" y="49" width="36" height="10" rx="4"/><path d="M26 30 H38" fill="none"/></g>
+<text x="783" y="211" font-family="Inter,Arial,sans-serif" font-size="12" font-weight="500" fill="#25243A">White Queen</text>
+<rect x="624" y="242" width="132" height="96" rx="18" fill="#34314C" stroke="#25243A" stroke-width="2"/>
+<g id="chess-black-king-662-246" transform="translate(662,246) scale(0.875)" fill="#25243A" stroke="#FFFFFF" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><path d="M18 24 Q15 14 25 14 H39 Q49 14 46 24 Z"/><path d="M32 3 V15 M26 8 H38" fill="none"/><path d="M20 24 H44 L40 38 L44 49 H20 L24 38 Z"/><rect x="14" y="49" width="36" height="10" rx="4"/><path d="M26 30 H38" fill="none"/></g>
+<text x="635" y="323" font-family="Inter,Arial,sans-serif" font-size="12" font-weight="500" fill="#FFFFFF">Black King</text>
+<rect x="772" y="242" width="132" height="96" rx="18" fill="#34314C" stroke="#25243A" stroke-width="2"/>
+<g id="chess-black-queen-810-246" transform="translate(810,246) scale(0.875)" fill="#25243A" stroke="#FFFFFF" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><path d="M18 24 L13 10 L25 18 L32 6 L39 18 L51 10 L46 24 Z"/><path d="M20 24 H44 L40 38 L44 49 H20 L24 38 Z"/><rect x="14" y="49" width="36" height="10" rx="4"/><path d="M26 30 H38" fill="none"/></g>
+<text x="783" y="323" font-family="Inter,Arial,sans-serif" font-size="12" font-weight="500" fill="#FFFFFF">Black Queen</text>
+<rect x="32" y="376" width="896" height="112" rx="18" fill="#25243A"/>
+<text x="48" y="404" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">DARK SURFACE · MEMORY AT 32 PT</text>
+<g id="memory-star-58-427" transform="translate(58,427) scale(0.5)" fill="#CBF36B" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M32 5 L40 23 L60 25 L45 39 L49 59 L32 49 L15 59 L19 39 L4 25 L24 23 Z"/></g>
+<g id="memory-heart-144-427" transform="translate(144,427) scale(0.5)" fill="#FF8E91" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M32 56 C23 49 6 37 6 23 C6 6 25 3 32 17 C39 3 58 6 58 23 C58 37 41 49 32 56 Z"/></g>
+<g id="memory-moon-230-427" transform="translate(230,427) scale(0.5)" fill="#C7B7FF" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M48 8 C38 10 30 19 30 31 C30 42 39 50 51 50 C45 60 30 61 19 54 C3 43 3 23 16 12 C25 4 37 2 48 8 Z"/></g>
+<g id="memory-sun-316-427" transform="translate(316,427) scale(0.5)" fill="#FF8E91" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><circle cx="32" cy="32" r="15"/><path d="M32 3 V8 M32 56 V61 M3 32 H8 M56 32 H61 M11 11 L15 15 M49 49 L53 53 M11 53 L15 49 M49 15 L53 11" fill="none"/></g>
+<g id="memory-leaf-402-427" transform="translate(402,427) scale(0.5)" fill="#CBF36B" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M53 7 C25 5 9 20 10 39 C11 53 25 59 38 49 C51 39 53 20 53 7 Z"/><path d="M12 56 L40 26" fill="none"/></g>
+<g id="memory-bolt-488-427" transform="translate(488,427) scale(0.5)" fill="#77D9EE" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"><path d="M36 4 L10 35 H28 L23 60 L54 25 H35 Z"/></g>
+<text x="624" y="404" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">CHESS AT 32 PT</text>
+<rect x="624" y="418" width="48" height="48" rx="10" fill="#C7B7FF"/>
+<g id="chess-white-king-632-426" transform="translate(632,426) scale(0.5)" fill="#FFFFFF" stroke="#25243A" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><path d="M18 24 Q15 14 25 14 H39 Q49 14 46 24 Z"/><path d="M32 3 V15 M26 8 H38" fill="none"/><path d="M20 24 H44 L40 38 L44 49 H20 L24 38 Z"/><rect x="14" y="49" width="36" height="10" rx="4"/><path d="M26 30 H38" fill="none"/></g>
+<rect x="696" y="418" width="48" height="48" rx="10" fill="#C7B7FF"/>
+<g id="chess-white-queen-704-426" transform="translate(704,426) scale(0.5)" fill="#FFFFFF" stroke="#25243A" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><path d="M18 24 L13 10 L25 18 L32 6 L39 18 L51 10 L46 24 Z"/><path d="M20 24 H44 L40 38 L44 49 H20 L24 38 Z"/><rect x="14" y="49" width="36" height="10" rx="4"/><path d="M26 30 H38" fill="none"/></g>
+<rect x="768" y="418" width="48" height="48" rx="10" fill="#34314C"/>
+<g id="chess-black-king-776-426" transform="translate(776,426) scale(0.5)" fill="#25243A" stroke="#FFFFFF" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><path d="M18 24 Q15 14 25 14 H39 Q49 14 46 24 Z"/><path d="M32 3 V15 M26 8 H38" fill="none"/><path d="M20 24 H44 L40 38 L44 49 H20 L24 38 Z"/><rect x="14" y="49" width="36" height="10" rx="4"/><path d="M26 30 H38" fill="none"/></g>
+<rect x="840" y="418" width="48" height="48" rx="10" fill="#34314C"/>
+<g id="chess-black-queen-848-426" transform="translate(848,426) scale(0.5)" fill="#25243A" stroke="#FFFFFF" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><path d="M18 24 L13 10 L25 18 L32 6 L39 18 L51 10 L46 24 Z"/><path d="M20 24 H44 L40 38 L44 49 H20 L24 38 Z"/><rect x="14" y="49" width="36" height="10" rx="4"/><path d="M26 30 H38" fill="none"/></g>
+<text x="32" y="530" font-family="Inter,Arial,sans-serif" font-size="16" font-weight="800" fill="#25243A">APP ACTIONS · SIMPLE SHAPES IN 44 PT TARGETS</text>
+<rect x="32.0" y="550" width="44" height="44" rx="12" fill="#77D9EE" stroke="#25243A" stroke-width="2"/>
+<g id="action-menu" transform="translate(32.0,550)"><path d="M12 14 H32 M12 22 H32 M12 30 H32" stroke="#25243A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="32.0" y="616" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Menu</text>
+<rect x="100.5" y="550" width="44" height="44" rx="12" fill="#CBF36B" stroke="#25243A" stroke-width="2"/>
+<g id="action-news" transform="translate(100.5,550)"><path d="M13 10 H31 V34 H13 Z M17 15 H27 M17 21 H27 M17 27 H23" stroke="#25243A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="100.5" y="616" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">News</text>
+<rect x="169.0" y="550" width="44" height="44" rx="12" fill="#77D9EE" stroke="#25243A" stroke-width="2"/>
+<g id="action-previous" transform="translate(169.0,550)"><path d="M28 12 L18 22 L28 32" stroke="#25243A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="169.0" y="616" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Previous</text>
+<rect x="237.5" y="550" width="44" height="44" rx="12" fill="#CBF36B" stroke="#25243A" stroke-width="2"/>
+<g id="action-next" transform="translate(237.5,550)"><path d="M16 12 L26 22 L16 32" stroke="#25243A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="237.5" y="616" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Next</text>
+<rect x="306.0" y="550" width="44" height="44" rx="12" fill="#77D9EE" stroke="#25243A" stroke-width="2"/>
+<g id="action-start" transform="translate(306.0,550)"><path d="M16 12 L31 22 L16 32 Z" stroke="#25243A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="306.0" y="616" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Start</text>
+<rect x="374.5" y="550" width="44" height="44" rx="12" fill="#CBF36B" stroke="#25243A" stroke-width="2"/>
+<g id="action-replay" transform="translate(374.5,550)"><path d="M31 16 A12 12 0 1 0 32 28 M31 9 V17 H23" stroke="#25243A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="374.5" y="616" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Replay</text>
+<rect x="443.0" y="550" width="44" height="44" rx="12" fill="#77D9EE" stroke="#25243A" stroke-width="2"/>
+<g id="action-import" transform="translate(443.0,550)"><path d="M22 10 V27 M15 20 L22 27 L29 20 M12 31 V35 H32 V31" stroke="#25243A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="443.0" y="616" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Import</text>
+<rect x="511.5" y="550" width="44" height="44" rx="12" fill="#CBF36B" stroke="#25243A" stroke-width="2"/>
+<g id="action-close" transform="translate(511.5,550)"><path d="M14 14 L30 30 M30 14 L14 30" stroke="#25243A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="511.5" y="616" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Close</text>
+<rect x="580.0" y="550" width="44" height="44" rx="12" fill="#77D9EE" stroke="#25243A" stroke-width="2"/>
+<g id="action-info" transform="translate(580.0,550)"><path d="M22 10 A12 12 0 1 0 22 34 A12 12 0 1 0 22 10 M22 20 V28 M22 15 V16" stroke="#25243A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="580.0" y="616" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Info</text>
+<rect x="648.5" y="550" width="44" height="44" rx="12" fill="#CBF36B" stroke="#25243A" stroke-width="2"/>
+<g id="action-open" transform="translate(648.5,550)"><path d="M24 11 H33 V20 M33 11 L20 24 M17 12 H11 V33 H32 V27" stroke="#25243A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="648.5" y="616" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Open</text>
+<rect x="717.0" y="550" width="44" height="44" rx="12" fill="#77D9EE" stroke="#25243A" stroke-width="2"/>
+<g id="action-empty" transform="translate(717.0,550)"><path d="M13 10 H32 V28 H13 Z M9 15 V33 H27" stroke="#25243A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="717.0" y="616" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Empty</text>
+<rect x="785.5" y="550" width="44" height="44" rx="12" fill="#CBF36B" stroke="#25243A" stroke-width="2"/>
+<g id="action-check" transform="translate(785.5,550)"><path d="M11 23 L19 31 L33 13" stroke="#25243A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="785.5" y="616" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Check</text>
+<rect x="854.0" y="550" width="44" height="44" rx="12" fill="#77D9EE" stroke="#25243A" stroke-width="2"/>
+<g id="action-back" transform="translate(854.0,550)"><path d="M13 14 L21 22 L13 30 M23 14 L31 22 L23 30" stroke="#25243A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<text x="854.0" y="616" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="500" fill="#25243A">Back</text>
+<rect x="32" y="646" width="896" height="150" rx="18" fill="#FFFFFF" stroke="#25243A" stroke-width="2"/>
+<text x="52" y="678" font-family="Inter,Arial,sans-serif" font-size="16" font-weight="800" fill="#25243A">IMPLEMENTATION GUARDRAILS</text>
+<text x="52" y="708" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="500" fill="#25243A">Keep recognizable piece types, spoken names and color-independent pair identity.</text>
+<text x="52" y="734" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="500" fill="#25243A">Use 44 pt actions; scale decorative art inside fixed game bounds. Never reveal hidden answers.</text>
+<text x="52" y="760" font-family="Inter,Arial,sans-serif" font-size="15" font-weight="500" fill="#25243A">Selected: bold outline. Matched: check + label. Disabled: readable, no action. Motion stays local.</text>
+<text x="32" y="825" font-family="Inter,Arial,sans-serif" font-size="13" font-weight="500" fill="#25243A">Static design proposal · native accessibility, contrast and touch behavior require app verification.</text>
+</svg>
