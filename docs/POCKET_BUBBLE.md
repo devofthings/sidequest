@@ -10,6 +10,8 @@ Keep explicit tap-to-play, manual feed navigation, five-game/news cadence, froze
 
 ## Bubble controls
 
+[Control child #138](https://github.com/devofthings/sidequest/issues/138) owns this implementation separately from [generator child #137](https://github.com/devofthings/sidequest/issues/137).
+
 A dedicated aiming region, clear launcher, aiming feedback and a large explicit Fire action are the lead's recommended next controls. The owner was asked to choose between drag-to-aim plus Fire and release-to-shoot; no answer is recorded yet. Preserve explicit Fire unless a change to shooting semantics is agreed. Real aiming gestures must not accidentally page the feed, and entering or starting a card must never fire. Keep accessible aiming alternatives and color-independent information. Resolve exact touch arbitration and trajectory rendering through the project-local agent-grill before implementation.
 
 ## Meaningful multi-shot challenges
