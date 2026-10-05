@@ -92,7 +92,7 @@ final class SudokuDifficultyTests: XCTestCase {
 final class SudokuChallengeControllerTests: XCTestCase {
   func testFirstInputResetCompletionAndQuietRestorationRetainCertificate() throws {
     for challenge in try SudokuChallenge.catalog() {
-      let runtime = GameRuntime()
+      let runtime = GameRuntime(activationPolicy: .firstInteraction)
       let controller = SudokuController(challenge: challenge, runtime: runtime)
       let first = try XCTUnwrap(challenge.puzzle.givens.firstIndex(of: 0))
       controller.selectCell(first)
@@ -115,7 +115,8 @@ final class SudokuChallengeControllerTests: XCTestCase {
       }
       let restored = SudokuController(
         challenge: challenge,
-        runtime: GameRuntime(completed: attempt), completedBoard: controller.displayedBoard,
+        runtime: GameRuntime(completed: attempt, activationPolicy: .firstInteraction),
+        completedBoard: controller.displayedBoard,
         selectedCell: controller.selectedCell)
       restored.runtime.setVisible(true)
       restored.selectCell(first)
