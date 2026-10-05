@@ -109,7 +109,7 @@ struct MemoryGameView: View {
           .padding(6).accessibilityHidden(true).allowsHitTesting(false)
       }
     }
-    .buttonStyle(.plain)
+    .buttonStyle(MemoryTileButtonStyle())
     .disabled(matched || board.isResolvingMismatch || board.isCompleted)
     .accessibilityLabel(
       matched
@@ -120,5 +120,11 @@ struct MemoryGameView: View {
     )
     .accessibilityHint(matched ? "This pair is complete." : "Flip to find a matching symbol.")
     .accessibilityIdentifier("memory.tile.\(index)")
+  }
+}
+
+private struct MemoryTileButtonStyle: ButtonStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
   }
 }

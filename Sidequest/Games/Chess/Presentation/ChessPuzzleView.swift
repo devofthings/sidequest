@@ -173,7 +173,7 @@ struct ChessPuzzleView: View {
             }
           }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(ChessSquareButtonStyle())
         .disabled(!controller.canAcceptInput)
         .accessibilityLabel("\(piece?.label ?? "Empty square") on \(square.coordinate)")
         .accessibilityIdentifier("chess.square.\(square.coordinate)")
@@ -304,5 +304,11 @@ struct ChessPuzzleView: View {
     case .notCheckmate: "That move is legal, but it is not checkmate. Try again."
     case .checkmate: "Checkmate!"
     }
+  }
+}
+
+private struct ChessSquareButtonStyle: ButtonStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
   }
 }
