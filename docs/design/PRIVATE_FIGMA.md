@@ -1,0 +1,48 @@
+# Private Figma refinement
+
+Status: **Proposed**, October 5, 2026, for [#157](https://github.com/devofthings/sidequest/issues/157). The owner authorized this design pass after #10 feedback that the games felt bland/boring and that news interruptions were enjoyable. The tested device, OS, and build are unknown. The owner remains uncertain about five-game cadence; this proposal preserves the current five-game/news rule.
+
+The editable artifact is [Sidequest — Design](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design) in Chris Winter's private Free team. Creation used ordinary browser UI and clipboard SVG import, which produced editable text/vector layers and named groups. No company connector, paid generation, upgrade, or sharing change was used. Existing Foundations, App & News, Games, and all five game sections remain; Archived explorations stays empty.
+
+## Artifact index
+
+Each game board contains named PREVIEW, PLAY, and COMPLETE groups inside an editable 960×840 frame. They are visual state examples, with logical 380×720 phone compositions displayed at 74% scale. Figma groups are not interactive controls or responsive Auto Layout components.
+
+| Page / section | Editable frame | Actual screenshot | Authored import source |
+| --- | --- | --- | --- |
+| Foundations | [Motion and accessibility](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=2-807) | [Foundations](figma-157/foundations.jpg) | [SVG](figma-157/foundations.svg) |
+| App & News | [Reading, navigation, large text](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=2-856) | [News](figma-157/news.jpg) | [SVG](figma-157/news.svg) |
+| Games / Sudoku | [Three states](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=5-2) | [Sudoku](figma-157/sudoku.jpg) | [SVG](figma-157/sudoku.svg) |
+| Games / Memory | [Three states](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=2-265) | [Memory](figma-157/memory.jpg) | [SVG](figma-157/memory.svg) |
+| Games / Chess | [Three states](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=2-386) | [Chess](figma-157/chess.jpg) | [SVG](figma-157/chess.svg) |
+| Games / Bubble | [Three states](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=2-520) | [Bubble](figma-157/bubble.jpg) | [SVG](figma-157/bubble.svg) |
+
+## Visual judgment
+
+Refine the [delivered baseline](../DESIGN.md) using larger game names, short goals, tactile opaque objects, one prominent action, and readable status in a reserved strip. Lime indicates the primary action; lavender, coral, and cyan establish the game family. Selection also has a dark outline, and outcomes have text/checkmarks. The quiet news surface uses a serif headline and ordinary body text, making a deliberate reading interruption without new feed destinations. Noto Serif is the available Figma reference font; native implementation would retain the baseline's system serif. Inter in Figma is a system-font approximation, not a new bundled-font dependency.
+
+The boards show the current 4×4 Sudoku, twelve-card/six-pair Memory, White e5–h8 Chess fixture with accepted Qg7, and a schematic two-row Bubble starting footprint in its fixed field. Black Chess retains a1–d4 and full coordinate alternatives. Bubble objects and the illustrative aim path are visual examples, not a validated generated challenge or a recorded shot. The existing imported-article action, attribution, capture/publication metadata, and intentional empty-news behavior remain authoritative. Fictional news copy here is original design data; it is not added to the production pool. The fictional-story strip is metadata, not a new external action.
+
+Chess coordinate and Bubble aim bars summarize existing controls. Their implementation must retain separate labeled, keyboard/VoiceOver-operable selections and at least 44×44-point targets; the drawings do not consolidate them into one control. The menu illustrates existing Previous card, Next card, and News library actions. No adaptive cadence, personalization, geographic news, quiz, daily session, character, sound pack, or new game mechanic is proposed here.
+
+## Geometry and accessibility
+
+All three game states retain the same board anchor and status/control reservations. Sudoku cells are 80 points with 60×52 number actions; Memory tiles are 100×70; Chess squares are 75 in this reference. Shared primary buttons are 332×52. Preserve measured native geometry when implementing rather than forcing these illustrative dimensions into every viewport.
+
+The Foundations board annotates the existing 375×579-point pocket card viewport. At smaller sizes, retain the fixed game footprint and allow inner scrolling for overflowing text/controls. At large Dynamic Type, grow text reservations, keep the existing two-column Memory layout and Chess coordinate alternatives, and allow article scrolling. The News board includes a larger-type example; the four game boards do not claim complete large-type responsive layouts. Maintain edge paging and the accessible navigation menu. Check dark/increased-contrast variants and preserve textual/symbolic alternatives to color. The dark Memory sample communicates palette only, not all twelve cards or a full gameplay screen.
+
+## Motion storyboard
+
+These are static storyboards, **not a running animated prototype**. Proposed tuning remains local and brief: press fill/outline, roughly 160 ms value or surface emphasis, then a readable settled state. Sudoku selection/value feedback stays within the cell; Memory emphasizes matched backing without delaying answer conceal; Chess emphasizes the accepted destination; Bubble preserves authoritative shot timing and only emphasizes committed removal. Completion uses the existing result region and success policy, with no automatic next card or new reward.
+
+Reduce Motion uses immediate state changes and static outlines/results, with the Bubble in-flight object stationary as already specified. Skip/background/reset cancels transient presentation; restored completed cards stay quiet. Animation completion never owns rule mutation or input eligibility. Manual feed, explicit Tap to play, unfinished skip/reset, completed revisits, current challenge configurations, and cadence remain unchanged.
+
+## Research and evidence
+
+Reused [primary-source baseline research](../research/mvp-design.md) and refreshed Apple's official guidance before drawing: [Motion](https://developer.apple.com/design/human-interface-guidelines/motion), [Buttons](https://developer.apple.com/design/human-interface-guidelines/buttons), and [Accessibility](https://developer.apple.com/design/human-interface-guidelines/accessibility), with readable official DocC JSON. Apple supports purposeful, brief, cancellable motion, optional motion alternatives, recognizable actions, and accessible targets/text. The palette, hierarchy, reference dimensions, and timing above are design judgments; they are not prescribed platform values or proof of greater enjoyment.
+
+Actual browser screenshots were visually inspected for all six boards, including a cleaned serif news layout and noncolor Sudoku outline. UI inspection confirmed named editable text/group/vector layers, correct page/section placement, and retained containers. SVG XML, local documentation links, and Git whitespace checks passed before the documentation commit. No application source, native build/test, simulator, CI runner, or release was run by this design agent. No physical-device accessibility, animation smoothness, prototype interaction, or enjoyment result is established. Independent repository review remains required.
+
+![Actual proposed Sudoku board in private Figma](figma-157/sudoku.jpg)
+
+![Actual proposed news board in private Figma](figma-157/news.jpg)
