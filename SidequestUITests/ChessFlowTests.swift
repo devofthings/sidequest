@@ -13,6 +13,7 @@ final class ChessFlowTests: XCTestCase {
     tapEdge(app.buttons["chess.rank"], in: app)
     XCTAssertTrue(app.buttons["Rank 7"].waitForExistence(timeout: 3))
     app.buttons["Rank 7"].tap()
+    reveal(app.buttons["chess.submit"], in: app)
     let viewport = app.scrollViews["feed.cardScroll"].frame
     let submitFrame = app.buttons["chess.submit"].frame
     tapEdge(app.buttons["chess.submit"], in: app)
