@@ -65,3 +65,7 @@ The owner selected first interaction starts and applies the same action, superse
 ## Varied Chess validation #177
 
 DEBUG-only `-sidequest-chess-catalog <id>` paired with an existing `-sidequest-chess-white-fixture` or `-sidequest-chess-black-fixture` route loads the separate immutable original catalog off the UI actor and selects that exact puzzle for the same composed Chess controller. Reject missing IDs, unknown IDs, or color mismatches through the ordinary fixture failure path. This route supplies real rendered 3×3/5×5 verification without changing normal startup, historical fixtures, production selection, or Release loading. Example: `-sidequest-chess-black-fixture -sidequest-chess-catalog hard-five-black -sidequest-large-text`. Rules, move tables, timing, feedback, and lifecycle remain real; no injected win or test-only game behavior.
+
+## Memory workload validation #178
+
+Only DEBUG with the existing finite `-sidequest-memory-fixtures` route and an additional `-sidequest-memory-three-pairs` or `-sidequest-memory-four-pairs` argument selects a frozen original seed178 challenge through the actual challenge-aware controller. Three takes precedence if both modifiers are supplied. Normal production, the six-pair fixture, integration fixtures, and generation RNG remain unchanged; Release ignores these modifiers. This narrow verification seam does not expose production difficulty labels or mixed-tier feed distribution.

@@ -48,12 +48,12 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 76 | 6,779 |
-| Unit tests | 39 | 5,248 |
-| UI tests | 19 | 3,277 |
-| **Total** | **134** | **15,304** |
+| App | 77 | 6,838 |
+| Unit tests | 41 | 5,362 |
+| UI tests | 20 | 3,401 |
+| **Total** | **138** | **15,601** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+12,879 / −638 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+13,182 / −644 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
@@ -88,7 +88,7 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 - [Endless feed](docs/ENDLESS.md): local generation, stable history, completed restoration, atomic replacement, and verification.
 - [Pocket Sudoku](docs/SUDOKU.md): standard9×9 source, historical4×4 fixtures, controls, validation, and lifecycle.
 - [Difficulty criteria](docs/pocket-games/DIFFICULTY.md): selected Sudoku technique, Chess mate-count, Memory pair-count, and Bubble shot-budget criteria, proof plans, and accepted mixed-feed exposure; production integration remains deferred.
-- [Memory pairs](docs/MEMORY.md): the six-pair board, delayed mismatches, and attempt reset.
+- [Memory pairs](docs/MEMORY.md): compatible six-pair production, configurable three/four/six-pair workloads, delayed mismatches, and attempt reset.
 - [Chess puzzles](docs/CHESS.md): original one-move puzzles, accessible coordinates, and exhaustive fixture validation.
 - [Bubble shooter](docs/BUBBLES.md): aiming, connected matches, bounded win/loss, flight cancellation, and replay.
 - [Source structure](docs/STRUCTURE.md): folder ownership, game grouping, scoped guidance, and verified foundation source discovery.
@@ -125,3 +125,5 @@ Current source follow-up #170 exposes standard 9×9 Sudoku with digits 1–9, co
 The owner selected first-interaction activation under [#185](https://github.com/devofthings/sidequest/issues/185): the first valid game action starts and applies immediately. Implementation and verification remain pending; see [the policy](docs/GAME_PREVIEWS.md).
 
 Varied original Chess catalog and immutable search-choice difficulty metadata are available for the approved shared rollout; see [Chess catalog](docs/CHESS.md#varied-catalog-source-177). Production adoption and native validation remain pending.
+
+Memory workload foundation #178 adds validated three/four/six-pair challenges with frozen seeds and configurations. Existing production remains six pairs; Easy/Medium/Hard are workload proxies pending separate mixed labeled feed integration. Actual native verification belongs to the PR evidence.

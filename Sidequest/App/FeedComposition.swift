@@ -247,8 +247,17 @@ final class FeedComposition {
           games[game.id] = .sudoku(SudokuController(puzzle: puzzle, runtime: runtime))
         case .memory:
           #if DEBUG
-            if ProcessInfo.processInfo.arguments.contains("-sidequest-memory-fixtures")
-              || ProcessInfo.processInfo.arguments.contains("-sidequest-integration-fixtures")
+            let arguments = ProcessInfo.processInfo.arguments
+            if arguments.contains("-sidequest-memory-fixtures"),
+              arguments.contains("-sidequest-memory-three-pairs")
+                || arguments.contains("-sidequest-memory-four-pairs")
+            {
+              let difficulty: GameDifficulty =
+                arguments.contains("-sidequest-memory-three-pairs") ? .easy : .medium
+              let challenge = MemoryChallenge(difficulty: difficulty, seed: 178)
+              games[game.id] = .memory(try MemoryController(runtime: runtime, challenge: challenge))
+            } else if arguments.contains("-sidequest-memory-fixtures")
+              || arguments.contains("-sidequest-integration-fixtures")
             {
               let board = try MemoryRules(
                 symbols: MemorySymbol.allCases.flatMap { [$0, $0] })

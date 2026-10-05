@@ -23,9 +23,9 @@ struct MemoryGameView: View {
   var body: some View {
     let board = controller.displayedRules
     return VStack(spacing: 16) {
-      Text("Find all six pairs.")
+      Text("Find all \(board.pairCount) pairs.")
         .font(.body)
-      Text("\(board.matchedPairCount) of 6 pairs matched")
+      Text("\(board.matchedPairCount) of \(board.pairCount) pairs matched")
         .font(.headline)
         .accessibilityIdentifier("memory.progress")
       LazyVGrid(

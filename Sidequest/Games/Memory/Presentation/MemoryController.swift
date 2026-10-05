@@ -5,6 +5,7 @@ import Observation
 @Observable
 final class MemoryController {
   let runtime: GameRuntime
+  private(set) var challenge: MemoryChallenge?
   private(set) var rules: MemoryRules?
   private let initialRules: MemoryRules
   @ObservationIgnored private let delay: @MainActor @Sendable () async throws -> Void
@@ -27,6 +28,23 @@ final class MemoryController {
     initialRules = makeBoard()
     self.delay = delay
     runtime.installEffectHandler { [weak self] effect in self?.apply(effect) }
+  }
+
+  convenience init(
+    runtime: GameRuntime, challenge: MemoryChallenge, completedRules: MemoryRules? = nil,
+    delay: @escaping @MainActor @Sendable () async throws -> Void = {
+      try await Task.sleep(for: .milliseconds(700))
+    }
+  ) throws {
+    if let completedRules {
+      guard completedRules.isCompleted, completedRules.symbols == challenge.rules.symbols else {
+        throw MemoryBoardError.invalidRestoration
+      }
+    }
+    self.init(
+      runtime: runtime, completedRules: completedRules, makeBoard: { challenge.rules }, delay: delay
+    )
+    self.challenge = challenge
   }
 
   deinit { mismatchTask?.cancel() }

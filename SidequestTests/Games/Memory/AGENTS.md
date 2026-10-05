@@ -1,0 +1,3 @@
+# Memory unit tests
+
+Follow [unit-test guidance](../../AGENTS.md) and the [game-owned contracts](../../../Sidequest/Games/Memory/AGENTS.md). Keep each XCTestCase class in its own source file: the native inventory binds discovered test methods to the first XCTestCase declaration, so combining classes can misidentify otherwise passing cases. `MemoryChallengeTests` owns deterministic workload/rule checks; `MemoryWorkloadControllerTests` owns frozen lifecycle and restoration checks. Preserve explicit runtime start in the manual controller harness; the separate current-policy running-app tests verify first-action activation.
