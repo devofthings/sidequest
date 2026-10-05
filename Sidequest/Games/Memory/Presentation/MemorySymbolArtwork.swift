@@ -115,19 +115,26 @@ private struct MemorySymbolContour: Shape {
 struct MemoryCardBackArtwork: View {
   var body: some View {
     MemoryCardBackContour()
-      .stroke(
-        SidequestTheme.darkInk,
-        style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
+      .fill(SidequestTheme.darkInk)
+      .overlay {
+        Circle()
+          .fill(SidequestTheme.cyan)
+          .overlay {
+            Circle().strokeBorder(SidequestTheme.darkInk, lineWidth: 3)
+          }
+          .frame(width: 14, height: 14)
+      }
   }
 }
 
 private struct MemoryCardBackContour: Shape {
   func path(in rect: CGRect) -> Path {
     var path = Path()
-    for x in [13.0, 23.0] {
-      path.move(to: CGPoint(x: x, y: 14))
-      path.addLine(to: CGPoint(x: x + 8, y: 22))
-      path.addLine(to: CGPoint(x: x, y: 30))
+    for center in [
+      CGPoint(x: 22, y: 7), CGPoint(x: 35, y: 14), CGPoint(x: 35, y: 30),
+      CGPoint(x: 22, y: 37), CGPoint(x: 9, y: 30), CGPoint(x: 9, y: 14),
+    ] {
+      path.addEllipse(in: CGRect(x: center.x - 3, y: center.y - 3, width: 6, height: 6))
     }
     let scale = min(rect.width, rect.height) / 44
     return path.applying(
