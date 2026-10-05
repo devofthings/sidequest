@@ -413,7 +413,7 @@
       ]
     },
     "SidequestUITests/MemoryWorkloadFlowTests/testSmallerWorkloadsKeepFrozenLayoutResetAndCompletedRevisit": {
-      "lower_layer": "Deterministic Memory challenge and controller tests cover workload validation and restoration; this focused actual-app case checks three and four pairs, inert start, real matching, frozen reset, completed revisit, and largest-text reachability.",
+      "lower_layer": "Deterministic Memory challenge and controller tests cover workload validation and restoration; this focused actual-app case checks three and four pairs, first-action startup, real matching, frozen reset, completed revisit, and largest-text reachability.",
       "paths": [
         "Sidequest/Games/Memory/",
         "Sidequest/App/",
