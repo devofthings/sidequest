@@ -1,34 +1,32 @@
 import SwiftUI
 
-/// Measures title/start independently of the game, leaving one stable viewport budget for consumers.
+/// Measures legacy start chrome independently of the game, leaving one stable viewport budget for consumers.
 @MainActor
 struct GameCardLayout<Start: View, Content: View>: View {
-  let title: String
+  let showsStart: Bool
   let start: Start
   let content: Content
   @Environment(\.sidequestCardViewport) private var viewport
   @State private var chromeHeight: CGFloat = 0
 
   private var budget: GameLayoutBudget? {
-    guard let viewport, viewport.width > 0, viewport.height > 0, chromeHeight > 0 else {
+    guard let viewport, viewport.width > 0, viewport.height > 0 else {
       return nil
     }
-    return GameLayoutBudget(viewport: viewport, chromeHeight: chromeHeight)
+    return GameLayoutBudget(
+      viewport: viewport, chromeHeight: showsStart ? chromeHeight : 0,
+      chromeSpacing: showsStart ? 20 : 0)
   }
 
   var body: some View {
     VStack(spacing: 20) {
-      VStack(alignment: .leading, spacing: 20) {
-        Text(title)
-          .font(.system(.title, design: .rounded, weight: .heavy))
-          .accessibilityAddTraits(.isHeader)
-          .frame(maxWidth: .infinity, alignment: .leading)
+      if showsStart {
         start
-      }
-      .onGeometryChange(for: CGFloat.self) { geometry in
-        geometry.size.height
-      } action: { height in
-        if abs(chromeHeight - height) > 0.5 { chromeHeight = height }
+          .onGeometryChange(for: CGFloat.self) { geometry in
+            geometry.size.height
+          } action: { height in
+            if abs(chromeHeight - height) > 0.5 { chromeHeight = height }
+          }
       }
       content.environment(\.sidequestGameLayoutBudget, budget)
     }

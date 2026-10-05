@@ -140,3 +140,7 @@ The lead selects Easy8/Medium5/Hard3 actual maximum shots for the original certi
 ## Centered successful-game celebration #193
 
 Owner-approved October 5, 2026: make the Nice! animation more prominent in the middle of the screen. Center the larger badge over the game viewport with decorative sparkles, preserve input pass-through and stable geometry, and use a spatial-motion-free fade under Reduce Motion. Retain the existing runtime lifetime/cancellation. The app title stays visible; this supersedes the #86 header badge location. Implementation and native validation are pending in the owning PR.
+
+## Current-game header #194 — accepted October 5, 2026
+
+The owner approved a PR replacing Sidequest in the top bar with the settled game's name, removing the duplicate card headline and using that space for gameplay. Existing instructions precede each board; game-owned feedback remains in stable reservations. News keeps its article headline and the Sidequest top-bar fallback. Legacy explicit-start Debug controls remain; real games reclaim their empty start row. Scope excludes the news-button change (#191). Implementation/native evidence belongs to #194's PR; no release is authorized.

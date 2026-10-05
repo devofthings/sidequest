@@ -5,9 +5,9 @@ struct GameLayoutBudget: Equatable, Sendable {
   let width: CGFloat
   let height: CGFloat
 
-  init(viewport: CGSize, chromeHeight: CGFloat) {
+  init(viewport: CGSize, chromeHeight: CGFloat, chromeSpacing: CGFloat = 20) {
     width = max(0, viewport.width - 32)
-    height = max(0, viewport.height - max(0, chromeHeight) - 52)
+    height = max(0, viewport.height - max(0, chromeHeight) - 32 - max(0, chromeSpacing))
   }
 
   /// Keep a usable minimum rather than forcing semantic text or touch targets into tiny geometry.

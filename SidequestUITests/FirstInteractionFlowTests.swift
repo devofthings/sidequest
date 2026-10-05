@@ -13,6 +13,17 @@ final class FirstInteractionFlowTests: XCTestCase {
       app.launchArguments = [fixture]
       app.launch()
       XCTAssertTrue(app.staticTexts["foundation.title"].waitForExistence(timeout: 10))
+      let title =
+        fixture.contains("sudoku")
+        ? "Sudoku"
+        : fixture.contains("memory")
+          ? "Memory"
+          : fixture.contains("chess") ? "Chess puzzle" : "Bubble shooter"
+      let header = app.staticTexts["foundation.title"]
+      XCTAssertEqual(header.label, title)
+      XCTAssertEqual(app.staticTexts.matching(NSPredicate(format: "label == %@", title)).count, 1)
+      let headerY = header.frame.minY
+      let navigationFrame = app.buttons["feed.navigation"].frame
       XCTAssertFalse(app.buttons["game.start"].exists)
       if fixture.contains("sudoku") {
         let cell = app.buttons["sudoku.cell.2"]
@@ -40,8 +51,15 @@ final class FirstInteractionFlowTests: XCTestCase {
         XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
         XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
       }
+      XCTAssertEqual(header.frame.minY, headerY)
+      XCTAssertEqual(app.buttons["feed.navigation"].frame, navigationFrame)
       app.nextFeedCard()
+      XCTAssertEqual(header.frame.minY, headerY)
+      XCTAssertEqual(app.buttons["feed.navigation"].frame, navigationFrame)
       app.previousFeedCard()
+      XCTAssertEqual(header.label, title)
+      XCTAssertEqual(header.frame.minY, headerY)
+      XCTAssertEqual(app.buttons["feed.navigation"].frame, navigationFrame)
       XCTAssertFalse(app.buttons["game.start"].exists)
       if fixture.contains("sudoku") {
         XCTAssertEqual(app.buttons["sudoku.cell.2"].value as? String, "Empty")

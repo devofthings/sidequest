@@ -15,6 +15,7 @@ final class FoundationLaunchTests: XCTestCase {
     XCTAssertNil(testBundle.url(forResource: "FoundationFixture", withExtension: "json"))
 
     let app = XCUIApplication()
+    app.launchArguments = ["-sidequest-sudoku-test"]
     app.launch()
 
     let heading = app.staticTexts["foundation.title"]

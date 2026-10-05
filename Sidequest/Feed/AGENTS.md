@@ -71,3 +71,15 @@ The feed-wide disabled gate rejects hidden cards and explicit-policy preview inp
 ## News access #191
 
 Keep the header limited to app/success identity and More options, with no reserved newspaper-button footprint. The menu invokes the existing `openNews` callback; composition retains modal eligibility/reset ownership. Source links and news cards stay unchanged. See [the accepted decision](../../docs/DECISIONS.md#news-access-191).
+
+## Selected game header #194
+
+The owner approved replacing the top-bar Sidequest title with the settled selected game's name and removing the duplicate in-card game heading. News/empty cards retain Sidequest in the top bar and news keeps its article headline. Measure all game/app names at the actual header width, hidden from accessibility, alongside the existing success badge; paging and celebration must not resize the viewport. Real first-interaction cards omit the obsolete empty start row; legacy explicit-start fixtures retain their measured control. Existing game instructions stay above boards and feedback reservations stay owned by each game.
+
+Agent-grill self-assessment (side-conversation author; no delegated agent):
+
+| Question | Kind | Answer and evidence | Verification needed |
+| --- | --- | --- | --- |
+| Which title owns the selected name? | Fact/technical choice | FeedView already owns settled selection and success chrome. Use selectedGame.kind.title; remove GameCardLayout's title. | Native all-game heading uniqueness and paging frames. |
+| Can we remove the empty start reservation? | Technical choice | First-interaction cards have no visible start content; retain it only for explicitStart fixtures. GameLayoutBudget subtracts actual chrome/gap plus padding. | Unit budget check and actual board stability tests. |
+| Must instructions move? | Fact | All four game presentations already place instructions before their boards. Keep game-owned feedback below. | Native gameplay/layout checks; no instruction rewrite. |
