@@ -93,3 +93,5 @@ The first actual #163 focused run passed all direct aim changes, native Slider g
 ## Standard Sudoku #170
 
 StandardSudokuFlowTests uses the original DEBUG9×9 twelve-blank fixture through real coordinate menus and digits1–9. Verify normal375-point whole-board/all44point primary controls without scrolling, inert initiating tap, stable conflict/correction/completion, frozen skip/reset/revisit and largest-text owned scrolling. These three cases are extended; the routine three-case smoke gate is unchanged. Overview secondary cell dimensions are deliberately below44points; actual primary alternatives must meet44points.
+
+Standard9 largest-text reveal gestures originate in the card’s8-point left padding, outside full-width native coordinate menus and the right scroll indicator. The first actual run failed digit9 full-containment after18 center-origin drags; the retained screenshot shows unchanged menus/board and vertical clipping. Menu capture is a hypothesis until root reruns the unchanged assertions. Failure attachments retain actual target/viewport rectangles, selected card, hierarchy and screenshot rather than masking failures.

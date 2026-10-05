@@ -99,11 +99,23 @@ final class StandardSudokuFlowTests: XCTestCase {
     let scroll = app.scrollViews["feed.cardScroll"]
     for _ in 0..<18 {
       if element.exists && element.isHittable && scroll.frame.contains(element.frame) { return }
-      let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: upward ? 0.7 : 0.3))
-      let end = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: upward ? 0.4 : 0.6))
+      // The card's left padding is outside native coordinate menus and the right scroll indicator.
+      let horizontal = min(8, scroll.frame.width / 2) / scroll.frame.width
+      let start = scroll.coordinate(
+        withNormalizedOffset: CGVector(dx: horizontal, dy: upward ? 0.7 : 0.3))
+      let end = scroll.coordinate(
+        withNormalizedOffset: CGVector(dx: horizontal, dy: upward ? 0.4 : 0.6))
       start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
     }
-    XCTAssertTrue(scroll.frame.contains(element.frame), "Required target must be fully contained")
+    let hierarchy = XCTAttachment(string: app.debugDescription)
+    hierarchy.name = "standard-nine-reveal-failure-hierarchy"
+    hierarchy.lifetime = .keepAlways
+    add(hierarchy)
+    screenshot(app, name: "standard-nine-reveal-failure")
+    XCTAssertTrue(
+      scroll.frame.contains(element.frame),
+      "Required target \(element.identifier) must be fully contained: target=\(element.frame), viewport=\(scroll.frame), selected=\(app.selectedFeedCardID), hittable=\(element.isHittable)"
+    )
   }
 
   @MainActor
