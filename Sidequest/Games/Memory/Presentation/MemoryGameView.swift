@@ -69,20 +69,21 @@ struct MemoryGameView: View {
     return Button {
       controller.flip(index)
     } label: {
-      StableGameRegion {
-        ZStack {
-          Image(systemName: "questionmark")
-          ForEach(MemorySymbol.allCases, id: \.self) { Image(systemName: $0.imageName) }
+      Group {
+        if revealed {
+          MemorySymbolArtwork(
+            symbol: symbol, outline: matched ? SidequestTheme.darkInk : theme.ink,
+            increasedContrast: theme.contrast == .increased)
+        } else {
+          MemoryCardBackArtwork()
         }
-        .font(.largeTitle)
-      } content: {
-        Image(systemName: revealed ? symbol.imageName : "questionmark")
-          .font(.largeTitle)
-          // Concealing a tile removes its answer immediately, even inside an animated update.
-          .transaction {
-            $0.animation = nil
-            $0.disablesAnimations = true
-          }
+      }
+      .frame(width: 48, height: 48)
+      .accessibilityHidden(true)
+      // Concealing a tile removes its answer immediately, even inside an animated update.
+      .transaction {
+        $0.animation = nil
+        $0.disablesAnimations = true
       }
       .frame(maxWidth: .infinity, minHeight: 72)
       .foregroundStyle(revealed && !matched ? theme.ink : SidequestTheme.darkInk)
@@ -108,7 +109,7 @@ struct MemoryGameView: View {
           .padding(6).accessibilityHidden(true).allowsHitTesting(false)
       }
     }
-    .buttonStyle(.plain)
+    .buttonStyle(MemoryTileButtonStyle())
     .disabled(matched || board.isResolvingMismatch || board.isCompleted)
     .accessibilityLabel(
       matched
@@ -122,15 +123,8 @@ struct MemoryGameView: View {
   }
 }
 
-extension MemorySymbol {
-  fileprivate var imageName: String {
-    switch self {
-    case .star: "star.fill"
-    case .heart: "heart.fill"
-    case .moon: "moon.fill"
-    case .sun: "sun.max.fill"
-    case .leaf: "leaf.fill"
-    case .bolt: "bolt.fill"
-    }
+private struct MemoryTileButtonStyle: ButtonStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
   }
 }

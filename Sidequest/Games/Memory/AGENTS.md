@@ -32,7 +32,7 @@ Production generates each six-pair layout before publishing its card and injects
 
 ## Stable tile and feedback geometry #108
 
-Reserve the natural footprint of all six symbols and the hidden question mark at the current font/text size, so revealing a differently shaped glyph cannot resize a tile or its grid row. Reserve mismatch/completion feedback separately. Read [stable layout](../../../docs/GAME_LAYOUT.md) before changing these regions; full feedback and all tiles remain reachable through the feed's owned scroller.
+Keep the selected #171 artwork in its fixed 48-point region inside each minimum 72-point tile, so revealing a differently shaped face cannot resize a tile or its grid row. This supersedes the previous glyph/font reservation; semantic text continues to scale. Reserve mismatch/completion feedback separately. Read [stable layout](../../../docs/GAME_LAYOUT.md) before changing these regions; full feedback and all tiles remain reachable through the feed's owned scroller.
 
 ## Visible inactive boards #88
 
@@ -51,3 +51,11 @@ Mark runtime completion successful only when real rules return completed after m
 ## Match feedback #161
 
 A nonfinal matching pair requests one shared interaction haptic. Reveals, ignored flips, mismatches, delayed concealment, and inactive input request none. The final pair uses existing success feedback exclusively. Retain authoritative lime/checkmark matching cues and contained 160 ms backing/outline motion; hidden answers still disappear immediately. No additional task, timer, or rule state is introduced. Native and physical feedback verification remain separately pending.
+
+## Selected original artwork #171
+
+The lead selects #159's six original vector faces under the owner's autonomous #13 design authority; see [native game art](../../../docs/design/NATIVE_GAME_ART.md) for provenance and verification boundaries. Render them with native presentation-only Shapes and existing palette values. Keep exact symbol identity and spoken names; all hidden cards share the same answer-independent chevron back. Decorative artwork is inaccessible, with semantic labels owned by the tile. A fixed48-point artwork region inside the existing minimum72-point tile replaces glyph-dependent reservations, preserving three/two column layout and stable footprints. Matched lime tiles use dark outlines; dark revealed tiles use light outlines. Increased contrast strengthens strokes. Preserve immediate answer concealment, matched check/label, disabled input and current motion/runtime gates; introduce no answer-bearing transition, controller, timer or rule behavior. Root-owned native appearance and interaction checks remain pending until actually recorded.
+
+Readiness question review: Native Shapes are a delegated translation choice supported by the original editable SVG and existing filesystem-synchronized discovery; no conversion tool or asset dependency is needed. Rules expose the same six enum values, so artwork mapping cannot change pair matching. Existing labels explicitly hide answer names before reveal. Validation requires strict lint, exact-head CI, fresh independent review and focused normal/dark/small/largest running-app checks; this record is source readiness, not rendered evidence.
+
+Use the local opaque-label board ButtonStyle to retain full artwork and coordinate contrast in preview, matched, and completed states. Native PlainButtonStyle was observed dimming these disabled labels in actual simulator captures. Keep `.disabled` eligibility and controller/runtime input guards unchanged; rendering at full opacity never enables interaction. The style adds no press transform, animation, layout or state. The original #171 six focused native flows passed before this correction; corrected rendered contrast requires a new root-owned native check.
