@@ -295,6 +295,24 @@
         "Sidequest/Resources/"
       ]
     },
+    "SidequestUITests/FirstInteractionFlowTests/testFirstActionAppliesAcrossAllGamesAndSkippingResets": {
+      "lower_layer": "First-action controller/runtime units cover invalid/stale inputs; this focused running-app journey verifies current real-fixture policy.",
+      "paths": [
+        "SidequestUITests/FirstInteractionFlowTests.swift",
+        "Sidequest/Games/",
+        "Sidequest/Feed/",
+        "Sidequest/App/"
+      ]
+    },
+    "SidequestUITests/FirstInteractionFlowTests/testFirstFireShootsAndBackgroundReturnsToInactiveBoard": {
+      "lower_layer": "First-action controller/runtime units cover invalid/stale inputs; this focused running-app journey verifies current real-fixture policy.",
+      "paths": [
+        "SidequestUITests/FirstInteractionFlowTests.swift",
+        "Sidequest/Games/",
+        "Sidequest/Feed/",
+        "Sidequest/App/"
+      ]
+    },
     "SidequestUITests/FoundationLaunchTests/testLaunchShowsAccessibleHeading": {
       "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
       "paths": [

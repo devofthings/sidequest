@@ -60,3 +60,6 @@ The owner's surface-start direction supersedes the earlier explicit lime start-b
 ## Selected shared chrome #182
 
 Use leading heavy rounded game headings and vivid existing-token fills for the existing header actions. Shared styling leaves the prior start cue unchanged; the owner's selected first-game-interaction start behavior is separately owned by [#185](https://github.com/devofthings/sidequest/issues/185). Do not add a new button row, resize the header/success slot, or alter the game-content budget when styling. Game adapters own their board/control geometry.
+## First meaningful interaction #185
+
+The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.

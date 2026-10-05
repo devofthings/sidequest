@@ -124,7 +124,8 @@ struct ChessPuzzleView: View {
   }
 
   private var board: some View {
-    LazyVGrid(
+    let visibility = controller.runtime.visibilityIdentity
+    return LazyVGrid(
       columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: window.files.count),
       spacing: 0
     ) {
@@ -134,7 +135,7 @@ struct ChessPuzzleView: View {
         let selected = controller.attempt?.selectedSquare == square
         let destination = controller.attempt?.solution?.destination == square
         Button {
-          controller.tap(square)
+          controller.tap(square, visibility: visibility)
         } label: {
           VStack(spacing: 0) {
             Group {
@@ -174,7 +175,7 @@ struct ChessPuzzleView: View {
           }
         }
         .buttonStyle(ChessSquareButtonStyle())
-        .disabled(!controller.canAcceptInput)
+        .disabled(!controller.canSelectPiece)
         .accessibilityLabel("\(piece?.label ?? "Empty square") on \(square.coordinate)")
         .accessibilityIdentifier("chess.square.\(square.coordinate)")
       }
@@ -208,9 +209,10 @@ struct ChessPuzzleView: View {
   }
 
   private var pieceButtons: some View {
-    ForEach(movingSquares, id: \.self) { square in
+    let visibility = controller.runtime.visibilityIdentity
+    return ForEach(movingSquares, id: \.self) { square in
       Button {
-        controller.tap(square)
+        controller.tap(square, visibility: visibility)
       } label: {
         let piece = controller.puzzle.board[square]
         Text(
@@ -224,7 +226,7 @@ struct ChessPuzzleView: View {
         .contentShape(Rectangle())
       }
       .buttonStyle(SidequestButtonStyle(compact: true))
-      .disabled(!controller.canAcceptInput)
+      .disabled(!controller.canSelectPiece)
       .accessibilityLabel(
         "\(controller.puzzle.board[square]?.label ?? "Piece") on \(square.coordinate)"
       )
@@ -249,12 +251,15 @@ struct ChessPuzzleView: View {
   }
 
   private var destinationControls: some View {
-    Group {
+    let visibility = controller.runtime.visibilityIdentity
+    return Group {
       Menu {
         ForEach(0..<8) { file in
           let name = String("abcdefgh".dropFirst(file).prefix(1))
-          Button("File \(name.uppercased())") { controller.selectFile(file) }
-            .accessibilityIdentifier("chess.file.\(name)")
+          Button("File \(name.uppercased())") {
+            controller.selectFile(file, visibility: visibility)
+          }
+          .accessibilityIdentifier("chess.file.\(name)")
         }
       } label: {
         Text(
@@ -269,7 +274,7 @@ struct ChessPuzzleView: View {
       .accessibilityHint("Choose a destination file from A through H.")
       Menu {
         ForEach(0..<8) { rank in
-          Button("Rank \(rank + 1)") { controller.selectRank(rank) }
+          Button("Rank \(rank + 1)") { controller.selectRank(rank, visibility: visibility) }
             .accessibilityIdentifier("chess.rank.\(rank + 1)")
         }
       } label: {
@@ -279,7 +284,9 @@ struct ChessPuzzleView: View {
       }
       .accessibilityIdentifier("chess.rank")
       .accessibilityHint("Choose a destination rank from 1 through 8.")
-      Button(action: controller.submitCoordinates) {
+      Button {
+        controller.submitCoordinates(visibility: visibility)
+      } label: {
         Text(compact ? "Submit" : "Submit move")
           .frame(maxWidth: .infinity, minHeight: 44)
           .contentShape(Rectangle())

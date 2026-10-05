@@ -46,8 +46,14 @@ final class BubbleShooterController {
     return runtime.acceptsInput(from: attempt) && flight == nil && game.outcome == .playing
   }
 
-  func aim(degrees: Double) {
-    guard canFire, degrees.isFinite else { return }
+  var canAimOrFire: Bool {
+    canFire || (runtime.canBeginInteraction && flight == nil && game.outcome == .playing)
+  }
+
+  func aim(degrees: Double, visibility: UUID? = nil) {
+    guard degrees.isFinite, canAimOrFire, runtime.prepareInteraction(visibility: visibility),
+      canFire
+    else { return }
     aimLease = nil
     aimDegrees = min(60, max(-60, degrees))
   }
@@ -58,8 +64,9 @@ final class BubbleShooterController {
     return try? game.traceShot(angleRadians: aimDegrees * .pi / 180).trajectory
   }
 
-  func beginAimDrag() -> BubbleAimLease? {
-    guard canFire, let attempt else { return nil }
+  func beginAimDrag(visibility: UUID? = nil) -> BubbleAimLease? {
+    guard canAimOrFire, runtime.prepareInteraction(visibility: visibility), canFire, let attempt
+    else { return nil }
     let lease = BubbleAimLease(attempt: attempt)
     aimLease = lease
     return lease
@@ -79,8 +86,9 @@ final class BubbleShooterController {
   }
 
   @discardableResult
-  func fire() -> Bool {
-    guard canFire, let attempt else { return false }
+  func fire(visibility: UUID? = nil) -> Bool {
+    guard canAimOrFire, runtime.prepareInteraction(visibility: visibility), canFire, let attempt
+    else { return false }
     do {
       let shot = try game.traceShot(angleRadians: aimDegrees * .pi / 180)
       aimLease = nil

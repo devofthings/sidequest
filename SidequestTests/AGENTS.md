@@ -7,3 +7,7 @@ Fixtures are fictional test inputs loaded from the test bundle, never production
 ## Standard Sudoku #170
 
 StandardSudokuControllerTests covers9×9 coordinate read-only givens, bounds, digit9/conflicts/clear, skip/reset, real completion and quiet reconstruction; cap sweeps retain exhaustive uniqueness. Root owns actual native execution.
+
+## First meaningful interaction #185
+
+The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.

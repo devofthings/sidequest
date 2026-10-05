@@ -12,8 +12,8 @@ Sidequest is the working name. The GitHub repository is private. Use GitHub Issu
 
 - Start with 30 clearly fictional English demo stories when saved news is absent, or import real English snapshots with source-provided excerpts and original links. Intentional empty imports stay empty. Automatic news fetching is deferred.
 - Shuffle games and show one article after every five games, cycling the current story pool. The bottom card counter is removed. Swipe directly on full-page cards; cards track the finger and settle using native paging. A compact accessible navigation menu also moves between cards. Overflowing content scrolls within its card; outward gestures starting at its top/bottom edge page. Movement stays manual.
-- Each game card initially shows its actual inactive initial board with a lightweight top-row "Tap to play" hint. Tap anywhere on the preview game surface to start, or activate the hint's accessible Start game action. Memory cards stay face down and puzzle answers stay hidden. Swiping onto the card does not start gameplay, timers, or accept game input. Tapping starts the game inside the card; that tap only starts the attempt.
-- Reset an unfinished game when its card is skipped. Returning shows the tap-to-play preview and requires a new explicit start. Fresh attempts are more important than saved progress in this test.
+- Each game initially shows its inactive board. The first meaningful interaction starts the eligible card and applies that action immediately: select a Sudoku cell or Chess piece, reveal a Memory card, or aim/Fire in Bubble. There is no extra Tap to play step. Memory stays face down until an actual flip; answers remain hidden. Appearance and scrolling never start an attempt. See [first-interaction policy](GAME_PREVIEWS.md).
+- Reset an unfinished game when its card is skipped. Returning shows the inactive frozen challenge; the next meaningful interaction starts a fresh attempt. Fresh attempts are more important than saved progress in this test.
 - Include simple Sudoku, memory pairs, one-move chess puzzles, and a bubble shooter. Approved #104 extends current source to endless manual scrolling with new local challenges; the recorded MVP download remains finite.
 - Test in the iPhone simulator and on the user's own iPhone through Xcode.
 
@@ -85,3 +85,7 @@ For [#160](https://github.com/devofthings/sidequest/issues/160), the owner repla
 ## Standard pocket Sudoku source #170
 
 Approved #162 presentation child #170 adds standard9×9 production cards, digits1–9 and3×3 regions. A lead-selected maximum12 editable cells bounds the initial session, without defining difficulty. Mini fixtures remain compatible; native44point coordinate alternatives supplement the compact overview. #118 mixed labeled exposure and first-pass Chess/Memory criteria are accepted; Sudoku/Bubble criteria remain proposed and parent162 remains open. Actual native fit/gameplay evidence belongs to the PR; the immutable published MVP is unchanged.
+
+## First-interaction activation #185
+
+On October 5, the owner said "tap to play is annoying" and selected "The first game interaction also starts it." This supersedes #160's inert initiating tap and visible hint. Shared runtime eligibility, manual paging, skip/reset and quiet completed revisits remain. Production and every real-game fixture use the selected policy; the existing DEBUG placeholder demo retains its separately documented manual lifecycle contract. Implementation and native proof remain pending until the #185 PR passes review and exact-head verification.

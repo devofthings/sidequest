@@ -31,7 +31,12 @@ final class MemoryController {
 
   deinit { mismatchTask?.cancel() }
 
-  func flip(_ index: Int) {
+  func flip(_ index: Int, visibility: UUID? = nil) {
+    let displayed = displayedRules
+    guard displayed.symbols.indices.contains(index), !displayed.isRevealed(index),
+      !displayed.isResolvingMismatch, !displayed.isCompleted,
+      runtime.prepareInteraction(visibility: visibility)
+    else { return }
     guard case .playing(let attempt) = runtime.phase, runtime.acceptsInput(from: attempt),
       var board = rules
     else { return }

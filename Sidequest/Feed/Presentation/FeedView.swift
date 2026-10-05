@@ -129,14 +129,20 @@ struct FeedView: View {
         GameCardLayout(
           title: game.kind.title,
           start: StableGameRegion {
-            startHint(runtime).disabled(true)
+            Color.clear.frame(height: 44)
           } content: {
-            if runtime.phase == .preview { startHint(runtime) }
+            if runtime.activationPolicy == .explicitStart && runtime.phase == .preview {
+              Button("Tap to play", action: runtime.start)
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .accessibilityLabel("Start game")
+                .accessibilityIdentifier("game.start")
+                .disabled(!runtime.isVisible)
+            }
           },
           content: gameContent(game, runtime)
-            .disabled(runtime.phase == .preview)
+            .disabled(!runtime.canInteract)
             .overlay {
-              if runtime.phase == .preview {
+              if runtime.activationPolicy == .explicitStart && runtime.phase == .preview {
                 GamePreviewSurface(runtime: runtime)
               }
             }
@@ -145,20 +151,6 @@ struct FeedView: View {
     }
   }
 
-  private func startHint(_ runtime: GameRuntime) -> some View {
-    Button(action: runtime.start) {
-      Text("Tap to play")
-        .font(.subheadline.weight(.semibold))
-        .foregroundStyle(theme.secondaryInk)
-        .frame(maxWidth: .infinity, minHeight: 44)
-        .contentShape(Rectangle())
-    }
-    .buttonStyle(.plain)
-    .accessibilityLabel("Start game")
-    .accessibilityHint("Starts this game without making a move.")
-    .accessibilityIdentifier("game.start")
-    .disabled(!runtime.isVisible)
-  }
 }
 
 extension GameKind {

@@ -48,3 +48,7 @@ The owner requires all four games to be pocket-sized. Follow [the accepted compa
 ## Preview-surface start #160
 
 [Preview policy](../../docs/GAME_PREVIEWS.md) supersedes the dedicated start button: top-row informational hint, accessible/keyboard Start game, and transparent tap capture only over inactive game content. Keep the same disabled game view and frozen configuration; the initiating tap cannot make a move. Existing native pans own drag/scroll/page, and real visibility changes invalidate held requests. Reserve hint/board/control geometry across phases.
+
+## First meaningful interaction #185
+
+The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.

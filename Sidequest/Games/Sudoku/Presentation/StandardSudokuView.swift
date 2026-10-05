@@ -25,10 +25,7 @@ struct StandardSudokuView: View {
     guard !textSize.isAccessibilitySize, let budget else { return 300 }
     return max(216, min(300, min(budget.width, budget.height - chromeHeight - spacing)))
   }
-  private var canSelect: Bool {
-    guard case .playing(let attempt) = controller.runtime.phase else { return false }
-    return controller.runtime.acceptsInput(from: attempt)
-  }
+  private var canSelect: Bool { controller.runtime.canInteract }
 
   var body: some View {
     VStack(spacing: spacing) {
@@ -64,6 +61,7 @@ struct StandardSudokuView: View {
   }
 
   private var overview: some View {
+    let visibility = controller.runtime.visibilityIdentity
     let board = controller.displayedBoard
     return LazyVGrid(
       columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 9), spacing: 0
@@ -74,7 +72,7 @@ struct StandardSudokuView: View {
         let conflict = board.conflicts.contains(index)
         let selected = controller.selectedCell == index
         Button {
-          controller.selectCell(index)
+          controller.selectCell(index, visibility: visibility)
         } label: {
           Text(value == 0 ? "·" : String(value))
             .font(.system(size: 17, weight: given ? .bold : .medium, design: .rounded))
@@ -128,10 +126,11 @@ struct StandardSudokuView: View {
   }
 
   private var coordinateButtons: some View {
-    Group {
+    let visibility = controller.runtime.visibilityIdentity
+    return Group {
       Menu {
         ForEach(0..<9, id: \.self) { row in
-          Button("Row \(row + 1)") { controller.selectRow(row) }
+          Button("Row \(row + 1)") { controller.selectRow(row, visibility: visibility) }
             .accessibilityIdentifier("sudoku.row.\(row + 1)")
         }
       } label: {
@@ -141,7 +140,7 @@ struct StandardSudokuView: View {
       .accessibilityIdentifier("sudoku.row")
       Menu {
         ForEach(0..<9, id: \.self) { column in
-          Button("Column \(column + 1)") { controller.selectColumn(column) }
+          Button("Column \(column + 1)") { controller.selectColumn(column, visibility: visibility) }
             .accessibilityIdentifier("sudoku.column.\(column + 1)")
         }
       } label: {
@@ -174,8 +173,9 @@ struct StandardSudokuView: View {
   }
 
   private var clearButton: some View {
-    Button {
-      controller.enter(0)
+    let visibility = controller.runtime.visibilityIdentity
+    return Button {
+      controller.enter(0, visibility: visibility)
     } label: {
       Text("Clear")
         .font(textSize.isAccessibilitySize ? .body : .subheadline)
@@ -187,8 +187,9 @@ struct StandardSudokuView: View {
   }
 
   private func number(_ value: Int) -> some View {
-    Button {
-      controller.enter(value)
+    let visibility = controller.runtime.visibilityIdentity
+    return Button {
+      controller.enter(value, visibility: visibility)
     } label: {
       Text(String(value)).font(.body.monospacedDigit())
         .frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())

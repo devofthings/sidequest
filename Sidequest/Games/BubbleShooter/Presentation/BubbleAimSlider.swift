@@ -25,6 +25,7 @@ struct BubbleAimSlider: UIViewRepresentable {
 @MainActor
 final class BubbleAimSliderControl: UISlider {
   private var controller: BubbleShooterController
+  private var trackingVisibility: UUID?
 
   init(controller: BubbleShooterController) {
     self.controller = controller
@@ -47,12 +48,29 @@ final class BubbleAimSliderControl: UISlider {
 
   func update(controller: BubbleShooterController, enabled: Bool) {
     self.controller = controller
-    isEnabled = enabled && controller.canFire
+    isEnabled = enabled && controller.canAimOrFire
     let normalized = Float((controller.aimDegrees + 60) / 120)
     if abs(value - normalized) > 0.000_001 { value = normalized }
   }
 
+  override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
+    trackingVisibility = controller.runtime.visibilityIdentity
+    return super.beginTracking(touch, with: event)
+  }
+
+  override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
+    super.endTracking(touch, with: event)
+    trackingVisibility = nil
+  }
+
+  override func cancelTracking(with event: UIEvent?) {
+    trackingVisibility = nil
+    super.cancelTracking(with: event)
+  }
+
   @objc private func changed() {
-    controller.aim(degrees: Double(value) * 120 - 60)
+    controller.aim(
+      degrees: Double(value) * 120 - 60,
+      visibility: trackingVisibility ?? controller.runtime.visibilityIdentity)
   }
 }

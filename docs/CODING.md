@@ -26,7 +26,7 @@ These rules apply to first-party Swift application and test code. They implement
 
 - Views render state and send explicit user actions. Put reusable game rules and lifecycle transitions outside view bodies. Keep body evaluation free of state-changing side effects.
 - Give UI state a clear owner and keep UI-observable updates on the main actor. Keep core logic independent of SwiftUI observation types and UI actor assumptions; the foundation must document compiler isolation defaults and apply explicit isolation where needed.
-- Starting, skipping, and completing a game follow [MVP.md](MVP.md) and the shared contract. View appearance or recomputation does not start gameplay. The start action does not also make a move.
+- Starting, skipping, and completing a game follow [MVP.md](MVP.md) and the shared contract. View appearance or recomputation does not start gameplay. Under #185, the first valid game action synchronously starts an eligible card and applies that same action. Appearance and scrolls remain inert; capture visibility identity for held controls.
 - Include readable Dynamic Type layouts, accessible names/actions, usable touch targets, and feedback distinguishable beyond color. Verify interaction and accessibility in the simulator; formatter or unit-test success does not establish UI usability.
 
 ## Concurrency and delayed work

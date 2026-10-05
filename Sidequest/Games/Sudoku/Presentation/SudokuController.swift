@@ -1,3 +1,4 @@
+import Foundation
 import Observation
 
 @Observable
@@ -29,8 +30,10 @@ final class SudokuController {
     runtime.installEffectHandler { [weak self] effect in self?.apply(effect) }
   }
 
-  func selectCell(_ index: Int) {
-    guard let board, board.cells.indices.contains(index), puzzle.givens[index] == 0,
+  func selectCell(_ index: Int, visibility: UUID? = nil) {
+    guard puzzle.givens.indices.contains(index), puzzle.givens[index] == 0,
+      runtime.prepareInteraction(visibility: visibility), let board,
+      board.cells.indices.contains(index),
       case .playing(let attempt) = runtime.phase, runtime.acceptsInput(from: attempt)
     else { return }
     selectedCell = index
@@ -38,27 +41,32 @@ final class SudokuController {
     coordinateColumn = index % puzzle.configuration.size
   }
 
-  func selectRow(_ row: Int) {
-    selectCoordinate(row: row, column: coordinateColumn)
+  func selectRow(_ row: Int, visibility: UUID? = nil) {
+    selectCoordinate(row: row, column: coordinateColumn, visibility: visibility)
   }
 
-  func selectColumn(_ column: Int) {
-    selectCoordinate(row: coordinateRow, column: column)
+  func selectColumn(_ column: Int, visibility: UUID? = nil) {
+    selectCoordinate(row: coordinateRow, column: column, visibility: visibility)
   }
 
-  private func selectCoordinate(row: Int, column: Int) {
+  private func selectCoordinate(row: Int, column: Int, visibility: UUID?) {
     let size = puzzle.configuration.size
-    guard (0..<size).contains(row), (0..<size).contains(column), board != nil,
-      case .playing(let attempt) = runtime.phase, runtime.acceptsInput(from: attempt)
+    guard (0..<size).contains(row), (0..<size).contains(column), runtime.canInteract,
+      visibility == nil || visibility == runtime.visibilityIdentity
     else { return }
+    let index = row * size + column
+    // A given is readable through coordinates but cannot initiate an attempt.
+    if puzzle.givens[index] == 0 {
+      guard runtime.prepareInteraction(visibility: visibility) else { return }
+    }
     coordinateRow = row
     coordinateColumn = column
-    let index = row * size + column
     selectedCell = puzzle.givens[index] == 0 ? index : nil
   }
 
-  func enter(_ value: Int) {
-    guard let selectedCell, var board,
+  func enter(_ value: Int, visibility: UUID? = nil) {
+    guard visibility == nil || visibility == runtime.visibilityIdentity, let selectedCell,
+      var board,
       case .playing(let attempt) = runtime.phase, runtime.acceptsInput(from: attempt),
       board.cells[selectedCell] != value,
       board.setValue(value, at: selectedCell)
