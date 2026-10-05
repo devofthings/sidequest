@@ -136,3 +136,7 @@ The lead selected original certified9×9 challenges with at most12/13/20 editabl
 ### Bubble attempt-budget criterion #188 — selected October 5, 2026
 
 The lead selects Easy8/Medium5/Hard3 actual maximum shots for the original certified three-shot Bubble envelope, superseding the proposed sampled shortest-route/tolerance classifier for this rollout. Preserve legacy default8 and its RNG draws/queue until mixed-feed integration. Extra attempts are not guaranteed recoverable mistakes; danger can end play earlier. See [the selected criterion](pocket-games/DIFFICULTY.md#bubble-selected-attempt-allowance-188) and [game guidance](../Sidequest/Games/BubbleShooter/AGENTS.md). Implementation and native proof remain separate from this choice.
+
+## Centered successful-game celebration #193
+
+Owner-approved October 5, 2026: make the Nice! animation more prominent in the middle of the screen. Center the larger badge over the game viewport with decorative sparkles, preserve input pass-through and stable geometry, and use a spatial-motion-free fade under Reduce Motion. Retain the existing runtime lifetime/cancellation. The app title stays visible; this supersedes the #86 header badge location. Implementation and native validation are pending in the owning PR.

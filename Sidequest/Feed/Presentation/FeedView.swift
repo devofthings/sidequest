@@ -29,16 +29,10 @@ struct FeedView: View {
   var body: some View {
     VStack(spacing: 8) {
       HStack {
-        ZStack(alignment: .leading) {
-          Text("Sidequest")
-            .font(.system(.title2, design: .rounded, weight: .heavy))
-            .accessibilityAddTraits(.isHeader)
-            .accessibilityIdentifier("foundation.title")
-            .opacity(selectedRuntime?.celebrationAttempt == nil ? 1 : 0)
-            .accessibilityHidden(selectedRuntime?.celebrationAttempt != nil)
-          SuccessCelebrationView(
-            runtime: selectedRuntime, gameTitle: selectedGame?.kind.title ?? "Game")
-        }
+        Text("Sidequest")
+          .font(.system(.title2, design: .rounded, weight: .heavy))
+          .accessibilityAddTraits(.isHeader)
+          .accessibilityIdentifier("foundation.title")
         Spacer(minLength: 8)
         Menu {
           if let openNews {
@@ -81,6 +75,12 @@ struct FeedView: View {
           }
         )
         .id(ObjectIdentifier(controller))
+        .overlay {
+          SuccessCelebrationView(
+            runtime: selectedRuntime, gameTitle: selectedGame?.kind.title ?? "Game"
+          )
+          .padding(16)
+        }
         if let message = controller.replenishmentMessage {
           VStack {
             Text(message)

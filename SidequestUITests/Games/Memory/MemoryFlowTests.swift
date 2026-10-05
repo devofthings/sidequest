@@ -43,7 +43,7 @@ final class MemoryFlowTests: XCTestCase {
         string:
           "app: \(appFrame)\nbadge: \(badgeFrame)\nnavigation: \(navigationFrame)\ncardScroll: \(scrollFrame)"
       )
-      frames.name = "memory-reduced-motion-header-viewport-frames"
+      frames.name = "memory-reduced-motion-centered-viewport-frames"
       frames.lifetime = .keepAlways
       add(frames)
       let screen = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
@@ -57,10 +57,13 @@ final class MemoryFlowTests: XCTestCase {
         XCTAssertFalse(frame.isEmpty, "\(name) needs a real visible footprint.")
         XCTAssertTrue(
           appFrame.contains(frame), "The entire \(name) must remain in the app viewport.")
-        XCTAssertLessThanOrEqual(
-          frame.maxY, scrollFrame.minY + 1,
-          "\(name) remains in the fixed header above the card scroller.")
+        if name != "badge" {
+          XCTAssertLessThanOrEqual(frame.maxY, scrollFrame.minY + 1)
+        }
       }
+      XCTAssertEqual(badgeFrame.midX, scrollFrame.midX, accuracy: 2)
+      XCTAssertEqual(badgeFrame.midY, scrollFrame.midY, accuracy: 2)
+      XCTAssertTrue(app.staticTexts["foundation.title"].exists)
       XCTAssertFalse(app.buttons["feed.news"].exists)
       XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
       XCUIDevice.shared.press(.home)
@@ -107,7 +110,8 @@ final class MemoryFlowTests: XCTestCase {
     XCTAssertTrue(badge.waitForExistence(timeout: 5))
     XCTAssertTrue(
       app.frame.contains(badge.frame), "Largest-text celebration must be fully visible.")
-    XCTAssertLessThanOrEqual(badge.frame.maxY, viewport.minY + 1)
+    XCTAssertEqual(badge.frame.midX, viewport.midX, accuracy: 2)
+    XCTAssertEqual(badge.frame.midY, viewport.midY, accuracy: 2)
     XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewport)
     XCTAssertEqual(lastTile.frame, tileFrame)
     capture(app, name: "largest-memory-viewport-success")
