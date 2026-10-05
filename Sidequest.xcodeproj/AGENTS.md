@@ -7,3 +7,6 @@ The foundation owns this project and the shared `Sidequest` scheme. App, unit, a
 Integration #9 enables `UIFileSharingEnabled` and `LSSupportsOpeningDocumentsInPlace` only in the app Debug configuration so native Files can select owned fictional Documents fixtures. Release omits these keys and all fixture/reset code. No team, signing identity, personal capture, or file path is committed.
 
 Xcode27’s generated Info omitted the file-sharing key despite the build setting. Debug therefore merges the minimal `DebugInfo.plist` containing both Boolean keys with generated application metadata. Release does not reference that file. Verify the actual Debug/Release built Info dictionaries; build settings alone do not establish Files visibility.
+
+
+Selected identity #14 adds `ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon` only to the app Debug/Release configurations. The filesystem-synchronized resource catalog owns the bitmap and slot; this requires no new explicit target membership, test setting, signing identity, or bundle-identifier change. Follow [identity guidance](../docs/logo-concepts/README.md) for source/provenance and automatic dark/tinted treatment; validate actual built icon metadata and appearance before merging.

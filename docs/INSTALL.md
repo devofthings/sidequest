@@ -99,6 +99,8 @@ It copies the app/project/test roots into a disposable directory, injects compil
 
 ## Install and launch in the simulator
 
+The app Debug and Release configurations select the original Card S `AppIcon` catalog. Its opaque 1024-pixel source and system-generated dark/tinted treatment are documented in [identity guidance](logo-concepts/README.md). This branch adds the asset; actual built icon metadata and Home Screen appearance checks must pass before delivery. The immutable `2026.10.14` download is unchanged.
+
 Find the available iPhone 18 Pro UDID and assign it to the task-specific variable below. Use the UDID from your Mac, not another machine's identifier:
 
 ```sh

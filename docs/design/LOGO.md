@@ -1,20 +1,20 @@
 # Sidequest logo concept
 
-Status: Proposed. Created October 3, 2026 for [issue #14](https://github.com/devofthings/sidequest/issues/14).
+Status: **Superseded** by selected A — Card S on October 5, 2026 under [owner approval](https://github.com/devofthings/sidequest/issues/14#issuecomment-5990513554). See [the selected identity and editable source](../logo-concepts/README.md). The image below preserves the October 3 exploration for provenance.
 
 ![Sidequest logo concept: two cards with a branching path](logo-concept-v1.png)
 
-The stacked cards represent the mixed feed; the branching path suggests taking a small sidequest. The current palette and geometry are exploratory. No visual direction has been accepted.
+The stacked cards represent the mixed feed; the branching path suggests taking a small sidequest. This earlier palette and geometry were exploratory and were not selected.
 
 ## Review and remaining work
 
-The initial image has a clear central silhouette and no text or external corner mask. Review it at home-screen sizes before selecting it. The bright accent colors and tilted cards should be evaluated against the design direction in issue #13.
+The selected Card S now owns production artwork. This earlier image remains historical and is not used in the app icon.
 
-This is a generated raster concept, not an editable vector master or an integrated app icon. Final identity selection, small-size checks, platform appearance variants, and asset-catalog integration remain in issue #14 after the design and app-foundation prerequisites. The app has no target yet, so icon integration cannot be verified.
+This is a generated raster concept, not an editable vector master or an integrated app icon. Current selected production asset locations and verification requirements are in the linked identity guidance. The app foundation exists; actual icon integration and Home Screen appearance verification are issue #14's delivery gates.
 
 ## Provenance
 
-Generated using the built-in image generation tool, with no reference images and an opaque background. The original generated output was copied into this repository as `logo-concept-v1.png` without editing. Human selection remains pending.
+Generated using the built-in image generation tool, with no reference images and an opaque background. The original generated output was copied into this repository as `logo-concept-v1.png` without editing. This earlier concept was not selected.
 
 ### Generation prompt
 
