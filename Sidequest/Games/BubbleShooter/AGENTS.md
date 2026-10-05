@@ -56,3 +56,7 @@ Agent-grill self-assessment: Committed pop feedback is a delegated presentation 
 ## Success feedback routing #86
 
 Mark runtime completion successful only for won; terminal lost still completes silently. Consume the shared runtime feedback boundary in [common game guidance](../AGENTS.md); keep rules, timing, retained results, and reset semantics unchanged. Appearance or restored completed values never emit success.
+
+## Better controls and harder compact play #135
+
+The owner authorized improved aiming controls and more difficult compact Bubble challenges on October 5. Follow [the bounded outcome](../../../docs/POCKET_BUBBLE.md). Keep existing explicit Fire until changed shooting semantics are agreed. Replace one-shot-only production generation with bounded, real-rule-validated multi-shot challenges; a longer witness alone cannot establish difficulty. Preserve the eight-shot rules, frozen replay, single-flight cancellation, manual paging and Reduce Motion. Resolve exact control/generation choices through agent-grill before code; no implementation or verification is claimed by this decision.
