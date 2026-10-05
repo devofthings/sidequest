@@ -27,7 +27,9 @@ Render the same game-owned initial board in preview and play, with gameplay disa
 
 ## Requested compact variants and difficulties
 
-The owner requested pocket-sized games and different difficulties on October 4, 2026. Before changing game dimensions, rules, generation or difficulty, read [the recorded direction](../../docs/DECISIONS.md#pocket-game-direction-recorded-october-4-2026) and the bounded specifications in #117/#118. Concrete variants, tier behavior and rollout remain pending; the Pocket Chess reference selects a direction rather than a board size or ruleset. Keep existing challenge/lifecycle and stable-layout guarantees while planning those changes.
+Before changing compact dimensions, rules, generation or difficulty, read [the recorded direction](../../docs/DECISIONS.md#pocket-game-direction-recorded-october-4-2026) and [the selected first specification](../../docs/pocket-games/README.md). The owner's October 5 selection accepts fixed 4×4 Chess focus windows over the original standard 8×8 fixtures, retaining full-coordinate input, current 4×4 Sudoku and six-pair Memory. #132 owns Chess presentation; a focus edge never becomes a rule boundary. Genuine reduced-board rules, multiple-move puzzles and difficulty tiers/selection under #118 remain unselected.
+
+The owner's subsequent instruction for all puzzles to be pocket-sized, with better Bubble controls and harder play, authorizes [#135](https://github.com/devofthings/sidequest/issues/135). It supersedes retaining the one-shot-only production Bubble default: plan compact attainable multi-shot generation and a bounded control/layout audit under its children, separately from #132. Keep explicit Fire pending the owner's shooting-semantics choice. Preserve frozen challenges, explicit start, unfinished reset, completed revisits, stable geometry and usable accessibility controls. Adaptive frequency #119 remains an Idea; compactness does not authorize tier progression or preference behavior.
 
 ## Authorized MVP visual design and motion
 
