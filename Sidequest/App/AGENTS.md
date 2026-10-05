@@ -79,3 +79,15 @@ Reconstruction validates descriptor kind/tier and completed archive compatibilit
 Readiness evidence: GeneratedGameBatch preserves legacy RNG; MemoryController's typed restoration throws on mismatched completed layout; FeedSelection is a value and supports staged navigation; game metadata is immutable. Planned verification covers all tiers, retry/cancellation, completed eviction/restoration, unchanged cadence, and normal/largest label geometry. No human-owned behavior or spending question remains.
 
 The lead accepted a bounded main-actor reconstruction closure at the real fallible adapter boundary, defaulting to ComposedGame.generated. Tests may inject preparation failure to verify concrete-owner/attempt preservation and retry; no unsafe archive setter or alternate production lifecycle owner is introduced.
+
+### Readiness self-assessment #201
+
+| Question | Kind | Selected answer | Evidence and rationale | Verification needed |
+| --- | --- | --- | --- | --- |
+| Where does production opt into classified cards? | Technical choice | App-owned preparation closure; direct defaults and historical Debug routes stay legacy. | GeneratedGameBatch preserves the historical random stream; all four game-owned tier APIs exist. | Native all-tier, cross-batch, and legacy shuffle checks. |
+| How does throwing restoration cross the navigation boundary? | Fact and technical choice | Validate typed descriptor/archive compatibility, stage invisible adapters, then commit owners and selection. | MemoryController rejects an incompatible completed layout; FeedSelection is a value. | Concrete factory rejection, preserved current owner/attempt, retry and completed eviction tests. |
+| When is the separate Chess catalog loaded? | Technical choice | Once during off-UI startup, retained with historical fixtures for imports and replenishment. | ChessPuzzleLoader exposes separate historical and classified resources; FeedComposition retains its immutable input array. | Startup/replacement integration and missing-catalog rejection. |
+| How are titles and difficulty labels stable? | Technical choice | Shared persistent header measures all supported text footprints at current width/type. | Header #199 already reserves all titles; GameHeading adds all tier subtitles without phase dependence. | Actual normal/largest label and control geometry. |
+| Does any choice need new owner approval? | Fact | No. | #118 already accepts mixed labeled tiers; #201 records bounded integration and no new Ideas or spending. | Fresh review and exact-head free CI remain delivery gates. |
+
+The plan is ready within delegated scope; these answers establish implementation choices, not passing native evidence or independent review.
