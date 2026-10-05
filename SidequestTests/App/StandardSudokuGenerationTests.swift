@@ -25,6 +25,12 @@ final class StandardSudokuGenerationTests: XCTestCase {
         XCTAssertEqual(actualMemory, memory)
         XCTAssertEqual(actualBubble, bubble)
       }
+      let expectedOrder = Array(0..<8).shuffled(using: &legacy)
+      let shuffled = try await GeneratedGameBatch.prepare(
+        sessionID: sessionID, sequence: sequence, seed: 104,
+        chessPuzzles: puzzles, ordered: false)
+      XCTAssertEqual(
+        shuffled.descriptors.map(\.card.id), expectedOrder.map { batch.descriptors[$0].card.id })
       let repeated = try await GeneratedGameBatch.prepare(
         sessionID: sessionID, sequence: sequence,
         seed: 104, chessPuzzles: puzzles, ordered: true)
