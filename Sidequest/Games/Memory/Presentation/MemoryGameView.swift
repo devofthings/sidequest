@@ -63,11 +63,12 @@ struct MemoryGameView: View {
   }
 
   private func tile(_ index: Int, board: MemoryRules) -> some View {
+    let visibility = controller.runtime.visibilityIdentity
     let revealed = board.isRevealed(index)
     let matched = board.matchedIndices.contains(index)
     let symbol = board.symbols[index]
     return Button {
-      controller.flip(index)
+      controller.flip(index, visibility: visibility)
     } label: {
       Group {
         if revealed {

@@ -171,12 +171,13 @@ struct BubbleShooterView: View {
   private var slider: some View {
     BubbleAimSlider(controller: controller)
       .frame(minWidth: 44, minHeight: 44)
-      .disabled(!controller.canFire)
+      .disabled(!controller.canAimOrFire)
   }
 
   private var fireButton: some View {
-    Button {
-      if isPlaying { controller.fire() } else { controller.replay() }
+    let visibility = controller.runtime.visibilityIdentity
+    return Button {
+      if isPlaying { controller.fire(visibility: visibility) } else { controller.replay() }
     } label: {
       StableGameRegion {
         ZStack {
@@ -190,7 +191,7 @@ struct BubbleShooterView: View {
     }
     .buttonStyle(SidequestButtonStyle(prominent: true, compact: true))
     .controlSize(.large).frame(minHeight: 44)
-    .disabled(isPlaying ? !controller.canFire : !controller.runtime.isVisible)
+    .disabled(isPlaying ? !controller.canAimOrFire : !controller.runtime.isVisible)
     .accessibilityIdentifier(isPlaying ? "bubble.fire" : "bubble.replay")
   }
 

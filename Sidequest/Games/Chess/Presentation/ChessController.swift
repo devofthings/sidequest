@@ -1,3 +1,4 @@
+import Foundation
 import Observation
 
 @MainActor
@@ -27,25 +28,35 @@ final class ChessController {
       && destinationFile != nil && destinationRank != nil
   }
 
-  func tap(_ square: ChessSquare) {
-    guard canAcceptInput else { return }
+  var canSelectPiece: Bool { canAcceptInput || runtime.canBeginInteraction }
+
+  func tap(_ square: ChessSquare, visibility: UUID? = nil) {
+    if runtime.phase == .preview {
+      guard puzzle.board[square]?.side == puzzle.sideToMove else { return }
+    }
+    guard runtime.prepareInteraction(visibility: visibility), canAcceptInput else { return }
     attempt?.tap(square)
     clearCoordinates()
     finishIfSolved()
   }
 
-  func selectFile(_ file: Int) {
-    guard canAcceptInput, attempt?.selectedSquare != nil, (0..<8).contains(file) else { return }
+  func selectFile(_ file: Int, visibility: UUID? = nil) {
+    guard visibility == nil || visibility == runtime.visibilityIdentity, canAcceptInput,
+      attempt?.selectedSquare != nil, (0..<8).contains(file)
+    else { return }
     destinationFile = file
   }
 
-  func selectRank(_ rank: Int) {
-    guard canAcceptInput, attempt?.selectedSquare != nil, (0..<8).contains(rank) else { return }
+  func selectRank(_ rank: Int, visibility: UUID? = nil) {
+    guard visibility == nil || visibility == runtime.visibilityIdentity, canAcceptInput,
+      attempt?.selectedSquare != nil, (0..<8).contains(rank)
+    else { return }
     destinationRank = rank
   }
 
-  func submitCoordinates() {
-    guard canSubmitCoordinates, let file = destinationFile, let rank = destinationRank,
+  func submitCoordinates(visibility: UUID? = nil) {
+    guard visibility == nil || visibility == runtime.visibilityIdentity, canSubmitCoordinates,
+      let file = destinationFile, let rank = destinationRank,
       let destination = ChessSquare(file: file, rank: rank)
     else { return }
     attempt?.submit(to: destination)

@@ -32,7 +32,7 @@ Anchor playing/completed game content at the top of the viewport-sized host so c
 
 ## Visible inactive boards #88
 
-Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../docs/GAME_PREVIEWS.md).
+Render the same frozen initial board in preview and play. Under #185, the first valid game action starts through the shared runtime and applies that same action; appearance and scrolling stay inactive. Preserve hidden answers, reset/completion, and the empty static chrome reservation. Before changing this boundary, read [preview guidance](../../docs/GAME_PREVIEWS.md).
 
 ## Proposed preference-based frequency
 
@@ -53,10 +53,17 @@ Render the shared success badge in the viewport-owned header title slot after an
 
 The lead's agent-grill accepts one presentation-only context from `FeedCardController`'s actual positive native card bounds. Retain it across content updates and publish only real size changes; never derive it from UIScreen, hosting intrinsic height, scroll offset or game phase. Feed game-card presentation subtracts independently measured stable title/reserved-start chrome and padding/gaps, exposing the remaining game-content budget. This seam is groundwork for Bubble #138, which consumes it after #142. Keep the fixed success header and single owned content scroller unchanged. Root's normal375×667 probe measured579-point card height: Sudoku/Memory fit, while both Chess control stacks overflow. Leave Sudoku/Memory sources unchanged. Native/CI results remain pending.
 
-## Informational start hint #160
+## Historical informational start hint #160
 
-The owner's surface-start direction supersedes the earlier explicit lime start-button styling. Feed composition renders a plain top-row Tap to play hint with semantic Start game activation and a transparent preview tap surface confined to game content; news and viewport navigation remain outside it. Retain the measured hint row in every phase, disabled actual initial boards, and one native content scroller. Existing native pans win over start taps. See [preview policy](../../docs/GAME_PREVIEWS.md).
+Historically, #160 superseded the earlier explicit lime start-button styling; #185 now supersedes this real-game hint/interception policy. Feed composition renders a plain top-row Tap to play hint with semantic Start game activation and a transparent preview tap surface confined to game content; news and viewport navigation remain outside it. Retain the measured hint row in every phase, disabled actual initial boards, and one native content scroller. Existing native pans win over start taps. See [preview policy](../../docs/GAME_PREVIEWS.md).
 
 ## Selected shared chrome #182
 
 Use leading heavy rounded game headings and vivid existing-token fills for the existing header actions. Shared styling leaves the prior start cue unchanged; the owner's selected first-game-interaction start behavior is separately owned by [#185](https://github.com/devofthings/sidequest/issues/185). Do not add a new button row, resize the header/success slot, or alter the game-content budget when styling. Game adapters own their board/control geometry.
+## First meaningful interaction #185
+
+The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.
+
+## Visible completed controls #185
+
+The feed-wide disabled gate rejects hidden cards and explicit-policy preview input only. A visible completed subtree remains eligible for game-owned actions such as Bubble Replay; `GameRuntime.canInteract` is the move gate and must not globally disable completed controls. Each adapter retains its own completed move rejection, and Replay still requires the shared visible-completed lifecycle gate. The actual #185 completed-win/revisit native flow exposed this distinction when the broader move gate disabled Replay; retain its enabled-control and frozen reset assertions.

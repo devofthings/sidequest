@@ -295,6 +295,24 @@
         "Sidequest/Resources/"
       ]
     },
+    "SidequestUITests/FirstInteractionFlowTests/testFirstActionAppliesAcrossAllGamesAndSkippingResets": {
+      "lower_layer": "First-action controller/runtime units cover invalid/stale inputs; this focused running-app journey verifies current real-fixture policy.",
+      "paths": [
+        "SidequestUITests/FirstInteractionFlowTests.swift",
+        "Sidequest/Games/",
+        "Sidequest/Feed/",
+        "Sidequest/App/"
+      ]
+    },
+    "SidequestUITests/FirstInteractionFlowTests/testFirstFireShootsAndBackgroundReturnsToInactiveBoard": {
+      "lower_layer": "First-action controller/runtime units cover invalid/stale inputs; this focused running-app journey verifies current real-fixture policy.",
+      "paths": [
+        "SidequestUITests/FirstInteractionFlowTests.swift",
+        "Sidequest/Games/",
+        "Sidequest/Feed/",
+        "Sidequest/App/"
+      ]
+    },
     "SidequestUITests/FoundationLaunchTests/testLaunchShowsAccessibleHeading": {
       "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
       "paths": [
@@ -308,7 +326,7 @@
         "Sidequest/Resources/"
       ]
     },
-    "SidequestUITests/GamePreviewTests/testAllInitialBoardsRejectPreviewInputAndResetAfterSkipAndBackground": {
+    "SidequestUITests/GamePreviewTests/testAllInitialBoardsAcceptFirstInputAndResetAfterSkipAndBackground": {
       "lower_layer": "Controller tests cover frozen values and input/task gates; this explicit native check proves visible initial boards, start/reset accessibility, and stable start geometry for all real adapters.",
       "paths": [
         "SidequestUITests/GamePreviewTests.swift",
@@ -330,7 +348,7 @@
         "Sidequest.xcodeproj/"
       ]
     },
-    "SidequestUITests/GamePreviewTests/testLargestTextKeepsEveryInitialBoardAndStartReachableWithoutMovingTheBoard": {
+    "SidequestUITests/GamePreviewTests/testLargestTextKeepsEveryInitialBoardAndFirstInputReachableWithoutMovingTheBoard": {
       "lower_layer": "Controller tests cover frozen values and input/task gates; this explicit native check proves visible initial boards, start/reset accessibility, and stable start geometry for all real adapters.",
       "paths": [
         "SidequestUITests/GamePreviewTests.swift",
@@ -433,7 +451,7 @@
         "Sidequest/Resources/"
       ]
     },
-    "SidequestUITests/PreviewSurfaceStartTests/testEveryGameSurfaceTapStartsWithoutMakingItsFirstMoveAndSkipRequiresRestart": {
+    "SidequestUITests/PreviewSurfaceStartTests/testEveryFirstGameActionStartsAndAppliesAndSkipRequiresRestart": {
       "lower_layer": "Preview start lease unit tests cover stale, retired and duplicate requests; native checks establish inert taps, gesture arbitration and owned overflow.",
       "paths": [
         "SidequestUITests/PreviewSurfaceStartTests.swift",
@@ -643,7 +661,7 @@
     "SidequestUITests/BubbleFlowTests/testShortBoardDragKeepsAttemptAndDirectSkipResetsPendingShot",
     "SidequestUITests/IntegrationFlowTests/testNativeImportsReplaceTheMixedDeckPersistAndRejectInvalidFiles",
     "SidequestUITests/EndlessFlowTests/testGeneratedPreviewInputSkipAndFirstNewsBoundary",
-    "SidequestUITests/MemoryFlowTests/testStartMakesNoFlipAndMatchingAllPairsRetainsCompletion",
+    "SidequestUITests/MemoryFlowTests/testFirstFlipStartsAndMatchingAllPairsRetainsCompletion",
     "SidequestUITests/MemoryFlowTests/testMismatchTurnsOverAndSkippingReturnsToUnflippedPreview",
     "SidequestUITests/MemoryFlowTests/testLargestTextKeepsEveryTileAndNavigationReachable"
   ],

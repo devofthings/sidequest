@@ -214,7 +214,7 @@ final class FeedComposition {
         let runtime = GameFeedbackComposition.makeRuntime()
         #if DEBUG
           if useDemoGames {
-            games[game.id] = .placeholder(PlaceholderGameController(runtime: runtime))
+            games[game.id] = .placeholder(PlaceholderGameController(runtime: GameRuntime()))
             continue
           }
         #endif

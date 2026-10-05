@@ -1,10 +1,16 @@
 import Foundation
 import Observation
 
+enum GameActivationPolicy: Equatable {
+  case explicitStart
+  case firstInteraction
+}
+
 /// A retained presentation owner for one card's lifecycle, never a view's local state.
 @MainActor
 @Observable
 final class GameRuntime {
+  let activationPolicy: GameActivationPolicy
   private var lifecycle: GameLifecycle
   private var isRetired = false
   // A held preview tap must not survive a hide/reset followed by a new visible preview.
@@ -24,6 +30,7 @@ final class GameRuntime {
 
   init(
     completed: GameAttemptID? = nil,
+    activationPolicy: GameActivationPolicy = .explicitStart,
     interactionHaptic: @escaping @MainActor () -> Void = InteractionHaptic.play,
     interactionTime: @escaping @MainActor () -> TimeInterval = {
       ProcessInfo.processInfo.systemUptime
@@ -35,6 +42,7 @@ final class GameRuntime {
     makeAttemptID: @escaping () -> GameAttemptID = { GameAttemptID() }
   ) {
     lifecycle = GameLifecycle(completed: completed)
+    self.activationPolicy = activationPolicy
     self.makeAttemptID = makeAttemptID
     self.interactionHaptic = interactionHaptic
     self.interactionTime = interactionTime
@@ -65,6 +73,26 @@ final class GameRuntime {
     guard !isRetired else { return }
     precondition(effectHandler != nil, "Composition must bind game effects before interaction.")
     deliver(lifecycle.start(makeAttemptID: makeAttemptID))
+  }
+
+  /// Presentation eligibility does not create an attempt; rendering and value reads stay inert.
+  var canBeginInteraction: Bool {
+    !isRetired && isVisible && phase == .preview && activationPolicy == .firstInteraction
+  }
+
+  var canInteract: Bool {
+    if canBeginInteraction { return true }
+    guard case .playing(let attempt) = phase else { return false }
+    return acceptsInput(from: attempt)
+  }
+
+  /// Call only after game-owned validation of a meaningful user action. The synchronous start
+  /// effect initializes its controller before the same action is applied, without suspending.
+  func prepareInteraction(visibility: UUID? = nil) -> Bool {
+    guard visibility == nil || visibility == visibilityIdentity else { return false }
+    if canBeginInteraction { start() }
+    guard case .playing(let attempt) = phase else { return false }
+    return acceptsInput(from: attempt)
   }
 
   /// Bubble-shooter replay replaces this owner's value; controllers never own a second lifecycle.

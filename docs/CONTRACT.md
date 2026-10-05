@@ -23,7 +23,7 @@ The finite historical Debug routes preserve their original verification contract
 | Call | Result and required handling |
 | --- | --- |
 | `setVisible(true)` | Select the card. Preview remains preview; no game input or time advancement is permitted. |
-| `start(makeAttemptID:)` | Only a visible preview starts. Return `.start(attempt)`, initialize rules/work for that token, and consume the tap without making a move. Repeated starts return nil and do not mint tokens. The default factory uses UUID; tests inject stable tokens. |
+| `start(makeAttemptID:)` | Only a visible preview starts. Return `.start(attempt)`, initialize rules/work for that token, and perform no move itself. Under #185 a game-owned valid action calls synchronous runtime preparation, then applies its intended action to that initialized attempt. Repeated starts return nil and do not mint tokens. The default factory uses UUID; tests inject stable tokens. |
 | `acceptsInput(from:)` | True only for the visible, playing, current token. Gate every move, timer tick, and asynchronous result immediately before state mutation, including after every suspension. |
 | `setVisible(false)` | A playing attempt becomes preview before returning `.reset(oldAttempt)`. Cancel pending work first, then clear rules, selection, and feedback. Repeated skips return nil. Preview stays preview; completion stays completed. |
 | `complete(attempt:)` | Only the eligible current token completes. Return `.stop(attempt)`; cancel work and preserve final rules/result. Stale, invisible, preview, and completed events return nil. |

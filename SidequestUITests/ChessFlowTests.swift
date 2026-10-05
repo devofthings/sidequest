@@ -4,7 +4,6 @@ final class ChessFlowTests: XCTestCase {
   @MainActor
   func testCoordinateAlternativesHaveUsableTargetsAndAcceptEdgeTaps() {
     let app = launch(color: "white", successFeedback: false)
-    app.buttons["game.start"].tap()
     tapEdge(app.buttons["chess.piece.g6"], in: app)
     XCTAssertTrue(app.staticTexts["chess.selection"].label.contains("g6"))
     tapEdge(app.buttons["chess.file"], in: app)
@@ -43,21 +42,23 @@ final class ChessFlowTests: XCTestCase {
       let controls =
         pieces.map { app.buttons["chess.piece.\($0)"] }
         + [app.buttons["chess.file"], app.buttons["chess.rank"], app.buttons["chess.submit"]]
-      for target in board + controls + [app.buttons["game.start"]] {
+      for target in board + controls {
         XCTAssertTrue(target.exists)
         XCTAssertTrue(viewport.contains(target.frame), "Full target must fit: \(target.identifier)")
         XCTAssertGreaterThanOrEqual(target.frame.width, 44)
         XCTAssertGreaterThanOrEqual(target.frame.height, 44)
       }
-      let before = (board + controls).map(\.frame)
+      let queen = color == "white" ? "g6" : "b3"
+      let stableTargets = (board + controls).filter { $0.identifier != "chess.square.\(queen)" }
+      let before = stableTargets.map(\.frame)
       let attachment = XCTAttachment(screenshot: app.screenshot())
       attachment.name = "pocket-\(color)-normal-all-controls"
       attachment.lifetime = .keepAlways
       add(attachment)
-      app.buttons["game.start"].tap()
-      XCTAssertEqual((board + controls).map(\.frame), before)
+      app.buttons["chess.piece.\(queen)"].tap()
+      XCTAssertTrue(app.staticTexts["chess.selection"].label.contains(queen))
+      XCTAssertEqual(stableTargets.map(\.frame), before)
       XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewport)
-      XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
       app.terminate()
     }
   }
@@ -75,13 +76,11 @@ final class ChessFlowTests: XCTestCase {
   @MainActor
   func testBackgroundRequiresFreshChessStart() {
     let app = launch(color: "white")
-    app.buttons["game.start"].tap()
     app.buttons["chess.square.g6"].tap()
     XCTAssertTrue(app.staticTexts["chess.selection"].label.contains("g6"))
     XCUIDevice.shared.press(.home)
     app.activate()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
-    app.buttons["game.start"].tap()
+    XCTAssertTrue(app.staticTexts["chess.selection"].waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
     XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
   }
@@ -90,9 +89,9 @@ final class ChessFlowTests: XCTestCase {
   func testLargestTextSupportsCoordinateSolutionAndNavigation() {
     let app = launch(color: "black", largeText: true)
     assertWindow(app, color: "black")
-    XCTAssertTrue(app.buttons["game.start"].isHittable)
+    reveal(app.buttons["chess.piece.b3"], in: app)
+    XCTAssertTrue(app.buttons["chess.piece.b3"].isHittable)
     XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
-    app.buttons["game.start"].tap()
     submit(app, queen: "b3", destination: "b2")
     assertSuccessVisible(app)
     capture(app, name: "largest-chess-viewport-success")
@@ -114,8 +113,7 @@ final class ChessFlowTests: XCTestCase {
     let app = launch(color: color)
     assertWindow(app, color: color)
     XCTAssertTrue(app.buttons["chess.square.\(queen)"].exists)
-    XCTAssertFalse(app.buttons["chess.square.\(queen)"].isEnabled)
-    app.buttons["game.start"].tap()
+    XCTAssertTrue(app.buttons["chess.square.\(queen)"].isEnabled)
     XCTAssertTrue(app.staticTexts["chess.side"].label.hasPrefix(color.capitalized))
     XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
     XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
@@ -123,8 +121,8 @@ final class ChessFlowTests: XCTestCase {
     capture(app, name: "chess-\(color)-started")
     app.buttons["chess.square.\(opponent)"].tap()
     XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
-    reveal(app.staticTexts["chess.feedback"], in: app)
-    XCTAssertTrue(app.staticTexts["chess.feedback"].label.hasPrefix("Select a"))
+    XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
+    XCTAssertTrue(app.buttons["chess.piece.\(queen)"].isEnabled)
     submit(app, queen: queen, destination: wrong)
     reveal(app.staticTexts["chess.feedback"], in: app)
     XCTAssertTrue(app.staticTexts["chess.feedback"].label.contains("not checkmate"))
@@ -145,8 +143,7 @@ final class ChessFlowTests: XCTestCase {
     app.buttons["chess.piece.\(queen)"].tap()
     navigate(app, forward: true)
     navigate(app, forward: false)
-    XCTAssertTrue(app.buttons["game.start"].exists)
-    app.buttons["game.start"].tap()
+    XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
     XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
     submit(app, queen: queen, destination: mate)
@@ -281,7 +278,7 @@ final class ChessFlowTests: XCTestCase {
       + (successFeedback ? ["-sidequest-success-feedback-test"] : [])
       + (largeText ? ["-sidequest-large-text"] : [])
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts["chess.selection"].waitForExistence(timeout: 5))
     return app
   }
 }

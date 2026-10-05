@@ -5,27 +5,30 @@ final class PagerFlowTests: XCTestCase {
   func testDirectCardDragTracksAndCommitsThenReverseReturnsToPreview() {
     continueAfterFailure = false
     let app = XCUIApplication()
-    app.launchArguments = ["-sidequest-feed-test"]
+    app.launchArguments = ["-sidequest-sudoku-test"]
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 10))
-    app.buttons["game.start"].tap()
-    app.buttons["game.interact"].tap()
+    XCTAssertTrue(app.buttons["sudoku.cell.2"].waitForExistence(timeout: 10))
+    XCTAssertFalse(app.buttons["game.start"].exists)
+    app.buttons["sudoku.cell.2"].tap()
+    app.buttons["sudoku.number.3"].tap()
     let pager = app.scrollViews["feed.pager"]
     XCTAssertTrue(pager.exists)
     let middle = pager.coordinate(withNormalizedOffset: CGVector(dx: 0.55, dy: 0.5))
     let short = pager.coordinate(withNormalizedOffset: CGVector(dx: 0.55, dy: 0.44))
     middle.press(
       forDuration: 0.01, thenDragTo: short, withVelocity: .slow, thenHoldForDuration: 0.2)
-    XCTAssertEqual(app.selectedFeedCardID, "sample-game-bubbleShooter")
-    XCTAssertEqual(app.staticTexts["game.interactions"].label, "Interactions: 1")
+    XCTAssertEqual(app.selectedFeedCardID, "sample-game-sudoku")
+    XCTAssertEqual(app.buttons["sudoku.cell.2"].value as? String, "3")
     let bottom = pager.coordinate(withNormalizedOffset: CGVector(dx: 0.55, dy: 0.85))
     let top = pager.coordinate(withNormalizedOffset: CGVector(dx: 0.55, dy: 0.15))
     bottom.press(forDuration: 0.01, thenDragTo: top, withVelocity: .slow, thenHoldForDuration: 0.3)
-    waitForPosition("sample-game-chess", in: app)
-    XCTAssertTrue(app.buttons["game.start"].exists)
+    waitForPosition("sample-news-garden", in: app)
+    XCTAssertFalse(app.buttons["game.start"].exists)
     top.press(forDuration: 0.01, thenDragTo: bottom, withVelocity: .slow, thenHoldForDuration: 0.3)
-    waitForPosition("sample-game-bubbleShooter", in: app)
-    XCTAssertTrue(app.buttons["game.start"].exists)
+    waitForPosition("sample-game-sudoku", in: app)
+    XCTAssertFalse(app.buttons["game.start"].exists)
+    XCTAssertEqual(app.buttons["sudoku.cell.2"].value as? String, "Empty")
+    XCTAssertFalse(app.buttons["sudoku.number.3"].isEnabled)
   }
 
   func testFastFlickAndFirstLastBounds() {
@@ -81,8 +84,8 @@ final class PagerFlowTests: XCTestCase {
     let app = XCUIApplication()
     app.launchArguments = ["-sidequest-sudoku-test", "-sidequest-large-text"]
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
-    app.buttons["game.start"].tap()
+    XCTAssertTrue(app.buttons["sudoku.cell.2"].waitForExistence(timeout: 5))
+    app.buttons["sudoku.cell.2"].tap()
     let content = app.scrollViews["feed.cardScroll"]
     let start = content.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.85))
     let end = content.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.15))
@@ -97,7 +100,7 @@ final class PagerFlowTests: XCTestCase {
     }
     waitForPosition("sample-news-garden", in: app)
     app.previousFeedCard()
-    XCTAssertTrue(app.buttons["game.start"].exists)
+    XCTAssertFalse(app.buttons["game.start"].exists)
   }
 
   func testSystemReduceMotionKeepsMenuAndFingerPagingUsable() {

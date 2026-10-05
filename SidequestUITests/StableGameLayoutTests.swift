@@ -249,8 +249,8 @@ final class StableGameLayoutTests: XCTestCase {
       [route] + (largeText ? ["-sidequest-large-text"] : [])
       + (slowShot ? ["-sidequest-bubble-slow-shot"] : [])
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
-    app.buttons["game.start"].tap()
+    XCTAssertTrue(app.staticTexts["foundation.title"].waitForExistence(timeout: 5))
+    XCTAssertFalse(app.buttons["game.start"].exists)
     return app
   }
 }

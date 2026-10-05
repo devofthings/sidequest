@@ -84,9 +84,9 @@ final class BubbleAimTouchControl: UIControl, FeedPanExcludingControl {
   func update(controller: BubbleShooterController) {
     if self.controller !== controller { cancelAim() }
     self.controller = controller
-    if !controller.canFire { cancelAim() }
+    if !controller.canAimOrFire { cancelAim() }
     // Keep the narrow area a hit-test destination while disabled so it never becomes a feed pan.
-    isEnabled = controller.canFire
+    isEnabled = controller.canAimOrFire
     accessibilityValue = "Aim: \(Int(controller.aimDegrees.rounded())) degrees"
   }
 
@@ -97,10 +97,12 @@ final class BubbleAimTouchControl: UIControl, FeedPanExcludingControl {
 
   override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
     cancelAim()
-    guard let lease = controller.beginAimDrag() else { return false }
+    guard let degrees = mapped(touch),
+      let lease = controller.beginAimDrag(visibility: controller.runtime.visibilityIdentity)
+    else { return false }
     self.lease = lease
     // Launcher-height horizontal gestures are valid; only the touch's x position sets aim.
-    if let degrees = mapped(touch) { controller.updateAimDrag(lease, degrees: degrees) }
+    controller.updateAimDrag(lease, degrees: degrees)
     return true
   }
 

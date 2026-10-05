@@ -29,6 +29,7 @@ struct SudokuGameView: View {
 
   private var miniBody: some View {
     let board = controller.displayedBoard
+    let visibility = controller.runtime.visibilityIdentity
     return VStack(spacing: 16) {
       Text("Each row, column, and 2×2 region needs 1–4.")
         .font(.subheadline)
@@ -47,7 +48,7 @@ struct SudokuGameView: View {
       HStack(spacing: 8) {
         ForEach(1...4, id: \.self) { value in
           Button {
-            controller.enter(value)
+            controller.enter(value, visibility: visibility)
           } label: {
             Text(String(value))
               .lineLimit(1)
@@ -62,7 +63,7 @@ struct SudokuGameView: View {
       .buttonStyle(SidequestButtonStyle(compact: true))
       .disabled(controller.selectedCell == nil || board.isComplete)
       Button {
-        controller.enter(0)
+        controller.enter(0, visibility: visibility)
       } label: {
         Text("Clear selected cell")
           .frame(maxWidth: .infinity, minHeight: 44)
@@ -96,12 +97,13 @@ struct SudokuGameView: View {
   }
 
   private func cell(_ index: Int, board: SudokuBoard) -> some View {
+    let visibility = controller.runtime.visibilityIdentity
     let value = board.cells[index]
     let given = controller.puzzle.givens[index] != 0
     let conflict = board.conflicts.contains(index)
     let selected = controller.selectedCell == index
     return Button {
-      controller.selectCell(index)
+      controller.selectCell(index, visibility: visibility)
     } label: {
       Text(value == 0 ? "·" : String(value))
         .font(.title3.monospacedDigit())

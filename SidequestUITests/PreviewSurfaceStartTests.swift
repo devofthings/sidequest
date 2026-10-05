@@ -2,22 +2,19 @@ import XCTest
 
 @MainActor
 final class PreviewSurfaceStartTests: XCTestCase {
-  func testEveryGameSurfaceTapStartsWithoutMakingItsFirstMoveAndSkipRequiresRestart() {
+  func testEveryFirstGameActionStartsAndAppliesAndSkipRequiresRestart() {
     for fixture in Fixture.allCases {
       let app = launch(fixture)
-      let start = app.buttons["game.start"]
-      XCTAssertEqual(start.label, "Start game")
+      XCTAssertFalse(app.buttons["game.start"].exists)
       let target = boardTarget(app, fixture: fixture)
       let boardFrame = target.frame
       let frozen = boardState(app, fixture: fixture)
-      target.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-      XCTAssertFalse(start.exists)
-      XCTAssertEqual(target.frame, boardFrame)
-      XCTAssertEqual(boardState(app, fixture: fixture), frozen)
       assertNoMove(app, fixture: fixture)
+      firstAction(app, fixture: fixture)
+      XCTAssertEqual(target.frame, boardFrame)
       app.nextFeedCard()
       app.previousFeedCard()
-      XCTAssertTrue(start.waitForExistence(timeout: 5))
+      XCTAssertTrue(boardTarget(app, fixture: fixture).waitForExistence(timeout: 5))
       XCTAssertEqual(boardState(app, fixture: fixture), frozen)
       assertNoMove(app, fixture: fixture)
       let screenshot = XCTAttachment(screenshot: app.screenshot())
@@ -31,12 +28,11 @@ final class PreviewSurfaceStartTests: XCTestCase {
   func testPreviewDragsAndOwnedOverflowNeverStartGames() {
     for fixture in Fixture.allCases {
       let app = launch(fixture)
-      let start = app.buttons["game.start"]
       let target = boardTarget(app, fixture: fixture)
       let from = target.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
       let end = from.withOffset(CGVector(dx: 0, dy: -24))
       from.press(forDuration: 0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0)
-      XCTAssertTrue(start.exists, "A short canceled page drag must remain an inactive preview.")
+      XCTAssertFalse(app.buttons["game.start"].exists)
       assertNoMove(app, fixture: fixture)
       let pager = app.scrollViews["feed.pager"]
       let viewport = app.scrollViews["feed.cardScroll"]
@@ -51,16 +47,20 @@ final class PreviewSurfaceStartTests: XCTestCase {
       XCTAssertTrue(pager.exists)
       // Returning through the existing menu must reveal a preview, never an attempt started by swipe.
       app.previousFeedCard()
-      XCTAssertTrue(start.waitForExistence(timeout: 5))
+      XCTAssertTrue(boardTarget(app, fixture: fixture).waitForExistence(timeout: 5))
       assertNoMove(app, fixture: fixture)
       app.terminate()
 
       let large = launch(fixture, largeText: true)
       let scroll = large.scrollViews["feed.cardScroll"]
-      let upper = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.88, dy: 0.65))
-      let lower = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.88, dy: 0.35))
+      let upper = scroll.coordinate(
+        withNormalizedOffset: CGVector(
+          dx: min(8, scroll.frame.width / 2) / scroll.frame.width, dy: 0.65))
+      let lower = scroll.coordinate(
+        withNormalizedOffset: CGVector(
+          dx: min(8, scroll.frame.width / 2) / scroll.frame.width, dy: 0.35))
       upper.press(forDuration: 0, thenDragTo: lower, withVelocity: .slow, thenHoldForDuration: 0)
-      XCTAssertTrue(large.buttons["game.start"].exists)
+      XCTAssertFalse(large.buttons["game.start"].exists)
       assertNoMove(large, fixture: fixture)
       XCTAssertTrue(large.buttons["feed.navigation"].isHittable)
       large.terminate()
@@ -86,7 +86,7 @@ final class PreviewSurfaceStartTests: XCTestCase {
     let app = XCUIApplication()
     app.launchArguments = [fixture.argument] + (largeText ? ["-sidequest-large-text"] : [])
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    XCTAssertTrue(boardTarget(app, fixture: fixture).waitForExistence(timeout: 5))
     return app
   }
 
@@ -94,9 +94,30 @@ final class PreviewSurfaceStartTests: XCTestCase {
     switch fixture {
     case .sudoku: app.buttons["sudoku.cell.2"]
     case .memory: app.buttons["memory.tile.0"]
-    case .chessWhite: app.buttons["chess.square.g6"]
-    case .chessBlack: app.buttons["chess.square.b3"]
+    case .chessWhite: app.buttons["chess.square.e8"]
+    case .chessBlack: app.buttons["chess.square.a4"]
     case .bubble: app.otherElements["bubble.board"]
+    }
+  }
+
+  private func firstAction(_ app: XCUIApplication, fixture: Fixture) {
+    switch fixture {
+    case .sudoku:
+      app.buttons["sudoku.cell.2"].tap()
+      XCTAssertTrue(app.buttons["sudoku.cell.2"].isSelected)
+      XCTAssertTrue(app.buttons["sudoku.number.3"].isEnabled)
+    case .memory:
+      app.buttons["memory.tile.0"].tap()
+      XCTAssertEqual(app.buttons["memory.tile.0"].label, "Revealed star, card 1")
+    case .chessWhite, .chessBlack:
+      let square = fixture == .chessWhite ? "g6" : "b3"
+      app.buttons["chess.square.\(square)"].tap()
+      XCTAssertTrue(app.staticTexts["chess.selection"].label.contains(square))
+    case .bubble:
+      let aim = app.otherElements["bubble.directAim"]
+      aim.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.2)).tap()
+      XCTAssertNotEqual(aim.value as? String, "Aim: 0 degrees")
+      XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     }
   }
 

@@ -57,3 +57,7 @@ GameGenerationComposition explicitly selects mini only for the existing DEBUG en
 ## Branded launch canvas #181
 
 Owner-approved #181 keeps the selected Card S introduction and its #91 lifetime unchanged. The root fills the window with the `LaunchCanvas` named color, including safe areas, underneath loading, failure, and ready states. It matches the static system launch background and current shared palette (light `#F5F3FF`, dark `#101427`). Keep preparation and input independent of the introduction. Loading/error titles use rounded system type; Retry uses the existing accessible prominent button style. Before changing launch assets, configuration, or timing, read [launch guidance](../../docs/design/LAUNCH.md).
+
+## First meaningful interaction #185
+
+The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.

@@ -24,6 +24,7 @@ final class BubbleFlowTests: XCTestCase {
     reveal(app.buttons["bubble.replay"], in: app)
     XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height + 0.001, 44)
     XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.width + 0.001, 44)
+    XCTAssertTrue(app.buttons["bubble.replay"].isEnabled)
     app.buttons["bubble.replay"].tap()
     XCTAssertFalse(app.staticTexts["bubble.outcome"].exists)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
@@ -47,6 +48,7 @@ final class BubbleFlowTests: XCTestCase {
     reveal(app.buttons["bubble.replay"], in: app)
     XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height + 0.001, 44)
     XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.width + 0.001, 44)
+    XCTAssertTrue(app.buttons["bubble.replay"].isEnabled)
     app.buttons["bubble.replay"].tap()
     XCTAssertFalse(app.staticTexts["bubble.outcome"].exists)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
@@ -65,9 +67,9 @@ final class BubbleFlowTests: XCTestCase {
     XCTAssertFalse(app.buttons["bubble.fire"].isEnabled)
     app.nextFeedCard()
     app.previousFeedCard()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 5))
     XCTAssertTrue(app.buttons["bubble.fire"].exists)
-    XCTAssertFalse(app.buttons["bubble.fire"].isEnabled)
+    XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
     start(app)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     // Finishing a fresh current shot also proves the old animation never commits into this attempt.
@@ -108,8 +110,8 @@ final class BubbleFlowTests: XCTestCase {
     XCTAssertEqual(app.selectedFeedCardID, position)
     app.nextFeedCard()
     app.previousFeedCard()
-    reveal(app.buttons["game.start"], in: app)
-    XCTAssertTrue(app.buttons["game.start"].isHittable)
+    reveal(app.buttons["bubble.fire"], in: app)
+    XCTAssertTrue(app.buttons["bubble.fire"].isHittable)
   }
 
   @MainActor
@@ -199,7 +201,7 @@ final class BubbleFlowTests: XCTestCase {
       withVelocity: .fast, thenHoldForDuration: 0.1)
     waitForPosition("sample-news-garden", in: app)
     app.previousFeedCard()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
   }
 
@@ -216,7 +218,7 @@ final class BubbleFlowTests: XCTestCase {
     XCTAssertFalse(app.sliders["bubble.aim"].isEnabled)
     XCUIDevice.shared.press(.home)
     app.activate()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 5))
     XCTAssertEqual(observedAim(in: app), "Aim: 0 degrees")
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     start(app)
@@ -247,9 +249,9 @@ final class BubbleFlowTests: XCTestCase {
     waitForPosition("sample-news-garden", in: app)
     pager.swipeDown(velocity: .fast)
     waitForPosition("sample-game-bubbleShooter", in: app)
-    XCTAssertTrue(app.buttons["game.start"].exists)
+    XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertTrue(app.buttons["bubble.fire"].exists)
-    XCTAssertFalse(app.buttons["bubble.fire"].isEnabled)
+    XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
     start(app)
     fire(app, aim: 0.5, expectedShots: 1)
   }
@@ -336,16 +338,21 @@ final class BubbleFlowTests: XCTestCase {
       + (slowShot ? ["-sidequest-bubble-slow-shot"] : [])
       + (largeText ? ["-sidequest-large-text"] : [])
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 5))
     XCTAssertTrue(app.staticTexts["Bubble shooter"].exists)
     XCTAssertTrue(app.buttons["bubble.fire"].exists)
-    XCTAssertFalse(app.buttons["bubble.fire"].isEnabled)
+    XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
     return app
   }
 
   @MainActor
   private func start(_ app: XCUIApplication) {
-    app.buttons["game.start"].tap()
+    let direct = app.otherElements["bubble.directAim"]
+    reveal(direct, in: app)
+    direct.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.2)).tap()
+    XCTAssertNotEqual(observedAim(in: app), "Aim: 0 degrees")
+    direct.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+    XCTAssertEqual(observedAim(in: app), "Aim: 0 degrees")
     XCTAssertTrue(app.otherElements["bubble.board"].waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
   }

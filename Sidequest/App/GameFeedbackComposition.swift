@@ -14,12 +14,12 @@ enum GameFeedbackComposition {
       {
         // Only presentation lifetime changes, so XCTest can observe real game outcomes reliably.
         return GameRuntime(
-          completed: completed,
+          completed: completed, activationPolicy: .firstInteraction,
           celebrationDelay: {
             try await Task.sleep(for: .seconds(10))
           })
       }
     #endif
-    return GameRuntime(completed: completed)
+    return GameRuntime(completed: completed, activationPolicy: .firstInteraction)
   }
 }

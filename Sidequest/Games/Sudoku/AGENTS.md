@@ -30,7 +30,7 @@ Reserve the natural size of all instruction, conflict, and solved status message
 
 ## Visible inactive boards #88
 
-Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../../docs/GAME_PREVIEWS.md).
+Render the same frozen initial board in preview and play. Under #185, the first valid game action starts through the shared runtime and applies that same action; appearance and scrolling stay inactive. Preserve hidden answers, reset/completion, and the empty static chrome reservation. Before changing this boundary, read [preview guidance](../../../docs/GAME_PREVIEWS.md).
 
 ## Vivid presentation and contained motion #124
 
@@ -78,3 +78,7 @@ Accessibility-size numbers use three columns for1–9 and a full-width Clear row
 ### Source-bound standard validation
 
 At `49b3db9c587d5f9964be5ac8117fe5cb74e7be24`, root-owned Debug compilation passed in 17.678 seconds and all three focused standard UI flows passed in 172.447 seconds. The flows cover normal overview/primary-control containment, inert start, conflict/correction/clear/reset, actual twelve-entry completion and quiet revisit, and largest-text owned scrolling with full-size Clear/reentry and stable frames. Actual screenshots show opaque dark given digits and the readable three-column/full-width Clear treatment. The owned simulator was shut down and deleted. These are simulator/source results; exact 375-point final-source execution, device/VoiceOver, difficulty and release claims require their own evidence. Final-head 375-point normal/largest-text checks, exact-head CI and fresh full review passed before PR172 merged; see [delivered refinement evidence](../../../docs/INSTALL.md#verified-source-refinements-october-5). The real completion run above remains earlier-source evidence, not a claimed final-head rerun.
+
+## First meaningful interaction #185
+
+The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.

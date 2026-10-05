@@ -6,15 +6,13 @@ final class EndlessFlowTests: XCTestCase {
     let app = launch()
     app.waitForFeedCard(gameID(0))
     XCTAssertTrue(app.buttons["sudoku.cell.0"].exists)
-    XCTAssertFalse(app.buttons["sudoku.cell.0"].isEnabled)
-    app.buttons["game.start"].tap()
+    XCTAssertTrue(app.buttons["sudoku.cell.0"].isEnabled)
     app.buttons["sudoku.cell.0"].tap()
     app.buttons["sudoku.number.3"].tap()
     XCTAssertEqual(app.buttons["sudoku.cell.0"].value as? String, "3")
     app.nextFeedCard()
     app.previousFeedCard()
-    XCTAssertTrue(app.buttons["game.start"].exists)
-    app.buttons["game.start"].tap()
+    XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertEqual(app.buttons["sudoku.cell.0"].value as? String, "Empty")
     for _ in 0..<5 { app.nextFeedCard() }
     app.waitForFeedCard(newsID(0))
@@ -23,7 +21,7 @@ final class EndlessFlowTests: XCTestCase {
     XCTAssertFalse(app.staticTexts["feed.position"].exists)
     app.previousFeedCard()
     app.waitForFeedCard(gameID(4))
-    XCTAssertTrue(app.buttons["game.start"].exists)
+    XCTAssertFalse(app.buttons["game.start"].exists)
     app.terminate()
   }
 
@@ -31,16 +29,14 @@ final class EndlessFlowTests: XCTestCase {
     let app = launch(extra: ["-sidequest-endless-slow-generation"])
     XCTAssertEqual(app.selectedFeedCardID, gameID(0))
     XCTAssertTrue(app.buttons["sudoku.cell.0"].exists)
-    XCTAssertFalse(app.buttons["sudoku.cell.0"].isEnabled)
-    app.buttons["game.start"].tap()
+    XCTAssertTrue(app.buttons["sudoku.cell.0"].isEnabled)
     let solution = [3, 4, 1, 2, 1, 2, 3, 4, 2, 3, 4, 1, 4, 1, 2, 3]
     let givens = [4, 5, 8, 15]
     app.buttons["sudoku.cell.0"].tap()
     app.buttons["sudoku.number.3"].tap()
     app.nextFeedCard()
     app.previousFeedCard()
-    XCTAssertTrue(app.buttons["game.start"].exists)
-    app.buttons["game.start"].tap()
+    XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertEqual(app.buttons["sudoku.cell.0"].value as? String, "Empty")
     for index in 0..<16 where !givens.contains(index) {
       reveal(app.buttons["sudoku.cell.\(index)"], in: app)
@@ -50,7 +46,6 @@ final class EndlessFlowTests: XCTestCase {
     }
     XCTAssertEqual(app.staticTexts["sudoku.status"].label, "Sudoku solved!")
     app.nextFeedCard()
-    app.buttons["game.start"].tap()
     // Seed104 freezes this original generated layout; no production layout is exposed to automation.
     for pair in [[0, 11], [1, 8], [2, 9], [3, 6], [4, 10], [5, 7]] {
       for index in pair {
@@ -60,7 +55,6 @@ final class EndlessFlowTests: XCTestCase {
     }
     XCTAssertTrue(app.staticTexts["memory.completed"].exists)
     app.nextFeedCard()
-    app.buttons["game.start"].tap()
     reveal(app.buttons["chess.square.g6"], in: app)
     app.buttons["chess.square.g6"].tap()
     app.buttons["chess.square.g7"].tap()
@@ -74,12 +68,11 @@ final class EndlessFlowTests: XCTestCase {
     let nearby = pager.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.47))
     origin.press(forDuration: 5, thenDragTo: nearby, withVelocity: .slow, thenHoldForDuration: 0.3)
     XCTAssertEqual(app.selectedFeedCardID, gameID(3))
-    XCTAssertTrue(app.buttons["game.start"].exists)
-    app.buttons["game.start"].tap()
+    XCTAssertFalse(app.buttons["game.start"].exists)
     solveGeneratedBubble(app)
     for _ in 0..<21 { app.nextFeedCard() }
     XCTAssertEqual(app.selectedFeedCardID, gameID(20))
-    XCTAssertTrue(app.buttons["game.start"].exists)
+    XCTAssertFalse(app.buttons["game.start"].exists)
     for _ in 0..<24 { app.previousFeedCard() }
     XCTAssertEqual(app.selectedFeedCardID, gameID(0))
     XCTAssertEqual(app.staticTexts["sudoku.status"].label, "Sudoku solved!")
@@ -97,12 +90,11 @@ final class EndlessFlowTests: XCTestCase {
     XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
     openLibrary(app)
     closeLibrary(app)
-    XCTAssertTrue(app.buttons["game.start"].exists)
-    app.buttons["game.start"].tap()
+    XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     XCUIDevice.shared.press(.home)
     app.activate()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts["foundation.title"].waitForExistence(timeout: 5))
     app.terminate()
   }
 
@@ -151,14 +143,14 @@ final class EndlessFlowTests: XCTestCase {
     importFile("Empty News", in: app)
     waitForMessage("Imported 0 news snapshots.", in: app)
     closeLibrary(app)
-    XCTAssertTrue(app.buttons["game.start"].exists)
+    XCTAssertFalse(app.buttons["game.start"].exists)
     for _ in 0..<17 { app.nextFeedCard() }
     app.waitForFeedCard(gameID(17))
     XCTAssertFalse(app.staticTexts["news.sample"].exists)
     app.terminate()
     app.launch()
     app.waitForFeedCard(gameID(0))
-    XCTAssertTrue(app.buttons["game.start"].exists)
+    XCTAssertFalse(app.buttons["game.start"].exists)
     for _ in 0..<5 { app.nextFeedCard() }
     app.waitForFeedCard(gameID(5))
     XCTAssertFalse(app.staticTexts["news.sample"].exists)
@@ -182,7 +174,7 @@ final class EndlessFlowTests: XCTestCase {
         XCTAssertTrue(app.links["news.source"].label.contains("fictional sample placeholder"))
       } else {
         app.waitForFeedCard(gameID(index - index / 6))
-        XCTAssertTrue(app.buttons["game.start"].exists)
+        XCTAssertFalse(app.buttons["game.start"].exists)
         XCTAssertFalse(app.staticTexts["news.sample"].exists)
       }
       if index < 23 { app.nextFeedCard() }
@@ -197,21 +189,21 @@ final class EndlessFlowTests: XCTestCase {
   func testLargestTextAndActualReduceMotionKeepEndlessPagingAndExplicitStartUsable() {
     SystemAccessibilitySupport.withReduceMotion {
       let app = launch(extra: ["-sidequest-large-text"])
-      for identifier in ["feed.news", "feed.navigation", "game.start"] {
+      for identifier in ["feed.news", "feed.navigation"] {
         XCTAssertTrue(app.buttons[identifier].isHittable)
         XCTAssertGreaterThanOrEqual(app.buttons[identifier].frame.width + 0.001, 44)
         XCTAssertGreaterThanOrEqual(app.buttons[identifier].frame.height + 0.001, 44)
       }
       for _ in 0..<20 { app.nextFeedCard() }
       XCTAssertEqual(app.selectedFeedCardID, gameID(17))
-      app.buttons["game.start"].tap()
       reveal(app.buttons["memory.tile.0"], in: app)
       XCTAssertTrue(app.buttons["memory.tile.0"].isHittable)
       app.buttons["memory.tile.0"].tap()
       XCTAssertTrue(app.buttons["memory.tile.0"].label.hasPrefix("Revealed"))
       app.nextFeedCard()
       app.previousFeedCard()
-      XCTAssertTrue(app.buttons["game.start"].isHittable)
+      XCTAssertEqual(app.buttons["memory.tile.0"].label, "Hidden card 1")
+      XCTAssertTrue(app.buttons["memory.tile.0"].isEnabled)
       app.terminate()
     }
   }
@@ -221,7 +213,6 @@ final class EndlessFlowTests: XCTestCase {
     for _ in 0..<3 { app.nextFeedCard() }
     app.waitForFeedCard(gameID(3))
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-    app.buttons["game.start"].tap()
     reveal(app.buttons["bubble.fire"], in: app)
     app.buttons["bubble.fire"].tap()
     waitForBubbleShots(1, in: app)
@@ -229,9 +220,8 @@ final class EndlessFlowTests: XCTestCase {
     app.nextFeedCard()
     app.previousFeedCard()
     app.waitForFeedCard(gameID(3))
-    XCTAssertTrue(app.buttons["game.start"].exists)
+    XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-    app.buttons["game.start"].tap()
     solveGeneratedBubble(app)
     let attachment = XCTAttachment(screenshot: app.screenshot())
     attachment.name = "generated-bubble-three-shot-completion"
@@ -306,7 +296,7 @@ final class EndlessFlowTests: XCTestCase {
         "-sidequest-endless-fixtures",
       ] + (slowShot ? ["-sidequest-bubble-slow-shot"] : []) + extra
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 10))
+    XCTAssertTrue(app.staticTexts["foundation.title"].waitForExistence(timeout: 10))
     return app
   }
   private func gameID(_ sequence: Int) -> String {

@@ -48,12 +48,12 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 72 | 6,255 |
-| Unit tests | 34 | 4,704 |
-| UI tests | 17 | 2,953 |
-| **Total** | **123** | **13,912** |
+| App | 72 | 6,342 |
+| Unit tests | 35 | 4,843 |
+| UI tests | 18 | 3,050 |
+| **Total** | **125** | **14,235** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+11,466 / −617 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+11,812 / −640 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
@@ -121,3 +121,5 @@ Committed game feedback adds restrained interaction haptics for Sudoku entries, 
 Original Memory faces and both-side King/Queen silhouettes are implemented in native source through [PR #173](https://github.com/devofthings/sidequest/pull/173); [game artwork guidance](docs/design/NATIVE_GAME_ART.md) records the design. Its source-bound checks are separate from the final combined Sudoku verification; the private Figma sheet alone does not verify app rendering.
 
 Current source follow-up #170 exposes standard 9×9 Sudoku with digits 1–9, compact overview and full-size coordinate alternatives; generated cards use at most 12 editable cells as a bounded baseline, without difficulty labels. Historical mini fixtures and release evidence remain unchanged. Source49b3db9 passed all three focused native flows; final-head 375-point normal/largest checks, fresh review and exact-head CI passed before [PR #172](https://github.com/devofthings/sidequest/pull/172) merged. See [delivered refinement evidence](docs/INSTALL.md#verified-source-refinements-october-5) and [Sudoku](docs/SUDOKU.md).
+
+The owner selected first-interaction activation under [#185](https://github.com/devofthings/sidequest/issues/185): the first valid game action starts and applies immediately. Implementation and verification remain pending; see [the policy](docs/GAME_PREVIEWS.md).

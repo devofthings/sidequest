@@ -36,7 +36,7 @@ Keep the selected #171 artwork in its fixed 48-point region inside each minimum 
 
 ## Visible inactive boards #88
 
-Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../../docs/GAME_PREVIEWS.md).
+Render the same frozen initial board in preview and play. Under #185, the first valid game action starts through the shared runtime and applies that same action; appearance and scrolling stay inactive. Preserve hidden answers, reset/completion, and the empty static chrome reservation. Before changing this boundary, read [preview guidance](../../../docs/GAME_PREVIEWS.md).
 
 ## Vivid presentation and contained motion #124
 
@@ -59,3 +59,7 @@ The lead selects #159's six original vector faces under the owner's autonomous #
 Readiness question review: Native Shapes are a delegated translation choice supported by the original editable SVG and existing filesystem-synchronized discovery; no conversion tool or asset dependency is needed. Rules expose the same six enum values, so artwork mapping cannot change pair matching. Existing labels explicitly hide answer names before reveal. Validation requires strict lint, exact-head CI, fresh independent review and focused normal/dark/small/largest running-app checks; this record is source readiness, not rendered evidence.
 
 Use the local opaque-label board ButtonStyle to retain full artwork and coordinate contrast in preview, matched, and completed states. Native PlainButtonStyle was observed dimming these disabled labels in actual simulator captures. Keep `.disabled` eligibility and controller/runtime input guards unchanged; rendering at full opacity never enables interaction. The style adds no press transform, animation, layout or state. The original #171 six focused native flows passed before this correction. Corrected final-head small/dark and largest-text checks also passed; see [delivered refinement evidence](../../../docs/INSTALL.md#verified-source-refinements-october-5). Physical-device appearance remains unverified.
+
+## First meaningful interaction #185
+
+The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.

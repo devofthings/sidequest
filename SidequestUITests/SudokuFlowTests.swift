@@ -5,8 +5,8 @@ final class SudokuFlowTests: XCTestCase {
   func testTapStartsOnlyAndCorrectionsResetAfterSkipping() {
     let app = launch()
     XCTAssertTrue(app.buttons["sudoku.cell.2"].exists)
-    XCTAssertFalse(app.buttons["sudoku.cell.2"].isEnabled)
-    app.buttons["game.start"].tap()
+    XCTAssertTrue(app.buttons["sudoku.cell.2"].isEnabled)
+    XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertEqual(app.buttons["sudoku.cell.2"].value as? String, "Empty")
     XCTAssertFalse(app.buttons["sudoku.number.3"].isEnabled)
     app.buttons["sudoku.cell.2"].tap()
@@ -20,8 +20,7 @@ final class SudokuFlowTests: XCTestCase {
     app.buttons["sudoku.number.3"].tap()
     app.nextFeedCard()
     app.previousFeedCard()
-    XCTAssertTrue(app.buttons["game.start"].exists)
-    app.buttons["game.start"].tap()
+    XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertEqual(app.buttons["sudoku.cell.2"].value as? String, "Empty")
     XCTAssertFalse(app.buttons["sudoku.number.3"].isEnabled)
   }
@@ -29,7 +28,7 @@ final class SudokuFlowTests: XCTestCase {
   @MainActor
   func testNormalControlsHaveFullTouchAreasAndCellCornersSelect() {
     let app = launch()
-    app.buttons["game.start"].tap()
+    app.buttons["sudoku.cell.2"].tap()
     let cell = app.buttons["sudoku.cell.2"]
     reveal(cell, in: app, upwards: true)
     XCTAssertGreaterThanOrEqual(cell.frame.width + 0.001, 44)
@@ -57,7 +56,7 @@ final class SudokuFlowTests: XCTestCase {
   @MainActor
   func testSolvedBoardRemainsOnCardAndSurvivesRevisit() {
     let app = launch(successFeedback: true)
-    app.buttons["game.start"].tap()
+    app.buttons["sudoku.cell.2"].tap()
     for (cell, value) in [(2, 3), (4, 3), (7, 2), (8, 2), (11, 3), (13, 3), (14, 2)] {
       app.buttons["sudoku.cell.\(cell)"].tap()
       app.buttons["sudoku.number.\(value)"].tap()
@@ -77,8 +76,8 @@ final class SudokuFlowTests: XCTestCase {
   @MainActor
   func testLargestTextKeepsBoardAndInputUsable() {
     let app = launch(largeText: true)
-    XCTAssertTrue(app.buttons["game.start"].isHittable)
-    app.buttons["game.start"].tap()
+    XCTAssertTrue(app.buttons["sudoku.cell.2"].isHittable)
+    app.buttons["sudoku.cell.2"].tap()
     let cell = app.buttons["sudoku.cell.2"]
     reveal(cell, in: app, upwards: true)
     XCTAssertTrue(cell.isHittable)
@@ -129,7 +128,7 @@ final class SudokuFlowTests: XCTestCase {
       ["-sidequest-sudoku-test"] + (largeText ? ["-sidequest-large-text"] : [])
       + (successFeedback ? ["-sidequest-success-feedback-test"] : [])
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.buttons["sudoku.cell.2"].waitForExistence(timeout: 5))
     return app
   }
 }
