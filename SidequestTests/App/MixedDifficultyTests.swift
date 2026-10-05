@@ -128,6 +128,89 @@ final class MixedDifficultyTests: XCTestCase {
     feed.retire()
   }
 
+  func testInvalidReplenishmentPreservesCursorCadenceAndRetryUsesSameSeed() async throws {
+    let historical = try await ChessPuzzleLoader.bundled()
+    let catalog = try await ChessPuzzleLoader.bundledCatalog()
+    let failure = MixedBatchFailure()
+    let sessionID = UUID()
+    let composition = try await FeedComposition.endless(
+      news: DemoNewsLoader.bundled(), chessPuzzles: historical + catalog, sessionID: sessionID,
+      seed: 201, ordered: true,
+      prepareBatch: { id, sequence, seed, puzzles, ordered in
+        let batch = try await GeneratedGameBatch.prepare(
+          sessionID: id, sequence: sequence,
+          seed: seed, chessPuzzles: puzzles, ordered: ordered, mixedDifficulties: true)
+        if await failure.reject(sequence: sequence) {
+          let first = batch.descriptors[0]
+          let invalid = GeneratedGameDescriptor(
+            card: GameCard(id: first.card.id, kind: .memory, difficulty: first.card.difficulty),
+            challenge: first.challenge)
+          return GeneratedGameBatch(
+            descriptors: [invalid] + Array(batch.descriptors.dropFirst()),
+            nextSequence: batch.nextSequence)
+        }
+        return batch
+      })
+    let feed = try XCTUnwrap(composition.controller)
+    let originalCards = feed.cards
+    let originalIDs = Set(composition.generatedDescriptors.keys)
+    feed.setSceneActive(true)
+    for _ in 0..<4 { feed.next() }
+    let deadline = ContinuousClock.now + .seconds(5)
+    while feed.replenishmentMessage == nil, ContinuousClock.now < deadline {
+      try await Task.sleep(for: .milliseconds(10))
+    }
+    XCTAssertNotNil(feed.replenishmentMessage)
+    XCTAssertEqual(feed.cards, originalCards)
+    XCTAssertEqual(Set(composition.generatedDescriptors.keys), originalIDs)
+    XCTAssertEqual(feed.selectedIndex, 4)
+    feed.retryReplenishment?()
+    let retryDeadline = ContinuousClock.now + .seconds(5)
+    while feed.count == originalCards.count, ContinuousClock.now < retryDeadline {
+      try await Task.sleep(for: .milliseconds(10))
+    }
+    XCTAssertEqual(feed.count, 19)
+    XCTAssertEqual(Array(feed.cards.prefix(originalCards.count)), originalCards)
+    XCTAssertNil(feed.replenishmentMessage)
+    let news = feed.cards.compactMap { card -> FeedNewsCard? in
+      if case .news(let value) = card { return value }
+      return nil
+    }
+    XCTAssertEqual(news.count, 3)
+    let expected = try await GeneratedGameBatch.prepare(
+      sessionID: sessionID,
+      sequence: 8, seed: 201, chessPuzzles: historical + catalog, ordered: true,
+      mixedDifficulties: true)
+    let actual = composition.generatedDescriptors.values.filter {
+      $0.card.id.rawValue.hasSuffix("-8")
+    }.first
+    XCTAssertEqual(actual?.card.difficulty, expected.descriptors[0].card.difficulty)
+    if case .certifiedSudoku(let actualChallenge)? = actual?.challenge,
+      case .certifiedSudoku(let expectedChallenge) = expected.descriptors[0].challenge
+    {
+      XCTAssertEqual(actualChallenge, expectedChallenge)
+    } else {
+      XCTFail("Retry must retain the certified challenge and cursor")
+    }
+    feed.retire()
+  }
+
+  func testCanceledMixedPreparationCannotPublishAnUncertifiedBatch() async throws {
+    let historical = try await ChessPuzzleLoader.bundled()
+    let catalog = try await ChessPuzzleLoader.bundledCatalog()
+    let task = Task {
+      try Task.checkCancellation()
+      return try await GeneratedGameBatch.prepare(
+        sessionID: UUID(), sequence: 0, seed: 201,
+        chessPuzzles: historical + catalog, mixedDifficulties: true)
+    }
+    task.cancel()
+    do {
+      _ = try await task.value
+      XCTFail("Canceled preparation must throw")
+    } catch { XCTAssertTrue(error is CancellationError) }
+  }
+
   func testInvalidDescriptorAndWrongCompletedLayoutAreRejectedWithoutFallback() throws {
     let challenge = MemoryChallenge(difficulty: .easy, seed: 201)
     let id = try CardID("classified-memory")
@@ -165,7 +248,7 @@ final class MixedDifficultyTests: XCTestCase {
 
   func testRejectedWindowKeepsSelectionOwnersAndAllowsSameNavigationRetry() throws {
     let cards = try (0..<4).map { index in
-      FeedCard.game(GameCard(id: CardID("transaction-\(index)"), kind: .memory))
+      FeedCard.game(GameCard(id: try CardID("transaction-\(index)"), kind: .memory))
     }
     let first = GameRuntime(activationPolicy: .firstInteraction)
     let feed = FeedController(cards: cards, runtimes: [cards[0].id: first], isEndless: true)
@@ -188,5 +271,14 @@ final class MixedDifficultyTests: XCTestCase {
     XCTAssertFalse(first.isVisible)
     XCTAssertEqual(first.phase, .preview)
     feed.retire()
+  }
+}
+
+private actor MixedBatchFailure {
+  private var hasRejected = false
+  func reject(sequence: Int) -> Bool {
+    guard sequence > 0, !hasRejected else { return false }
+    hasRejected = true
+    return true
   }
 }

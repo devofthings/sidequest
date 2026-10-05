@@ -58,7 +58,8 @@ enum PreparedGameReconstruction {
         && restored.puzzle.acceptedMoves == puzzle.acceptedMoves
     case (.bubble(let challenge), .bubble(let game, let aim, _)):
       valid =
-        game.outcome != .playing && aim.isFinite && (-65...65).contains(aim)
+        game.outcome != .playing && aim.isFinite
+        && abs(aim) <= BubbleGeometry.maximumAngle * 180 / .pi
         && game.hasSameChallenge(as: challenge.game)
     default: valid = false
     }
