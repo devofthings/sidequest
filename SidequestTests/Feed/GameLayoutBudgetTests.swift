@@ -11,6 +11,13 @@ final class GameLayoutBudgetTests: XCTestCase {
     XCTAssertEqual(budget.squareBoardExtent(chromeHeight: 200, columns: 4), 224)
   }
 
+  func testFirstInteractionCardsUseSpaceFreedByAbsentStartChrome() {
+    let budget = GameLayoutBudget(
+      viewport: CGSize(width: 375, height: 579), chromeHeight: 0, chromeSpacing: 0)
+    XCTAssertEqual(budget.width, 343)
+    XCTAssertEqual(budget.height, 547)
+  }
+
   func testUnfittableBudgetPreservesTargetsInsteadOfForcingFit() {
     let budget = GameLayoutBudget(viewport: CGSize(width: 140, height: 100), chromeHeight: 300)
     XCTAssertEqual(budget.height, 0)

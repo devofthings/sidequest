@@ -19,10 +19,12 @@ final class FoundationLaunchTests: XCTestCase {
 
     let heading = app.staticTexts["foundation.title"]
     XCTAssertTrue(heading.waitForExistence(timeout: 10))
-    XCTAssertEqual(heading.label, fixture.heading)
+    XCTAssertTrue(fixture.headings.contains(heading.label))
+    XCTAssertTrue(app.selectedFeedCard.waitForExistence(timeout: 10))
+    XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
   }
 
   private struct Fixture: Decodable {
-    let heading: String
+    let headings: [String]
   }
 }

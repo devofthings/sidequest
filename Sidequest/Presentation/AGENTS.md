@@ -28,3 +28,5 @@ For #138, the shared native control marker carries touch ownership only. It lets
 ## Selected private design translation #182
 
 The owner's October 5 request selects the saved private Foundations/News visual direction for bounded native refinement; see [the adoption record](../../docs/design/PRIVATE_FIGMA.md#selected-shared-native-refinement-182). `SidequestButtonStyle` accepts an optional accent fill from existing tokens. Its default remains unchanged for all existing game controls; accent fills use dark ink and an outline in both appearances, without changing eligibility, target size, or motion. Preserve existing palette values and the 44-point header controls. Native rendering remains a separate verification gate.
+
+For #194, GameLayoutBudget subtracts 32 points of outer padding and an explicit chrome gap (20 by default for legacy start chrome; zero for real first-interaction cards). Absent chrome consumes no height. Header changes never derive budget from game state.

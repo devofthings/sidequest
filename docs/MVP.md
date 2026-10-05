@@ -89,3 +89,7 @@ Approved #162 presentation child #170 adds standard9×9 production cards, digits
 ## First-interaction activation #185
 
 On October 5, the owner said "tap to play is annoying" and selected "The first game interaction also starts it." This supersedes #160's inert initiating tap and visible hint. Shared runtime eligibility, manual paging, skip/reset and quiet completed revisits remain. Production and every real-game fixture use the selected policy; the existing DEBUG placeholder demo retains its separately documented manual lifecycle contract. Implementation and native proof remain pending until the #185 PR passes review and exact-head verification.
+
+## Selected-game header #194
+
+The owner approved replacing the top-bar Sidequest name with the current game's name, removing the duplicate headline inside the game card, and reclaiming its space for play. Short game instructions already precede each board. News article headlines stay visible; news/empty cards retain the Sidequest top-bar fallback. Real-game empty start chrome is removed while legacy Debug explicit-start controls stay supported. Native validation and independent review belong to the PR; this acceptance does not certify delivery or authorize a release.
