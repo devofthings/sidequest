@@ -114,4 +114,6 @@ Review integration #193/#191: celebration geometry checks measure the persistent
 
 ## Selected-game header #194
 
-FoundationLaunch uses the deterministic real Sudoku route and its Sudoku heading fixture. FirstInteractionFlowTests requires one accessible selected-game heading for every real game, a stable header vertical position/navigation frame across input and paging, and the existing reset outcomes. Hidden header size samples must never create duplicate accessible names. Native execution remains pending until actual results are recorded.
+FoundationLaunch uses unflagged normal startup and a fixture of permitted selected-game/app headings; it requires a settled card and reachable navigation. FirstInteractionFlowTests requires one accessible selected-game heading for every real game, a stable header vertical position/navigation frame across input and paging, and the existing reset outcomes. Hidden header size samples must never create duplicate accessible names. Native execution remains pending until actual results are recorded.
+
+For #194, the required Foundation launch case must exercise unflagged normal production preparation, not a game fixture. Its title fixture enumerates permitted dynamic headings; require settled card existence and reachable navigation after preparation.

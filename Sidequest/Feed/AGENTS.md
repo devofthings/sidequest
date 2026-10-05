@@ -74,7 +74,7 @@ Keep the header limited to app/success identity and More options, with no reserv
 
 ## Selected game header #194
 
-The owner approved replacing the top-bar Sidequest title with the settled selected game's name and removing the duplicate in-card game heading. News/empty cards retain Sidequest in the top bar and news keeps its article headline. Measure all game/app names at the actual header width, hidden from accessibility, alongside the existing success badge; paging and celebration must not resize the viewport. Real first-interaction cards omit the obsolete empty start row; legacy explicit-start fixtures retain their measured control. Existing game instructions stay above boards and feedback reservations stay owned by each game.
+The owner approved replacing the top-bar Sidequest title with the settled selected game's name and removing the duplicate in-card game heading. News/empty cards retain Sidequest in the top bar and news keeps its article headline. Measure all game/app names at the actual header width, hidden from accessibility; the success badge stays in the game viewport; paging and celebration must not resize the viewport. Real first-interaction cards omit the obsolete empty start row; legacy explicit-start fixtures retain their measured control. Existing game instructions stay above boards and feedback reservations stay owned by each game.
 
 Agent-grill self-assessment (side-conversation author; no delegated agent):
 
@@ -83,3 +83,5 @@ Agent-grill self-assessment (side-conversation author; no delegated agent):
 | Which title owns the selected name? | Fact/technical choice | FeedView already owns settled selection and success chrome. Use selectedGame.kind.title; remove GameCardLayout's title. | Native all-game heading uniqueness and paging frames. |
 | Can we remove the empty start reservation? | Technical choice | First-interaction cards have no visible start content; retain it only for explicitStart fixtures. GameLayoutBudget subtracts actual chrome/gap plus padding. | Unit budget check and actual board stability tests. |
 | Must instructions move? | Fact | All four game presentations already place instructions before their boards. Keep game-owned feedback below. | Native gameplay/layout checks; no instruction rewrite. |
+
+Review correction #194: keep the selected game heading accessible and visible during success. Preserve the merged #193 viewport-owned celebration; it must not cover or replace this sole heading. The required launch smoke remains unflagged normal startup, accepts legitimate selected-game/app titles, and requires a settled feed card and reachable navigation.
