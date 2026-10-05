@@ -9,6 +9,8 @@ struct StartupIntroductionView<Content: View>: View {
 
   var body: some View {
     content
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .background(Color("LaunchCanvas").ignoresSafeArea())
       .overlay {
         if introduction.isShowing, !reduceMotion {
           Image("StartupLogo")

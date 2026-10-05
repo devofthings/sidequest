@@ -13,3 +13,7 @@ Keep only original assets and fictional, redistributable samples here. `sample-n
 ## Startup logo #91
 
 `Assets.xcassets/StartupLogo.imageset/CardS.png` is a byte-identical copy of the selected `AppIcon.appiconset/AppIcon.png`, exposed as a normal image for the brief decorative startup introduction. Preserve that provenance when changing the selected artwork; do not redesign or rerender it independently. [App guidance](../App/AGENTS.md) owns introduction timing, cancellation, accessibility, and Reduce Motion behavior.
+
+## Launch canvas #181
+
+`LaunchCanvas.colorset` supplies the static system launch and SwiftUI root background: Any `#F5F3FF`, Dark `#101427`, matching the current shared palette. Update both appearances and the shared palette together if that design decision changes. Preserve selected AppIcon/StartupLogo bytes. [Launch guidance](../../docs/design/LAUNCH.md) owns rationale and compiled-resource checks.
