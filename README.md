@@ -111,4 +111,4 @@ The owner-authorized [compact-game and harder Bubble follow-up](docs/POCKET_BUBB
 
 The [private Figma refinement](docs/design/PRIVATE_FIGMA.md) contains proposed game/news state boards and motion/accessibility storyboards from #157. It is a visual proposal following personal-test feedback, with editable links and actual Figma screenshots; it adds no application behavior or verified animation.
 
-[Proposed icon family](docs/design/ICONS.md) includes original Chess pieces, Memory artwork, and existing app-action examples in private Figma. Native asset adoption remains pending.
+[Proposed icon family](docs/design/ICONS.md) includes original Chess pieces, Memory artwork, and existing app-action examples in private Figma. The lead selected Memory and current Chess artwork for bounded #171 implementation under the existing autonomous design authorization; native adoption remains pending.
