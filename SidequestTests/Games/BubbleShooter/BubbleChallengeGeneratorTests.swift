@@ -12,6 +12,7 @@ final class BubbleChallengeGeneratorTests: XCTestCase {
           ? BubbleChallengeGenerator.fallback(using: &random)
           : BubbleChallengeGenerator.generate(using: &random)
         var game = challenge.game
+        let pending = try game.traceShot(angleRadians: challenge.winningAngles[0] * .pi / 180)
         XCTAssertTrue(game.board.keys.allSatisfy { $0.row < 2 })
         XCTAssertTrue((6...9).contains(game.board.count))
         XCTAssertEqual(Set(game.board.filter { $0.key.row == 0 }.values).count, 3)
@@ -26,7 +27,24 @@ final class BubbleChallengeGeneratorTests: XCTestCase {
         }
         XCTAssertEqual(game.shotsFired, 3)
         game.reset()
-        XCTAssertEqual(game, challenge.game)
+        XCTAssertEqual(game.board, challenge.game.board)
+        XCTAssertEqual(game.nextColor, challenge.game.nextColor)
+        XCTAssertEqual(game.shotsFired, 0)
+        XCTAssertEqual(game.outcome, .playing)
+        XCTAssertThrowsError(try game.commitShot(pending)) { error in
+          XCTAssertEqual(error as? BubbleShotError, .staleShot)
+        }
+        var fresh = challenge.game
+        for angle in challenge.winningAngles {
+          XCTAssertEqual(
+            try game.fire(angleRadians: angle * .pi / 180),
+            try fresh.fire(angleRadians: angle * .pi / 180))
+          XCTAssertEqual(game.board, fresh.board)
+          XCTAssertEqual(game.nextColor, fresh.nextColor)
+          XCTAssertEqual(game.shotsFired, fresh.shotsFired)
+          XCTAssertEqual(game.outcome, fresh.outcome)
+        }
+        XCTAssertEqual(game.outcome, .won)
       }
     }
   }
