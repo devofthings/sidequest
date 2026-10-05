@@ -26,7 +26,7 @@ final class EndlessFeedTests: XCTestCase {
       let challenge = try BubbleChallengeGenerator.generate(using: &random)
       var game = challenge.game
       XCTAssertFalse(game.board.isEmpty)
-      XCTAssertLessThanOrEqual(challenge.winningAngles.count, BubbleShooterGame.shotLimit)
+      XCTAssertEqual(challenge.winningAngles.count, 3)
       for angle in challenge.winningAngles { _ = try game.fire(angleRadians: angle * .pi / 180) }
       XCTAssertEqual(game.outcome, .won)
       game.reset()
@@ -58,8 +58,8 @@ final class EndlessFeedTests: XCTestCase {
       if !distinct.contains(challenge) { distinct.append(challenge) }
     }
     XCTAssertGreaterThan(distinct.count, 10)
-    XCTAssertEqual(BubbleChallengeGenerator.attemptLimit, 16)
-    XCTAssertEqual(BubbleChallengeGenerator.anglesPerAttempt, 121)
+    XCTAssertEqual(BubbleChallengeGenerator.attemptLimit, 4)
+    XCTAssertEqual(BubbleChallengeGenerator.witnessShotsPerAttempt, 3)
   }
 
   func testThousandsOfAdvancesKeepStableHistoryAndAtMostThreeAdapters() async throws {
@@ -346,7 +346,7 @@ final class EndlessFeedTests: XCTestCase {
     }
     bubble.runtime.start()
     let initial = bubble.game.board
-    // Seed104's -56° path loses after six actual physics/rule commits.
+    // Repeated -56° shots exercise a non-winning path under the real rules and eight-shot bound.
     for _ in 0..<8 where bubble.game.outcome == .playing {
       bubble.aim(degrees: -56)
       XCTAssertTrue(bubble.fire())

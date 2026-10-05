@@ -485,6 +485,15 @@
         "Sidequest/App/",
         "Sidequest.xcodeproj/"
       ]
+    },
+    "SidequestUITests/EndlessFlowTests/testGeneratedBubbleNeedsThreeShotsAndResetRestoresTheChallenge": {
+      "lower_layer": "Pure structural and witness tests prove three required ceiling colors; native flow verifies production generation, actual aiming/fire, wrong-attempt reset and retained multi-shot completion.",
+      "paths": [
+        "SidequestUITests/EndlessFlowTests.swift",
+        "Sidequest/Games/BubbleShooter/",
+        "Sidequest/App/GeneratedGameBatch.swift",
+        "Sidequest/Feed/"
+      ]
     }
   },
   "required": [
