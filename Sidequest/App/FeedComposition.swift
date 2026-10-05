@@ -263,14 +263,29 @@ final class FeedComposition {
             games[game.id] = .memory(MemoryController(runtime: runtime))
           #endif
         case .chess:
-          let fixtureID: String
+          let historicalFixtureID: String
           switch game.id.rawValue {
-          case "sample-game-chess-white": fixtureID = "queen-corner-white"
-          case "sample-game-chess-black": fixtureID = "queen-corner-black"
+          case "sample-game-chess-white": historicalFixtureID = "queen-corner-white"
+          case "sample-game-chess-black": historicalFixtureID = "queen-corner-black"
           default: throw GameCompositionError.missingChessFixture(game.id.rawValue)
           }
+          #if DEBUG
+            let fixtureID: String
+            let arguments = CommandLine.arguments
+            if let index = arguments.firstIndex(of: "-sidequest-chess-catalog") {
+              guard arguments.indices.contains(index + 1) else {
+                throw GameCompositionError.missingChessFixture("catalog selection")
+              }
+              fixtureID = arguments[index + 1]
+            } else {
+              fixtureID = historicalFixtureID
+            }
+          #else
+            let fixtureID = historicalFixtureID
+          #endif
           guard
-            let puzzle = chessPuzzles.first(where: { $0.id == fixtureID })
+            let puzzle = chessPuzzles.first(where: { $0.id == fixtureID }),
+            puzzle.sideToMove == (game.id.rawValue == "sample-game-chess-white" ? .white : .black)
           else {
             throw GameCompositionError.missingChessFixture(fixtureID)
           }

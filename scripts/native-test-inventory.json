@@ -646,6 +646,36 @@
         "SidequestUITests/NewsPresentationTests.swift",
         "Sidequest/Resources/"
       ]
+    },
+    "SidequestUITests/VariedChessFlowTests/testThreeSquareBothColorsStartResetAndCompletedRevisit": {
+      "lower_layer": "Validated original catalog/domain/controller tests cover standard legal moves, metadata, and lifecycle; actual 3×3/5×5 rendering, full coordinate controls, and largest text require this focused native flow.",
+      "paths": [
+        "Sidequest/Games/Chess/",
+        "Sidequest/Resources/chess-challenges.json",
+        "Sidequest/App/",
+        "SidequestUITests/VariedChessFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift"
+      ]
+    },
+    "SidequestUITests/VariedChessFlowTests/testFiveSquareBothColorsFitAndCoordinateMoves": {
+      "lower_layer": "Validated original catalog/domain/controller tests cover standard legal moves, metadata, and lifecycle; actual 3×3/5×5 rendering, full coordinate controls, and largest text require this focused native flow.",
+      "paths": [
+        "Sidequest/Games/Chess/",
+        "Sidequest/Resources/chess-challenges.json",
+        "Sidequest/App/",
+        "SidequestUITests/VariedChessFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift"
+      ]
+    },
+    "SidequestUITests/VariedChessFlowTests/testLargestFiveSquareBlackCoordinatesAndRevisit": {
+      "lower_layer": "Validated original catalog/domain/controller tests cover standard legal moves, metadata, and lifecycle; actual 3×3/5×5 rendering, full coordinate controls, and largest text require this focused native flow.",
+      "paths": [
+        "Sidequest/Games/Chess/",
+        "Sidequest/Resources/chess-challenges.json",
+        "Sidequest/App/",
+        "SidequestUITests/VariedChessFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift"
+      ]
     }
   },
   "pre_design_smoke": [
