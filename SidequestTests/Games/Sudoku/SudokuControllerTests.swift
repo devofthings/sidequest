@@ -57,11 +57,15 @@ final class SudokuControllerTests: XCTestCase {
     }
     XCTAssertTrue(try XCTUnwrap(controller.board).isComplete)
     let phase = controller.runtime.phase
-    guard case .completed = phase else { return XCTFail("Solved board must complete the runtime.") }
+    guard case .completed(let attempt) = phase else {
+      return XCTFail("Solved board must complete the runtime.")
+    }
+    XCTAssertEqual(controller.runtime.celebrationAttempt, attempt)
     controller.runtime.setVisible(false)
     controller.runtime.setVisible(true)
     controller.runtime.start()
     XCTAssertEqual(controller.runtime.phase, phase)
+    XCTAssertNil(controller.runtime.celebrationAttempt)
     XCTAssertEqual(controller.board?.cells, controller.puzzle.solution)
     controller.enter(0)
     XCTAssertEqual(controller.board?.cells, controller.puzzle.solution)

@@ -38,7 +38,7 @@ extension ComposedGame {
   static func generated(_ descriptor: GeneratedGameDescriptor, completed: CompletedGameState?)
     -> ComposedGame
   {
-    let runtime = GameRuntime(completed: completed?.attempt)
+    let runtime = GameFeedbackComposition.makeRuntime(completed: completed?.attempt)
     switch descriptor.challenge {
     case .sudoku(let puzzle):
       if case .sudoku(let board, let selected)? = completed?.result {

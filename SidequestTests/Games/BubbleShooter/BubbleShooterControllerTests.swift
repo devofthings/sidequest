@@ -47,6 +47,10 @@ final class BubbleShooterControllerTests: XCTestCase {
       await finishShot(gate, firstPause: index * 24 + 1)
     }
     XCTAssertEqual(controller.game.outcome, .won)
+    guard case .completed(let attemptID) = runtime.phase else {
+      return XCTFail("Expected won completion")
+    }
+    XCTAssertEqual(runtime.celebrationAttempt, attemptID)
     XCTAssertEqual(controller.game.shotsFired, 3)
     XCTAssertNil(controller.flight)
     guard case .completed = runtime.phase else { return XCTFail("Expected completion") }
@@ -75,6 +79,7 @@ final class BubbleShooterControllerTests: XCTestCase {
       await finishShot(gate, firstPause: index * 24 + 1)
     }
     XCTAssertEqual(controller.game.outcome, .lost(.dangerRow))
+    XCTAssertNil(runtime.celebrationAttempt)
     guard case .completed = runtime.phase else { return XCTFail("Loss must finish lifecycle") }
     XCTAssertTrue(controller.replay())
     XCTAssertEqual(controller.game.outcome, .playing)

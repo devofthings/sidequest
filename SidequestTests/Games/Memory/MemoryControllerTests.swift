@@ -142,7 +142,10 @@ final class MemoryControllerTests: XCTestCase {
       controller.flip(index)
       controller.flip(index + 1)
     }
-    guard case .completed = runtime.phase else { return XCTFail("Expected completion.") }
+    guard case .completed(let attempt) = runtime.phase else {
+      return XCTFail("Expected completion.")
+    }
+    XCTAssertEqual(runtime.celebrationAttempt, attempt)
     let completed = controller.rules
     runtime.setVisible(false)
     XCTAssertEqual(controller.rules, completed)
@@ -151,6 +154,7 @@ final class MemoryControllerTests: XCTestCase {
     controller.flip(0)
     XCTAssertEqual(controller.rules, completed)
     XCTAssertEqual(controller.rules?.matchedPairCount, 6)
+    XCTAssertNil(runtime.celebrationAttempt)
   }
 
   private func fixedBoard() throws -> MemoryRules {

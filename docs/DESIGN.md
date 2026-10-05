@@ -1,6 +1,6 @@
 # MVP visual and motion baseline
 
-Status: selected by the technical lead on October 5, 2026 under the owner’s explicit #13 authorization. Shared feed/news styling was implemented in #123 / PR #125. Game styling and contained motion are implemented in the #124 feature branch; exact-head CI, independent review, and focused rendered/motion validation remain pending. See [primary-source research](research/mvp-design.md) for evidence, limitations, and the distinction between guidance and design judgment.
+Status: selected by the technical lead on October 5, 2026 under the owner’s explicit #13 authorization. Shared feed/news styling was implemented in #123 / PR #125. Game styling and contained motion were merged in [PR #126](https://github.com/devofthings/sidequest/pull/126) after exact-head CI, fresh review, and focused simulator checks. See [primary-source research](research/mvp-design.md) for evidence, limitations, and the distinction between guidance and design judgment.
 
 ## Direction
 
@@ -38,3 +38,7 @@ The four existing views and game-owned guidance contain the implementation; no n
 | Can Bubble effects change shot timing? | Fact and technical choice | Preserve flight/commit code; fade committed removals from shotsFired. | Existing controller checks current attempt after every authoritative pause. Presentation has no rule callback. | Slow-flight interruption, committed removal, Replay, and actual Reduce Motion. |
 
 No human-owned product or spending choice is open for this bounded presentation slice. Source choices are ready; executable and rendered verification remain pending.
+
+## Success feedback #86
+
+Successful game attempts request one standard native success haptic and show a brief readable checkmark/“Nice!” badge within the fixed viewport header title slot. A 180 ms contained scale/opacity transition supplies emphasis; Reduce Motion uses immediate appearance/removal. The decoration lasts 1.5 seconds, never advances the feed, never obscures a board or scrolls away with game controls, and does not replace the game-owned completed result. Hiding/backgrounding or replay cancels it immediately. Bubble losses, stale completions, and restored/revisited results stay quiet. Runtime/controller verification and fresh PR gates remain required; physical vibration is unverified pending device testing.

@@ -55,7 +55,7 @@ final class ChessController {
 
   private func finishIfSolved() {
     guard attempt?.isSolved == true, let attemptID else { return }
-    runtime.complete(attempt: attemptID)
+    runtime.complete(attempt: attemptID, successful: true)
   }
 
   private func clearCoordinates() {

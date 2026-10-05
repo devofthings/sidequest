@@ -119,6 +119,10 @@ final class ChessControllerTests: XCTestCase {
         controller.selectRank(move.destination.rank)
         controller.submitCoordinates()
         XCTAssertTrue(controller.attempt?.isSolved ?? false)
+        guard case .completed(let attemptID) = runtime.phase else {
+          return XCTFail("Expected solved completion")
+        }
+        XCTAssertEqual(runtime.celebrationAttempt, attemptID)
         XCTAssertNil(controller.attempt?.board[move.origin])
         XCTAssertEqual(controller.attempt?.board[move.destination], puzzle.board[move.origin])
         XCTAssertFalse(controller.canAcceptInput)

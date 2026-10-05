@@ -24,7 +24,7 @@ The recorded MVP and test results describe that selected release. Later document
 
 ## What's playable?
 
-Game cards show their actual inactive boards before **Tap to play**; Memory stays face down. Starting enables play without moving or reshuffling the board. Skipping or backgrounding resets unfinished attempts; completed results survive revisits during the session.
+Game cards show their actual inactive boards before **Tap to play**; Memory stays face down. Starting enables play without moving or reshuffling the board. Skipping or backgrounding resets unfinished attempts; completed results survive revisits during the session. Current source requests one system success haptic and briefly shows a readable celebration after a solved/won attempt; Bubble losses and completed revisits stay quiet. Physical vibration remains unverified pending your iPhone test.
 
 Current source supports full-card native vertical paging: swipe up/down directly on a card or use the compact **Feed navigation** menu. Overflowing content scrolls within its card; a new outward gesture at its top/bottom edge changes cards. See [feed navigation](docs/FEED.md#navigation-and-eligibility). Game boards and primary controls retain their geometry when feedback or results change; [stable layout](docs/GAME_LAYOUT.md) describes the current source correction and verification.
 
@@ -42,12 +42,12 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 52 | 4,608 |
-| Unit tests | 23 | 3,564 |
-| UI tests | 14 | 2,114 |
-| **Total** | **89** | **10,286** |
+| App | 55 | 4,741 |
+| Unit tests | 24 | 3,784 |
+| UI tests | 14 | 2,223 |
+| **Total** | **93** | **10,748** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+7,772 / −549 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+8,245 / −560 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
