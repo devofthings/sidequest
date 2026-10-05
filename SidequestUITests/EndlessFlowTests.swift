@@ -247,9 +247,20 @@ final class EndlessFlowTests: XCTestCase {
   private func solveGeneratedBubble(_ app: XCUIApplication) {
     // Alternate real route for seed104 avoids narrow endpoint aiming: 0°,0°, then a broad left window.
     for (index, degrees) in [0, 0, -24].enumerated() {
-      let slider = app.sliders["bubble.aim"]
-      reveal(slider, in: app)
-      if degrees == -24 { slider.adjust(toNormalizedSliderPosition: 0.3) }
+      if degrees == -24 {
+        let direct = app.otherElements["bubble.directAim"]
+        reveal(direct, in: app)
+        let boardFrame = app.otherElements["bubble.board"].frame
+        let viewportFrame = app.scrollViews["feed.cardScroll"].frame
+        // A real ray from launcher (5,11) toward (3.66,8) aims about24 degrees left.
+        direct.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8)).press(
+          forDuration: 0.01,
+          thenDragTo: direct.coordinate(withNormalizedOffset: CGVector(dx: 0.366, dy: 0.2)),
+          withVelocity: .slow, thenHoldForDuration: 0.1)
+        XCTAssertEqual(app.otherElements["bubble.board"].frame, boardFrame)
+        XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewportFrame)
+        XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 2 of 8")
+      }
       captureBubbleAim(app, name: "shot-\(index + 1)")
       let actualLabel = app.staticTexts["bubble.angle"].label
       if degrees == 0 {

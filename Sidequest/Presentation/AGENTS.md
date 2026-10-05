@@ -21,3 +21,6 @@ The implementation author conducted this agent-grill self-assessment; the lead's
 ## Read-only game layout context #142
 
 Shared UI-only layout values carry actual native card viewport and the remaining game-content budget. Rules/controllers/Core do not consume geometry. Independent stable chrome measurements may size a normal board; measure chrome at the fixed content width, excluding that board, to prevent feedback cycles. Empty/unavailable measurements use a safe minimum fallback until actual layout settles. Genuine viewport/Dynamic Type changes may relayout, but selection/start/feedback/completion must not change settled board extent. All44-point minimum targets and full readable semantic text remain; accessibility sizes use natural owned scrolling.
+
+
+For #138, the shared native control marker carries touch ownership only. It lets both feed pans exclude a dedicated game input without importing game rules; it does not own gestures, game state, or eligibility. Bubble consumes the existing rectangular budget directly for its 10:12 board; the square-grid minimum is not a Bubble touch-target rule.

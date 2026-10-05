@@ -13,3 +13,8 @@ Compare adjacent-window membership as well as selected index on update. Rebuild/
 ## Palette hosting #123
 
 Keep the pager and hosting root backgrounds transparent so the opaque SwiftUI semantic canvas is consistent through native page movement. Appearance, contrast, and Reduce Motion are explicitly forwarded by FeedView into each separate hosting root; UIKit retains gesture and content-scroll ownership.
+
+
+## Dedicated game-control ownership #138
+
+A narrow shared UI-only marker identifies direct game aiming controls. Both the outer pager and owned inner scroller decline their vertical pan when the originating hit is that control or its descendant, or a native Slider. Preserve the existing one-way failure relationship and ordinary outside-control paging/overflow. This adds no game-rule dependency and does not exempt all UIControl instances. Actual horizontal/vertical/diagonal control gestures must prove unchanged selected card and inner offset.

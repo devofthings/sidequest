@@ -276,7 +276,9 @@ private final class FeedPagingScrollView: UIScrollView {
       beganOnControl = false
       var ancestor = hit
       while let current = ancestor, current !== self {
-        if current is UISlider { beganOnControl = true }
+        if current is UISlider || current is any FeedPanExcludingControl {
+          beganOnControl = true
+        }
         if let child = current as? FeedCardScrollView { touchedScroller = child }
         ancestor = current.superview
       }
@@ -299,6 +301,23 @@ private final class FeedPagingScrollView: UIScrollView {
 
 @MainActor
 private final class FeedCardScrollView: UIScrollView {
+  private var beganOnControl = false
+
+  override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+    let hit = super.hitTest(point, with: event)
+    if event?.type == .touches {
+      beganOnControl = false
+      var ancestor = hit
+      while let current = ancestor, current !== self {
+        if current is UISlider || current is any FeedPanExcludingControl {
+          beganOnControl = true
+        }
+        ancestor = current.superview
+      }
+    }
+    return hit
+  }
+
   func canConsume(verticalVelocity: CGFloat) -> Bool {
     let end = max(0, contentSize.height - bounds.height)
     if verticalVelocity < 0 { return contentOffset.y < end - 1 }
@@ -310,7 +329,7 @@ private final class FeedCardScrollView: UIScrollView {
       return super.gestureRecognizerShouldBegin(gestureRecognizer)
     }
     let velocity = panGestureRecognizer.velocity(in: self)
-    guard abs(velocity.y) > abs(velocity.x) * 1.2 else { return false }
+    guard !beganOnControl, abs(velocity.y) > abs(velocity.x) * 1.2 else { return false }
     return super.gestureRecognizerShouldBegin(gestureRecognizer)
   }
 }

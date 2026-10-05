@@ -134,6 +134,84 @@ final class BubbleShooterControllerTests: XCTestCase {
     XCTAssertTrue(controller.feedback.contains("Could not fire"))
   }
 
+  func testOriginatingDragCannotResumeAfterFireFinishesWithinTheSameAttempt() async throws {
+    let gate = BubbleDelayGate()
+    let runtime = GameRuntime()
+    let controller = BubbleShooterController(runtime: runtime, pause: { try await gate.pause() })
+    runtime.setVisible(true)
+    XCTAssertNil(controller.beginAimDrag())
+    runtime.start()
+    let phase = runtime.phase
+    let old = try XCTUnwrap(controller.beginAimDrag())
+    XCTAssertEqual(controller.aimDegrees, 0)
+    XCTAssertNil(controller.flight, "Beginning a drag on an undefined launcher ray does not fire.")
+    XCTAssertFalse(controller.updateAimDrag(old, degrees: .nan))
+    XCTAssertTrue(controller.updateAimDrag(old, degrees: 0))
+    XCTAssertEqual(controller.game.shotsFired, 0)
+    XCTAssertTrue(controller.fire())
+    XCTAssertFalse(controller.updateAimDrag(old, degrees: 30))
+    await finishShot(gate, firstPause: 1)
+    XCTAssertEqual(runtime.phase, phase)
+    XCTAssertTrue(controller.canFire)
+    XCTAssertFalse(controller.updateAimDrag(old, degrees: 30))
+    XCTAssertEqual(controller.aimDegrees, 0)
+    let fresh = try XCTUnwrap(controller.beginAimDrag())
+    XCTAssertTrue(controller.updateAimDrag(fresh, degrees: -20))
+    controller.endAimDrag(old)
+    XCTAssertTrue(controller.updateAimDrag(fresh, degrees: -25))
+    controller.endAimDrag(fresh)
+    XCTAssertFalse(controller.updateAimDrag(fresh, degrees: 20))
+    XCTAssertEqual(controller.game.shotsFired, 1)
+  }
+
+  func testSliderReplacementSkipAndRetirementInvalidateHeldDrags() throws {
+    let runtime = GameRuntime()
+    let controller = BubbleShooterController(runtime: runtime)
+    runtime.setVisible(true)
+    runtime.start()
+    let replaced = try XCTUnwrap(controller.beginAimDrag())
+    let current = try XCTUnwrap(controller.beginAimDrag())
+    XCTAssertFalse(controller.updateAimDrag(replaced, degrees: 45))
+    XCTAssertFalse(controller.updateAimDrag(current, degrees: .nan))
+    XCTAssertTrue(controller.updateAimDrag(current, degrees: 10))
+    controller.aim(degrees: -15)
+    XCTAssertFalse(controller.updateAimDrag(current, degrees: 45))
+    XCTAssertEqual(controller.aimDegrees, -15)
+    let skipped = try XCTUnwrap(controller.beginAimDrag())
+    runtime.setVisible(false)
+    runtime.setVisible(true)
+    runtime.start()
+    XCTAssertFalse(controller.updateAimDrag(skipped, degrees: 45))
+    XCTAssertEqual(controller.aimDegrees, 0)
+    let retired = try XCTUnwrap(controller.beginAimDrag())
+    runtime.retire()
+    runtime.setVisible(true)
+    runtime.start()
+    XCTAssertFalse(controller.updateAimDrag(retired, degrees: 45))
+    XCTAssertNil(controller.beginAimDrag())
+    XCTAssertEqual(controller.game.shotsFired, 0)
+  }
+
+  func testGuideUsesRealReflectionAndContactWithoutMutatingTheGame() throws {
+    let runtime = GameRuntime()
+    let controller = BubbleShooterController(runtime: runtime)
+    XCTAssertNil(controller.aimTrajectory)
+    runtime.setVisible(true)
+    runtime.start()
+    controller.aim(degrees: 60)
+    let game = controller.game
+    let actual = try game.traceShot(angleRadians: .pi / 3).trajectory
+    XCTAssertGreaterThan(
+      actual.points.count, 2, "A reflected route needs an intermediate wall point.")
+    XCTAssertEqual(controller.aimTrajectory, actual)
+    XCTAssertEqual(controller.aimTrajectory, actual)
+    XCTAssertEqual(controller.game, game)
+    XCTAssertNil(controller.flight)
+    XCTAssertEqual(controller.game.shotsFired, 0)
+    runtime.setVisible(false)
+    XCTAssertNil(controller.aimTrajectory)
+  }
+
   private func finishShot(_ gate: BubbleDelayGate, firstPause: Int) async {
     for number in firstPause..<(firstPause + 24) {
       await gate.waitUntilStarted(number)

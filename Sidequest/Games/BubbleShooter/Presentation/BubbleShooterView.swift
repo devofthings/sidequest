@@ -8,6 +8,9 @@ struct BubbleShooterView: View {
   @Environment(\.sidequestContrast) private var contrastOverride
   @Environment(\.accessibilityReduceMotion) private var systemReduceMotion
   @Environment(\.sidequestReduceMotion) private var motionOverride
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.sidequestGameLayoutBudget) private var layoutBudget
+  @State private var chromeHeight: CGFloat = 0
 
   private var theme: SidequestTheme {
     SidequestTheme(scheme: scheme, contrast: contrastOverride ?? systemContrast)
@@ -19,57 +22,41 @@ struct BubbleShooterView: View {
     return .smooth(duration: 0.16)
   }
 
+  private var compact: Bool { !dynamicTypeSize.isAccessibilitySize }
+  private var spacing: CGFloat { compact ? 8 : 12 }
+  private var boardWidth: CGFloat {
+    guard compact else { return min(300, layoutBudget?.width ?? 300) }
+    guard let layoutBudget, chromeHeight > 0 else { return 200 }
+    return max(
+      200, min(300, layoutBudget.width, (layoutBudget.height - chromeHeight - spacing) / 1.2))
+  }
+
   var body: some View {
-    VStack(spacing: 12) {
-      Text("Match three letters to clear the board.").font(.callout)
-      board
-        .aspectRatio(10.0 / 12.0, contentMode: .fit)
-        .frame(maxWidth: 300)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Bubble board")
-        .accessibilityValue(boardDescription)
-        .accessibilityIdentifier("bubble.board")
-      StableGameRegion {
-        ZStack {
-          ForEach(feedbackMessages, id: \.self) { Text($0) }
+    VStack(spacing: spacing) {
+      instructions
+      board.frame(width: boardWidth, height: boardWidth * 1.2)
+      status
+      feedback
+      actionControls
+    }
+    .frame(maxWidth: .infinity)
+    .background(alignment: .top) {
+      if compact {
+        // Measure full-width stable chrome independently; the board cannot feed back into its budget.
+        VStack(spacing: spacing) {
+          instructions
+          status
+          feedback
+          actionControls
         }
-      } content: {
-        Text(controller.feedback)
-          .accessibilityIdentifier("bubble.feedback")
-      }
-      .monospacedDigit()
-      Text("Shots: \(controller.game.shotsFired) of \(BubbleShooterGame.shotLimit)")
-        .monospacedDigit()
-        .accessibilityIdentifier("bubble.shots")
-      StableGameRegion {
-        aimingControls.disabled(true)
-      } content: {
-        if isPlaying {
-          aimingControls
-        } else {
-          Text(controller.game.outcome == .won ? "You won!" : "You lost")
-            .font(.headline)
-            .accessibilityIdentifier("bubble.outcome")
+        .frame(maxWidth: .infinity)
+        .hidden().accessibilityHidden(true).allowsHitTesting(false)
+        .onGeometryChange(for: CGFloat.self) {
+          $0.size.height
+        } action: { height in
+          if abs(chromeHeight - height) > 0.5 { chromeHeight = height }
         }
       }
-      Button {
-        if isPlaying { controller.fire() } else { controller.replay() }
-      } label: {
-        StableGameRegion {
-          ZStack {
-            Text("Fire")
-            Text("Replay")
-          }
-        } content: {
-          Text(isPlaying ? "Fire" : "Replay")
-        }
-        .frame(maxWidth: .infinity, minHeight: 44)
-      }
-      .buttonStyle(SidequestButtonStyle(prominent: true, compact: true))
-      .controlSize(.large)
-      .frame(minHeight: 44)
-      .disabled(isPlaying ? !controller.canFire : !controller.runtime.isVisible)
-      .accessibilityIdentifier(isPlaying ? "bubble.fire" : "bubble.replay")
     }
     .allowsHitTesting(controller.runtime.isVisible)
     .transaction { transaction in
@@ -78,38 +65,164 @@ struct BubbleShooterView: View {
     }
   }
 
-  private var aimingControls: some View {
-    VStack(spacing: 12) {
+  private var instructions: some View {
+    Text("Drag to aim · Fire to shoot")
+      .font(.callout).fixedSize(horizontal: false, vertical: true)
+  }
+
+  private var feedback: some View {
+    StableGameRegion {
+      ZStack { ForEach(feedbackMessages, id: \.self) { Text($0) } }
+    } content: {
+      Text(controller.feedback).accessibilityIdentifier("bubble.feedback")
+    }
+    .font(compact ? .subheadline : .body)
+    .monospacedDigit()
+  }
+
+  private var status: some View {
+    Group {
+      if compact {
+        HStack(spacing: 12) {
+          shots
+          Spacer(minLength: 0)
+          playingStatus
+        }
+      } else {
+        VStack(spacing: 12) {
+          shots
+          playingStatus
+        }
+      }
+    }
+    .font(compact ? .subheadline : .body)
+  }
+
+  private var shots: some View {
+    StableGameRegion {
+      Text(compact ? "8/8 shots" : "Shots: 8 of 8")
+    } content: {
+      Text(
+        compact
+          ? "\(controller.game.shotsFired)/8 shots" : "Shots: \(controller.game.shotsFired) of 8"
+      )
+      .accessibilityLabel("Shots: \(controller.game.shotsFired) of 8")
+      .accessibilityIdentifier("bubble.shots")
+    }
+    .monospacedDigit()
+  }
+
+  private var playingStatus: some View {
+    StableGameRegion {
+      ZStack {
+        nextAndAngle(reservation: true)
+        Text("You won!").font(.headline)
+        Text("You lost").font(.headline)
+      }
+    } content: {
+      if isPlaying {
+        nextAndAngle(reservation: false)
+      } else {
+        Text(controller.game.outcome == .won ? "You won!" : "You lost")
+          .font(.headline).accessibilityIdentifier("bubble.outcome")
+      }
+    }
+  }
+
+  private func nextAndAngle(reservation: Bool) -> some View {
+    Group {
+      if compact {
+        HStack(spacing: 12) {
+          nextColor(reservation: reservation)
+          angle(reservation: reservation)
+        }
+      } else {
+        VStack(spacing: 12) {
+          nextColor(reservation: reservation)
+          angle(reservation: reservation)
+        }
+      }
+    }
+  }
+
+  private func nextColor(reservation: Bool) -> some View {
+    StableGameRegion {
+      ZStack {
+        ForEach(BubbleColor.allCases, id: \.self) { color in
+          Text(compact ? "Next: \(color.symbol)" : "Next bubble: \(color.name), \(color.symbol)")
+        }
+      }
+    } content: {
+      let color = controller.game.nextColor
+      Text(compact ? "Next: \(color.symbol)" : "Next bubble: \(color.name), \(color.symbol)")
+        .accessibilityLabel("Next bubble: \(color.name), \(color.symbol)")
+        .accessibilityIdentifier(reservation ? "" : "bubble.next")
+    }
+  }
+
+  private func angle(reservation: Bool) -> some View {
+    StableGameRegion {
+      Text(compact ? "−60°" : "Aim: −60°")
+    } content: {
+      Text(
+        compact
+          ? "\(Int(controller.aimDegrees.rounded()))°"
+          : "Aim: \(Int(controller.aimDegrees.rounded()))°"
+      )
+      .accessibilityLabel("Aim: \(Int(controller.aimDegrees.rounded()))°")
+      .accessibilityIdentifier(reservation ? "" : "bubble.angle")
+    }
+    .monospacedDigit()
+  }
+
+  private var actionControls: some View {
+    Group {
+      if compact {
+        HStack(spacing: 12) {
+          aimSlider
+          fireButton.frame(width: 96)
+        }
+      } else {
+        VStack(spacing: 12) {
+          aimSlider
+          fireButton
+        }
+      }
+    }
+  }
+
+  private var aimSlider: some View {
+    StableGameRegion {
+      slider.disabled(true)
+    } content: {
+      if isPlaying { slider }
+    }
+  }
+
+  private var slider: some View {
+    BubbleAimSlider(controller: controller)
+      .frame(minWidth: 44, minHeight: 44)
+      .disabled(!controller.canFire)
+  }
+
+  private var fireButton: some View {
+    Button {
+      if isPlaying { controller.fire() } else { controller.replay() }
+    } label: {
       StableGameRegion {
         ZStack {
-          ForEach(BubbleColor.allCases, id: \.self) { color in
-            Text("Next bubble: \(color.name), \(color.symbol)")
-          }
+          Text("Fire")
+          Text("Replay")
         }
       } content: {
-        Text(
-          "Next bubble: \(controller.game.nextColor.name), \(controller.game.nextColor.symbol)")
+        Text(isPlaying ? "Fire" : "Replay")
       }
-      StableGameRegion {
-        Text("Aim: −60°")
-      } content: {
-        Text("Aim: \(controller.aimDegrees, specifier: "%.0f")°")
-          .accessibilityIdentifier("bubble.angle")
-      }
-      .monospacedDigit()
-      Slider(
-        value: Binding(
-          get: { (controller.aimDegrees + 60) / 120 },
-          set: { controller.aim(degrees: $0 * 120 - 60) }),
-        in: 0...1
-      )
-      .disabled(!controller.canFire)
-      .accessibilityLabel("Aim")
-      .accessibilityHint(
-        "Aim from 60 degrees left to 60 degrees right of vertical. The angle is shown above."
-      )
-      .accessibilityIdentifier("bubble.aim")
+      .frame(maxWidth: .infinity, minHeight: 44)
     }
+    .buttonStyle(SidequestButtonStyle(prominent: true, compact: true))
+    .controlSize(.large).frame(minHeight: 44)
+    .disabled(isPlaying ? !controller.canFire : !controller.runtime.isVisible)
+    .accessibilityIdentifier(isPlaying ? "bubble.fire" : "bubble.replay")
   }
 
   private var isPlaying: Bool { controller.game.outcome == .playing }
@@ -126,6 +239,19 @@ struct BubbleShooterView: View {
   }
 
   private var board: some View {
+    ZStack(alignment: .bottom) {
+      boardArtwork
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Bubble board")
+        .accessibilityValue(boardDescription)
+        .accessibilityIdentifier("bubble.board")
+      BubbleAimControl(controller: controller)
+        .frame(height: boardWidth / 10 * BubbleAimMapping.regionHeight)
+        .accessibilityHidden(!isPlaying)
+    }
+  }
+
+  private var boardArtwork: some View {
     GeometryReader { geometry in
       let scale = geometry.size.width / BubbleGeometry.width
       ZStack(alignment: .topLeading) {
@@ -140,14 +266,12 @@ struct BubbleShooterView: View {
           path.addLine(to: CGPoint(x: geometry.size.width, y: y))
         }
         .stroke(theme.secondaryInk, style: StrokeStyle(lineWidth: 2, dash: [4]))
-        if controller.canFire {
+        if let trajectory = controller.aimTrajectory {
           Path { path in
-            let angle = controller.aimDegrees * .pi / 180
-            let launcher = BubbleGeometry.launcher
-            path.move(to: CGPoint(x: launcher.x * scale, y: launcher.y * scale))
-            path.addLine(
-              to: CGPoint(
-                x: (launcher.x + sin(angle) * 3) * scale, y: (launcher.y - cos(angle) * 3) * scale))
+            for (index, point) in trajectory.points.enumerated() {
+              let rendered = CGPoint(x: point.x * scale, y: point.y * scale)
+              if index == 0 { path.move(to: rendered) } else { path.addLine(to: rendered) }
+            }
           }
           .stroke(theme.ink, style: StrokeStyle(lineWidth: 2, dash: [3]))
         }
@@ -182,7 +306,7 @@ struct BubbleShooterView: View {
 
   private func bubble(_ color: BubbleColor, at point: BubblePoint, scale: Double) -> some View {
     Text(color.symbol)
-      .font(.system(size: max(12, scale), weight: .bold))
+      .font(.system(size: max(14, scale), weight: .bold))
       .foregroundStyle(.white)
       .frame(width: scale * 2, height: scale * 2)
       .background(color.tint, in: Circle())

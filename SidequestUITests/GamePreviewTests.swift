@@ -76,6 +76,99 @@ final class GamePreviewTests: XCTestCase {
     }
   }
 
+  func testEveryNormalPocketBoardAndPrimaryControlFitsWithoutScrollingAcrossStart() {
+    for fixture in Fixture.allCases {
+      let app = launch(fixture)
+      let viewport = app.scrollViews["feed.cardScroll"]
+      let board = completeBoard(app, fixture: fixture)
+      let controls = primaryControls(app, fixture: fixture)
+      let start = app.buttons["game.start"]
+      // Wait for viewport/chrome measurements to settle, without scrolling or changing the fixture.
+      let contained = expectation(
+        for: NSPredicate { _, _ in
+          (board + controls + [start]).allSatisfy {
+            $0.exists && !$0.frame.isEmpty && viewport.frame.contains($0.frame)
+          }
+        }, evaluatedWith: app)
+      wait(for: [contained], timeout: 5)
+      capture(app, name: "pocket-\(fixture.rawValue)-normal-full-preview")
+      assertContained(board + controls + [start], in: viewport, app: app)
+      for control in controls + [start] {
+        XCTAssertGreaterThanOrEqual(control.frame.width + 0.001, 44, control.identifier)
+        XCTAssertGreaterThanOrEqual(control.frame.height + 0.001, 44, control.identifier)
+      }
+      if fixture != .bubble {
+        for cell in board {
+          XCTAssertGreaterThanOrEqual(cell.frame.width + 0.001, 44, cell.identifier)
+          XCTAssertGreaterThanOrEqual(cell.frame.height + 0.001, 44, cell.identifier)
+          XCTAssertFalse(cell.isEnabled)
+        }
+      }
+      let frozen = board.map { "\($0.label)|\(String(describing: $0.value))" }
+      let frames = board.map(\.frame)
+      let controlFrames = controls.map(\.frame)
+      let viewportFrame = viewport.frame
+      start.tap()
+      XCTAssertFalse(start.exists)
+      XCTAssertEqual(board.map { "\($0.label)|\(String(describing: $0.value))" }, frozen)
+      XCTAssertEqual(board.map(\.frame), frames, "Start must not reposition any board target.")
+      XCTAssertEqual(controls.map(\.frame), controlFrames)
+      XCTAssertEqual(viewport.frame, viewportFrame)
+      assertContained(board + controls, in: viewport, app: app)
+      capture(app, name: "pocket-\(fixture.rawValue)-normal-full-started")
+      app.terminate()
+    }
+  }
+
+  private func completeBoard(_ app: XCUIApplication, fixture: Fixture) -> [XCUIElement] {
+    switch fixture {
+    case .sudoku: (0..<16).map { app.buttons["sudoku.cell.\($0)"] }
+    case .memory: (0..<12).map { app.buttons["memory.tile.\($0)"] }
+    case .chessWhite, .chessBlack:
+      (fixture == .chessWhite ? [8, 7, 6, 5] : [4, 3, 2, 1]).flatMap { rank in
+        (fixture == .chessWhite ? ["e", "f", "g", "h"] : ["a", "b", "c", "d"]).map {
+          app.buttons["chess.square.\($0)\(rank)"]
+        }
+      }
+    case .bubble: [app.otherElements["bubble.board"]]
+    }
+  }
+
+  private func primaryControls(_ app: XCUIApplication, fixture: Fixture) -> [XCUIElement] {
+    switch fixture {
+    case .sudoku:
+      (1...4).map { app.buttons["sudoku.number.\($0)"] } + [app.buttons["sudoku.clear"]]
+    case .memory: completeBoard(app, fixture: fixture)
+    case .chessWhite, .chessBlack:
+      (fixture == .chessWhite ? ["f7", "g6"] : ["b3", "c2"]).map {
+        app.buttons["chess.piece.\($0)"]
+      } + [app.buttons["chess.file"], app.buttons["chess.rank"], app.buttons["chess.submit"]]
+    case .bubble:
+      [
+        app.otherElements["bubble.directAim"], app.sliders["bubble.aim"],
+        app.buttons["bubble.fire"],
+      ]
+    }
+  }
+
+  private func assertContained(
+    _ elements: [XCUIElement], in viewport: XCUIElement, app: XCUIApplication
+  ) {
+    let diagnostic = elements.map {
+      "\($0.identifier): exists=\($0.exists), frame=\($0.frame), viewport=\(viewport.frame)"
+    }.joined(separator: "\n")
+    let attachment = XCTAttachment(string: diagnostic)
+    attachment.name = "pocket-normal-frame-evidence"
+    attachment.lifetime = .keepAlways
+    add(attachment)
+    for element in elements {
+      XCTAssertTrue(element.exists, element.identifier)
+      XCTAssertFalse(element.frame.isEmpty, element.identifier)
+      XCTAssertTrue(viewport.frame.contains(element.frame), element.identifier)
+      XCTAssertTrue(app.frame.contains(element.frame), element.identifier)
+    }
+  }
+
   private enum Fixture: String, CaseIterable {
     case sudoku, memory, chessWhite, chessBlack, bubble
 
@@ -186,10 +279,15 @@ final class GamePreviewTests: XCTestCase {
     for _ in 0..<18 {
       if element.exists && element.isHittable && scroll.frame.contains(element.frame) { return }
       let upwards = !element.exists || element.frame.midY > scroll.frame.midY
-      let start = scroll.coordinate(
-        withNormalizedOffset: CGVector(dx: 0.9, dy: upwards ? 0.7 : 0.3))
-      let end = scroll.coordinate(
-        withNormalizedOffset: CGVector(dx: 0.9, dy: upwards ? 0.4 : 0.6))
+      let bubbleBoard = app.otherElements["bubble.board"]
+      let x =
+        bubbleBoard.exists && !bubbleBoard.frame.isEmpty
+        ? min(scroll.frame.width - 32, bubbleBoard.frame.maxX - scroll.frame.minX + 10)
+        : scroll.frame.width * 0.9
+      let origin = scroll.coordinate(withNormalizedOffset: .zero)
+      let start = origin.withOffset(
+        CGVector(dx: x, dy: scroll.frame.height * (upwards ? 0.7 : 0.3)))
+      let end = origin.withOffset(CGVector(dx: x, dy: scroll.frame.height * (upwards ? 0.4 : 0.6)))
       start.press(forDuration: 0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0)
     }
     XCTAssertTrue(element.isHittable)

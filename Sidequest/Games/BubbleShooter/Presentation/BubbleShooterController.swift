@@ -1,4 +1,10 @@
+import Foundation
 import Observation
+
+struct BubbleAimLease: Equatable {
+  fileprivate let id = UUID()
+  fileprivate let attempt: GameAttemptID
+}
 
 struct BubbleFlight: Equatable {
   let color: BubbleColor
@@ -14,6 +20,7 @@ final class BubbleShooterController {
   private(set) var flight: BubbleFlight?
   private(set) var feedback = "Clear matching groups of three."
   @ObservationIgnored private var attempt: GameAttemptID?
+  @ObservationIgnored private var aimLease: BubbleAimLease?
   @ObservationIgnored private var shotTask: Task<Void, Never>?
   @ObservationIgnored private let pause: @MainActor () async throws -> Void
 
@@ -41,7 +48,34 @@ final class BubbleShooterController {
 
   func aim(degrees: Double) {
     guard canFire, degrees.isFinite else { return }
+    aimLease = nil
     aimDegrees = min(60, max(-60, degrees))
+  }
+
+  /// The guide is a fresh nonmutating trace, never a plan retained for a later commit.
+  var aimTrajectory: BubbleTrajectory? {
+    guard canFire else { return nil }
+    return try? game.traceShot(angleRadians: aimDegrees * .pi / 180).trajectory
+  }
+
+  func beginAimDrag() -> BubbleAimLease? {
+    guard canFire, let attempt else { return nil }
+    let lease = BubbleAimLease(attempt: attempt)
+    aimLease = lease
+    return lease
+  }
+
+  @discardableResult
+  func updateAimDrag(_ lease: BubbleAimLease, degrees: Double) -> Bool {
+    guard aimLease == lease, runtime.acceptsInput(from: lease.attempt), canFire,
+      degrees.isFinite
+    else { return false }
+    aimDegrees = min(60, max(-60, degrees))
+    return true
+  }
+
+  func endAimDrag(_ lease: BubbleAimLease) {
+    if aimLease == lease { aimLease = nil }
   }
 
   @discardableResult
@@ -49,6 +83,7 @@ final class BubbleShooterController {
     guard canFire, let attempt else { return false }
     do {
       let shot = try game.traceShot(angleRadians: aimDegrees * .pi / 180)
+      aimLease = nil
       flight = BubbleFlight(color: shot.color, position: BubbleGeometry.launcher)
       feedback = "Shot in flight."
       shotTask = Task { [weak self, pause] in
@@ -98,6 +133,7 @@ final class BubbleShooterController {
   func replay() -> Bool { runtime.replay() }
 
   private func apply(_ effect: GameLifecycleEffect) {
+    aimLease = nil
     shotTask?.cancel()
     shotTask = nil
     flight = nil

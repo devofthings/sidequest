@@ -42,12 +42,12 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 58 | 4,969 |
-| Unit tests | 27 | 3,975 |
-| UI tests | 14 | 2,360 |
-| **Total** | **99** | **11,304** |
+| App | 62 | 5,372 |
+| Unit tests | 28 | 4,095 |
+| UI tests | 14 | 2,607 |
+| **Total** | **104** | **12,074** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+8,804 / −563 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+9,574 / −563 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
@@ -101,6 +101,6 @@ Sidequest is the working project name. Public naming availability has not been e
 
 Until design agreement, verification uses [all unit tests and three UI smoke cases](docs/TESTING.md) on one owned simulator that is [deleted after the run](docs/TESTING.md#owned-simulator-cleanup-114), current-source Debug compilation, and exact-head PR checks before merge. Merging starts no automatic main job under the owner's [PR-only decision](docs/CI.md#verification-contract). Longer UI journeys remain available explicitly. The approved 123-case PR gate passed in 3 minutes 45 seconds, and main's full-gate fallback passed in 3 minutes 41 seconds with fresh install/launch and Release verification; [recorded evidence](docs/TESTING.md#measured-temporary-gate-ci) distinguishes these from the historical broader benchmark. Historical main inheritance remains available for explicitly owner-authorized manual releases; [#90](https://github.com/devofthings/sidequest/issues/90) records its proof. Focused checks do not replace exact-head CI.
 
-The [design baseline](https://github.com/devofthings/sidequest/issues/13) guides vivid, modern visuals and animations for a pitch-ready MVP. The [researched baseline](docs/DESIGN.md) is selected. Shared feed/news styling is implemented; #124 adds vivid game surfaces and contained motion, with actual verification recorded in its PR. The owner selected the [pocket-game specification](docs/pocket-games/README.md): Chess uses fixed 4×4 focus windows with standard 8×8 rules and full-board coordinate controls; current Sudoku/Memory/Bubble configurations remain. Difficulty remains a separate specification.
+The [design baseline](https://github.com/devofthings/sidequest/issues/13) guides vivid, modern visuals and animations for a pitch-ready MVP. The [researched baseline](docs/DESIGN.md) is selected. Shared feed/news styling is implemented; #124 adds vivid game surfaces and contained motion, with actual verification recorded in its PR. The owner selected the [pocket-game specification](docs/pocket-games/README.md): Chess uses fixed 4×4 focus windows with standard 8×8 rules and full-board coordinate controls; current Sudoku/Memory configurations remain. Difficulty remains a separate specification.
 
-The owner-authorized [compact-game and harder Bubble follow-up](docs/POCKET_BUBBLE.md) is tracked in [#135](https://github.com/devofthings/sidequest/issues/135); implementation and verification are pending.
+The owner-authorized [compact-game and harder Bubble follow-up](docs/POCKET_BUBBLE.md) is tracked in [#135](https://github.com/devofthings/sidequest/issues/135); harder multi-shot Bubble generation (#137) and compact Chess/viewport controls (#142) are merged with actual native evidence. Direct Bubble aiming/compact controls (#138) and the parent all-game fit audit remain under verification; see [Bubble guidance](docs/BUBBLES.md#compact-direct-aiming-138).
