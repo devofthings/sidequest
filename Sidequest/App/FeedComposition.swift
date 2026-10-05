@@ -48,7 +48,10 @@ final class FeedComposition {
         throw DeckConstructionError.duplicateCardID(card.id)
       }
     }
-    return FeedComposition(
+    for descriptor in batch.descriptors {
+      try PreparedGameReconstruction.validate(descriptor, completed: nil)
+    }
+    return try FeedComposition(
       cards: cards, chessPuzzles: chessPuzzles, batch: batch, cadence: prepared.next,
       sessionID: sessionID, seed: seed, ordered: ordered, prepareBatch: prepareBatch)
   }
@@ -57,7 +60,7 @@ final class FeedComposition {
     cards: [FeedCard], chessPuzzles: [ChessPuzzle], batch: GeneratedGameBatch,
     cadence: FeedNewsCadence,
     sessionID: UUID, seed: UInt64, ordered: Bool, prepareBatch: @escaping GameBatchPreparation
-  ) {
+  ) throws {
     self.chessPuzzles = chessPuzzles
     session = .loaded(cards)
     games = [:]
@@ -71,33 +74,47 @@ final class FeedComposition {
     knownIDs = Set(cards.map(\.id))
     let feed = FeedController(cards: cards, runtimes: [:], isEndless: true)
     controller = feed
-    feed.windowDidChange = { [weak self] cards in self?.prepareWindow(cards) ?? [:] }
+    feed.windowDidChange = { [weak self] cards in
+      self?.prepareWindow(cards) ?? .failure(.preparationFailed)
+    }
     feed.demandDidChange = { [weak self] in self?.replenishIfNeeded() }
     feed.retryReplenishment = { [weak self] in
-      self?.controller?.replenishmentMessage = nil
-      self?.replenishIfNeeded()
+      guard let self else { return }
+      controller?.replenishmentMessage = nil
+      guard controller?.reconcileWindow() != false else { return }
+      replenishIfNeeded()
     }
-    feed.reconcileWindow()
+    guard feed.reconcileWindow() else { throw PreparedGameReconstruction.Failure.invalidDescriptor }
   }
 
-  private func prepareWindow(_ cards: [FeedCard]) -> [CardID: GameRuntime] {
+  private func prepareWindow(_ cards: [FeedCard]) -> Result<[CardID: GameRuntime], FeedWindowError>
+  {
     let required = Set(cards.map(\.id))
-    for (id, game) in games where !required.contains(id) {
-      if let snapshot = game.completedState {
-        completed[id] = snapshot
-      } else {
-        completed[id] = nil
+    var staged: [CardID: ComposedGame] = [:]
+    do {
+      for card in cards {
+        guard case .game = card, games[card.id] == nil else { continue }
+        guard let descriptor = descriptors[card.id] else {
+          throw PreparedGameReconstruction.Failure.invalidDescriptor
+        }
+        staged[card.id] = try ComposedGame.generated(descriptor, completed: completed[card.id])
       }
+    } catch {
+      for game in staged.values { game.runtime.retire() }
+      return .failure(.preparationFailed)
+    }
+    var archives = completed
+    for (id, game) in games where !required.contains(id) {
+      archives[id] = game.completedState
+    }
+    // Only a fully prepared invisible window may replace existing owners.
+    for (id, game) in games where !required.contains(id) {
       game.runtime.retire()
       games[id] = nil
     }
-    for card in cards {
-      guard case .game = card, games[card.id] == nil, let descriptor = descriptors[card.id] else {
-        continue
-      }
-      games[card.id] = ComposedGame.generated(descriptor, completed: completed[card.id])
-    }
-    return games.mapValues(\.runtime)
+    completed = archives
+    games.merge(staged) { existing, _ in existing }
+    return .success(games.mapValues(\.runtime))
   }
 
   private func replenishIfNeeded() {
@@ -126,6 +143,7 @@ final class FeedComposition {
         guard let self, generationRequest == request, controller.canNavigate else { return }
         var batchIDs = Set<CardID>()
         for descriptor in batch.descriptors {
+          try PreparedGameReconstruction.validate(descriptor, completed: nil)
           guard batchIDs.insert(descriptor.card.id).inserted else {
             throw DeckConstructionError.duplicateCardID(descriptor.card.id)
           }
@@ -141,15 +159,19 @@ final class FeedComposition {
             throw DeckConstructionError.duplicateCardID(card.id)
           }
         }
+        let previousDescriptors = descriptors
         for descriptor in batch.descriptors {
           descriptors[descriptor.card.id] = descriptor
+        }
+        guard controller.append(prepared.cards) else {
+          descriptors = previousDescriptors
+          throw PreparedGameReconstruction.Failure.invalidDescriptor
         }
         knownIDs = additionIDs
         newsCadence = prepared.next
         nextSequence = batch.nextSequence
         generationTask = nil
         generationRequest = nil
-        controller.append(prepared.cards)
       } catch {
         guard let self, generationRequest == request else { return }
         generationTask = nil

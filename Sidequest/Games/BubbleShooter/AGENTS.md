@@ -124,3 +124,7 @@ Agent-grill self-assessment before implementation:
 | What validates configuration? | Technical choice | Immutable game cap accepts 1...8 for deterministic rule fixtures; nonnil tier must match exactly8/5/3. Generator publishes only requested-tier certified three-shot games. | Reject zero, negative, over-eight and mismatched metadata; Hard wins before exhaustion on its last shot. |
 | Who owns reset and archives? | Fact | Controller resets the retained game value; completed archives already store that full value. No second lifecycle/configuration owner is needed. | First action, skip/reset, completed restoration and replay retain cap/tier; stale plans remain invalid. |
 | What stays deferred? | Scope | Mixed-feed labels/distribution, human calibration and sampled tolerance search are separate work. | Native/CI execution and independent review belong to the lead; source changes alone certify no delivery. |
+
+## Completed archive configuration #201
+
+Composition may compare immutable original board, full color queue, cap, and tier through hasSameChallenge(as:). Current board/outcome/revision are attempt state and cannot establish challenge identity. Reject incompatible archives instead of dropping completion.

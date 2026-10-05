@@ -69,3 +69,11 @@ DEBUG-only `-sidequest-chess-catalog <id>` paired with an existing `-sidequest-c
 ## Memory workload validation #178
 
 Only DEBUG with the existing finite `-sidequest-memory-fixtures` route and an additional `-sidequest-memory-three-pairs` or `-sidequest-memory-four-pairs` argument selects a frozen original seed178 challenge through the actual challenge-aware controller. Three takes precedence if both modifiers are supplied. Normal production, the six-pair fixture, integration fixtures, and generation RNG remain unchanged; Release ignores these modifiers. This narrow verification seam does not expose production difficulty labels or mixed-tier feed distribution.
+
+## Mixed difficulty rollout #201
+
+Agent-grill self-assessment: game-owned challenge APIs certify immutable tiers; legacy descriptors and generators remain supported. Normal app composition explicitly opts into mixed generation. Each game occurrence cycles Easy/Medium/Hard using a session-seeded per-kind offset; challenge RNG uses isolated streams while historical generation draws and batch shuffle order are retained. Load the separate Chess catalog once with startup fixtures and retain it through imports/replenishment.
+
+Reconstruction validates descriptor kind/tier and completed archive compatibility before creating invisible adapters. Window preparation stages replacements and archives before retiring existing owners; navigation stages selection before accepting a fallible window. Failure keeps the current selection, owners, descriptors, and completion, and exposes Retry games. Initial preparation/import must reject invalid descriptors before persistence. No fallback may silently discard completion or claim an uncertified tier. Native compilation, actual mixed-tier journeys, and exact-head CI remain pending in the owning PR.
+
+Readiness evidence: GeneratedGameBatch preserves legacy RNG; MemoryController's typed restoration throws on mismatched completed layout; FeedSelection is a value and supports staged navigation; game metadata is immutable. Planned verification covers all tiers, retry/cancellation, completed eviction/restoration, unchanged cadence, and normal/largest label geometry. No human-owned behavior or spending question remains.

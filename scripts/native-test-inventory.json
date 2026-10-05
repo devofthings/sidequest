@@ -422,6 +422,26 @@
         "SidequestUITests/FeedNavigationSupport.swift"
       ]
     },
+    "SidequestUITests/MixedDifficultyFlowTests/testAllTwelveGameTierCombinationsHaveFrozenAccessibleLabelsAndRealControls": {
+      "lower_layer": "MixedDifficultyTests covers certification, tier scheduling, frozen metadata and completed reconstruction; this actual native journey verifies rendered labels and usable controls.",
+      "paths": [
+        "SidequestUITests/MixedDifficultyFlowTests.swift",
+        "Sidequest/App/",
+        "Sidequest/Core/",
+        "Sidequest/Feed/",
+        "Sidequest/Games/"
+      ]
+    },
+    "SidequestUITests/MixedDifficultyFlowTests/testHardestGamesAtLargestTextKeepLabelAndPrimaryControlsStableDuringInput": {
+      "lower_layer": "MixedDifficultyTests covers certification, tier scheduling, frozen metadata and completed reconstruction; this actual native journey verifies rendered labels and usable controls.",
+      "paths": [
+        "SidequestUITests/MixedDifficultyFlowTests.swift",
+        "Sidequest/App/",
+        "Sidequest/Core/",
+        "Sidequest/Feed/",
+        "Sidequest/Games/"
+      ]
+    },
     "SidequestUITests/NewsPresentationTests/testOfflineSampleShowsSourceDateLabelAndImportPicker": {
       "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
       "paths": [
@@ -657,18 +677,8 @@
         "Sidequest/Resources/"
       ]
     },
-    "SidequestUITests/VariedChessFlowTests/testThreeSquareBothColorsStartResetAndCompletedRevisit": {
-      "lower_layer": "Validated original catalog/domain/controller tests cover standard legal moves, metadata, and lifecycle; actual 3×3/5×5 rendering, full coordinate controls, and largest text require this focused native flow.",
-      "paths": [
-        "Sidequest/Games/Chess/",
-        "Sidequest/Resources/chess-challenges.json",
-        "Sidequest/App/",
-        "SidequestUITests/VariedChessFlowTests.swift",
-        "SidequestUITests/FeedNavigationSupport.swift"
-      ]
-    },
     "SidequestUITests/VariedChessFlowTests/testFiveSquareBothColorsFitAndCoordinateMoves": {
-      "lower_layer": "Validated original catalog/domain/controller tests cover standard legal moves, metadata, and lifecycle; actual 3×3/5×5 rendering, full coordinate controls, and largest text require this focused native flow.",
+      "lower_layer": "Validated original catalog/domain/controller tests cover standard legal moves, metadata, and lifecycle; actual 3\u00d73/5\u00d75 rendering, full coordinate controls, and largest text require this focused native flow.",
       "paths": [
         "Sidequest/Games/Chess/",
         "Sidequest/Resources/chess-challenges.json",
@@ -678,7 +688,17 @@
       ]
     },
     "SidequestUITests/VariedChessFlowTests/testLargestFiveSquareBlackCoordinatesAndRevisit": {
-      "lower_layer": "Validated original catalog/domain/controller tests cover standard legal moves, metadata, and lifecycle; actual 3×3/5×5 rendering, full coordinate controls, and largest text require this focused native flow.",
+      "lower_layer": "Validated original catalog/domain/controller tests cover standard legal moves, metadata, and lifecycle; actual 3\u00d73/5\u00d75 rendering, full coordinate controls, and largest text require this focused native flow.",
+      "paths": [
+        "Sidequest/Games/Chess/",
+        "Sidequest/Resources/chess-challenges.json",
+        "Sidequest/App/",
+        "SidequestUITests/VariedChessFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift"
+      ]
+    },
+    "SidequestUITests/VariedChessFlowTests/testThreeSquareBothColorsStartResetAndCompletedRevisit": {
+      "lower_layer": "Validated original catalog/domain/controller tests cover standard legal moves, metadata, and lifecycle; actual 3\u00d73/5\u00d75 rendering, full coordinate controls, and largest text require this focused native flow.",
       "paths": [
         "Sidequest/Games/Chess/",
         "Sidequest/Resources/chess-challenges.json",

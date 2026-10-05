@@ -36,8 +36,9 @@ extension ComposedGame {
   }
 
   static func generated(_ descriptor: GeneratedGameDescriptor, completed: CompletedGameState?)
-    -> ComposedGame
+    throws -> ComposedGame
   {
+    try PreparedGameReconstruction.validate(descriptor, completed: completed)
     let runtime = GameFeedbackComposition.makeRuntime(completed: completed?.attempt)
     switch descriptor.challenge {
     case .sudoku(let puzzle):
@@ -47,6 +48,24 @@ extension ComposedGame {
             puzzle: puzzle, runtime: runtime, completedBoard: board, selectedCell: selected))
       }
       return .sudoku(SudokuController(puzzle: puzzle, runtime: runtime))
+    case .certifiedSudoku(let challenge):
+      let restored: SudokuBoard?
+      let selected: Int?
+      if case .sudoku(let board, let cell)? = completed?.result {
+        restored = board
+        selected = cell
+      } else {
+        restored = nil
+        selected = nil
+      }
+      return .sudoku(
+        SudokuController(
+          challenge: challenge, runtime: runtime, completedBoard: restored, selectedCell: selected))
+    case .certifiedMemory(let challenge):
+      let restored: MemoryRules?
+      if case .memory(let value)? = completed?.result { restored = value } else { restored = nil }
+      return .memory(
+        try MemoryController(runtime: runtime, challenge: challenge, completedRules: restored))
     case .memory(let rules):
       let restored: MemoryRules?
       if case .memory(let value)? = completed?.result { restored = value } else { restored = nil }

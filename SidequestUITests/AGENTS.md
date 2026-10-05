@@ -117,3 +117,7 @@ Review integration #193/#191: celebration geometry checks measure the persistent
 FoundationLaunch uses unflagged normal startup and a fixture of permitted selected-game/app headings; it requires a settled card and reachable navigation. FirstInteractionFlowTests requires one accessible selected-game heading for every real game, a stable header vertical position/navigation frame across input and paging, and the existing reset outcomes. Hidden header size samples must never create duplicate accessible names. Native execution remains pending until actual results are recorded.
 
 For #194, the required Foundation launch case must exercise unflagged normal production preparation, not a game fixture. Its title fixture enumerates permitted dynamic headings; require settled card existence and reachable navigation after preparation.
+
+## Mixed difficulty checks #201
+
+MixedDifficultyTests covers actual classified generation, all-tier scheduling, legacy shuffle identity, incompatible archives, completed eviction/Replay, and rejected-window retry. MixedDifficultyFlowTests uses the same production opt-in with a dedicated owned fictional-news test store, deterministic ordered seed201, all12 game/tier combinations and hardest largest-text controls. Keep these two UI cases extended; all units plus exactly three smoke cases remain the routine gate. Root alone owns actual native proof.

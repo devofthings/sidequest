@@ -86,6 +86,12 @@ struct BubbleShooterGame: Equatable, Sendable {
       maximumShots: Self.maximumShots(for: difficulty), difficulty: difficulty)
   }
 
+  /// Completion archives must describe the same frozen board, queue, and attempt budget.
+  func hasSameChallenge(as other: Self) -> Bool {
+    initialBoard == other.initialBoard && colors == other.colors
+      && maximumShots == other.maximumShots && difficulty == other.difficulty
+  }
+
   static let challenge: [BubbleSlot: BubbleColor] = [
     BubbleSlot(row: 0, column: 0): .red, BubbleSlot(row: 0, column: 1): .red,
     BubbleSlot(row: 0, column: 2): .blue, BubbleSlot(row: 0, column: 3): .blue,

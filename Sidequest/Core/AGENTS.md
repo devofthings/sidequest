@@ -17,3 +17,7 @@ Distinguish immutable story identity from feed appearance identity. A repeated n
 ## Immutable challenge difficulty #177
 
 `GameDifficulty` is the shared raw-string Codable, Hashable, Sendable classification (`easy`, `medium`, `hard`). Each game validates its own immutable measurements and proxy; this enum owns no selection policy, user setting, or claim of human calibration. Presentation and feed integration consume validated configuration rather than reclassifying an attempt.
+
+## Classified card metadata #201
+
+GameCard accepts optional immutable GameDifficulty, defaulting to nil for legacy callers. Composition validates agreement with the frozen game-owned descriptor; Core neither classifies games nor schedules tiers.
