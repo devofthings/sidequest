@@ -259,23 +259,56 @@ final class EndlessFlowTests: XCTestCase {
   private func aimGeneratedBubble(_ app: XCUIApplication, degrees: Int) {
     let slider = app.sliders["bubble.aim"]
     reveal(slider, in: app)
-    slider.adjust(toNormalizedSliderPosition: CGFloat(Double(degrees + 60) / 120))
     if degrees == 60 {
-      // Native normalized adjustment can stop at 99%/59°. Track a real finger past the right end.
+      slider.adjust(toNormalizedSliderPosition: 1)
+      // Track a real finger past the right end; normalized requests may stop at 59°.
       let start = slider.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5))
       let end = slider.coordinate(withNormalizedOffset: CGVector(dx: 1, dy: 0.5))
         .withOffset(CGVector(dx: 8, dy: 0))
       start.press(forDuration: 0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0)
+      captureBubbleAim(app, name: "endpoint")
       XCTAssertEqual(app.staticTexts["bubble.angle"].label, "Aim: 60°")
       XCTAssertEqual(slider.value as? String, "100%")
     } else {
+      // Native adjustment is not a linear degree command. Steer from actual displayed feedback.
+      var requested = Double(degrees + 60) / 120
+      for attempt in 0..<6 {
+        slider.adjust(toNormalizedSliderPosition: CGFloat(requested))
+        captureBubbleAim(app, name: "feedback-\(attempt)")
+        guard let observed = observedBubbleAngle(app) else {
+          return XCTFail("Missing actual aim angle: \(app.staticTexts["bubble.angle"].label)")
+        }
+        if (54...55).contains(observed) { break }
+        requested = min(1, max(0, requested - 0.5 * (Double(observed) - 54.5) / 120))
+      }
+      // A bounded physical correction handles native quantization without injecting any game value.
+      for attempt in 0..<3 {
+        guard let observed = observedBubbleAngle(app) else { break }
+        if (54...55).contains(observed) { break }
+        let trackWidth = max(1, slider.frame.width - 32)
+        let thumbX = 16 + CGFloat(observed + 60) / 120 * trackWidth
+        let correction = CGFloat(54.5 - Double(observed)) / 120 * trackWidth * 0.7
+        let start = slider.coordinate(withNormalizedOffset: .zero)
+          .withOffset(CGVector(dx: thumbX, dy: slider.frame.height / 2))
+        let end = start.withOffset(CGVector(dx: correction, dy: 0))
+        start.press(forDuration: 0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0)
+        captureBubbleAim(app, name: "physical-correction-\(attempt)")
+      }
+      let actualLabel = app.staticTexts["bubble.angle"].label
       XCTAssertTrue(
-        ["Aim: 54°", "Aim: 55°"].contains(app.staticTexts["bubble.angle"].label),
-        "The actual first aim must reach the independently verified winning window.")
+        ["Aim: 54°", "Aim: 55°"].contains(actualLabel),
+        "Actual first aim must reach the verified 54°/55° winning window; observed \(actualLabel).")
     }
     XCTAssertEqual(app.selectedFeedCardID, gameID(3))
+  }
+
+  private func observedBubbleAngle(_ app: XCUIApplication) -> Int? {
+    Int(app.staticTexts["bubble.angle"].label.filter { $0.isNumber || $0 == "-" })
+  }
+
+  private func captureBubbleAim(_ app: XCUIApplication, name: String) {
     let attachment = XCTAttachment(screenshot: app.screenshot())
-    attachment.name = "generated-bubble-verified-aim-\(degrees)"
+    attachment.name = "generated-bubble-actual-aim-\(name)"
     attachment.lifetime = .keepAlways
     add(attachment)
   }
