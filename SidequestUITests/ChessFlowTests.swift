@@ -31,6 +31,38 @@ final class ChessFlowTests: XCTestCase {
   }
 
   @MainActor
+  func testNormalPocketBoardAndAllMoveControlsFitTogether() {
+    for color in ["white", "black"] {
+      let app = launch(color: color)
+      assertWindow(app, color: color)
+      let viewport = app.scrollViews["feed.cardScroll"].frame
+      let files = color == "white" ? ["e", "f", "g", "h"] : ["a", "b", "c", "d"]
+      let ranks = color == "white" ? [8, 7, 6, 5] : [4, 3, 2, 1]
+      let board = ranks.flatMap { rank in files.map { app.buttons["chess.square.\($0)\(rank)"] } }
+      let pieces = color == "white" ? ["f7", "g6"] : ["b3", "c2"]
+      let controls =
+        pieces.map { app.buttons["chess.piece.\($0)"] }
+        + [app.buttons["chess.file"], app.buttons["chess.rank"], app.buttons["chess.submit"]]
+      for target in board + controls + [app.buttons["game.start"]] {
+        XCTAssertTrue(target.exists)
+        XCTAssertTrue(viewport.contains(target.frame), "Full target must fit: \(target.identifier)")
+        XCTAssertGreaterThanOrEqual(target.frame.width, 44)
+        XCTAssertGreaterThanOrEqual(target.frame.height, 44)
+      }
+      let before = (board + controls).map(\.frame)
+      let attachment = XCTAttachment(screenshot: app.screenshot())
+      attachment.name = "pocket-\(color)-normal-all-controls"
+      attachment.lifetime = .keepAlways
+      add(attachment)
+      app.buttons["game.start"].tap()
+      XCTAssertEqual((board + controls).map(\.frame), before)
+      XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewport)
+      XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
+      app.terminate()
+    }
+  }
+
+  @MainActor
   func testWhiteFixtureWrongMovesResetAndCompletedRevisit() {
     checkFixture(color: "white", queen: "g6", opponent: "h8", wrong: "g5", mate: "g7")
   }

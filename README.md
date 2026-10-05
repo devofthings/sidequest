@@ -32,7 +32,7 @@ Current source supports full-card native vertical paging: swipe up/down directly
 | --- | --- | --- |
 | Mini Sudoku | Playable 4×4 puzzle | [Rules, controls, and checks](docs/SUDOKU.md) |
 | Memory pairs | Playable six-pair board | [Rules, controls, and checks](docs/MEMORY.md) |
-| Chess puzzles | One-move mates in fixed 4×4 focus windows, with full 8×8 rules | [Rules, accessible controls, and exhaustive fixture checks](docs/CHESS.md) |
+| Chess puzzles | Fixed 4×4 focus, compact normal controls, full 8×8 rules | [Rules, accessible controls, and exhaustive fixture checks](docs/CHESS.md) |
 | Bubble shooter | Compact attainable three-group challenges, within eight shots | [Rules, aiming, win/loss, and replay checks](docs/BUBBLES.md) |
 
 Merged #104 source extends normal launch to endless generated Sudoku, frozen Memory layouts, attainable Bubble challenges, and reused validated Chess puzzles. Merged #106 source adds 30 clearly fictional demo stories when saved news is absent, cycles the active pool after every five games, and removes the bottom counter. Games shuffle; story order stays stable. [Demo policy](docs/DEMO_NEWS.md) describes nil-only demo resolution and five-game cadence. The immutable `2026.10.14` download retains the finite five-game deck. Use **News snapshots** in the header to import a JSON replacement through Files. Empty imports intentionally disable news; corrupt/unavailable storage stays recoverable without demo fallback. Rejected imports preserve saved bytes and the current deck. Integrated delivery and selected-release source/download installation evidence are recorded in [#9](https://github.com/devofthings/sidequest/issues/9) and the [install guide](docs/INSTALL.md#verified-mvp-delivery). The enjoyment hypothesis still needs your personal test in #10. See [news preparation and import](docs/NEWS.md). Accounts, synced preferences, and leaderboards are deferred to phase two; [MVP.md](docs/MVP.md) owns the approved scope.
@@ -42,12 +42,12 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 56 | 4,804 |
-| Unit tests | 26 | 3,947 |
-| UI tests | 14 | 2,328 |
-| **Total** | **96** | **11,079** |
+| App | 58 | 4,969 |
+| Unit tests | 27 | 3,975 |
+| UI tests | 14 | 2,360 |
+| **Total** | **99** | **11,304** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+8,576 / −560 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+8,804 / −563 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.

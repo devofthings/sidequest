@@ -208,8 +208,11 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
 private final class FeedCardController: UIViewController {
   let scroller = FeedCardScrollView()
   private let hosting: UIHostingController<AnyView>
+  private var content: AnyView
+  private var viewport: CGSize?
 
   init(content: AnyView) {
+    self.content = content
     hosting = UIHostingController(rootView: content)
     hosting.sizingOptions = .intrinsicContentSize
     super.init(nibName: nil, bundle: nil)
@@ -244,9 +247,21 @@ private final class FeedCardController: UIViewController {
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
     scroller.frame = view.bounds
+    let size = view.bounds.size
+    if size.width > 0, size.height > 0, viewport != size {
+      viewport = size
+      publishContent()
+    }
   }
 
-  func update(_ content: AnyView) { hosting.rootView = content }
+  func update(_ content: AnyView) {
+    self.content = content
+    publishContent()
+  }
+
+  private func publishContent() {
+    hosting.rootView = AnyView(content.environment(\.sidequestCardViewport, viewport))
+  }
 }
 
 @MainActor

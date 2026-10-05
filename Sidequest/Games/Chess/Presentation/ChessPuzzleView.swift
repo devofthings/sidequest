@@ -8,6 +8,9 @@ struct ChessPuzzleView: View {
   @Environment(\.sidequestContrast) private var contrastOverride
   @Environment(\.accessibilityReduceMotion) private var systemReduceMotion
   @Environment(\.sidequestReduceMotion) private var motionOverride
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.sidequestGameLayoutBudget) private var layoutBudget
+  @State private var chromeHeight: CGFloat = 0
 
   private var theme: SidequestTheme {
     SidequestTheme(scheme: scheme, contrast: contrastOverride ?? systemContrast)
@@ -21,48 +24,42 @@ struct ChessPuzzleView: View {
 
   private var window: ChessBoardWindow { ChessBoardWindow(puzzle: controller.puzzle) }
 
+  private var compact: Bool { !dynamicTypeSize.isAccessibilitySize && window.files.count == 4 }
+  private var spacing: CGFloat { compact ? 8 : 16 }
+  private var boardExtent: CGFloat {
+    layoutBudget?.squareBoardExtent(chromeHeight: chromeHeight, columns: 4) ?? 176
+  }
+
   var body: some View {
-    VStack(spacing: 16) {
-      Text("\(controller.puzzle.sideToMove.name) to move")
-        .font(.headline)
-        .accessibilityIdentifier("chess.side")
-      Text("Find checkmate in one move.")
-      Text("Focus area \(window.coordinateRange) · Standard 8×8 rules")
-        .font(.subheadline)
-        .fixedSize(horizontal: false, vertical: true)
-        .accessibilityIdentifier("chess.focus")
-      board
-      StableGameRegion {
-        ZStack {
-          Text("No piece selected")
-          ForEach(movingSquares, id: \.self) { square in
-            Text(
-              "Selected: \(controller.puzzle.board[square]?.label ?? "Piece") on \(square.coordinate)"
-            )
-          }
-        }
-      } content: {
-        Text(selectionLabel)
-          .accessibilityIdentifier("chess.selection")
+    VStack(spacing: spacing) {
+      instructions
+      if compact {
+        board.frame(width: boardExtent, height: boardExtent)
+      } else {
+        board
       }
+      selection
       pieceControls
       coordinateControls
-      StableGameRegion {
-        ZStack {
-          Text(feedbackLabel(.chooseMovingPiece))
-          Text(feedbackLabel(.illegalMove))
-          Text(feedbackLabel(.notCheckmate))
-          Text(feedbackLabel(.checkmate))
-          Text("Checkmate! \(controller.puzzle.sideToMove.name) wins.").font(.headline)
+      feedback
+    }
+    .frame(maxWidth: .infinity)
+    .background(alignment: .top) {
+      if compact {
+        // This independent reservation excludes the board and always uses the content width.
+        VStack(spacing: spacing) {
+          instructions
+          selection
+          pieceControls
+          coordinateControls
+          feedback
         }
-      } content: {
-        if controller.attempt?.isSolved == true {
-          Text("Checkmate! \(controller.puzzle.sideToMove.name) wins.")
-            .font(.headline)
-            .accessibilityIdentifier("chess.completed")
-        } else if let feedback = controller.attempt?.feedback {
-          Text(feedbackLabel(feedback))
-            .accessibilityIdentifier("chess.feedback")
+        .frame(maxWidth: .infinity)
+        .hidden().accessibilityHidden(true).allowsHitTesting(false)
+        .onGeometryChange(for: CGFloat.self) {
+          $0.size.height
+        } action: { height in
+          if abs(chromeHeight - height) > 0.5 { chromeHeight = height }
         }
       }
     }
@@ -70,6 +67,60 @@ struct ChessPuzzleView: View {
       if case .preview = controller.runtime.phase { transaction.disablesAnimations = true }
       if !controller.runtime.isVisible { transaction.disablesAnimations = true }
     }
+  }
+
+  private var instructions: some View {
+    VStack(spacing: compact ? 4 : 16) {
+      Text(
+        compact
+          ? "\(controller.puzzle.sideToMove.name) to move · Mate in one"
+          : "\(controller.puzzle.sideToMove.name) to move"
+      )
+      .font(.headline)
+      .fixedSize(horizontal: false, vertical: true)
+      .accessibilityIdentifier("chess.side")
+      if !compact { Text("Find checkmate in one move.") }
+      Text("Focus area \(window.coordinateRange) · Standard 8×8 rules")
+        .font(.subheadline)
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityIdentifier("chess.focus")
+    }
+  }
+
+  private var selection: some View {
+    StableGameRegion {
+      ZStack {
+        Text("No piece selected")
+        ForEach(movingSquares, id: \.self) { square in
+          Text(
+            "Selected: \(controller.puzzle.board[square]?.label ?? "Piece") on \(square.coordinate)"
+          )
+        }
+      }
+    } content: {
+      Text(selectionLabel).accessibilityIdentifier("chess.selection")
+    }
+    .font(compact ? .subheadline : .body)
+  }
+
+  private var feedback: some View {
+    StableGameRegion {
+      ZStack {
+        Text(feedbackLabel(.chooseMovingPiece))
+        Text(feedbackLabel(.illegalMove))
+        Text(feedbackLabel(.notCheckmate))
+        Text(feedbackLabel(.checkmate))
+        Text("Checkmate! \(controller.puzzle.sideToMove.name) wins.").font(.headline)
+      }
+    } content: {
+      if controller.attempt?.isSolved == true {
+        Text("Checkmate! \(controller.puzzle.sideToMove.name) wins.")
+          .font(.headline).accessibilityIdentifier("chess.completed")
+      } else if let feedback = controller.attempt?.feedback {
+        Text(feedbackLabel(feedback)).accessibilityIdentifier("chess.feedback")
+      }
+    }
+    .font(compact ? .subheadline : .body)
   }
 
   private var board: some View {
@@ -87,14 +138,18 @@ struct ChessPuzzleView: View {
         } label: {
           VStack(spacing: 0) {
             Text(symbol(piece)).font(
-              .system(size: window.files.count == 4 ? 40 : 26, weight: .semibold)
+              .system(
+                size: compact ? min(40, boardExtent / 4 - 20) : (window.files.count == 4 ? 40 : 26),
+                weight: .semibold)
             )
             .scaleEffect(destination && !reduceMotion ? 1.12 : 1)
             .animation(feedbackAnimation, value: destination)
             Text(square.coordinate).font(.system(size: window.files.count == 4 ? 13 : 10))
           }
           .frame(maxWidth: .infinity)
+          .frame(width: compact ? boardExtent / 4 : nil, height: compact ? boardExtent / 4 : nil)
           .aspectRatio(1, contentMode: .fit)
+          .contentShape(Rectangle())
           .foregroundStyle(SidequestTheme.darkInk)
           .background(
             selected
@@ -133,32 +188,61 @@ struct ChessPuzzleView: View {
   }
 
   private var pieceControls: some View {
-    VStack(spacing: 8) {
-      Text("Select a piece")
-        .font(.headline)
-      ForEach(
-        movingSquares,
-        id: \.self
-      ) { square in
-        Button {
-          controller.tap(square)
-        } label: {
-          Text("\(controller.puzzle.board[square]?.label ?? "Piece") on \(square.coordinate)")
-            .frame(maxWidth: .infinity, minHeight: 44)
-            .contentShape(Rectangle())
+    Group {
+      if compact {
+        HStack(spacing: 8) { pieceButtons }
+      } else {
+        VStack(spacing: 8) {
+          Text("Select a piece").font(.headline)
+          pieceButtons
         }
-        .buttonStyle(SidequestButtonStyle(compact: true))
-        .disabled(!controller.canAcceptInput)
-        .accessibilityIdentifier("chess.piece.\(square.coordinate)")
       }
     }
   }
 
-  private var coordinateControls: some View {
-    VStack(spacing: 8) {
-      Text("Choose the destination")
-        .font(.headline)
+  private var pieceButtons: some View {
+    ForEach(movingSquares, id: \.self) { square in
+      Button {
+        controller.tap(square)
+      } label: {
+        let piece = controller.puzzle.board[square]
+        Text(
+          compact
+            ? "\(piece?.kind.rawValue.capitalized ?? "Piece") \(square.coordinate)"
+            : "\(piece?.label ?? "Piece") on \(square.coordinate)"
+        )
+        .font(compact ? .subheadline : .headline)
         .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity, minHeight: 44)
+        .contentShape(Rectangle())
+      }
+      .buttonStyle(SidequestButtonStyle(compact: true))
+      .disabled(!controller.canAcceptInput)
+      .accessibilityLabel(
+        "\(controller.puzzle.board[square]?.label ?? "Piece") on \(square.coordinate)"
+      )
+      .accessibilityIdentifier("chess.piece.\(square.coordinate)")
+    }
+  }
+
+  private var coordinateControls: some View {
+    Group {
+      if compact {
+        HStack(spacing: 8) { destinationControls }
+      } else {
+        VStack(spacing: 8) {
+          Text("Choose the destination").font(.headline)
+            .fixedSize(horizontal: false, vertical: true)
+          destinationControls
+        }
+      }
+    }
+    .buttonStyle(SidequestButtonStyle(compact: true))
+    .disabled(!controller.canAcceptInput || controller.attempt?.selectedSquare == nil)
+  }
+
+  private var destinationControls: some View {
+    Group {
       Menu {
         ForEach(0..<8) { file in
           let name = String("abcdefgh".dropFirst(file).prefix(1))
@@ -189,16 +273,16 @@ struct ChessPuzzleView: View {
       .accessibilityIdentifier("chess.rank")
       .accessibilityHint("Choose a destination rank from 1 through 8.")
       Button(action: controller.submitCoordinates) {
-        Text("Submit move")
+        Text(compact ? "Submit" : "Submit move")
           .frame(maxWidth: .infinity, minHeight: 44)
           .contentShape(Rectangle())
       }
       .buttonStyle(SidequestButtonStyle(prominent: true, compact: true))
       .disabled(!controller.canSubmitCoordinates)
+      .accessibilityLabel("Submit move")
       .accessibilityIdentifier("chess.submit")
     }
-    .buttonStyle(SidequestButtonStyle(compact: true))
-    .disabled(!controller.canAcceptInput || controller.attempt?.selectedSquare == nil)
+    .font(compact ? .subheadline : .headline)
   }
 
   private var selectionLabel: String {

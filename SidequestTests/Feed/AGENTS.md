@@ -9,3 +9,5 @@ Issue #87 adds settled adjacent-page commits and independent scene/host eligibil
 The native adapter regression gives a replacement pager a retired session request while the replacement is already active and has a laid-out viewport. Assert no movement/reset, then legitimate new-session movement, then rejection of stopped-host callbacks; an unlaid-out pager would produce a false passing rejection.
 
 `FeedNewsCadenceTests` verifies carried five-game cadence over varied preparation boundaries and complete demo-pool cycles, with unique appearance IDs and unchanged source snapshots. Preparing or repeating a candidate must leave the prior cadence value unchanged. See [demo policy](../../docs/DEMO_NEWS.md).
+
+`GameLayoutBudgetTests` cover the presentation-only native viewport minus independent stable chrome, real viewport changes and44-point board-target floors when content cannot fit. These values never enter feed-domain/game-rule/controller behavior. Actual containment and hit targets require root-owned native checks.
