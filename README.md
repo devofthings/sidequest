@@ -48,12 +48,12 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 70 | 6,036 |
+| App | 72 | 6,240 |
 | Unit tests | 34 | 4,704 |
 | UI tests | 17 | 2,953 |
-| **Total** | **121** | **13,693** |
+| **Total** | **123** | **13,897** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+11,244 / −614 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+11,459 / −625 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
@@ -117,6 +117,6 @@ The [private Figma refinement](docs/design/PRIVATE_FIGMA.md) contains proposed g
 
 Committed game feedback adds restrained interaction haptics for Sudoku entries, Memory matches, and Bubble clears, with contained Bubble pop motion. Final actions use existing success feedback, including one-move Chess. See [event and lifecycle guidance](Sidequest/Games/Presentation/AGENTS.md#committed-interaction-feedback-161); native verification is pending, and physical iPhone vibration needs separate owner testing.
 
-Original Memory faces and both-side King/Queen silhouettes are selected for the native refinement in [game artwork guidance](docs/design/NATIVE_GAME_ART.md). Focused native appearance and interaction verification remains pending in #171; the private Figma sheet alone does not verify app rendering.
+Original Memory faces and both-side King/Queen silhouettes are implemented in native source through [PR #173](https://github.com/devofthings/sidequest/pull/173); [game artwork guidance](docs/design/NATIVE_GAME_ART.md) records the design. Its source-bound checks are separate from the final combined Sudoku verification; the private Figma sheet alone does not verify app rendering.
 
 Current source follow-up #170 exposes standard9×9 Sudoku with digits1–9, compact overview and full-size coordinate alternatives; generated cards use at most12 editable cells as a bounded baseline, without difficulty labels. Historical mini fixtures and release evidence remain unchanged. Source49b3db9 passed all three focused native flows; final CI/review remain pending. See [Sudoku](docs/SUDOKU.md).
