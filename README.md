@@ -87,7 +87,7 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 - [Demo news and cadence](docs/DEMO_NEWS.md): original fictional stories, nil-only fallback, unique appearances, and five-game cadence.
 - [Endless feed](docs/ENDLESS.md): local generation, stable history, completed restoration, atomic replacement, and verification.
 - [Pocket Sudoku](docs/SUDOKU.md): standard9×9 source, historical4×4 fixtures, controls, validation, and lifecycle.
-- [Proposed difficulty research](docs/pocket-games/DIFFICULTY.md): game-owned tier criteria, original candidates, proof plans, and accepted mixed-feed exposure; no implemented tiers.
+- [Proposed difficulty research](docs/pocket-games/DIFFICULTY.md): selected first-pass Chess/Memory criteria, proposed Sudoku/Bubble criteria, proof plans, and accepted mixed-feed exposure; no implemented tiers.
 - [Memory pairs](docs/MEMORY.md): the six-pair board, delayed mismatches, and attempt reset.
 - [Chess puzzles](docs/CHESS.md): original one-move puzzles, accessible coordinates, and exhaustive fixture validation.
 - [Bubble shooter](docs/BUBBLES.md): aiming, connected matches, bounded win/loss, flight cancellation, and replay.

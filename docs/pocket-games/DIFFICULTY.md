@@ -1,6 +1,6 @@
 # Difficulty research and proposed classification
 
-Status: **Accepted product exposure; Proposed classification criteria**, partial contribution to [#118](https://github.com/devofthings/sidequest/issues/118), researched October 5, 2026. Multiple difficulties are approved; these tier definitions and thresholds are not selected implementation. This note adds no gameplay, classified fixture catalog, settings, progression, or verified completion-time claim. On October 5, the owner selected a [mixed feed with an Easy, Medium, or Hard label on each game](https://github.com/devofthings/sidequest/issues/118#issuecomment-6000642597), and [differently sized cropped Chess focus areas under standard 8×8 rules](https://github.com/devofthings/sidequest/issues/117#issuecomment-6000644787). These are accepted product decisions, not implemented difficulty labels or varied-board behavior. No manual level selector, automatic progression, or true smaller-board rule system is selected.
+Status: **Accepted product exposure and first-pass Chess/Memory criteria; Proposed Sudoku/Bubble criteria**, partial contribution to [#118](https://github.com/devofthings/sidequest/issues/118), researched October 5, 2026. Multiple difficulties and first-pass Chess/Memory technical criteria are selected; Sudoku/Bubble definitions remain Proposed. No classifier or tier catalog is implemented by this document. This note adds no gameplay, classified fixture catalog, settings, progression, or verified completion-time claim. On October 5, the owner selected a [mixed feed with an Easy, Medium, or Hard label on each game](https://github.com/devofthings/sidequest/issues/118#issuecomment-6000642597), and [differently sized cropped Chess focus areas under standard 8×8 rules](https://github.com/devofthings/sidequest/issues/117#issuecomment-6000644787). These are accepted product decisions, not implemented difficulty labels or varied-board behavior. No manual level selector, automatic progression, or true smaller-board rule system is selected.
 
 ## Evidence and scope
 
@@ -31,17 +31,22 @@ The implemented standard production baseline in [#170](https://github.com/devoft
 
 Checkmate requires check with no legal response, not merely attacking the king. Standard king safety and legal movement remain authoritative if a board is cropped. [FIDE Laws, Articles 1, 3, and 5](https://handbook.fide.com/chapter/e012023).
 
-For a first mate-in-one classification, propose counting **all** legal moves, accepted mates, and legal checking moves that fail to mate. These are reproducible search-choice measures, not established human ratings. Keep the full position and every equivalent accepted solution; never manufacture difficulty by rejecting a valid mate.
+The lead selects first-pass mate-in-one tiers based on the number of accepted mating moves. Count **all** legal moves, accepted mates, and legal checking moves that fail to mate, retaining checking nonmates as a separate measurement. These are transparent search-choice proxies, not established human ratings. Keep the full position and every equivalent accepted solution; never manufacture difficulty by rejecting a valid mate. Crop size remains independent of classification.
 
-| Proposed tier | Candidate eligibility within king/queen mate in one |
+| Selected first-pass tier | Eligibility within king/queen mate in one |
 | --- | --- |
-| Easy | At least three mating moves, and no checking move that fails to mate. |
-| Medium | At least two mating moves, with one or more checking nonmates. |
-| Hard | Exactly one mating move, with one or more checking nonmates. |
+| Easy | At least three accepted mating moves. |
+| Medium | Exactly two accepted mating moves. |
+| Hard | Exactly one accepted mating move. |
+| Unclassified | Invalid/unsupported position, no accepted mate, incomplete move sets, or proof budget exhausted. |
 
-These disjoint bins are an exploratory proposal. It is not established that the current three-piece envelope provides a varied eligible catalog for all three bins. Reject empty/unproven bins rather than advertise three levels. A development readiness probe, independently rerun during this integration with the existing pinned `chess==1.11.2`, enumerated 2,100 valid nonterminal White-king/queen versus Black-king states: the defending king occupied a1, h1, a8, or h8; the moving king was within Chebyshev distance three; the queen occupied each distinct square. Enumerating every legal move found 328 states in the proposed Hard bin, 416 in Medium, and none in Easy. This development probe did not execute the app or canonical fixture validator. This bounded sample is a calibration warning, not a global impossibility proof; its result does not select the bins or validate human difficulty. The Easy definition needs further investigation or revision before these thresholds can be accepted. The existing original White example has FEN `7k/5K2/6Q1/8/8/8/8/8 w - - 0 1`, 26 recorded legal moves, and four accepted mates: `g6g7`, `g6g8`, `g6h5`, `g6h6`. The Black example has FEN `8/8/8/8/8/1q6/2k5/K7 b - - 0 1`, 26 legal moves, and four mates: `b3a3`, `b3a4`, `b3b1`, `b3b2`. Checking-nonmate counts have not been measured here, so neither receives a proposed label.
+The earlier proposed requirement of zero checking nonmates for Easy is superseded. A development readiness probe, independently rerun during integration with the existing pinned `chess==1.11.2`, enumerated 2,100 valid nonterminal White-king/queen versus Black-king states: the defending king occupied a1, h1, a8, or h8; the moving king was within Chebyshev distance three; the queen occupied each distinct square. Enumerating every legal move produced zero Easy, 416 Medium, and 328 Hard under the old proposal. The selected mate-count bins instead produced 152 Easy, 264 Medium, and 328 Hard. The lead accepted the latter because all three bins have concrete candidates within the current piece envelope. This bounded sample establishes candidate availability, not global completeness or human calibration. It did not execute the app or canonical fixture validator.
 
-Future candidates should be original positions verified with the existing exhaustive fixture validator, with provenance and complete move sets retained. A candidate Hard example would have one accepted queen mate and at least one plausible checking nonmate; this is an eligibility configuration, not an invented validated FEN. True smaller-board rules, additional piece kinds, and multistep solutions need their separately recorded decisions and rule support. Different focus-window sizes do not establish difficulty. Current code can validate recorded mate-one sets; computing checking decoys and building a catalog remain future work.
+Local development evidence: `/private/tmp/sidequest-118-chess-probe.py` and `/private/tmp/sidequest-118-readiness.json`; reproduction used `/private/tmp/sidequest-chess-validation-venv/bin/python /private/tmp/sidequest-118-chess-probe.py`. These temporary files are handoff evidence, not tracked app dependencies. Before rollout, curated original fixtures must pass the existing pinned development-only validator with complete legal, mating, and checking-nonmate sets, plus frozen focus windows that retain required information. Add reproducible classifier/fixture checks in that bounded implementation ticket.
+
+The existing original White example has FEN `7k/5K2/6Q1/8/8/8/8/8 w - - 0 1`, 26 recorded legal moves, and four accepted mates: `g6g7`, `g6g8`, `g6h5`, `g6h6`. The Black example has FEN `8/8/8/8/8/1q6/2k5/K7 b - - 0 1`, 26 legal moves, and four mates: `b3a3`, `b3a4`, `b3b1`, `b3b2`. Their recorded mate counts satisfy selected Easy eligibility; production labels are not implemented, and checking-nonmate completeness still needs the rollout audit.
+
+Future candidates must be original and independently validated, retaining provenance and every equivalent solution. Preserve the current two-kings/one-queen subset, standard 8×8 rules, and mate-in-one lifecycle; introduce no new runtime engine or piece kinds. True smaller-board rules and multistep solutions are not selected. Different focus-window sizes do not establish difficulty. Computing checking decoys and adopting a curated catalog remain bounded implementation work.
 
 ## Bubble: attainable routes and aim tolerance
 
@@ -59,9 +64,15 @@ Thresholds are proposed engineering targets, not research-derived player ratings
 
 A concrete original current candidate is the generator’s unreflected pattern 7 with color permutation red/blue/green: ceiling row `[red, red, blue, blue, green]`, second row `[red, red, blue, green]`, queue beginning red/blue/green, and witness `[-55, -60, -60]` degrees. The generator replays its witness before publishing. This is a three-shot baseline example, **not** a Medium certification: its shortest sampled route and tolerance metrics are unmeasured here. Easy/Hard candidate construction would need different original arrangements and queue configurations; do not relabel the same baseline three ways. Existing rules can replay routes; the bounded grid search, tolerance measurement, and diverse eligible catalog remain future implementation.
 
-## Memory: layout burden without changing the rules
+## Memory: selected pair-count workload
 
-Retain six pairs, existing symbol identities, face-down preview, and the current mismatch delay. Propose measuring pair separation on the frozen three-column/four-row logical board, independently of its accessibility presentation. Let separation be Manhattan distance between a pair’s two logical positions; calculate mean and maximum across the six pairs. This is a layout proxy, not a demonstrated memory-difficulty scale.
+The lead selects first-pass workload tiers of three, four, and six distinct pairs for Easy, Medium, and Hard respectively. Pair count measures a concrete increase in the amount to remember; it is not a calibrated claim about every player's experience. Use a subset of the existing six original symbol identities, exactly two tiles per included symbol, an answer-free preview, and the existing mismatch delay. Freeze pair count, layout, and tier together per card. Do not change mismatch exposure, reshuffle mid-attempt, or introduce a timer.
+
+Production currently enforces six pairs. Rollout requires an explicit bounded generalization of that contract, layout/generator/validation support for 3/4/6 pairs, and dynamic instructions/completion copy reflecting the actual pair count. Validate all counts, completion, cancellation, accessibility reflow, reset, and completed restoration before exposing labels. This document does not implement the generalization.
+
+### Historical proposed six-pair layout alternative
+
+The earlier unselected alternative retains six pairs and proposes measuring pair separation on the frozen three-column/four-row logical board, independently of its accessibility presentation. Let separation be Manhattan distance between a pair’s two logical positions; calculate mean and maximum across the six pairs. This is a layout proxy, not a demonstrated memory-difficulty scale.
 
 | Proposed tier | Layout proxy candidates |
 | --- | --- |
@@ -69,7 +80,7 @@ Retain six pairs, existing symbol identities, face-down preview, and the current
 | Medium | Maximum distance ≥3 and mean distance <3. |
 | Hard | Mean distance ≥3. |
 
-The bins partition layouts, but equal distance may still produce very different recognition/memory experiences. Require comparison through personal testing before treating them as player-facing levels. Use the same original six symbols; do not shorten mismatch exposure, reshuffle mid-attempt, introduce a timer, or increase the pair count to force difficulty.
+These historical proposed bins partition layouts, but equal distance may still produce very different recognition/memory experiences. Require comparison through personal testing before treating them as player-facing levels. Use the same original six symbols; do not shorten mismatch exposure, reshuffle mid-attempt, introduce a timer, or increase the pair count to force difficulty.
 
 Concrete candidate sequences in row-major order, using `S=star, H=heart, M=moon, U=sun, L=leaf, B=bolt`:
 
@@ -89,7 +100,7 @@ Planned verification, not executed app evidence:
 2. Test every tier boundary, effective versus ineffective eliminations, unsupported strategy and budget failures. Keep classification independent of generation randomness so neighboring game configurations do not change unexpectedly.
 3. Exhaustively verify each new Chess fixture and equivalent mate set through the existing development validator. Fail on invalid king safety, unsupported pieces, missing mates, or clipped important information.
 4. Replay Bubble witnesses and sampled shorter-route/tolerance probes through the actual geometry and rules. Check the declared search domain, deterministic work bounds, reflection, shot cap, and cancellation. Incomplete search must remain unclassified.
-5. Check all Memory example metrics, pair invariants, deterministic selection, and normal versus accessibility reflow independence.
+5. Validate selected Memory 3/4/6 pair contracts, exactly two tiles per symbol, dynamic instructions/results, deterministic selection, completion/reset/restoration, and accessibility reflow. Historical spread metrics are not the selected classifier.
 6. Verify frozen difficulty through preview/start, unfinished skip/reset, completion/eviction/revisit, and Bubble replay in unit/controller tests. For the accepted mixed feed, verify visible and spoken tier labels and stable geometry through focused running-app checks; preserve the tiny routine smoke gate.
 
 ## Readiness record
@@ -98,8 +109,8 @@ Planned verification, not executed app evidence:
 | --- | --- | --- | --- |
 | Can clue count or window size alone define difficulty? | Fact | No defensible human-difficulty proof. | Sudoku primary research; current Chess legality versus presentation. |
 | Where should classification run? | Proposed technical choice | Pure game-owned classifier during frozen batch preparation. | Existing `GeneratedGameBatch` boundary; implementation and lifecycle tests pending. |
-| Are the proposed three tiers populated and valid? | Fact still open | Not established; no catalog is certified here. | Original candidate proof, deterministic classifier, and bounded generation tests required. |
+| Are all game tiers implemented and validated? | Fact still open | No. First-pass Chess/Memory criteria are selected, with bounded Chess candidate evidence; no rollout catalog is certified. | Canonical fixture/classifier checks, Memory contract generalization, and Sudoku/Bubble proof and budgets remain required. |
 | How are levels exposed? | Accepted owner decision, October 5 | Mix Easy, Medium, and Hard game cards; label each game. | [Owner choice](https://github.com/devofthings/sidequest/issues/118#issuecomment-6000642597); no manual selector or automatic progression. Implementation remains pending. |
 | What rules govern varied pocket Chess? | Accepted owner decision, October 5 | Differently sized cropped focus areas over standard 8×8 rules. | [Owner choice](https://github.com/devofthings/sidequest/issues/117#issuecomment-6000644787); full-board legality and semantic coordinates remain authoritative. New piece or multistep rules are not selected. |
 
-This partial research is ready for independent documentation review. Full #118 implementation still needs lead technical readiness: record selected definitions, verify eligible examples and calibration limits, and then split bounded game-owned implementation tickets without expanding into Ideas or paid catalogs.
+This partial research is ready for independent documentation review. Full #118 implementation still requires verification and bounded handoffs: implement selected Chess/Memory criteria with their proof gates, resolve proposed Sudoku/Bubble definitions and budgets, verify eligible examples and calibration limits, and then split bounded game-owned implementation tickets without expanding into Ideas or paid catalogs.

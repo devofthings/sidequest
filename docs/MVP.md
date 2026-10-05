@@ -84,4 +84,4 @@ For [#160](https://github.com/devofthings/sidequest/issues/160), the owner repla
 
 ## Standard pocket Sudoku source #170
 
-Approved #162 presentation child #170 adds standard9×9 production cards, digits1–9 and3×3 regions. A lead-selected maximum12 editable cells bounds the initial session, without defining difficulty. Mini fixtures remain compatible; native44point coordinate alternatives supplement the compact overview. #118 tier classification remains proposed while mixed labeled exposure is accepted and parent162 remains open. Actual native fit/gameplay evidence belongs to the PR; the immutable published MVP is unchanged.
+Approved #162 presentation child #170 adds standard9×9 production cards, digits1–9 and3×3 regions. A lead-selected maximum12 editable cells bounds the initial session, without defining difficulty. Mini fixtures remain compatible; native44point coordinate alternatives supplement the compact overview. #118 mixed labeled exposure and first-pass Chess/Memory criteria are accepted; Sudoku/Bubble criteria remain proposed and parent162 remains open. Actual native fit/gameplay evidence belongs to the PR; the immutable published MVP is unchanged.
