@@ -5,3 +5,7 @@ Read [the selected specification](README.md) and [#117](https://github.com/devof
 Chess presentation retains standard 8×8 coordinates and independently validated complete legal/mate sets. Freeze the window per challenge, display all pieces and accepted destinations, and preserve full-board coordinate input. A focus-window edge never becomes a rule boundary. Unsupported future fixtures must use a full-board presentation instead of silently clipping information; no new fixture or rule system is authorized.
 
 This area owns the selected specification and its supporting evidence. Keep original audit evidence distinct from new rendered verification. Preserve explicit start, frozen challenges, unfinished reset, completed revisits, accessibility, and stable geometry under shared guidance.
+
+## Proposed difficulty classification #118
+
+[DIFFICULTY.md](DIFFICULTY.md) records proposed game-owned measurements and original candidate configurations. They are research, not accepted tiers or certified puzzles. Preserve frozen per-card configuration and keep classification separate from game preference and scoring. Do not derive Sudoku tiers from clue count, Chess tiers from visible board size, or player difficulty from uncalibrated layout/angle metrics. The feed exposure decision and varied Chess rule boundary remain with the owner in #118/#117. Record selected definitions and actual deterministic proof before a bounded implementation handoff; this partial document does not authorize new settings, automatic progression, copied catalogs, or paid services.
