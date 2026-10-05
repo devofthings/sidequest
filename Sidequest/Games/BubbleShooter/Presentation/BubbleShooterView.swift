@@ -200,18 +200,9 @@ struct BubbleShooterView: View {
   }
 
   private var slider: some View {
-    Slider(
-      value: Binding(
-        get: { (controller.aimDegrees + 60) / 120 },
-        set: { controller.aim(degrees: $0 * 120 - 60) }), in: 0...1
-    )
-    .frame(minWidth: 44, minHeight: 44)
-    .disabled(!controller.canFire)
-    .accessibilityLabel("Aim")
-    .accessibilityHint(
-      "Aim from 60 degrees left to 60 degrees right of vertical. The angle is shown above."
-    )
-    .accessibilityIdentifier("bubble.aim")
+    BubbleAimSlider(controller: controller)
+      .frame(minWidth: 44, minHeight: 44)
+      .disabled(!controller.canFire)
   }
 
   private var fireButton: some View {

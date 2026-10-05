@@ -15,10 +15,14 @@ final class BubbleFlowTests: XCTestCase {
     success.lifetime = .keepAlways
     add(success)
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
+    XCTAssertFalse(app.otherElements["bubble.directAim"].exists)
+    XCTAssertFalse(app.sliders["bubble.aim"].exists)
     app.nextFeedCard()
     app.previousFeedCard()
     XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
+    XCTAssertFalse(app.otherElements["bubble.directAim"].exists)
+    XCTAssertFalse(app.sliders["bubble.aim"].exists)
     reveal(app.buttons["bubble.replay"], in: app)
     XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height + 0.001, 44)
     XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.width + 0.001, 44)
@@ -29,6 +33,8 @@ final class BubbleFlowTests: XCTestCase {
       (app.otherElements["bubble.board"].value as? String)?.hasPrefix("9 bubbles remaining.")
         == true)
     XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
+    XCTAssertTrue(app.otherElements["bubble.directAim"].exists)
+    XCTAssertTrue(app.sliders["bubble.aim"].exists)
   }
 
   @MainActor
@@ -38,6 +44,8 @@ final class BubbleFlowTests: XCTestCase {
     for count in 1...7 { fire(app, aim: 0.5, expectedShots: count) }
     XCTAssertTrue(app.staticTexts["bubble.outcome"].waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You lost")
+    XCTAssertFalse(app.otherElements["bubble.directAim"].exists)
+    XCTAssertFalse(app.sliders["bubble.aim"].exists)
     XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
     reveal(app.buttons["bubble.replay"], in: app)
     XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height + 0.001, 44)
@@ -46,6 +54,8 @@ final class BubbleFlowTests: XCTestCase {
     XCTAssertFalse(app.staticTexts["bubble.outcome"].exists)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
+    XCTAssertTrue(app.otherElements["bubble.directAim"].exists)
+    XCTAssertTrue(app.sliders["bubble.aim"].exists)
   }
 
   @MainActor

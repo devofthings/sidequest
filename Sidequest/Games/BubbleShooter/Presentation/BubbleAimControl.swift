@@ -46,6 +46,9 @@ final class BubbleAimTouchControl: UIControl, FeedPanExcludingControl {
     if !controller.canFire { cancelAim() }
     // Keep the narrow area a hit-test destination while disabled so it never becomes a feed pan.
     isEnabled = controller.canFire
+    // Completion removes aiming from assistive navigation without changing native touch ownership.
+    isAccessibilityElement = controller.game.outcome == .playing
+    accessibilityElementsHidden = controller.game.outcome != .playing
     accessibilityValue = "Aim: \(Int(controller.aimDegrees.rounded())) degrees"
   }
 
