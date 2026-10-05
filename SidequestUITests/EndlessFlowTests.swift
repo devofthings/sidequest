@@ -245,65 +245,30 @@ final class EndlessFlowTests: XCTestCase {
   }
 
   private func solveGeneratedBubble(_ app: XCUIApplication) {
-    // The host-verified production witness uses 54°/55° first, then the actual 60° endpoint twice.
-    for (index, degrees) in [55, 60, 60].enumerated() {
-      aimGeneratedBubble(app, degrees: degrees)
+    // Alternate real route for seed104 avoids narrow endpoint aiming: 0°,0°, then a broad left window.
+    for (index, degrees) in [0, 0, -24].enumerated() {
+      let slider = app.sliders["bubble.aim"]
+      reveal(slider, in: app)
+      if degrees == -24 { slider.adjust(toNormalizedSliderPosition: 0.3) }
+      captureBubbleAim(app, name: "shot-\(index + 1)")
+      let actualLabel = app.staticTexts["bubble.angle"].label
+      if degrees == 0 {
+        XCTAssertEqual(
+          actualLabel, "Aim: 0°", "Reset/default aim must remain unchanged before Fire.")
+      } else {
+        let actual = Int(actualLabel.filter { $0.isNumber || $0 == "-" })
+        XCTAssertTrue(
+          actual.map { (-35 ... -12).contains($0) } ?? false,
+          "The final real aim must reach the audited broad winning window; observed \(actualLabel)."
+        )
+      }
+      XCTAssertEqual(app.selectedFeedCardID, gameID(3))
       reveal(app.buttons["bubble.fire"], in: app)
       app.buttons["bubble.fire"].tap()
       waitForBubbleShots(index + 1, in: app)
       if index < 2 { XCTAssertFalse(app.staticTexts["bubble.outcome"].exists) }
     }
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
-  }
-
-  private func aimGeneratedBubble(_ app: XCUIApplication, degrees: Int) {
-    let slider = app.sliders["bubble.aim"]
-    reveal(slider, in: app)
-    if degrees == 60 {
-      slider.adjust(toNormalizedSliderPosition: 1)
-      // Track a real finger past the right end; normalized requests may stop at 59°.
-      let start = slider.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5))
-      let end = slider.coordinate(withNormalizedOffset: CGVector(dx: 1, dy: 0.5))
-        .withOffset(CGVector(dx: 8, dy: 0))
-      start.press(forDuration: 0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0)
-      captureBubbleAim(app, name: "endpoint")
-      XCTAssertEqual(app.staticTexts["bubble.angle"].label, "Aim: 60°")
-      XCTAssertEqual(slider.value as? String, "100%")
-    } else {
-      // Native adjustment is not a linear degree command. Steer from actual displayed feedback.
-      var requested = Double(degrees + 60) / 120
-      for attempt in 0..<6 {
-        slider.adjust(toNormalizedSliderPosition: CGFloat(requested))
-        captureBubbleAim(app, name: "feedback-\(attempt)")
-        guard let observed = observedBubbleAngle(app) else {
-          return XCTFail("Missing actual aim angle: \(app.staticTexts["bubble.angle"].label)")
-        }
-        if (54...55).contains(observed) { break }
-        requested = min(1, max(0, requested - 0.5 * (Double(observed) - 54.5) / 120))
-      }
-      // A bounded physical correction handles native quantization without injecting any game value.
-      for attempt in 0..<3 {
-        guard let observed = observedBubbleAngle(app) else { break }
-        if (54...55).contains(observed) { break }
-        let trackWidth = max(1, slider.frame.width - 32)
-        let thumbX = 16 + CGFloat(observed + 60) / 120 * trackWidth
-        let correction = CGFloat(54.5 - Double(observed)) / 120 * trackWidth * 0.7
-        let start = slider.coordinate(withNormalizedOffset: .zero)
-          .withOffset(CGVector(dx: thumbX, dy: slider.frame.height / 2))
-        let end = start.withOffset(CGVector(dx: correction, dy: 0))
-        start.press(forDuration: 0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0)
-        captureBubbleAim(app, name: "physical-correction-\(attempt)")
-      }
-      let actualLabel = app.staticTexts["bubble.angle"].label
-      XCTAssertTrue(
-        ["Aim: 54°", "Aim: 55°"].contains(actualLabel),
-        "Actual first aim must reach the verified 54°/55° winning window; observed \(actualLabel).")
-    }
-    XCTAssertEqual(app.selectedFeedCardID, gameID(3))
-  }
-
-  private func observedBubbleAngle(_ app: XCUIApplication) -> Int? {
-    Int(app.staticTexts["bubble.angle"].label.filter { $0.isNumber || $0 == "-" })
   }
 
   private func captureBubbleAim(_ app: XCUIApplication, name: String) {

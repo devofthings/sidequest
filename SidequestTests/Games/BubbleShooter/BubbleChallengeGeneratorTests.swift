@@ -49,6 +49,23 @@ final class BubbleChallengeGeneratorTests: XCTestCase {
     }
   }
 
+  func testProductionSeed104HasARobustInteriorAimingRoute() throws {
+    var random = ChallengeRandom(seed: 104)
+    _ = try SudokuGenerator.generate(using: &random)
+    _ = MemoryRules(using: &random)
+    let challenge = try BubbleChallengeGenerator.generate(using: &random)
+    for quarterDegrees in (-35 * 4)...(-12 * 4) {
+      var game = challenge.game
+      for angle in [0.0, 0.0] {
+        _ = try game.fire(angleRadians: angle)
+        XCTAssertEqual(game.outcome, .playing)
+      }
+      _ = try game.fire(angleRadians: Double(quarterDegrees) / 4 * .pi / 180)
+      XCTAssertEqual(game.outcome, .won)
+      XCTAssertEqual(game.shotsFired, 3)
+    }
+  }
+
   func testNoFirstShotCanClearTheOtherCeilingColors() throws {
     for seed in 0..<12 {
       var random = ChallengeRandom(seed: UInt64(seed))
