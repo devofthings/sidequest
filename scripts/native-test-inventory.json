@@ -542,6 +542,34 @@
         "SidequestUITests/NewsPresentationTests.swift",
         "Sidequest/Resources/"
       ]
+    },
+    "SidequestUITests/StartupIntroductionFlowTests/testColdLaunchAndForegroundKeepRealGameInactiveAndFeedPosition": {
+      "lower_layer": "Deterministic startup introduction tests cover bounded timing, cancellation, stale callbacks, failure, and reduced-motion omission; this native flow checks accessible cold launch and explicit gameplay. Actual recordings establish the brief decoration.",
+      "paths": [
+        "SidequestUITests/StartupIntroductionFlowTests.swift",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/App/",
+        "Sidequest/Resources/",
+        "Sidequest/Core/",
+        "Sidequest/Feed/",
+        "Sidequest/Games/Sudoku/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/StartupIntroductionFlowTests/testSystemReduceMotionKeepsColdLaunchAndForegroundUsable": {
+      "lower_layer": "Deterministic startup introduction tests cover bounded timing, cancellation, stale callbacks, failure, and reduced-motion omission; this native flow checks accessible cold launch and explicit gameplay. Actual recordings establish the brief decoration.",
+      "paths": [
+        "SidequestUITests/StartupIntroductionFlowTests.swift",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/App/",
+        "Sidequest/Resources/",
+        "Sidequest/Core/",
+        "Sidequest/Feed/",
+        "Sidequest/Games/Sudoku/",
+        "Sidequest.xcodeproj/"
+      ]
     }
   },
   "pre_design_smoke": [

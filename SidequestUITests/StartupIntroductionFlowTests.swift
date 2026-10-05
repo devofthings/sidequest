@@ -3,6 +3,16 @@ import XCTest
 @MainActor
 final class StartupIntroductionFlowTests: XCTestCase {
   func testColdLaunchAndForegroundKeepRealGameInactiveAndFeedPosition() {
+    assertColdLaunchAndForegroundKeepRealGameInactiveAndFeedPosition()
+  }
+
+  func testSystemReduceMotionKeepsColdLaunchAndForegroundUsable() {
+    SystemAccessibilitySupport.withReduceMotion {
+      assertColdLaunchAndForegroundKeepRealGameInactiveAndFeedPosition()
+    }
+  }
+
+  private func assertColdLaunchAndForegroundKeepRealGameInactiveAndFeedPosition() {
     let app = XCUIApplication()
     app.launchArguments = ["-sidequest-sudoku-test"]
     app.launch()

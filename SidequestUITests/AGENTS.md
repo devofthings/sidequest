@@ -78,3 +78,7 @@ The exported larger #138 failure video and synthesized events showed repeated up
 
 
 Completed Bubble win/loss/revisit checks retain full running-app hierarchy and all matching direct-aim/Slider element metadata before unchanged absence assertions. The larger r3 completed-direct lookup failed after a real three-shot win; the log establishes identified-element retention, not assistive traversal or completed Slider failure. Preserve this diagnostic evidence and actual Replay reachability checks when changing native completion composition.
+
+## Cold-launch introduction #91
+
+`StartupIntroductionFlowTests` uses the real Sudoku route to verify accessible cold launch, disabled initial gameplay, preserved feed selection after background/foreground, and explicit Start followed by real input. Its second case uses `SystemAccessibilitySupport.withReduceMotion` to change and restore actual native Settings. Keep both cases in explicit extended coverage; the three routine smoke cases remain unchanged. XCTest semantics do not prove a 430 ms decorative animation: retain actual normal/reduced-motion cold-launch recordings separately, without introducing a test-only accessibility element or extending production timing. [App guidance](../Sidequest/App/AGENTS.md#cold-launch-logo-introduction-91) owns the policy; physical-device and VoiceOver results require actual testing.
