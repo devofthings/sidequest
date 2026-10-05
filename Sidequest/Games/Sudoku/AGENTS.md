@@ -82,3 +82,18 @@ At `49b3db9c587d5f9964be5ac8117fe5cb74e7be24`, root-owned Debug compilation pass
 ## First meaningful interaction #185
 
 The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.
+
+## Certified opt-in tiers #187
+
+Lead-selected technical criteria supersede the 12-editable-cell baseline only for certified opt-in challenges: Easy <=12 blanks solved by naked singles; Medium <=13 blanks stalls naked-only and solves with hidden singles; Hard <=20 blanks stalls singles and solves with effective naked-pair/pointing eliminations. These are technique/workload proxies, not human ratings. Original fixtures originate in the bounded local seed118162 search, not an external catalog. Default generation and historical mini/standard fixtures keep their existing RNG operations.
+
+Agent-grill self-assessment with lead `/root`:
+
+| Question | Kind | Settled answer and evidence | Verification needed |
+| --- | --- | --- | --- |
+| What proves a tier? | Delegated technical choice | Replay actual validated 9×9 givens in ascending cell/digit order; units rows, columns, then boxes. Retain effective eliminations across placements. Require exhaustive canonical uniqueness and exact stored solution. Local Python original13/20 examples provide candidates, not Swift proof. | Root native tests must execute canonical Swift certificates before merge. |
+| How is work bounded? | Fact/technical choice | Existing uniqueness limit100,000 nodes; at most81 placements and729 effective removals per replay. Reject invalid, ambiguous, unsupported, or exhausted inputs. | Deterministic negative/budget/trace tests. |
+| How do cards vary safely? | Delegated technical choice | Game-owned seeded digit permutation of one certified same-tier original; classify actual transformed givens and exactsolution. One attempt, then freshly certified same-tier original fallback. Dedicated RNG never touches legacy generators. | Repeatability, variation, matching solution/tier, frozen controller reset/revisit tests. |
+| Where does selection run? | Existing boundary | Opt-in `SudokuChallenge` carries puzzle plus immutable certificate; controller retains it. Production selection and mixed-feed labels remain outside187. | Later batch preparation owns off-main execution; current defaults unchanged. |
+
+The plan is ready within approved #187; no owner decision or purchase is needed. Formatting/offline checks do not constitute native proof. No appearance/start-time classification, lifecycle owner, level selector, or live corpus search is introduced.

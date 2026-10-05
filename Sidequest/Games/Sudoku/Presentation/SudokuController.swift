@@ -6,6 +6,7 @@ import Observation
 final class SudokuController {
   let runtime: GameRuntime
   let puzzle: SudokuPuzzle
+  let challenge: SudokuChallenge?
   private let initialBoard: SudokuBoard
   private(set) var board: SudokuBoard?
   private(set) var selectedCell: Int?
@@ -14,10 +15,29 @@ final class SudokuController {
 
   var displayedBoard: SudokuBoard { board ?? initialBoard }
 
-  init(
+  convenience init(
     puzzle: SudokuPuzzle, runtime: GameRuntime, completedBoard: SudokuBoard? = nil,
     selectedCell: Int? = nil
   ) {
+    self.init(
+      puzzle: puzzle, challenge: nil, runtime: runtime,
+      completedBoard: completedBoard, selectedCell: selectedCell)
+  }
+
+  convenience init(
+    challenge: SudokuChallenge, runtime: GameRuntime, completedBoard: SudokuBoard? = nil,
+    selectedCell: Int? = nil
+  ) {
+    self.init(
+      puzzle: challenge.puzzle, challenge: challenge, runtime: runtime,
+      completedBoard: completedBoard, selectedCell: selectedCell)
+  }
+
+  private init(
+    puzzle: SudokuPuzzle, challenge: SudokuChallenge?, runtime: GameRuntime,
+    completedBoard: SudokuBoard?, selectedCell: Int?
+  ) {
+    self.challenge = challenge
     self.puzzle = puzzle
     self.runtime = runtime
     initialBoard = SudokuBoard(puzzle: puzzle)
