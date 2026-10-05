@@ -245,16 +245,39 @@ final class EndlessFlowTests: XCTestCase {
   }
 
   private func solveGeneratedBubble(_ app: XCUIApplication) {
-    // Seed104 consumes Sudoku and Memory generation first; its real three-shot witness is 55°,60°,60°.
-    for (index, position) in [CGFloat(115.0 / 120.0), 1, 1].enumerated() {
-      reveal(app.sliders["bubble.aim"], in: app)
-      app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: position)
+    // The host-verified production witness uses 54°/55° first, then the actual 60° endpoint twice.
+    for (index, degrees) in [55, 60, 60].enumerated() {
+      aimGeneratedBubble(app, degrees: degrees)
       reveal(app.buttons["bubble.fire"], in: app)
       app.buttons["bubble.fire"].tap()
       waitForBubbleShots(index + 1, in: app)
       if index < 2 { XCTAssertFalse(app.staticTexts["bubble.outcome"].exists) }
     }
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
+  }
+
+  private func aimGeneratedBubble(_ app: XCUIApplication, degrees: Int) {
+    let slider = app.sliders["bubble.aim"]
+    reveal(slider, in: app)
+    slider.adjust(toNormalizedSliderPosition: CGFloat(Double(degrees + 60) / 120))
+    if degrees == 60 {
+      // Native normalized adjustment can stop at 99%/59°. Track a real finger past the right end.
+      let start = slider.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5))
+      let end = slider.coordinate(withNormalizedOffset: CGVector(dx: 1, dy: 0.5))
+        .withOffset(CGVector(dx: 8, dy: 0))
+      start.press(forDuration: 0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0)
+      XCTAssertEqual(app.staticTexts["bubble.angle"].label, "Aim: 60°")
+      XCTAssertEqual(slider.value as? String, "100%")
+    } else {
+      XCTAssertTrue(
+        ["Aim: 54°", "Aim: 55°"].contains(app.staticTexts["bubble.angle"].label),
+        "The actual first aim must reach the independently verified winning window.")
+    }
+    XCTAssertEqual(app.selectedFeedCardID, gameID(3))
+    let attachment = XCTAttachment(screenshot: app.screenshot())
+    attachment.name = "generated-bubble-verified-aim-\(degrees)"
+    attachment.lifetime = .keepAlways
+    add(attachment)
   }
 
   private func waitForBubbleShots(_ count: Int, in app: XCUIApplication) {

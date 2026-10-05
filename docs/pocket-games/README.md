@@ -1,10 +1,10 @@
 # Selected pocket-sized games
 
-Status: accepted first revision for [#117](https://github.com/devofthings/sidequest/issues/117) on October 5, 2026. After the lead's pending-choice handoff, the owner replied “go ahead,” selecting the recommended standard-board Chess focus windows and retention of current Sudoku/Memory/Bubble configurations. [The approval record](https://github.com/devofthings/sidequest/issues/117#issuecomment-5990514369) defines the bounded scope; [#132](https://github.com/devofthings/sidequest/issues/132) implements Chess. The source audit below used commit `449bfab29c96dd360a2a3978f5dc7ceb8be48e76`. Session ranges remain unmeasured usability targets, not timers.
+Status: accepted first revision for [#117](https://github.com/devofthings/sidequest/issues/117) on October 5, 2026. After the lead's pending-choice handoff, the owner replied “go ahead,” selecting the recommended standard-board Chess focus windows and retention of current Sudoku/Memory/Bubble configurations. [The approval record](https://github.com/devofthings/sidequest/issues/117#issuecomment-5990514369) defines the bounded scope; [#132](https://github.com/devofthings/sidequest/issues/132) implements Chess. The source audit below used commit `449bfab29c96dd360a2a3978f5dc7ceb8be48e76`. Session ranges remain unmeasured usability targets, not timers. The subsequent harder-Bubble instruction under [#135](https://github.com/devofthings/sidequest/issues/135) supersedes retention of the one-shot generator: child #137 changes generation, while #138 owns controls/layout. The original audit/examples below remain historical baseline evidence, not the updated production default.
 
 ## Selected first revision
 
-Keep the already compact Sudoku, Memory, and Bubble configurations. Give Chess a fixed 4×4 focus window over its existing standard-board fixtures, preserving standard legality and all coordinate controls. This produces a smaller visual puzzle without introducing a new chess engine or opponent. Treat difficulty [#118](https://github.com/devofthings/sidequest/issues/118) separately; adaptive frequency [#119](https://github.com/devofthings/sidequest/issues/119) remains an Idea.
+Keep current compact Sudoku and Memory configurations. Bubble’s original one-shot configuration below is the pre-#137 baseline; the approved harder compact follow-up owns its replacement. Give Chess a fixed 4×4 focus window over its existing standard-board fixtures, preserving standard legality and all coordinate controls. This produces a smaller visual puzzle without introducing a new chess engine or opponent. Treat difficulty [#118](https://github.com/devofthings/sidequest/issues/118) separately; adaptive frequency [#119](https://github.com/devofthings/sidequest/issues/119) remains an Idea.
 
 Target roughly 15–90 seconds of active play per card. The game-specific ranges below are selected usability targets, not measured completion times, timers, pass/fail limits, or retention claims. Evaluate them through personal testing in [#10](https://github.com/devofthings/sidequest/issues/10).
 
@@ -65,7 +65,7 @@ Suggested copy: “White to move · Mate in one” and “Focus area e5–h8 · 
 
 The full 8×8 position remains the authority for legality and mate, including possible escape squares outside any future focus window. The current app checks supplied, independently validated tables; it does not calculate arbitrary chess legality. A future fixture with off-window pieces, accepted destinations, or relevant escape squares requires a wider window or explicit full-board presentation, with independent validation. It cannot silently clip that information. For this bounded revision, accept only the two existing fixtures and stated windows.
 
-### Bubble shooter: one compact clearing shot
+### Historical Bubble baseline: one compact clearing shot
 
 An existing valid small shape has two red bubbles at zero-based slots `(row:0,column:2)` and `(row:0,column:3)`. Its shot sequence begins red, blue, green. A red shot at 0° attaches, makes a group of three, and clears the board under the existing pure rules. Leave the angle slider and explicit Fire action available, including wrong shots; do not auto-aim or fire on entry. Keep the existing eight-shot maximum, danger-row and blocked-attachment losses, delayed-shot cancellation, completed result, and Replay behavior.
 
@@ -103,4 +103,4 @@ A disposable host-only Swift probe compiled the unchanged `SudokuPuzzle`, `Memor
 
 ## Owner selection and handoff
 
-The owner selected the focused standard-board first revision on October 5, 2026, with current Sudoku/Memory/Bubble configurations retained. Genuine reduced-board rules, new catalogs, and multiple-move puzzles remain deferred. The active-play ranges are accepted usability targets with no measured-time claim or enforced timer. Chess implementation belongs to #132; difficulty #118 remains a separate decision and adaptive frequency #119 remains an Idea.
+The owner selected the focused standard-board first revision on October 5, 2026, with current Sudoku/Memory configurations retained; the initially retained Bubble baseline is subsequently superseded by harder-play children #137/#138 under #135. Genuine reduced-board rules, new catalogs, and multiple-move puzzles remain deferred. The active-play ranges are accepted usability targets with no measured-time claim or enforced timer. Chess implementation belongs to #132; difficulty #118 remains a separate decision and adaptive frequency #119 remains an Idea.

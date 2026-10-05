@@ -1,6 +1,6 @@
 # Compact game cards and harder Bubble play
 
-Status: owner-authorized outcome on October 5, 2026; implementation pending in [#135](https://github.com/devofthings/sidequest/issues/135). The owner requested that all puzzles be pocket-sized, with better Bubble shooter controls and more difficulty. This supersedes retaining the existing one-shot Bubble production default in the first [pocket specification](pocket-games/README.md); it does not replace the four game kinds or select difficulty tiers in [#118](https://github.com/devofthings/sidequest/issues/118).
+Status: owner-authorized outcome on October 5, 2026; implementation is split into separately reviewed children under [#135](https://github.com/devofthings/sidequest/issues/135). The owner requested that all puzzles be pocket-sized, with better Bubble shooter controls and more difficulty. This supersedes retaining the existing one-shot Bubble production default in the first [pocket specification](pocket-games/README.md); it does not replace the four game kinds or select difficulty tiers in [#118](https://github.com/devofthings/sidequest/issues/118).
 
 ## Compact interaction
 
@@ -16,9 +16,9 @@ A dedicated aiming region, clear launcher, aiming feedback and a large explicit 
 
 ## Meaningful multi-shot challenges
 
-Current `BubbleChallengeGenerator.generate` and `fallback` accept only a replayed single winning shot. This is a source observation, not a difficulty measurement: production has deliberately trivial winning routes. The accepted outcome is a harder compact default requiring meaningful multiple shots while retaining the current eight-shot rules.
+The pre-#137 source baseline accepted a replayed single winning shot in `BubbleChallengeGenerator.generate` and `fallback`. That observation explains the harder-play request; it is not a measured difficulty result. [Generator child #137](https://github.com/devofthings/sidequest/issues/137) replaces that baseline with compact three-color ceiling-anchored groups and real-rule replayed three-shot witnesses, independently of control/layout child #138. Its actual native verification and fresh review remain pending in its PR; merging a reviewed child does not imply all parent #135 outcomes are complete.
 
-Use bounded local preparation and replay a concrete winning witness through the real rules before publishing a card. A padded or needlessly long witness does not prove difficulty. Reject trivial one-shot clears and establish multiple required actions or independently anchored color groups; document the actual verification method and limits. Preserve deterministic fixtures, solvability and preparation bounds. Technical generation strategy, exact shot targets and new tier labels remain unselected until evidence resolves them. Original fixed fixtures may remain historical test routes; normal-production checks must exercise the changed generator.
+Use bounded local preparation and replay a concrete winning witness through the real rules before publishing a card. A padded or needlessly long witness does not prove difficulty. Reject trivial one-shot clears and establish multiple required actions or independently anchored color groups; document the actual verification method and limits. Preserve deterministic fixtures, solvability and preparation bounds. The #137 constructive generation strategy and bounds are recorded in [Bubble guidance](BUBBLES.md); control/layout choices remain with #138, while new tier labels remain unselected. Original fixed fixtures may remain historical test routes; normal-production checks must exercise the changed generator.
 
 No timer, score, automatic progression, paid catalog, backend or release is selected. Difficulty tiers remain a separate specification, and adaptive game frequency remains an Idea. Prioritize #135 after the current Chess review, ahead of optional startup animation #91.
 
