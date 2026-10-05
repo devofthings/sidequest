@@ -12,24 +12,23 @@ final class MemoryWorkloadFlowTests: XCTestCase {
           pairCount == 3 ? "-sidequest-memory-three-pairs" : "-sidequest-memory-four-pairs",
         ] + (pairCount == 4 ? ["-sidequest-large-text"] : [])
       app.launch()
-      let start = app.buttons["game.start"]
-      XCTAssertTrue(start.waitForExistence(timeout: 5))
+      let first = app.buttons["memory.tile.0"]
+      XCTAssertTrue(first.waitForExistence(timeout: 5))
+      XCTAssertFalse(app.buttons["game.start"].exists)
       XCTAssertTrue(app.staticTexts["Find all \(pairCount) pairs."].exists)
       XCTAssertEqual(app.staticTexts["memory.progress"].label, "0 of \(pairCount) pairs matched")
       XCTAssertFalse(app.buttons["memory.tile.\(pairCount * 2)"].exists)
-      let first = app.buttons["memory.tile.0"]
-      XCTAssertFalse(first.isEnabled)
-      reveal(start, app: app)
-      start.tap()
-      XCTAssertEqual(first.label, "Hidden card 1", "Starting must not flip a card.")
+      XCTAssertTrue(first.isEnabled)
+      XCTAssertEqual(first.label, "Hidden card 1", "Appearance must not flip a card.")
       tap(0, app: app)
       let originalFirstFace = first.label
-      XCTAssertTrue(originalFirstFace.hasPrefix("Revealed "))
+      XCTAssertTrue(
+        originalFirstFace.hasPrefix("Revealed "), "The first flip must start and reveal its tile.")
+      XCTAssertEqual(app.staticTexts["memory.progress"].label, "0 of \(pairCount) pairs matched")
       app.nextFeedCard()
       app.previousFeedCard()
-      reveal(start, app: app)
-      XCTAssertFalse(first.isEnabled)
-      start.tap()
+      XCTAssertFalse(app.buttons["game.start"].exists)
+      XCTAssertTrue(first.isEnabled)
       XCTAssertEqual(first.label, "Hidden card 1")
       XCTAssertEqual(app.staticTexts["memory.progress"].label, "0 of \(pairCount) pairs matched")
       tap(0, app: app)
@@ -86,7 +85,7 @@ final class MemoryWorkloadFlowTests: XCTestCase {
       app.nextFeedCard()
       app.previousFeedCard()
       XCTAssertTrue(app.staticTexts["memory.completed"].exists)
-      XCTAssertFalse(start.exists)
+      XCTAssertFalse(app.buttons["game.start"].exists)
       for index in 0..<(pairCount * 2) {
         XCTAssertTrue(app.buttons["memory.tile.\(index)"].label.hasPrefix("Matched "))
         XCTAssertFalse(app.buttons["memory.tile.\(index)"].isEnabled)
