@@ -8,23 +8,21 @@ final class VariedChessFlowTests: XCTestCase {
       let queen = color == "white" ? "c2" : "c7"
       let mate = color == "white" ? "b2" : "b7"
       let board = assertWindow(app, size: 3, color: color)
-      for target in board + [app.buttons["game.start"]] {
+      for target in board {
         assertTarget(target, viewport: app.scrollViews["feed.cardScroll"].frame)
       }
-      let frames = board.map(\.frame)
-      XCTAssertFalse(app.buttons["chess.square.\(queen)"].isEnabled)
-      app.buttons["chess.square.\(queen)"].coordinate(withNormalizedOffset: .init(dx: 0.5, dy: 0.5))
-        .tap()
+      let stableBoard = board.filter { $0.identifier != "chess.square.\(queen)" }
+      let frames = stableBoard.map(\.frame)
+      XCTAssertTrue(app.buttons["chess.square.\(queen)"].isEnabled)
       XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
-      XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
-      XCTAssertEqual(board.map(\.frame), frames)
       app.buttons["chess.square.\(queen)"].tap()
       XCTAssertTrue(app.staticTexts["chess.selection"].label.contains(queen))
+      XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
+      XCTAssertEqual(stableBoard.map(\.frame), frames)
       navigate(app, color: color, forward: true)
       navigate(app, color: color, forward: false)
-      XCTAssertTrue(app.buttons["game.start"].exists)
       assertWindow(app, size: 3, color: color)
-      app.buttons["game.start"].tap()
+      XCTAssertFalse(app.buttons["game.start"].exists)
       XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
       submit(app, queen: queen, destination: mate)
       assertCompletedRevisit(app, size: 3, color: color, mate: mate)
@@ -41,7 +39,7 @@ final class VariedChessFlowTests: XCTestCase {
       let outside = color == "white" ? "h1" : "h8"
       let board = assertWindow(app, size: 5, color: color)
       let controls = [
-        "chess.piece.\(queen)", "chess.file", "chess.rank", "chess.submit", "game.start",
+        "chess.piece.\(queen)", "chess.file", "chess.rank", "chess.submit",
       ]
       .map { app.buttons[$0] }
       let viewport = app.scrollViews["feed.cardScroll"].frame
@@ -49,15 +47,14 @@ final class VariedChessFlowTests: XCTestCase {
         assertTarget(target, viewport: viewport)
       }
       capture(app, name: "five-square-\(color)-preview-all-controls")
-      let frames = board.map(\.frame)
-      app.buttons["game.start"].tap()
-      XCTAssertEqual(board.map(\.frame), frames)
+      let stableBoard = board.filter { $0.identifier != "chess.square.\(queen)" }
+      let frames = stableBoard.map(\.frame)
       XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
       XCTAssertFalse(app.buttons["chess.square.\(outside)"].exists)
       submit(app, queen: queen, destination: outside)
       XCTAssertTrue(app.staticTexts["chess.feedback"].label.contains("not checkmate"))
       XCTAssertTrue(app.buttons["chess.square.\(queen)"].label.contains("queen"))
-      XCTAssertEqual(board.map(\.frame), frames)
+      XCTAssertEqual(stableBoard.map(\.frame), frames)
       submit(app, queen: queen, destination: mate)
       assertCompletedRevisit(app, size: 5, color: color, mate: mate)
       app.terminate()
@@ -72,8 +69,6 @@ final class VariedChessFlowTests: XCTestCase {
       reveal(target, in: app)
       assertTarget(target, viewport: app.scrollViews["feed.cardScroll"].frame)
     }
-    reveal(app.buttons["game.start"], in: app)
-    app.buttons["game.start"].tap()
     XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
     submit(app, queen: "e8", destination: "a4")
     reveal(app.staticTexts["chess.completed"], in: app)
@@ -111,6 +106,9 @@ final class VariedChessFlowTests: XCTestCase {
       assertTarget(control, viewport: app.scrollViews["feed.cardScroll"].frame)
       XCTAssertTrue(control.isEnabled)
       control.tap()
+      if identifier == "chess.piece.\(queen)" {
+        XCTAssertTrue(app.staticTexts["chess.selection"].label.contains(queen))
+      }
       if let option {
         XCTAssertTrue(app.buttons[option].waitForExistence(timeout: 3))
         app.buttons[option].tap()
@@ -181,7 +179,9 @@ final class VariedChessFlowTests: XCTestCase {
         "hard-\(size == 3 ? "three" : "five")-\(color)",
       ] + (largeText ? ["-sidequest-large-text"] : [])
     app.launch()
-    XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts["chess.selection"].waitForExistence(timeout: 5))
+    XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
+    XCTAssertFalse(app.buttons["game.start"].exists)
     return app
   }
 }
