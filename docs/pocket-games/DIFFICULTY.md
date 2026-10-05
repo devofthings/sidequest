@@ -1,6 +1,6 @@
 # Difficulty research and proposed classification
 
-Status: **Proposed**, partial contribution to [#118](https://github.com/devofthings/sidequest/issues/118), researched October 5, 2026. Multiple difficulties are approved; these tier definitions and thresholds are not selected implementation. This note adds no gameplay, classified fixture catalog, settings, progression, or verified completion-time claim. The owner’s feed-mix versus manual-selection decision remains [pending in #118](https://github.com/devofthings/sidequest/issues/118#issuecomment-5998722336). [#117](https://github.com/devofthings/sidequest/issues/117) still owns varied Chess rules and presentation.
+Status: **Accepted product exposure; Proposed classification criteria**, partial contribution to [#118](https://github.com/devofthings/sidequest/issues/118), researched October 5, 2026. Multiple difficulties are approved; these tier definitions and thresholds are not selected implementation. This note adds no gameplay, classified fixture catalog, settings, progression, or verified completion-time claim. On October 5, the owner selected a [mixed feed with an Easy, Medium, or Hard label on each game](https://github.com/devofthings/sidequest/issues/118#issuecomment-6000642597), and [differently sized cropped Chess focus areas under standard 8×8 rules](https://github.com/devofthings/sidequest/issues/117#issuecomment-6000644787). These are accepted product decisions, not implemented difficulty labels or varied-board behavior. No manual level selector, automatic progression, or true smaller-board rule system is selected.
 
 ## Evidence and scope
 
@@ -81,7 +81,7 @@ All have exactly two of each symbol. A dependency-free development calculation c
 
 ## Frozen cards and verification plan
 
-Proposed implementation seam: a game-owned immutable classification result contains tier, classifier version, measured metrics, and the original frozen challenge. Attach it during off-main batch preparation before publishing a card, not while rendering or starting. Keep the card ID, challenge payload, and classification together in lightweight history; reset, Bubble replay, and completed restoration must preserve them. A future selected preference affects only future generated cards, never an existing card. It does not alter game/news preference or phase-two scores.
+Proposed implementation seam: a game-owned immutable classification result contains tier, classifier version, measured metrics, and the original frozen challenge. Attach it during off-main batch preparation before publishing a card, not while rendering or starting. Keep the card ID, challenge payload, and classification together in lightweight history; reset, Bubble replay, and completed restoration must preserve them. The accepted mixed-feed policy freezes each card’s challenge and tier together across preview, start, unfinished reset, Bubble replay, and completed revisit. New generated cards may use a different tier; an existing card never changes tier during its lifecycle. Exact mix proportions remain a technical implementation choice to record with bounded validation. It does not alter game/news preference or phase-two scores.
 
 Planned verification, not executed app evidence:
 
@@ -90,7 +90,7 @@ Planned verification, not executed app evidence:
 3. Exhaustively verify each new Chess fixture and equivalent mate set through the existing development validator. Fail on invalid king safety, unsupported pieces, missing mates, or clipped important information.
 4. Replay Bubble witnesses and sampled shorter-route/tolerance probes through the actual geometry and rules. Check the declared search domain, deterministic work bounds, reflection, shot cap, and cancellation. Incomplete search must remain unclassified.
 5. Check all Memory example metrics, pair invariants, deterministic selection, and normal versus accessibility reflow independence.
-6. Verify frozen difficulty through preview/start, unfinished skip/reset, completion/eviction/revisit, and Bubble replay in unit/controller tests. After distribution is selected, verify visible and spoken tier labels, stable geometry, and any chosen controls through focused running-app checks; preserve the tiny routine smoke gate.
+6. Verify frozen difficulty through preview/start, unfinished skip/reset, completion/eviction/revisit, and Bubble replay in unit/controller tests. For the accepted mixed feed, verify visible and spoken tier labels and stable geometry through focused running-app checks; preserve the tiny routine smoke gate.
 
 ## Readiness record
 
@@ -99,7 +99,7 @@ Planned verification, not executed app evidence:
 | Can clue count or window size alone define difficulty? | Fact | No defensible human-difficulty proof. | Sudoku primary research; current Chess legality versus presentation. |
 | Where should classification run? | Proposed technical choice | Pure game-owned classifier during frozen batch preparation. | Existing `GeneratedGameBatch` boundary; implementation and lifecycle tests pending. |
 | Are the proposed three tiers populated and valid? | Fact still open | Not established; no catalog is certified here. | Original candidate proof, deterministic classifier, and bounded generation tests required. |
-| How are levels exposed? | Human-owned decision | Pending: mixed feed versus manual selection. | Existing assigned #118 request; no settings or progression selected. |
-| What rules govern varied pocket Chess? | Human-owned decision | Pending #117 boundary and multistep scope. | Current standard king/queen mate-one envelope only. |
+| How are levels exposed? | Accepted owner decision, October 5 | Mix Easy, Medium, and Hard game cards; label each game. | [Owner choice](https://github.com/devofthings/sidequest/issues/118#issuecomment-6000642597); no manual selector or automatic progression. Implementation remains pending. |
+| What rules govern varied pocket Chess? | Accepted owner decision, October 5 | Differently sized cropped focus areas over standard 8×8 rules. | [Owner choice](https://github.com/devofthings/sidequest/issues/117#issuecomment-6000644787); full-board legality and semantic coordinates remain authoritative. New piece or multistep rules are not selected. |
 
-This partial research is ready for independent documentation review. Full #118 implementation is not ready: choose exposure policy, record the selected definitions, verify eligible examples, and then split bounded game-owned implementation tickets without expanding into Ideas or paid catalogs.
+This partial research is ready for independent documentation review. Full #118 implementation still needs lead technical readiness: record selected definitions, verify eligible examples and calibration limits, and then split bounded game-owned implementation tickets without expanding into Ideas or paid catalogs.
