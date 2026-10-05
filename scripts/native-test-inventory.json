@@ -1,5 +1,34 @@
 {
+  "active_gate": "pre_design_smoke",
   "extended": {
+    "SidequestUITests/BubbleFlowTests/testBackgroundDuringDirectAimedFlightReturnsToFrozenPreview": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/BubbleFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/Games/BubbleShooter/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/BubbleFlowTests/testDirectAimHorizontalVerticalAndDiagonalStayInTheirOwnedAreaUntilFire": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/BubbleFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/Games/BubbleShooter/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
+      ]
+    },
     "SidequestUITests/BubbleFlowTests/testSevenStraightShotsLoseAndReplayRestoresChallenge": {
       "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
       "paths": [
@@ -84,6 +113,15 @@
         "Sidequest/Resources/"
       ]
     },
+    "SidequestUITests/ChessFlowTests/testNormalPocketBoardAndAllMoveControlsFitTogether": {
+      "lower_layer": "GameLayoutBudgetTests verify independent budget and target floor; real app asserts complete board plus all coordinate actions and Start together at normal text, preserving exact start geometry.",
+      "paths": [
+        "SidequestUITests/ChessFlowTests.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Presentation/GameLayoutBudget.swift",
+        "Sidequest/Games/Chess/"
+      ]
+    },
     "SidequestUITests/EndlessFlowTests/testEndlessNativeImportsCyclePersistAndKeepHistoryAfterRejectionOrCancel": {
       "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
       "paths": [
@@ -116,6 +154,15 @@
         "SidequestUITests/SystemAccessibilitySupport.swift",
         "SidequestUITests/NewsPresentationTests.swift",
         "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/EndlessFlowTests/testGeneratedBubbleNeedsThreeShotsAndResetRestoresTheChallenge": {
+      "lower_layer": "Pure structural and witness tests prove three required ceiling colors; native flow verifies production generation, actual aiming/fire, wrong-attempt reset and retained multi-shot completion.",
+      "paths": [
+        "SidequestUITests/EndlessFlowTests.swift",
+        "Sidequest/Games/BubbleShooter/",
+        "Sidequest/App/GeneratedGameBatch.swift",
+        "Sidequest/Feed/"
       ]
     },
     "SidequestUITests/EndlessFlowTests/testGeneratedGamesCompleteResetAndRestoreAfterMultipleBatchesAndCanceledDrag": {
@@ -261,6 +308,40 @@
         "Sidequest/Resources/"
       ]
     },
+    "SidequestUITests/GamePreviewTests/testAllInitialBoardsRejectPreviewInputAndResetAfterSkipAndBackground": {
+      "lower_layer": "Controller tests cover frozen values and input/task gates; this explicit native check proves visible initial boards, start/reset accessibility, and stable start geometry for all real adapters.",
+      "paths": [
+        "SidequestUITests/GamePreviewTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/GamePreviewTests/testEveryNormalPocketBoardAndPrimaryControlFitsWithoutScrollingAcrossStart": {
+      "lower_layer": "Pure game and controller tests cover rules and input eligibility; this extended native case proves whole-frame simultaneous compact fit and same-offset start geometry for all games.",
+      "paths": [
+        "SidequestUITests/GamePreviewTests.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Presentation/",
+        "Sidequest/Games/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/GamePreviewTests/testLargestTextKeepsEveryInitialBoardAndStartReachableWithoutMovingTheBoard": {
+      "lower_layer": "Controller tests cover frozen values and input/task gates; this explicit native check proves visible initial boards, start/reset accessibility, and stable start geometry for all real adapters.",
+      "paths": [
+        "SidequestUITests/GamePreviewTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
     "SidequestUITests/IntegrationFlowTests/testLargestTextImportedOverflowSourceLinkAndActualReducedMotionKeepNavigation": {
       "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
       "paths": [
@@ -291,6 +372,17 @@
         "SidequestUITests/SystemAccessibilitySupport.swift",
         "SidequestUITests/NewsPresentationTests.swift",
         "Sidequest/Resources/"
+      ]
+    },
+    "SidequestUITests/MemoryFlowTests/testSuccessWithSystemReduceMotionDoesNotRepeatAfterBackground": {
+      "lower_layer": "GameSuccessFeedbackTests cover once-per-attempt, cancellation, failed/stale completion, restored state, and replay. This focused native case verifies actual system Reduce Motion and background cancellation of visible successful Memory feedback.",
+      "paths": [
+        "SidequestUITests/Games/Memory/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
       ]
     },
     "SidequestUITests/NewsPresentationTests/testOfflineSampleShowsSourceDateLabelAndImportPicker": {
@@ -341,21 +433,55 @@
         "Sidequest/Resources/"
       ]
     },
-    "SidequestUITests/SudokuFlowTests/testNormalControlsHaveFullTouchAreasAndCellCornersSelect": {
-      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+    "SidequestUITests/StableGameLayoutTests/testBubbleFeedbackCompletionAndReplayKeepBoardAndControlsStable": {
+      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
       "paths": [
-        "SidequestUITests/SudokuFlowTests.swift",
+        "SidequestUITests/StableGameLayoutTests.swift",
         "SidequestUITests/FeedNavigationSupport.swift",
         "Sidequest/Feed/",
+        "Sidequest/Games/",
         "Sidequest/Core/",
-        "Sidequest/Games/Sudoku/",
-        "Sidequest.xcodeproj/",
-        "SidequestUITests/SystemAccessibilitySupport.swift",
-        "SidequestUITests/NewsPresentationTests.swift",
-        "Sidequest/Resources/"
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
       ]
     },
-    "SidequestUITests/StableGameLayoutTests/testSudokuFeedbackAndCompletionKeepBoardAndControlsStable": {
+    "SidequestUITests/StableGameLayoutTests/testChessSelectionFeedbackAndCompletionKeepBoardAndControlsStable": {
+      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
+      "paths": [
+        "SidequestUITests/StableGameLayoutTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/StableGameLayoutTests/testLargestTextBubbleFeedbackCompletionAndReplayKeepBoardAndControlsStable": {
+      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
+      "paths": [
+        "SidequestUITests/StableGameLayoutTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/StableGameLayoutTests/testLargestTextChessSelectionFeedbackAndCompletionKeepBoardAndControlsStable": {
+      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
+      "paths": [
+        "SidequestUITests/StableGameLayoutTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Games/",
+        "Sidequest/Core/",
+        "Sidequest/App/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/StableGameLayoutTests/testLargestTextMemoryMismatchAndCompletionKeepTilesStable": {
       "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
       "paths": [
         "SidequestUITests/StableGameLayoutTests.swift",
@@ -391,7 +517,7 @@
         "Sidequest.xcodeproj/"
       ]
     },
-    "SidequestUITests/StableGameLayoutTests/testLargestTextMemoryMismatchAndCompletionKeepTilesStable": {
+    "SidequestUITests/StableGameLayoutTests/testSudokuFeedbackAndCompletionKeepBoardAndControlsStable": {
       "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
       "paths": [
         "SidequestUITests/StableGameLayoutTests.swift",
@@ -403,108 +529,26 @@
         "Sidequest.xcodeproj/"
       ]
     },
-    "SidequestUITests/StableGameLayoutTests/testChessSelectionFeedbackAndCompletionKeepBoardAndControlsStable": {
-      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
+    "SidequestUITests/SudokuFlowTests/testNormalControlsHaveFullTouchAreasAndCellCornersSelect": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
       "paths": [
-        "SidequestUITests/StableGameLayoutTests.swift",
+        "SidequestUITests/SudokuFlowTests.swift",
         "SidequestUITests/FeedNavigationSupport.swift",
         "Sidequest/Feed/",
-        "Sidequest/Games/",
         "Sidequest/Core/",
-        "Sidequest/App/",
-        "Sidequest.xcodeproj/"
-      ]
-    },
-    "SidequestUITests/StableGameLayoutTests/testLargestTextChessSelectionFeedbackAndCompletionKeepBoardAndControlsStable": {
-      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
-      "paths": [
-        "SidequestUITests/StableGameLayoutTests.swift",
-        "SidequestUITests/FeedNavigationSupport.swift",
-        "Sidequest/Feed/",
-        "Sidequest/Games/",
-        "Sidequest/Core/",
-        "Sidequest/App/",
-        "Sidequest.xcodeproj/"
-      ]
-    },
-    "SidequestUITests/StableGameLayoutTests/testBubbleFeedbackCompletionAndReplayKeepBoardAndControlsStable": {
-      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
-      "paths": [
-        "SidequestUITests/StableGameLayoutTests.swift",
-        "SidequestUITests/FeedNavigationSupport.swift",
-        "Sidequest/Feed/",
-        "Sidequest/Games/",
-        "Sidequest/Core/",
-        "Sidequest/App/",
-        "Sidequest.xcodeproj/"
-      ]
-    },
-    "SidequestUITests/StableGameLayoutTests/testLargestTextBubbleFeedbackCompletionAndReplayKeepBoardAndControlsStable": {
-      "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
-      "paths": [
-        "SidequestUITests/StableGameLayoutTests.swift",
-        "SidequestUITests/FeedNavigationSupport.swift",
-        "Sidequest/Feed/",
-        "Sidequest/Games/",
-        "Sidequest/Core/",
-        "Sidequest/App/",
-        "Sidequest.xcodeproj/"
-      ]
-    },
-    "SidequestUITests/GamePreviewTests/testAllInitialBoardsRejectPreviewInputAndResetAfterSkipAndBackground": {
-      "lower_layer": "Controller tests cover frozen values and input/task gates; this explicit native check proves visible initial boards, start/reset accessibility, and stable start geometry for all real adapters.",
-      "paths": [
-        "SidequestUITests/GamePreviewTests.swift",
-        "SidequestUITests/FeedNavigationSupport.swift",
-        "Sidequest/Feed/",
-        "Sidequest/Games/",
-        "Sidequest/Core/",
-        "Sidequest/App/",
-        "Sidequest.xcodeproj/"
-      ]
-    },
-    "SidequestUITests/GamePreviewTests/testLargestTextKeepsEveryInitialBoardAndStartReachableWithoutMovingTheBoard": {
-      "lower_layer": "Controller tests cover frozen values and input/task gates; this explicit native check proves visible initial boards, start/reset accessibility, and stable start geometry for all real adapters.",
-      "paths": [
-        "SidequestUITests/GamePreviewTests.swift",
-        "SidequestUITests/FeedNavigationSupport.swift",
-        "Sidequest/Feed/",
-        "Sidequest/Games/",
-        "Sidequest/Core/",
-        "Sidequest/App/",
-        "Sidequest.xcodeproj/"
-      ]
-    },
-    "SidequestUITests/MemoryFlowTests/testSuccessWithSystemReduceMotionDoesNotRepeatAfterBackground": {
-      "lower_layer": "GameSuccessFeedbackTests cover once-per-attempt, cancellation, failed/stale completion, restored state, and replay. This focused native case verifies actual system Reduce Motion and background cancellation of visible successful Memory feedback.",
-      "paths": [
-        "SidequestUITests/Games/Memory/",
+        "Sidequest/Games/Sudoku/",
+        "Sidequest.xcodeproj/",
         "SidequestUITests/SystemAccessibilitySupport.swift",
-        "Sidequest/Feed/",
-        "Sidequest/Games/",
-        "Sidequest/App/",
-        "Sidequest.xcodeproj/"
-      ]
-    },
-    "SidequestUITests/EndlessFlowTests/testGeneratedBubbleNeedsThreeShotsAndResetRestoresTheChallenge": {
-      "lower_layer": "Pure structural and witness tests prove three required ceiling colors; native flow verifies production generation, actual aiming/fire, wrong-attempt reset and retained multi-shot completion.",
-      "paths": [
-        "SidequestUITests/EndlessFlowTests.swift",
-        "Sidequest/Games/BubbleShooter/",
-        "Sidequest/App/GeneratedGameBatch.swift",
-        "Sidequest/Feed/"
-      ]
-    },
-    "SidequestUITests/ChessFlowTests/testNormalPocketBoardAndAllMoveControlsFitTogether": {
-      "lower_layer": "GameLayoutBudgetTests verify independent budget and target floor; real app asserts complete board plus all coordinate actions and Start together at normal text, preserving exact start geometry.",
-      "paths": [
-        "SidequestUITests/ChessFlowTests.swift",
-        "Sidequest/Feed/",
-        "Sidequest/Presentation/GameLayoutBudget.swift",
-        "Sidequest/Games/Chess/"
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
       ]
     }
   },
+  "pre_design_smoke": [
+    "SidequestUITests/FoundationLaunchTests/testLaunchShowsAccessibleHeading",
+    "SidequestUITests/PagerFlowTests/testDirectCardDragTracksAndCommitsThenReverseReturnsToPreview",
+    "SidequestUITests/SudokuFlowTests/testTapStartsOnlyAndCorrectionsResetAfterSkipping"
+  ],
   "required": [
     "SidequestUITests/SudokuFlowTests/testTapStartsOnlyAndCorrectionsResetAfterSkipping",
     "SidequestUITests/SudokuFlowTests/testSolvedBoardRemainsOnCardAndSurvivesRevisit",
@@ -572,11 +616,5 @@
     "SidequestUITests/SudokuFlowTests/testSolvedBoardRemainsOnCardAndSurvivesRevisit": 17.20818793773651,
     "SidequestUITests/SudokuFlowTests/testTapStartsOnlyAndCorrectionsResetAfterSkipping": 14.573032021522522
   },
-  "active_gate": "pre_design_smoke",
-  "workers": 1,
-  "pre_design_smoke": [
-    "SidequestUITests/FoundationLaunchTests/testLaunchShowsAccessibleHeading",
-    "SidequestUITests/PagerFlowTests/testDirectCardDragTracksAndCommitsThenReverseReturnsToPreview",
-    "SidequestUITests/SudokuFlowTests/testTapStartsOnlyAndCorrectionsResetAfterSkipping"
-  ]
+  "workers": 1
 }

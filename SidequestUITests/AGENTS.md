@@ -59,3 +59,10 @@ A normalized Slider request is not evidence of actual degrees. Capture the obser
 ## Compact Chess control verification #142
 
 Normal pocket coverage requires every visible4×4square, own-piece choice, File, Rank, Submit and preview Start to fit completely inside the same settled card viewport, with44-point targets. Do not reveal controls by scrolling to claim simultaneous fit. Compare the same frames immediately across Start; existing both-color wrong/illegal/off-window/mate flows and largest full-control checks remain. This new case stays extended; routine three-case smoke is unchanged. Root executes the375×667 and larger-device runs and records actual results.
+
+
+## Compact direct Bubble and all-game fit #138/#135
+
+The new extended default-font pocket loop enumerates every Sudoku/Memory/Chess board target and primary input, plus Bubble board/direct aim/native Slider/Fire and preview Start. Require whole nonempty frames inside the same settled card viewport and app bounds without reveal/scroll, actual44-point controls, frozen state and unchanged complete board/control frames across Start. Root runs it at375×667 and a larger viewport; dimensions alone do not certify parent135. Existing tiny three-case gate stays unchanged.
+
+Direct aim coverage begins on the launcher then moves upward and also exercises horizontal/vertical/diagonal gestures; assert observed angle change, unchanged selected card/board/control frames (hence unchanged inner offset), zero shots until explicit Fire, actual commit and ordinary outside-control paging. Largest Bubble uses owned scrolling and direct plus accessible Slider input; background/skip pending-flight and actual system Reduce Motion remain checked. Reveal overflow from the narrow right margin outside the dedicated lower-board aim control, avoiding accidental aim during a test's scrolling gesture. No injected aim, auto-win, new fixture or normalized-angle assumption.

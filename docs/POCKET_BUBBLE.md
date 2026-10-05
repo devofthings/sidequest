@@ -16,7 +16,7 @@ A dedicated aiming region, clear launcher, aiming feedback and a large explicit 
 
 ## Meaningful multi-shot challenges
 
-The pre-#137 source baseline accepted a replayed single winning shot in `BubbleChallengeGenerator.generate` and `fallback`. That observation explains the harder-play request; it is not a measured difficulty result. [Generator child #137](https://github.com/devofthings/sidequest/issues/137) replaces that baseline with compact three-color ceiling-anchored groups and real-rule replayed three-shot witnesses, independently of control/layout child #138. Its actual native verification and fresh review remain pending in its PR; merging a reviewed child does not imply all parent #135 outcomes are complete.
+The pre-#137 source baseline accepted a replayed single winning shot in `BubbleChallengeGenerator.generate` and `fallback`. That observation explains the harder-play request; it is not a measured difficulty result. [Generator child #137](https://github.com/devofthings/sidequest/issues/137) replaces that baseline with compact three-color ceiling-anchored groups and real-rule replayed three-shot witnesses, independently of control/layout child #138. It merged through [PR139](https://github.com/devofthings/sidequest/pull/139) after fresh review, exact-head137-test native CI and a real production three-shot/reset/revisit flow; merging a reviewed child does not imply all parent #135 outcomes are complete.
 
 Use bounded local preparation and replay a concrete winning witness through the real rules before publishing a card. A padded or needlessly long witness does not prove difficulty. Reject trivial one-shot clears and establish multiple required actions or independently anchored color groups; document the actual verification method and limits. Preserve deterministic fixtures, solvability and preparation bounds. The #137 constructive generation strategy and bounds are recorded in [Bubble guidance](BUBBLES.md); control/layout choices remain with #138, while new tier labels remain unselected. Original fixed fixtures may remain historical test routes; normal-production checks must exercise the changed generator.
 
@@ -25,3 +25,8 @@ No timer, score, automatic progression, paid catalog, backend or release is sele
 ## Planned verification
 
 Verify actual normal/largest-text layouts and stable board/control frames for all four games. For Bubble, exercise actual aiming without paging, explicit start/Fire, multi-shot success and wrong shots, input lock, skip during flight, frozen replay and Reduce Motion. Add deterministic generation tests for witnesses, nontriviality and bounded failure. Exact-head native CI and fresh independent review remain required. Physical-device results and enjoyment remain unverified until actually tested.
+
+
+## Child integration status
+
+Compact Chess/shared viewport child142 merged through [PR143](https://github.com/devofthings/sidequest/pull/143) after seven focused cases passed on both small375×667 and larger simulators, fresh review and exact-head140-test native CI. Generator137's merged evidence is recorded above. Control child138 consumes that seam with direct lower-board aiming, a real reflected guide, explicit Fire/native Slider and compact stable chrome; its changed behavior and the new all-game whole-frame normal-size audit require actual verification before parent135 is complete. See [Bubble implementation/verification](BUBBLES.md#compact-direct-aiming-138). No new release or tier is implied.
