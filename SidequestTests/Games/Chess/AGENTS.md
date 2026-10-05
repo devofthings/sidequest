@@ -5,3 +5,5 @@ Test pure puzzle behavior through the same public attempt operations used by the
 Controller and app-flow tests cover preview/start with no selected piece, input gates, skip/reset, revisit/completion, and both moving colors through the retained presentation adapter. App-flow checks also measure the alternative controls' actual accessibility frames and perform edge actions before asserting the resulting selection and mate. Keep engine files, virtual environments, generated reports, and private output outside Git.
 
 Await the real off-UI bundled loader in rule/controller tests. Startup tests suspend an injected loader to verify composition ordering, single load/cache reuse, visible failures, and cancellation plus late completion after replacement; never bypass loading with a fabricated success.
+
+For #132, verify immutable White e5–h8 / Black a1–d4 window ordering, all pieces/mates and defending-king neighbors, unchanged standard-board nonmates outside the crop, and full-board fallback for unknown IDs, changed FENs, or accepted destinations outside the crop. The window owns presentation only; canonical move-table validation remains separate.
