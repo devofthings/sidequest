@@ -49,3 +49,9 @@ Child #170 supersedes the foundation-only state with standard production generat
 See [game guidance](../Sidequest/Games/Sudoku/AGENTS.md#standard-format-foundation-162--partial-delivery) for the configuration, work-budget, cancellation, compatibility, and planned verification decisions. Existing mini delivery evidence above remains historical proof; standard-format tests require their own actual results before any delivery claim.
 
 GameGenerationComposition explicitly selects mini only for the existing DEBUG endless fixture route, preserving its historical4×4 completion assertions. GeneratedGameBatch takes an explicit configuration with standard as its default; normal/Release production uses standard. The new standard route exercises the same9×9 rules/controller/view through deterministic original input.
+
+## Standard presentation validation in progress
+
+Root’s focused source69e5d42 execution passed normal full-board/primary-control fit, inert surface start/conflict/correction/clear/reset (22.550seconds) and actual twelve-entry completion/completed revisit (98.417seconds). Its largest-text reachability initially failed with retained screenshots/video. Moving only the native test’s scroll origin into card padding, outside coordinate menus, passed the unchanged largest-text containment44point/stability/reset assertions at2c04bba (45.412seconds). These results certify those source revisions, not subsequent refinements.
+
+The retained render also showed dimmed essential given digits and a wrapping accessibility Clear label. Changed source supplies a label-preserving genuinely disabled overview button style and accessibility-only three-column keypad/full-width Clear; normal five/four rows remain. Actual root native/rendered checks, exact-head CI and fresh review remain pending. Difficulty tiers and physical-device/VoiceOver validation remain separate.

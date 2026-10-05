@@ -76,6 +76,16 @@ final class StandardSudokuFlowTests: XCTestCase {
     let initial = number.frame
     number.tap()
     XCTAssertEqual(number.frame, initial)
+    let clear = app.buttons["sudoku.clear"]
+    reveal(clear, in: app, upward: true)
+    XCTAssertGreaterThanOrEqual(clear.frame.width, 44)
+    XCTAssertGreaterThanOrEqual(clear.frame.height, 44)
+    let clearFrame = clear.frame
+    clear.tap()
+    XCTAssertEqual(clear.frame, clearFrame)
+    reveal(number, in: app, upward: false)
+    number.tap()
+    screenshot(app, name: "standard-nine-largest-readable-controls")
     reveal(app.buttons["sudoku.cell.8"], in: app, upward: false)
     XCTAssertEqual(app.buttons["sudoku.cell.8"].value as? String, "9")
     screenshot(app, name: "standard-nine-largest-overview")

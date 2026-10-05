@@ -93,7 +93,7 @@ struct StandardSudokuView: View {
             .animation(feedbackAnimation, value: selected)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(SudokuOverviewButtonStyle())
         .disabled(!canSelect || given)
         .accessibilityLabel(
           "Row \(index / 9 + 1), column \(index % 9 + 1)\(given ? ", given" : "")"
@@ -154,21 +154,36 @@ struct StandardSudokuView: View {
 
   private var numbers: some View {
     VStack(spacing: 8) {
-      HStack(spacing: 8) { ForEach(1...5, id: \.self) { number($0) } }
-      HStack(spacing: 8) {
-        ForEach(6...9, id: \.self) { number($0) }
-        Button {
-          controller.enter(0)
-        } label: {
-          Text("Clear").font(.subheadline)
-            .frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
+      if textSize.isAccessibilitySize {
+        LazyVGrid(
+          columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8
+        ) {
+          ForEach(1...9, id: \.self) { number($0) }
         }
-        .accessibilityLabel("Clear selected cell")
-        .accessibilityIdentifier("sudoku.clear")
+        clearButton
+      } else {
+        HStack(spacing: 8) { ForEach(1...5, id: \.self) { number($0) } }
+        HStack(spacing: 8) {
+          ForEach(6...9, id: \.self) { number($0) }
+          clearButton
+        }
       }
     }
     .buttonStyle(SidequestButtonStyle(compact: true))
     .disabled(!canSelect || controller.selectedCell == nil)
+  }
+
+  private var clearButton: some View {
+    Button {
+      controller.enter(0)
+    } label: {
+      Text("Clear")
+        .font(textSize.isAccessibilitySize ? .body : .subheadline)
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity, minHeight: 44).contentShape(Rectangle())
+    }
+    .accessibilityLabel("Clear selected cell")
+    .accessibilityIdentifier("sudoku.clear")
   }
 
   private func number(_ value: Int) -> some View {
@@ -212,5 +227,12 @@ private struct StandardSudokuRegionDividers: Shape {
       path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY + rect.height * fraction))
     }
     return path
+  }
+}
+
+/// Disabled board values remain essential puzzle information, rather than dimmed action labels.
+private struct SudokuOverviewButtonStyle: ButtonStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
   }
 }
