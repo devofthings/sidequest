@@ -55,7 +55,7 @@ The temporary three-case UI gate uses one worker. The earlier two-worker benchma
 
 On October 4, 2026, the owner requested simulator reuse or cleanup. The selected cleanup option keeps a fresh isolated device per worker, preserves same-device behavior throughout each run, and removes those devices afterward. The native driver attempts shutdown and deletion for every successfully returned owned UUID after normal completion or a handled failure, including partial creation and boot failures. A failed cleanup command does not prevent attempts on the other owned devices; it fails verification and names the failed operation and owned ID. CI writes its successful manifest only after cleanup succeeds. No global simulator cleanup or persistent shared pool is introduced.
 
-Logs, result bundles, incremental Debug cache, and unique Release products remain outside simulator storage and survive device deletion. Historical shutdown-only benchmark evidence remains unchanged. Hard kills such as SIGKILL cannot execute this cleanup; interruption/process handling remains separate under #102.
+Logs, result bundles, incremental Debug cache, and unique Release products remain outside simulator storage and survive device deletion. Historical shutdown-only benchmark evidence remains unchanged. Hard kills such as SIGKILL cannot execute this context's cleanup; foreground CI additionally records returned UUIDs before boot for its [bounded final recovery step](CI.md#shell-cancellation-recovery-140). Interruption/process handling remains separate under #102. Focused manually launched native runs retain their original ownership boundary.
 
 | Readiness question | Kind | Decision and evidence | Verification |
 | --- | --- | --- | --- |

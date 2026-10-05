@@ -36,7 +36,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           SIDEQUEST_EXPECTED_HEAD: ${{ github.sha }}
           SIDEQUEST_BASE_REF: main
-        run: python3 scripts/ci-verify.py
+        run: exec python3 scripts/ci-verify.py
+      - name: Recover owned simulators after verification
+        if: always()
+        env:
+          SIDEQUEST_EXPECTED_HEAD: ${{ github.sha }}
+          SIDEQUEST_VERIFICATION_OUTCOME: ${{ steps.verify.outcome }}
+        run: exec python3 scripts/ci_devices.py
   publish:
     name: Sidequest / publish preview
     needs: verification

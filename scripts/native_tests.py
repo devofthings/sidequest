@@ -202,13 +202,15 @@ def execute(root, diagnostics, cache_root, destinations, selected, run, xcode, s
 
 
 @contextmanager
-def devices(run, name, count):
+def devices(run, name, count, created=None):
     owned = []
     try:
         for index in range(count):
             identifier = run(f"create-{index + 1}", ["xcrun", "simctl", "create", f"{name} {index + 1}",
                                                    DEVICE_TYPE, RUNTIME]).strip()
             owned.append(identifier)
+            if created is not None:
+                created(identifier, f"{name} {index + 1}")
             run(f"boot-{index + 1}", ["xcrun", "simctl", "boot", identifier])
             run(f"bootstatus-{index + 1}", ["xcrun", "simctl", "bootstatus", identifier, "-b"])
         yield [f"platform=iOS Simulator,id={identifier}" for identifier in owned]
