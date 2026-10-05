@@ -51,7 +51,10 @@ final class FirstInteractionFlowTests: XCTestCase {
       } else if fixture.contains("chess") {
         XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
       } else {
-        XCTAssertEqual(app.sliders["bubble.aim"].value as? String, "50%")
+        let resetValue = (app.sliders["bubble.aim"].value as? String)?.filter {
+          !$0.isWhitespace
+        }
+        XCTAssertEqual(resetValue, "50%")
       }
       app.terminate()
     }

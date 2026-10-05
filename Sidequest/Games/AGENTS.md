@@ -23,7 +23,7 @@ Use the shared `StableGameRegion` for state-dependent text that could change boa
 
 ## Visible inactive boards #88
 
-Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../docs/GAME_PREVIEWS.md).
+Render the same frozen initial board in preview and play. Under #185, the first valid game action starts through the shared runtime and applies that same action; appearance and scrolling stay inactive. Preserve hidden answers, reset/completion, and the empty static chrome reservation. Before changing this boundary, read [preview guidance](../../docs/GAME_PREVIEWS.md).
 
 ## Requested compact variants and difficulties
 
@@ -47,7 +47,7 @@ The owner requires all four games to be pocket-sized. Follow [the accepted compa
 
 ## Preview-surface start #160
 
-[Preview policy](../../docs/GAME_PREVIEWS.md) supersedes the dedicated start button: top-row informational hint, accessible/keyboard Start game, and transparent tap capture only over inactive game content. Keep the same disabled game view and frozen configuration; the initiating tap cannot make a move. Existing native pans own drag/scroll/page, and real visibility changes invalidate held requests. Reserve hint/board/control geometry across phases.
+Historical #160 superseded the dedicated start button; #185 supersedes its real-game hint and inert tap. The old implementation used: top-row informational hint, accessible/keyboard Start game, and transparent tap capture only over inactive game content. Keep the same disabled game view and frozen configuration; the initiating tap cannot make a move. Existing native pans own drag/scroll/page, and real visibility changes invalidate held requests. Reserve hint/board/control geometry across phases.
 
 ## First meaningful interaction #185
 

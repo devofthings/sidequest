@@ -38,7 +38,7 @@ Keep all eight geometry cases in the native inventory’s explicit extended cove
 
 ## Visible inactive boards #88
 
-Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../docs/GAME_PREVIEWS.md).
+Render the same frozen initial board in preview and play. Under #185, the first valid game action starts through the shared runtime and applies that same action; appearance and scrolling stay inactive. Preserve hidden answers, reset/completion, and the empty static chrome reservation. Before changing this boundary, read [preview guidance](../docs/GAME_PREVIEWS.md).
 
 ## Success feedback #86
 
@@ -48,7 +48,7 @@ Existing real-game completion flows observe the readable `game.successCelebratio
 
 Both-color Chess flows assert the fixed 16-square focus window, standard-rule copy, full-coordinate off-window legal nonmates (White g6a6, Black b3h3), wrong/illegal retry, reset, and completed revisit. Keep largest-text full-control containment and pinned success feedback checks. Preview and geometry anchors must use an unselected visible square (White e8, Black a4), never removed full-board corners. The three routine smoke cases remain unchanged; lead-owned focused execution supplies actual rendered evidence.
 
-Largest-text preview checks must actually reveal and fully contain both board endpoints through the owned scroller, verify disabled preview input and unchanged frozen configuration, then reveal the complete start control before capturing the anchor/viewport baseline. Compare that baseline immediately after Tap to play without an intervening scroll; XCTest's implicit tap auto-scroll is not a board-layout mutation. Keep normal-size simultaneous start/initial-board intersection assertions. Largest accessibility text may overflow; reachable complete labels and usable targets remain required.
+Largest-text preview checks must actually reveal and fully contain both board endpoints through the owned scroller, verify unchanged frozen configuration before meaningful input, then capture the first reachable control and board anchor/viewport baseline. Compare that baseline immediately after its first meaningful action without an intervening scroll; XCTest's implicit tap auto-scroll is not a board-layout mutation. Keep normal-size simultaneous board/primary-control containment assertions. Largest accessibility text may overflow; reachable complete labels and usable targets remain required.
 
 ## Harder production Bubble #137
 
@@ -85,14 +85,14 @@ Completed Bubble win/loss/revisit checks retain full running-app hierarchy and a
 
 ## Preview surface start #160
 
-`PreviewSurfaceStartTests` covers all four game kinds and both Chess colors with actual board-coordinate taps, inert first activation, unchanged board frames, skip/restart, short canceled drags, full native paging, and largest owned scrolling without start. The reserved hint keeps `game.start` with the accessible label Start game, so existing semantic start helpers remain applicable. Previous expectations that a board tap must stay preview are superseded; board input remains disabled before the explicit initiating tap. Keep these new cases extended, without broadening the three-case required smoke gate. [Preview policy](../docs/GAME_PREVIEWS.md) owns the behavior.
+`PreviewSurfaceStartTests` now covers real first-action selection/reveal/aim across all four game kinds and both Chess colors, unchanged board anchors, skip/restart, short canceled drags, full native paging, and largest owned scrolling without start. Real-game routes expose no `game.start` cue or intercept overlay. Keep these cases extended, without broadening the three-case required smoke gate. Earlier inert-tap coverage remains historical, superseded by #185. [Preview policy](../docs/GAME_PREVIEWS.md) owns the behavior.
 
 
 The first actual #163 focused run passed all direct aim changes, native Slider gestures, largest-text controls and both real three-shot routes, but the direct case's final page gesture began inside the native Slider: the recorded pager frame `(0,122,402,710)` mapped normalized `(0.05,0.85)` to `(20.1,725.5)`, within its allocated `(16,725.3,262,44)` row. The native pager correctly excluded a Slider-origin pan. Derive the next outside-control swipe from measured left card padding outside the dedicated controls, explicitly asserting the origin lies in the pager and outside direct aim/Slider/Fire. Keep the actual settled next-card and unfinished reset assertions; this harness correction establishes no production paging defect. Root-owned rerun, fresh review and exact-head CI remain required.
 
 ## Standard Sudoku #170
 
-StandardSudokuFlowTests uses the original DEBUG9×9 twelve-blank fixture through real coordinate menus and digits1–9. Verify normal375-point whole-board/all44point primary controls without scrolling, inert initiating tap, stable conflict/correction/completion, frozen skip/reset/revisit and largest-text owned scrolling. These three cases are extended; the routine three-case smoke gate is unchanged. Overview secondary cell dimensions are deliberately below44points; actual primary alternatives must meet44points.
+StandardSudokuFlowTests uses the original DEBUG9×9 twelve-blank fixture through real coordinate menus and digits1–9. Verify normal375-point whole-board/all44point primary controls without scrolling, first editable selection starts and selects, stable conflict/correction/completion, frozen skip/reset/revisit and largest-text owned scrolling. These three cases are extended; the routine three-case smoke gate is unchanged. Overview secondary cell dimensions are deliberately below44points; actual primary alternatives must meet44points.
 
 Standard9 largest-text reveal gestures originate in the card’s8-point left padding, outside full-width native coordinate menus and the right scroll indicator. The first actual run failed digit9 full-containment after18 center-origin drags; the retained screenshot shows unchanged menus/board and vertical clipping. Root reran the unchanged containment44point/stability/reset assertions at2c04bba and the largest-text case passed in45.412seconds, supporting the outside-menu scroll path; this does not establish an app content-extent defect. Failure attachments retain actual target/viewport rectangles, selected card, hierarchy and screenshot rather than masking failures.
 

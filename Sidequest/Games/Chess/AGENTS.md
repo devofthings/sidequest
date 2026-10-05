@@ -45,7 +45,7 @@ Reserve all own-piece selection and feedback/result text variants with their act
 
 ## Visible inactive boards #88
 
-Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../../docs/GAME_PREVIEWS.md).
+Render the same frozen initial board in preview and play. Under #185, the first valid game action starts through the shared runtime and applies that same action; appearance and scrolling stay inactive. Preserve hidden answers, reset/completion, and the empty static chrome reservation. Before changing this boundary, read [preview guidance](../../../docs/GAME_PREVIEWS.md).
 
 ## Vivid presentation and contained motion #124
 
