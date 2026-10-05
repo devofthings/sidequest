@@ -69,7 +69,7 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 
 - [MVP brief](docs/MVP.md): confirmed product direction and delivery sequence.
 - [Project decisions](docs/DECISIONS.md): accepted choices, proposals, and source research.
-- [Logo proposals](docs/logo-concepts/README.md): three original concepts and small-size previews; final owner selection and app-icon integration remain pending.
+- [Selected Card S identity](docs/logo-concepts/README.md): owner-approved editable artwork, local app-icon rendering, and retained concept comparisons; actual appearance verification is recorded in #14.
 - [Phase-two gamification proposal](docs/gamification/README.md): per-game personal results, shared ranking credibility, and static result-screen examples; owner selection pending.
 - [Vocabulary](CONTEXT.md): domain names used by issues and implementation.
 - [Agent setup](docs/AGENT_SETUP.md): isolated checkout ownership, portable review skill, and read-only readiness checks.
