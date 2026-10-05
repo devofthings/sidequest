@@ -4,11 +4,11 @@ Status: accepted first revision for [#117](https://github.com/devofthings/sidequ
 
 ## Selected first revision
 
-Keep current compact Sudoku and Memory configurations. Bubble’s original one-shot configuration below is the pre-#137 baseline; the approved harder compact follow-up owns its replacement. Give Chess a fixed 4×4 focus window over its existing standard-board fixtures, preserving standard legality and all coordinate controls. This produces a smaller visual puzzle without introducing a new chess engine or opponent. Treat difficulty [#118](https://github.com/devofthings/sidequest/issues/118) separately; adaptive frequency [#119](https://github.com/devofthings/sidequest/issues/119) remains an Idea.
+The first revision retained compact mini Sudoku and six-pair Memory. Owner-approved #162/#170 supersedes the Sudoku production default with standard 9×9, at most 12 editable cells and full-size coordinate alternatives; see [current Sudoku controls and evidence](../SUDOKU.md). The mini audit/examples below remain historical. Retain six-pair Memory. Bubble’s original one-shot configuration below is the pre-#137 baseline; the approved harder compact follow-up owns its replacement. Give Chess a fixed 4×4 focus window over its existing standard-board fixtures, preserving standard legality and all coordinate controls. This produces a smaller visual puzzle without introducing a new chess engine or opponent. Treat difficulty [#118](https://github.com/devofthings/sidequest/issues/118) separately; adaptive frequency [#119](https://github.com/devofthings/sidequest/issues/119) remains an Idea.
 
 Target roughly 15–90 seconds of active play per card. The game-specific ranges below are selected usability targets, not measured completion times, timers, pass/fail limits, or retention claims. Evaluate them through personal testing in [#10](https://github.com/devofthings/sidequest/issues/10).
 
-| Game | Current configuration | Selected first revision | Active-play target (unmeasured) |
+| Game | Historical audited configuration | Selected first revision | Active-play target (unmeasured) |
 | --- | --- | --- | --- |
 | Sudoku | 4×4 grid, digits 1–4, four 2×2 regions; generated puzzles require one solution. | Retain the existing puzzle and uniqueness policy. | 30–90 seconds |
 | Memory | Six symbols, exactly two of each, 12 tiles; three columns normally, two at accessibility text sizes. | Retain six pairs and the existing 700 ms mismatch delay. | 30–90 seconds |
