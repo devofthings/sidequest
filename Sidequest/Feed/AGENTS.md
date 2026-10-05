@@ -59,4 +59,4 @@ The owner's surface-start direction supersedes the earlier explicit lime start-b
 
 ## Selected shared chrome #182
 
-Use leading heavy rounded game headings, vivid existing-token fills for the existing header actions, and a text-plus-hand Tap to play cue. The cue remains informational within the same 44-point reservation and retains Start game semantics. Do not add a new button row, resize the header/success slot, or alter the game-content budget when styling. The saved drawings' dedicated start button remains superseded by #160; game adapters own their board/control geometry.
+Use leading heavy rounded game headings and vivid existing-token fills for the existing header actions. Shared styling leaves the prior start cue unchanged; the owner's selected first-game-interaction start behavior is separately owned by [#185](https://github.com/devofthings/sidequest/issues/185). Do not add a new button row, resize the header/success slot, or alter the game-content budget when styling. Game adapters own their board/control geometry.

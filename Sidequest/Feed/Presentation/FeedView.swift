@@ -147,9 +147,9 @@ struct FeedView: View {
 
   private func startHint(_ runtime: GameRuntime) -> some View {
     Button(action: runtime.start) {
-      Label("Tap to play", systemImage: "hand.tap")
+      Text("Tap to play")
         .font(.subheadline.weight(.semibold))
-        .foregroundStyle(theme.ink)
+        .foregroundStyle(theme.secondaryInk)
         .frame(maxWidth: .infinity, minHeight: 44)
         .contentShape(Rectangle())
     }
