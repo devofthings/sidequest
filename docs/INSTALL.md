@@ -6,7 +6,7 @@
 
 The [2026.10.14 MVP](https://github.com/devofthings/sidequest/releases/tag/2026.10.14) passed 133 native tests and separate installations of freshly built tagged source and the downloaded ARM64 simulator archive. [Verified delivery](#verified-mvp-delivery) records the exact source, checksums, and evidence. [CI](CI.md) uses the same toolchain on a foreground self-hosted Mac runner. Seven older preview downloads were removed; Git tags/source remain. Routine verification runs on PRs; merging starts no automatic main job under #112. Explicit owner-authorized manual release verification/publication follows [RELEASES.md](RELEASES.md).
 
-The owner chose simulator-first delivery in resolved [#79](https://github.com/devofthings/sidequest/issues/79). Physical-iPhone signing and installation are deferred and unverified. The documented source-signing route requires your local Apple Account and signing configuration; the simulator archive cannot run on a physical iPhone.
+The owner chose simulator-first delivery in resolved [#79](https://github.com/devofthings/sidequest/issues/79). The owner reported successful iPhone installation and basic play on October 5, 2026; see [the report and its limits](#owner-reported-iphone-test). The documented source-signing route requires your local Apple Account and signing configuration; the simulator archive cannot run on a physical iPhone.
 
 | Setting | Verified value |
 | --- | --- |
@@ -35,7 +35,13 @@ The archive SHA-256 is `5b613f043cd533eabfd9e4d3939dd9fcfe7d9e2f1ae1f2da727784ba
 
 The metadata’s installation URL pins the immutable release-source guide. This current guide adds post-publication proof; later documentation changes do not retarget the release or publish another app. [Issue #9](https://github.com/devofthings/sidequest/issues/9#issuecomment-5976928508) retains commands and evidence; screenshots and private captures stay outside Git.
 
-Current source also corrects feedback/result layout under [#108](https://github.com/devofthings/sidequest/issues/108): game boards and primary controls keep their geometry at a fixed viewport/text size. During personal testing, cause a Memory mismatch, complete Chess, and win/replay Bubble while keeping the scroll position unchanged. Repeat with larger text after revealing the controls. See [the Review checklist](GAME_LAYOUT.md#personal-iphone-review); physical execution remains unverified.
+Current source also corrects feedback/result layout under [#108](https://github.com/devofthings/sidequest/issues/108): game boards and primary controls keep their geometry at a fixed viewport/text size. During personal testing, cause a Memory mismatch, complete Chess, and win/replay Bubble while keeping the scroll position unchanged. Repeat with larger text after revealing the controls. See [the Review checklist](GAME_LAYOUT.md#personal-iphone-review); that specific layout checklist remains unverified on a physical device.
+
+## Owner-reported iPhone test
+
+On October 5, 2026 (Europe/Berlin), the owner confirmed that they installed Sidequest on their iPhone and could play it, then provided [product feedback in #10](https://github.com/devofthings/sidequest/issues/10#issuecomment-5995830255). Installation and basic gameplay are complete by owner report; #79's earlier simulator-first deferral no longer describes these activities as pending. The report is separate from the exact agent-run simulator/release evidence above.
+
+Device model, iOS version, exact installed source/build, and news snapshot dates remain unknown. No detailed per-game/news checks, physical haptic result, or device VoiceOver outcome was supplied. This report certifies no unmerged PR or exact release and does not establish iOS 17 execution. Preserve those limits in later Review handoffs. [The personal-test outcome](MVP.md#personal-test-outcome) records the feedback and refinement priorities; #10 is closed for actual testing and feedback.
 
 ## Get the source and tools
 
@@ -155,19 +161,19 @@ Use the local signing steps below for a physical iPhone. [RELEASES.md](RELEASES.
 
 ## Install on your own iPhone
 
-A normal Apple Account gives you a free **Personal Team** in Xcode for testing on your own device. Paid Apple Developer Program membership is unnecessary for this route. Apple requires rebuilding and reinstalling after the provisioning profile expires, seven days after issuance; see [Personal Team guidance](https://developer.apple.com/help/account/basics/about-your-developer-account). Physical Sidequest signing, installation, and gameplay remain **unverified**.
+A normal Apple Account gives you a free **Personal Team** in Xcode for testing on your own device. Paid Apple Developer Program membership is unnecessary for this route. Apple requires rebuilding and reinstalling after the provisioning profile expires, seven days after issuance; see [Personal Team guidance](https://developer.apple.com/help/account/basics/about-your-developer-account). The owner reports successful installation and basic play; [exact device/build details and detailed checks remain unknown](#owner-reported-iphone-test).
 
-For #106, use the PR source once the item reaches Review. Its handoff identifies the exact commit. Before merge, `main` and the older `2026.10.14` simulator download do not contain these changes. A separate checkout preserves your existing work and private news:
+For merged features, use a clean checkout of the reviewed main commit. For an app-change PR in Review, use the branch and exact commit named in its handoff; owner-reported earlier play does not verify that PR. A separate checkout preserves your existing work and private news:
 
 ```sh
 gh repo clone devofthings/sidequest sidequest-iphone
 cd sidequest-iphone
 git fetch origin
-git switch codex/106-demo-news-cadence
+git switch main
 open Sidequest.xcodeproj
 ```
 
-After merge, a clean checkout of the reviewed main commit also works. The simulator ZIP is built for the Mac simulator and cannot be installed directly on an iPhone.
+Merged #106 is included in current main; the immutable `2026.10.14` download has the earlier finite deck. The simulator ZIP is built for the Mac simulator and cannot be installed directly on an iPhone.
 
 1. In **Xcode → Settings → Accounts**, add your regular Apple Account. Identify its **Personal Team** and local team ID. Complete account prompts yourself; credentials stay in Xcode.
 2. Create the ignored `Sidequest.xcodeproj/LocalSigning.xcconfig` in this checkout with your team ID and a unique identifier, replacing both example values:
@@ -183,15 +189,15 @@ After merge, a clean checkout of the reviewed main commit also works. The simula
 5. Select the shared **Sidequest** scheme and your actual iPhone as Xcode's destination. Press **Run (⌘R)**. Complete any signing or device-trust prompts locally. If signing fails, check the actual message, Personal Team ID, unique bundle identifier, and automatic signing; do not substitute the unsigned simulator build command.
 6. After seven days, reconnect and press **Run** again to rebuild, reprovision, and reinstall. Keep the same local bundle identifier to use the same app's storage.
 
-For the #106 personal test:
+For a detailed current-source demo-news check (not established by the basic-play report):
 
 - On an install without saved news, swipe through five game cards and check the next card is visibly labeled **Fictional sample**. Continue another five game cards to reach the next story. The pool contains 30 stories, with truthful sample-placeholder link wording.
 - Check that the bottom counter is absent, each game starts only after **Tap to play**, skipping unfinished play resets it, and completed games retain their result when revisited.
-- Continue through several stories, return to earlier cards, and try your preferred text size. Report the device/iOS version and actual errors or behavior in the Review issue or personal test #10.
+- Continue through several stories, return to earlier cards, and try your preferred text size. Report the device/iOS version and actual errors or behavior in the applicable Review issue.
 
 Existing saved news remains authoritative; an empty saved import intentionally gives games only. To try all 30 on an existing installation, AirDrop `Sidequest/Resources/demo-news.json` from the Mac and save it to Files, then choose it through **News snapshots → Import news JSON**. This explicitly replaces the active pool using the normal import transaction. Keep a private copy of prior captures if you want to restore them; see [demo import steps](NEWS.md#try-the-demo-pool-on-an-existing-install).
 
-These steps document a local testing route, not a verified physical-device result or TestFlight distribution. No signing account, membership, or credentials were created by this work.
+These steps document the local testing route; the owner report above does not identify its exact signing steps or establish TestFlight distribution. No signing account, membership, or credentials were created by this work.
 
 ## Content, versions, and troubleshooting
 
@@ -201,7 +207,7 @@ Normal launch uses your saved snapshots, or the 30 bundled fictional demo storie
 
 For deterministic integration checks, a Debug build can launch with `-sidequest-integration-fixtures -sidequest-integration-reset`. It creates original fictional valid/empty/malformed/reserved-ID JSON under **On My iPhone → Sidequest → Sidequest Fixtures v2** and uses an isolated persistent test store. Remove the reset argument to test persistence across relaunch. Debug exposes Documents to Files; Release excludes these fixture/reset routes and file-sharing keys. To try private captures in the simulator, place your JSON in its Debug Documents directory using the app’s data-container path, select it with Files, and keep the file outside Git. On iPhone, AirDrop or another existing Files location works without enabling app file sharing.
 
-The older standalone Debug fixture route `-sidequest-news-preview` still provides **Read news** for its original tests. The immutable finite MVP release `2026.10.14` did not load fictional news on normal launch. Current source uses the [demo fallback](DEMO_NEWS.md#product-policy) only when the saved document is confirmed absent; all four game kinds remain playable implementations. Release ignores all Debug fixture flags. A successful simulator run establishes neither physical signing/install nor device VoiceOver/iOS17 behavior; those remain unverified until exercised.
+The older standalone Debug fixture route `-sidequest-news-preview` still provides **Read news** for its original tests. The immutable finite MVP release `2026.10.14` did not load fictional news on normal launch. Current source uses the [demo fallback](DEMO_NEWS.md#product-policy) only when the saved document is confirmed absent; all four game kinds remain playable implementations. Release ignores all Debug fixture flags. Simulator runs are separate from the owner-reported installation/basic play above; device VoiceOver and iOS 17 behavior remain unverified until exercised.
 
 Generated output belongs in ignored `DerivedData/`, `build/`, or an external build directory, outside synchronized source roots. Keep scoped `AGENTS.md` guidance in its owning folder; all target Markdown is excluded from built resources.
 
