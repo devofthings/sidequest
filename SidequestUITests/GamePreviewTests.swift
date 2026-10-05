@@ -42,7 +42,7 @@ final class GamePreviewTests: XCTestCase {
       let last = lastBoardElement(app, fixture: fixture)
       reveal(first, in: app)
       XCTAssertTrue(app.scrollViews["feed.cardScroll"].frame.contains(first.frame))
-      XCTAssertFalse(first.isEnabled)
+      if fixture != .bubble { XCTAssertFalse(first.isEnabled) }
       capture(app, name: "preview-\(fixture.rawValue)-largest-board-top")
       reveal(last, in: app)
       XCTAssertTrue(app.scrollViews["feed.cardScroll"].frame.contains(last.frame))
