@@ -247,6 +247,7 @@ struct BubbleShooterView: View {
         .accessibilityIdentifier("bubble.board")
       BubbleAimControl(controller: controller)
         .frame(height: boardWidth / 10 * BubbleAimMapping.regionHeight)
+        .accessibilityHidden(!isPlaying)
     }
   }
 

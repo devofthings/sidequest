@@ -279,10 +279,15 @@ final class GamePreviewTests: XCTestCase {
     for _ in 0..<18 {
       if element.exists && element.isHittable && scroll.frame.contains(element.frame) { return }
       let upwards = !element.exists || element.frame.midY > scroll.frame.midY
-      let start = scroll.coordinate(
-        withNormalizedOffset: CGVector(dx: 0.95, dy: upwards ? 0.7 : 0.3))
-      let end = scroll.coordinate(
-        withNormalizedOffset: CGVector(dx: 0.95, dy: upwards ? 0.4 : 0.6))
+      let bubbleBoard = app.otherElements["bubble.board"]
+      let x =
+        bubbleBoard.exists && !bubbleBoard.frame.isEmpty
+        ? min(scroll.frame.width - 32, bubbleBoard.frame.maxX - scroll.frame.minX + 10)
+        : scroll.frame.width * 0.9
+      let origin = scroll.coordinate(withNormalizedOffset: .zero)
+      let start = origin.withOffset(
+        CGVector(dx: x, dy: scroll.frame.height * (upwards ? 0.7 : 0.3)))
+      let end = origin.withOffset(CGVector(dx: x, dy: scroll.frame.height * (upwards ? 0.4 : 0.6)))
       start.press(forDuration: 0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0)
     }
     XCTAssertTrue(element.isHittable)

@@ -109,6 +109,7 @@ final class BubbleFlowTests: XCTestCase {
     XCTAssertEqual(app.selectedFeedCardID, position)
     app.nextFeedCard()
     app.previousFeedCard()
+    reveal(app.buttons["game.start"], in: app)
     XCTAssertTrue(app.buttons["game.start"].isHittable)
   }
 
@@ -336,11 +337,23 @@ final class BubbleFlowTests: XCTestCase {
     for _ in 0..<18 {
       if element.exists && element.isHittable && scroll.frame.contains(element.frame) { return }
       let needsUp = element.frame.midY > scroll.frame.midY
-      let start = scroll.coordinate(
-        withNormalizedOffset: CGVector(dx: 0.95, dy: needsUp ? 0.65 : 0.35))
-      let end = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: needsUp ? 0.4 : 0.6))
+      // Stay beyond the board's direct input but away from UIKit's draggable scroll indicator.
+      let board = app.otherElements["bubble.board"]
+      let x =
+        board.exists && !board.frame.isEmpty
+        ? min(scroll.frame.width - 32, board.frame.maxX - scroll.frame.minX + 10)
+        : scroll.frame.width - 32
+      let origin = scroll.coordinate(withNormalizedOffset: .zero)
+      let start = origin.withOffset(
+        CGVector(dx: x, dy: scroll.frame.height * (needsUp ? 0.65 : 0.35)))
+      let end = origin.withOffset(CGVector(dx: x, dy: scroll.frame.height * (needsUp ? 0.4 : 0.6)))
       start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
     }
+    let diagnostic = XCTAttachment(string: app.debugDescription)
+    diagnostic.name = "bubble-reveal-failed-hierarchy"
+    diagnostic.lifetime = .keepAlways
+    add(diagnostic)
+    capture(app, name: "bubble-reveal-failed-viewport")
     XCTAssertTrue(element.isHittable)
     XCTAssertTrue(scroll.frame.contains(element.frame))
   }
