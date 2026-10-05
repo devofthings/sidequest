@@ -7,3 +7,7 @@ Use accessible tile labels to verify that the first valid flip starts and reveal
 Before tapping, require each tile's frame to be fully inside the game scroll viewport as well as hittable. Use bounded gentle drags; a partly clipped element can report hittable while the tap misses. Capture only original fixture screenshots, and bring completion feedback into view before the largest-text capture. Keep exported screenshots/results outside Git.
 
 Issue #185 supersedes the historical inert initiating-tap policy for this real fixture. Skip returns to the frozen face-down challenge; the next valid flip starts a fresh attempt and reveals its chosen card immediately. The prior three-check result above remains historical evidence; current-source first-interaction results belong to the #185 PR.
+
+## Smaller workloads #178
+
+The extended `MemoryWorkloadFlowTests` case uses the DEBUG-only three/four-pair modifiers with the existing finite route. It discovers and matches original seeded faces through actual input, checks inert start, count-specific copy, frozen skip/reset, completed revisit, and72-point tile height/44-point width. Four pairs use largest accessibility text with bounded bidirectional scrolling from the owned card padding; each tap requires complete viewport containment. No face layout, win, or controller result is injected into the test. Root supplies actual execution evidence; authored assertions and offline checks are not a native pass. The three required smoke cases remain unchanged.

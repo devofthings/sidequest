@@ -412,6 +412,16 @@
         "Sidequest.xcodeproj/"
       ]
     },
+    "SidequestUITests/MemoryWorkloadFlowTests/testSmallerWorkloadsKeepFrozenLayoutResetAndCompletedRevisit": {
+      "lower_layer": "Deterministic Memory challenge and controller tests cover workload validation and restoration; this focused actual-app case checks three and four pairs, inert start, real matching, frozen reset, completed revisit, and largest-text reachability.",
+      "paths": [
+        "Sidequest/Games/Memory/",
+        "Sidequest/App/",
+        "Sidequest/Core/",
+        "SidequestUITests/Games/Memory/MemoryWorkloadFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift"
+      ]
+    },
     "SidequestUITests/NewsPresentationTests/testOfflineSampleShowsSourceDateLabelAndImportPicker": {
       "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
       "paths": [
