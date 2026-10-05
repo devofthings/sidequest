@@ -19,10 +19,19 @@ final class MixedDifficultyFlowTests: XCTestCase {
       let label = app.staticTexts["game.difficulty"]
       XCTAssertTrue(label.waitForExistence(timeout: 5))
       XCTAssertEqual(label.label, "Difficulty: \(tier)")
-      XCTAssertTrue(app.staticTexts["game.heading"].exists)
+      XCTAssertTrue(app.staticTexts["foundation.title"].exists)
       XCTAssertFalse(app.buttons["game.start"].exists)
       switch index % 4 {
-      case 0: XCTAssertTrue(app.otherElements["sudoku.board"].exists)
+      case 0:
+        XCTAssertTrue(app.otherElements["sudoku.board"].exists)
+        let editable = app.buttons.matching(
+          NSPredicate(
+            format: "identifier BEGINSWITH %@ AND value == %@", "sudoku.cell.", "Empty")
+        ).firstMatch
+        XCTAssertTrue(editable.exists)
+        editable.tap()
+        XCTAssertTrue(
+          editable.isSelected, "First input must start and select the actual editable cell")
       case 1:
         let pairs = tier == "Easy" ? 3 : (tier == "Medium" ? 4 : 6)
         XCTAssertTrue(app.staticTexts["Find all \(pairs) pairs."].exists)
@@ -34,11 +43,28 @@ final class MixedDifficultyFlowTests: XCTestCase {
         app.previousFeedCard()
         XCTAssertEqual(app.staticTexts["game.difficulty"].label, "Difficulty: \(tier)")
         XCTAssertEqual(app.buttons["memory.tile.0"].label, "Hidden card 1")
-      case 2: XCTAssertTrue(app.staticTexts["chess.focus"].exists)
+      case 2:
+        XCTAssertTrue(app.staticTexts["chess.focus"].exists)
+        let side = app.staticTexts["chess.side"].label.hasPrefix("White") ? "White" : "Black"
+        let piece = app.buttons.matching(
+          NSPredicate(
+            format: "identifier BEGINSWITH %@ AND label BEGINSWITH[c] %@ AND label CONTAINS[c] %@",
+            "chess.square.", side, "queen")
+        ).firstMatch
+        XCTAssertTrue(piece.exists)
+        piece.tap()
+        XCTAssertEqual(app.staticTexts["chess.selection"].label, "Selected: \(piece.label)")
       default:
         XCTAssertTrue(app.buttons["bubble.fire"].exists)
         XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
-        XCTAssertTrue(app.staticTexts["bubble.shots"].exists)
+        let cap = tier == "Easy" ? 8 : (tier == "Medium" ? 5 : 3)
+        XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of \(cap)")
+        let aim = app.sliders["bubble.aim"]
+        XCTAssertTrue(aim.exists)
+        let oldValue = aim.value as? String
+        aim.adjust(toNormalizedSliderPosition: 0.6)
+        XCTAssertNotEqual(aim.value as? String, oldValue)
+        XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of \(cap)")
       }
       app.nextFeedCard()
     }

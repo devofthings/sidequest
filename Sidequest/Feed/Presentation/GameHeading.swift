@@ -3,18 +3,18 @@ import SwiftUI
 /// Maximum text footprints are measured independently of the current challenge and attempt.
 @MainActor
 struct GameHeading: View {
-  let kind: GameKind
+  let kind: GameKind?
   let difficulty: GameDifficulty?
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       ZStack(alignment: .topLeading) {
-        ForEach(GameKind.allCases, id: \.self) { value in
-          title(value.title).hidden().accessibilityHidden(true)
+        ForEach(["Sidequest"] + GameKind.allCases.map(\.title), id: \.self) { value in
+          title(value).hidden().accessibilityHidden(true)
         }
-        title(kind.title)
+        title(kind?.title ?? "Sidequest")
           .accessibilityAddTraits(.isHeader)
-          .accessibilityIdentifier("game.heading")
+          .accessibilityIdentifier("foundation.title")
       }
       ZStack(alignment: .topLeading) {
         ForEach([GameDifficulty.easy, .medium, .hard], id: \.self) { tier in
