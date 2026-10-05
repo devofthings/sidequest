@@ -14,8 +14,8 @@ Each game board contains named PREVIEW, PLAY, and COMPLETE groups inside an edit
 | App & News | [Reading, navigation, large text](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=2-856) | [News](figma-157/news.jpg) | [SVG](figma-157/news.svg) |
 | Games / Sudoku | [Three states](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=5-2) | [Sudoku](figma-157/sudoku.jpg) | [SVG](figma-157/sudoku.svg) |
 | Games / Memory | [Three states](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=2-265) | [Memory](figma-157/memory.jpg) | [SVG](figma-157/memory.svg) |
-| Games / Chess | [Three states](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=2-386) | [Chess](figma-157/chess.jpg) | [SVG](figma-157/chess.svg) |
-| Games / Bubble | [Three states](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=2-520) | [Bubble](figma-157/bubble.jpg) | [SVG](figma-157/bubble.svg) |
+| Games / Chess | [Three states](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=15-2) | [Chess](figma-157/chess.jpg) | [SVG](figma-157/chess.svg) |
+| Games / Bubble | [Three states](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=14-129) | [Bubble](figma-157/bubble.jpg) | [SVG](figma-157/bubble.svg) |
 
 ## Visual judgment
 
@@ -28,6 +28,8 @@ Chess coordinate and Bubble aim bars summarize existing controls. Their implemen
 ## Geometry and accessibility
 
 All three game states retain the same board anchor and status/control reservations. Sudoku cells are 80 points with 60×52 number actions; Memory tiles are 100×70; Chess squares are 75 in this reference. Shared primary buttons are 332×52. Preserve measured native geometry when implementing rather than forcing these illustrative dimensions into every viewport.
+
+Chess preview/start, Submit move, and completed Play again share logical bounds `x=24, y=631, width=332, height=52`; Bubble preview/start, Fire, and completed Play again share `x=24, y=620, width=332, height=52`. Their footer copy stays below the action. Completed Chess retains its disabled coordinate-row footprint at `y=568, height=48`; Bubble preserves its aiming-row reservation. These reference bounds are identical across each game's three states and exceed the 44-point minimum.
 
 The Foundations board annotates the existing 375×579-point pocket card viewport. At smaller sizes, retain the fixed game footprint and allow inner scrolling for overflowing text/controls. At large Dynamic Type, grow text reservations, keep the existing two-column Memory layout and Chess coordinate alternatives, and allow article scrolling. The News board includes a larger-type example; the four game boards do not claim complete large-type responsive layouts. Maintain edge paging and the accessible navigation menu. Check dark/increased-contrast variants and preserve textual/symbolic alternatives to color. The dark Memory sample communicates palette only, not all twelve cards or a full gameplay screen.
 
@@ -42,6 +44,8 @@ Reduce Motion uses immediate state changes and static outlines/results, with the
 Reused [primary-source baseline research](../research/mvp-design.md) and refreshed Apple's official guidance before drawing: [Motion](https://developer.apple.com/design/human-interface-guidelines/motion), [Buttons](https://developer.apple.com/design/human-interface-guidelines/buttons), and [Accessibility](https://developer.apple.com/design/human-interface-guidelines/accessibility), with readable official DocC JSON. Apple supports purposeful, brief, cancellable motion, optional motion alternatives, recognizable actions, and accessible targets/text. The palette, hierarchy, reference dimensions, and timing above are design judgments; they are not prescribed platform values or proof of greater enjoyment.
 
 Actual browser screenshots were visually inspected for all six boards, including a cleaned serif news layout and noncolor Sudoku outline. UI inspection confirmed named editable text/group/vector layers, correct page/section placement, and retained containers. SVG XML, local documentation links, and Git whitespace checks passed before the documentation commit. No application source, native build/test, simulator, CI runner, or release was run by this design agent. No physical-device accessibility, animation smoothness, prototype interaction, or enjoyment result is established. Independent repository review remains required.
+
+Independent review round 1 found shifting Chess/Bubble primary actions. The design author corrected their SVG geometry; Root applied the two corrected frames through the private browser UI and captured the replacement screenshots. Source-coordinate checks establish identical primary-action bounds across each game's three states, with preview status copy preserved. Both replacement screenshots were inspected for aligned actions and retained section placement. This verifies the static proposal only, not native layout execution.
 
 ![Actual proposed Sudoku board in private Figma](figma-157/sudoku.jpg)
 
