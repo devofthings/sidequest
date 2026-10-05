@@ -35,8 +35,37 @@ final class MemoryFlowTests: XCTestCase {
       let app = launch(successFeedback: true)
       app.buttons["game.start"].tap()
       for index in 0..<12 { tapTile(index, app: app) }
-      XCTAssertTrue(app.staticTexts["game.successCelebration"].waitForExistence(timeout: 5))
-      capture(app, name: "memory-success-system-reduce-motion")
+      let badge = app.staticTexts["game.successCelebration"]
+      XCTAssertTrue(badge.waitForExistence(timeout: 5))
+      let appFrame = app.frame
+      let badgeFrame = badge.frame
+      let newsFrame = app.buttons["feed.news"].frame
+      let navigationFrame = app.buttons["feed.navigation"].frame
+      let scrollFrame = app.scrollViews["feed.cardScroll"].frame
+      let frames = XCTAttachment(
+        string:
+          "app: \(appFrame)\nbadge: \(badgeFrame)\nnews: \(newsFrame)\nnavigation: \(navigationFrame)\ncardScroll: \(scrollFrame)"
+      )
+      frames.name = "memory-reduced-motion-header-viewport-frames"
+      frames.lifetime = .keepAlways
+      add(frames)
+      let screen = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+      screen.name = "memory-success-system-reduce-motion-whole-screen"
+      screen.lifetime = .keepAlways
+      add(screen)
+      capture(app, name: "memory-success-system-reduce-motion-app-element")
+      for (name, frame) in [
+        ("badge", badgeFrame), ("news", newsFrame), ("navigation", navigationFrame),
+      ] {
+        XCTAssertFalse(frame.isEmpty, "\(name) needs a real visible footprint.")
+        XCTAssertTrue(
+          appFrame.contains(frame), "The entire \(name) must remain in the app viewport.")
+        XCTAssertLessThanOrEqual(
+          frame.maxY, scrollFrame.minY + 1,
+          "\(name) remains in the fixed header above the card scroller.")
+      }
+      XCTAssertTrue(app.buttons["feed.news"].isHittable)
+      XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
       XCUIDevice.shared.press(.home)
       app.activate()
       XCTAssertTrue(app.staticTexts["memory.completed"].waitForExistence(timeout: 5))
