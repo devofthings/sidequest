@@ -100,13 +100,18 @@ struct BubbleShooterView: View {
 
   private var shots: some View {
     StableGameRegion {
-      Text(compact ? "8/8 shots" : "Shots: 8 of 8")
+      Text(
+        compact
+          ? "\(controller.game.maximumShots)/\(controller.game.maximumShots) shots"
+          : "Shots: \(controller.game.maximumShots) of \(controller.game.maximumShots)"
+      )
     } content: {
       Text(
         compact
-          ? "\(controller.game.shotsFired)/8 shots" : "Shots: \(controller.game.shotsFired) of 8"
+          ? "\(controller.game.shotsFired)/\(controller.game.maximumShots) shots"
+          : "Shots: \(controller.game.shotsFired) of \(controller.game.maximumShots)"
       )
-      .accessibilityLabel("Shots: \(controller.game.shotsFired) of 8")
+      .accessibilityLabel("Shots: \(controller.game.shotsFired) of \(controller.game.maximumShots)")
       .accessibilityIdentifier("bubble.shots")
     }
     .monospacedDigit()
