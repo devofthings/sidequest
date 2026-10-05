@@ -140,7 +140,10 @@ struct FeedView: View {
             }
           },
           content: gameContent(game, runtime)
-            .disabled(!runtime.canInteract)
+            .disabled(
+              !runtime.isVisible
+                || (runtime.activationPolicy == .explicitStart && runtime.phase == .preview)
+            )
             .overlay {
               if runtime.activationPolicy == .explicitStart && runtime.phase == .preview {
                 GamePreviewSurface(runtime: runtime)

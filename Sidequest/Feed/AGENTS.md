@@ -63,3 +63,7 @@ Use leading heavy rounded game headings and vivid existing-token fills for the e
 ## First meaningful interaction #185
 
 The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.
+
+## Visible completed controls #185
+
+The feed-wide disabled gate rejects hidden cards and explicit-policy preview input only. A visible completed subtree remains eligible for game-owned actions such as Bubble Replay; `GameRuntime.canInteract` is the move gate and must not globally disable completed controls. Each adapter retains its own completed move rejection, and Replay still requires the shared visible-completed lifecycle gate. The actual #185 completed-win/revisit native flow exposed this distinction when the broader move gate disabled Replay; retain its enabled-control and frozen reset assertions.
