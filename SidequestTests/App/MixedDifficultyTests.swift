@@ -211,6 +211,56 @@ final class MixedDifficultyTests: XCTestCase {
     } catch { XCTAssertTrue(error is CancellationError) }
   }
 
+  func testConcreteWindowFailurePreservesActiveOwnerAndCanRetryWithoutLosingChallenge() async throws
+  {
+    let historical = try await ChessPuzzleLoader.bundled()
+    let catalog = try await ChessPuzzleLoader.bundledCatalog()
+    var rejectChess = true
+    let composition = try await FeedComposition.endless(
+      news: [], chessPuzzles: historical + catalog, seed: 201, ordered: true,
+      prepareBatch: { id, sequence, seed, puzzles, ordered in
+        try await GeneratedGameBatch.prepare(
+          sessionID: id, sequence: sequence, seed: seed,
+          chessPuzzles: puzzles, ordered: ordered, mixedDifficulties: true)
+      },
+      reconstruct: { descriptor, completed in
+        if rejectChess, descriptor.card.kind == .chess {
+          throw PreparedGameReconstruction.Failure.invalidDescriptor
+        }
+        return try ComposedGame.generated(descriptor, completed: completed)
+      })
+    let feed = try XCTUnwrap(composition.controller)
+    feed.setSceneActive(true)
+    let id = try XCTUnwrap(feed.selectedCard?.id)
+    guard case .sudoku(let sudoku)? = composition.games[id] else {
+      return XCTFail("Expected Sudoku")
+    }
+    let editable = try XCTUnwrap(sudoku.puzzle.givens.firstIndex(of: 0))
+    sudoku.selectCell(editable)
+    sudoku.enter(sudoku.puzzle.solution[editable])
+    let phase = sudoku.runtime.phase
+    let ownerIDs = Set(composition.games.keys)
+    let challenge = sudoku.challenge
+    feed.next()
+    XCTAssertEqual(feed.selectedIndex, 0)
+    XCTAssertEqual(Set(composition.games.keys), ownerIDs)
+    XCTAssertTrue(composition.games[id]?.runtime === sudoku.runtime)
+    XCTAssertEqual(sudoku.runtime.phase, phase)
+    XCTAssertEqual(sudoku.board?.cells[editable], sudoku.puzzle.solution[editable])
+    XCTAssertEqual(sudoku.challenge, challenge)
+    XCTAssertNotNil(feed.replenishmentMessage)
+    rejectChess = false
+    feed.retryReplenishment?()
+    XCTAssertNil(feed.replenishmentMessage)
+    feed.next()
+    XCTAssertEqual(feed.selectedIndex, 1)
+    XCTAssertEqual(sudoku.runtime.phase, .preview)
+    feed.previous()
+    XCTAssertEqual(sudoku.challenge, challenge)
+    XCTAssertEqual((sudoku.board?.cells ?? sudoku.puzzle.givens), sudoku.puzzle.givens)
+    feed.retire()
+  }
+
   func testInvalidDescriptorAndWrongCompletedLayoutAreRejectedWithoutFallback() throws {
     let challenge = MemoryChallenge(difficulty: .easy, seed: 201)
     let id = try CardID("classified-memory")

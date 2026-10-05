@@ -6,6 +6,7 @@ final class FeedComposition {
   let session: SampleSession
   let controller: FeedController?
   private(set) var games: [CardID: ComposedGame]
+  private var reconstruct: GameReconstruction = { try ComposedGame.generated($0, completed: $1) }
   private var descriptors: [CardID: GeneratedGameDescriptor] = [:]
   private var completed: [CardID: CompletedGameState] = [:]
   private var nextSequence = 0
@@ -35,7 +36,8 @@ final class FeedComposition {
       try await GameGenerationComposition.prepare(
         sessionID: id, sequence: sequence, seed: seed,
         chessPuzzles: puzzles, ordered: ordered)
-    }
+    },
+    reconstruct: @escaping GameReconstruction = { try ComposedGame.generated($0, completed: $1) }
   ) async throws -> FeedComposition {
     let batch = try await prepareBatch(sessionID, 0, seed, chessPuzzles, ordered)
     try Task.checkCancellation()
@@ -53,13 +55,15 @@ final class FeedComposition {
     }
     return try FeedComposition(
       cards: cards, chessPuzzles: chessPuzzles, batch: batch, cadence: prepared.next,
-      sessionID: sessionID, seed: seed, ordered: ordered, prepareBatch: prepareBatch)
+      sessionID: sessionID, seed: seed, ordered: ordered, prepareBatch: prepareBatch,
+      reconstruct: reconstruct)
   }
 
   private init(
     cards: [FeedCard], chessPuzzles: [ChessPuzzle], batch: GeneratedGameBatch,
     cadence: FeedNewsCadence,
-    sessionID: UUID, seed: UInt64, ordered: Bool, prepareBatch: @escaping GameBatchPreparation
+    sessionID: UUID, seed: UInt64, ordered: Bool, prepareBatch: @escaping GameBatchPreparation,
+    reconstruct: @escaping GameReconstruction
   ) throws {
     self.chessPuzzles = chessPuzzles
     session = .loaded(cards)
@@ -70,6 +74,7 @@ final class FeedComposition {
     generatedSessionID = sessionID
     generationSeed = seed
     self.prepareBatch = prepareBatch
+    self.reconstruct = reconstruct
     orderedGeneration = ordered
     knownIDs = Set(cards.map(\.id))
     let feed = FeedController(cards: cards, runtimes: [:], isEndless: true)
@@ -97,7 +102,7 @@ final class FeedComposition {
         guard let descriptor = descriptors[card.id] else {
           throw PreparedGameReconstruction.Failure.invalidDescriptor
         }
-        staged[card.id] = try ComposedGame.generated(descriptor, completed: completed[card.id])
+        staged[card.id] = try reconstruct(descriptor, completed[card.id])
       }
     } catch {
       for game in staged.values { game.runtime.retire() }
@@ -471,3 +476,7 @@ enum GameCompositionError: Error, LocalizedError {
     }
   }
 }
+
+/// The concrete adapter boundary supports controlled fallible preparation without a second owner.
+typealias GameReconstruction =
+  @MainActor (GeneratedGameDescriptor, CompletedGameState?) throws -> ComposedGame
