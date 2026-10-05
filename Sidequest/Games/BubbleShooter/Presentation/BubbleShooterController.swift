@@ -102,6 +102,9 @@ final class BubbleShooterController {
           shotTask = nil
           switch result.outcome {
           case .playing:
+            if !result.matched.isEmpty || !result.detached.isEmpty {
+              runtime.feedbackForInteraction(attempt: attempt)
+            }
             feedback =
               result.matched.isEmpty
               ? "Bubble attached. Try a matching group."

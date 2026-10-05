@@ -35,16 +35,27 @@ final class BubbleShooterControllerTests: XCTestCase {
 
   func testThreeActualAnimatedShotsWinAndReplayRestoresFreshBoard() async {
     let gate = BubbleDelayGate()
-    let runtime = GameRuntime()
+    var haptics = 0
+    var successes = 0
+    var now = 0.0
+    let runtime = GameRuntime(
+      interactionHaptic: { haptics += 1 }, interactionTime: { now },
+      successHaptic: { successes += 1 })
     let controller = BubbleShooterController(runtime: runtime, pause: { try await gate.pause() })
     runtime.setVisible(true)
     runtime.start()
     let oldPhase = runtime.phase
     for (index, angle) in [0.0, 0.0, 6.0].enumerated() {
+      now += 1
       controller.aim(degrees: angle)
       XCTAssertTrue(controller.fire())
       XCTAssertFalse(controller.fire())
+      let before = controller.game.board.count
+      XCTAssertEqual(haptics, index)
       await finishShot(gate, firstPause: index * 24 + 1)
+      XCTAssertLessThan(controller.game.board.count, before)
+      XCTAssertEqual(haptics, min(index + 1, 2))
+      XCTAssertEqual(successes, index == 2 ? 1 : 0)
     }
     XCTAssertEqual(controller.game.outcome, .won)
     guard case .completed(let attemptID) = runtime.phase else {
@@ -88,7 +99,8 @@ final class BubbleShooterControllerTests: XCTestCase {
 
   func testSkipCancelsNoncooperativeFlightWithoutChangingNewAttempt() async {
     let gate = BubbleDelayGate()
-    let runtime = GameRuntime()
+    var haptics = 0
+    let runtime = GameRuntime(interactionHaptic: { haptics += 1 }, successHaptic: {})
     let controller = BubbleShooterController(runtime: runtime, pause: { try await gate.pause() })
     runtime.setVisible(true)
     runtime.start()
@@ -112,6 +124,7 @@ final class BubbleShooterControllerTests: XCTestCase {
     await gate.waitUntilReturned(1)
     XCTAssertEqual(controller.flight, pending)
     XCTAssertEqual(controller.game.shotsFired, 0)
+    XCTAssertEqual(haptics, 0, "Canceled old shot cannot emit feedback in a fresh attempt.")
     await finishShot(gate, firstPause: 2)
     XCTAssertNil(controller.flight)
     XCTAssertEqual(controller.game.shotsFired, 1)

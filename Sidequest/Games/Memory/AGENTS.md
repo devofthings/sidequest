@@ -47,3 +47,7 @@ Agent-grill self-assessment: Reveal and match is a delegated presentation choice
 ## Success feedback routing #86
 
 Mark runtime completion successful only when real rules return completed after matching the final pair. Consume the shared runtime feedback boundary in [common game guidance](../AGENTS.md); keep rules, timing, retained results, and reset semantics unchanged. Appearance or restored completed values never emit success.
+
+## Match feedback #161
+
+A nonfinal matching pair requests one shared interaction haptic. Reveals, ignored flips, mismatches, delayed concealment, and inactive input request none. The final pair uses existing success feedback exclusively. Retain authoritative lime/checkmark matching cues and contained 160 ms backing/outline motion; hidden answers still disappear immediately. No additional task, timer, or rule state is introduced. Native and physical feedback verification remain separately pending.

@@ -247,7 +247,8 @@ struct BubbleShooterView: View {
         ForEach(BubbleGeometry.slots, id: \.self) { slot in
           if let color = controller.game.board[slot] {
             bubble(color, at: BubbleGeometry.center(of: slot), scale: scale)
-              .transition(reduceMotion ? .identity : .opacity)
+              .transition(
+                reduceMotion ? .identity : .scale(scale: 0.6).combined(with: .opacity))
           }
         }
         // Only committed shots animate removal; preview/reset/restoration never animate the board.
@@ -262,6 +263,7 @@ struct BubbleShooterView: View {
           bubble(controller.game.nextColor, at: BubbleGeometry.launcher, scale: scale)
         }
       }
+      .clipShape(RoundedRectangle(cornerRadius: 16))
     }
   }
 

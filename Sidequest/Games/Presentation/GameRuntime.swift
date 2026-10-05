@@ -11,6 +11,9 @@ final class GameRuntime {
   private(set) var visibilityIdentity = UUID()
   private(set) var celebrationAttempt: GameAttemptID?
   @ObservationIgnored private var celebrationTask: Task<Void, Never>?
+  @ObservationIgnored private var lastInteractionTime: TimeInterval?
+  @ObservationIgnored private let interactionHaptic: @MainActor () -> Void
+  @ObservationIgnored private let interactionTime: @MainActor () -> TimeInterval
   @ObservationIgnored private let successHaptic: @MainActor () -> Void
   @ObservationIgnored private let celebrationDelay: @MainActor @Sendable () async throws -> Void
   @ObservationIgnored private var effectHandler: ((GameLifecycleEffect) -> Void)?
@@ -21,6 +24,10 @@ final class GameRuntime {
 
   init(
     completed: GameAttemptID? = nil,
+    interactionHaptic: @escaping @MainActor () -> Void = InteractionHaptic.play,
+    interactionTime: @escaping @MainActor () -> TimeInterval = {
+      ProcessInfo.processInfo.systemUptime
+    },
     successHaptic: @escaping @MainActor () -> Void = SuccessHaptic.play,
     celebrationDelay: @escaping @MainActor @Sendable () async throws -> Void = {
       try await Task.sleep(for: .milliseconds(1500))
@@ -29,6 +36,8 @@ final class GameRuntime {
   ) {
     lifecycle = GameLifecycle(completed: completed)
     self.makeAttemptID = makeAttemptID
+    self.interactionHaptic = interactionHaptic
+    self.interactionTime = interactionTime
     self.successHaptic = successHaptic
     self.celebrationDelay = celebrationDelay
   }
@@ -45,7 +54,10 @@ final class GameRuntime {
   func setVisible(_ visible: Bool) {
     guard !isRetired else { return }
     if visible != isVisible { visibilityIdentity = UUID() }
-    if !visible { cancelCelebration() }
+    if !visible {
+      cancelCelebration()
+      lastInteractionTime = nil
+    }
     deliver(lifecycle.setVisible(visible))
   }
 
@@ -62,6 +74,7 @@ final class GameRuntime {
     let fresh = makeAttemptID()
     guard fresh != old else { return false }
     cancelCelebration()
+    lastInteractionTime = nil
     lifecycle = GameLifecycle()
     _ = lifecycle.setVisible(true)
     deliver(.reset(old))
@@ -72,6 +85,17 @@ final class GameRuntime {
 
   func acceptsInput(from attempt: GameAttemptID) -> Bool {
     !isRetired && lifecycle.acceptsInput(from: attempt)
+  }
+
+  /// Only controllers request feedback after a meaningful nonfinal rule change.
+  /// Effects are immediate, never queued across lifecycle boundaries.
+  func feedbackForInteraction(attempt: GameAttemptID) {
+    guard acceptsInput(from: attempt) else { return }
+    let now = interactionTime()
+    guard now.isFinite else { return }
+    if let lastInteractionTime, now - lastInteractionTime < 0.12 { return }
+    lastInteractionTime = now
+    interactionHaptic()
   }
 
   /// Controllers distinguish a solved/won attempt from terminal failure. Rendering never emits feedback.
@@ -108,6 +132,7 @@ final class GameRuntime {
     guard !isRetired else { return }
     visibilityIdentity = UUID()
     cancelCelebration()
+    lastInteractionTime = nil
     deliver(lifecycle.setVisible(false))
     isRetired = true
   }

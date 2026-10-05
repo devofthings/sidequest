@@ -74,3 +74,7 @@ Keep board dimensions constant across preview, selection, wrong moves, completio
 ## Compact controls #142
 
 Root actual SE3 standard-text evidence places the original board inside the375×579 viewport but own-piece/File/Rank/Submit controls below it. The lead accepts concise objective/range copy, a normal own-piece row and File/Rank/Submit row, with complete color/kind/square AX labels and all eight menu options. Derive a square4×4 board extent from the read-only game budget minus independently measured stable nonboard chrome. Keep44-point cell/control floors; size decorative glyphs within cells instead of shrinking semantic text. Default Dynamic Type.large must fit375×667 and larger; other nonaccessibility sizes may scroll when minimum geometry cannot fit. Accessibility1+ retains natural vertical full-label controls/owned scrolling. Preserve original rules/window, explicit Start/Submit, fixed-header success and settled geometry across every phase. Record actual fit/gameplay only after root verification.
+
+## Accepted-move feedback #161
+
+Current one-move fixtures accept only a solving mate, so an accepted move uses the existing success haptic and visible checkmate/destination emphasis without a duplicate interaction haptic. Selection, coordinate edits, illegal moves, and legal nonmates stay quiet. Preserve contained 160 ms emphasis and immediate Reduce Motion. Future multistep rules must select their own event policy through approved scope; this slice adds no rule or attempt state.

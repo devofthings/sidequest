@@ -33,10 +33,15 @@ final class SudokuController {
   func enter(_ value: Int) {
     guard let selectedCell, var board,
       case .playing(let attempt) = runtime.phase, runtime.acceptsInput(from: attempt),
+      board.cells[selectedCell] != value,
       board.setValue(value, at: selectedCell)
     else { return }
     self.board = board
-    if board.isComplete { runtime.complete(attempt: attempt, successful: true) }
+    if board.isComplete {
+      runtime.complete(attempt: attempt, successful: true)
+    } else {
+      runtime.feedbackForInteraction(attempt: attempt)
+    }
   }
 
   private func apply(_ effect: GameLifecycleEffect) {

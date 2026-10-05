@@ -41,7 +41,8 @@ final class MemoryController {
     switch result {
     case .mismatch: concealAfterDelay(attempt: attempt)
     case .completed: runtime.complete(attempt: attempt, successful: true)
-    case .ignored, .revealed, .matched: break
+    case .matched: runtime.feedbackForInteraction(attempt: attempt)
+    case .ignored, .revealed: break
     }
   }
 
