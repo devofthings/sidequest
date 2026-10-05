@@ -15,14 +15,12 @@ final class BubbleFlowTests: XCTestCase {
     success.lifetime = .keepAlways
     add(success)
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
-    XCTAssertFalse(app.otherElements["bubble.directAim"].exists)
-    XCTAssertFalse(app.sliders["bubble.aim"].exists)
+    assertCompletedAimAbsent(app)
     app.nextFeedCard()
     app.previousFeedCard()
     XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
-    XCTAssertFalse(app.otherElements["bubble.directAim"].exists)
-    XCTAssertFalse(app.sliders["bubble.aim"].exists)
+    assertCompletedAimAbsent(app)
     reveal(app.buttons["bubble.replay"], in: app)
     XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height + 0.001, 44)
     XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.width + 0.001, 44)
@@ -44,8 +42,7 @@ final class BubbleFlowTests: XCTestCase {
     for count in 1...7 { fire(app, aim: 0.5, expectedShots: count) }
     XCTAssertTrue(app.staticTexts["bubble.outcome"].waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You lost")
-    XCTAssertFalse(app.otherElements["bubble.directAim"].exists)
-    XCTAssertFalse(app.sliders["bubble.aim"].exists)
+    assertCompletedAimAbsent(app)
     XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
     reveal(app.buttons["bubble.replay"], in: app)
     XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height + 0.001, 44)
@@ -262,6 +259,29 @@ final class BubbleFlowTests: XCTestCase {
       waitForShots(1, in: app)
       app.terminate()
     }
+  }
+
+  @MainActor
+  private func assertCompletedAimAbsent(_ app: XCUIApplication) {
+    let directControls = app.descendants(matching: .any).matching(identifier: "bubble.directAim")
+    let sliders = app.descendants(matching: .any).matching(identifier: "bubble.aim")
+    let metadata = [directControls, sliders].flatMap { query in
+      query.allElementsBoundByIndex.map { element in
+        "type=\(element.elementType.rawValue) identifier=\(element.identifier) "
+          + "label=\(element.label) value=\(String(describing: element.value)) "
+          + "enabled=\(element.isEnabled) hittable=\(element.isHittable) frame=\(element.frame)"
+      }
+    }
+    let diagnostic = XCTAttachment(
+      string: "Completed aiming matches: direct=\(directControls.count), slider=\(sliders.count)\n"
+        + metadata.joined(separator: "\n") + "\n\n" + app.debugDescription)
+    diagnostic.name = "bubble-completed-aim-hierarchy"
+    diagnostic.lifetime = .keepAlways
+    add(diagnostic)
+    XCTAssertFalse(app.otherElements["bubble.directAim"].exists)
+    XCTAssertFalse(app.sliders["bubble.aim"].exists)
+    XCTAssertEqual(directControls.count, 0)
+    XCTAssertEqual(sliders.count, 0)
   }
 
   @MainActor

@@ -5,16 +5,57 @@ import UIKit
 struct BubbleAimControl: UIViewRepresentable {
   let controller: BubbleShooterController
 
-  func makeUIView(context: Context) -> BubbleAimTouchControl {
-    BubbleAimTouchControl(controller: controller)
+  func makeUIView(context: Context) -> BubbleAimTouchRegion {
+    BubbleAimTouchRegion(controller: controller)
   }
 
-  func updateUIView(_ view: BubbleAimTouchControl, context: Context) {
+  func updateUIView(_ view: BubbleAimTouchRegion, context: Context) {
     view.update(controller: controller)
   }
 
-  static func dismantleUIView(_ view: BubbleAimTouchControl, coordinator: ()) {
+  static func dismantleUIView(_ view: BubbleAimTouchRegion, coordinator: ()) {
     view.cancelAim()
+  }
+}
+
+/// Keep the same touch-exclusion region after completion, with no remaining aiming control.
+@MainActor
+final class BubbleAimTouchRegion: UIView, FeedPanExcludingControl {
+  private var aimControl: BubbleAimTouchControl?
+
+  init(controller: BubbleShooterController) {
+    super.init(frame: .zero)
+    backgroundColor = .clear
+    isAccessibilityElement = false
+    update(controller: controller)
+  }
+
+  required init?(coder: NSCoder) { nil }
+
+  func update(controller: BubbleShooterController) {
+    guard controller.game.outcome == .playing else {
+      cancelAim()
+      aimControl?.removeFromSuperview()
+      aimControl = nil
+      accessibilityElements = []
+      accessibilityElementsHidden = true
+      return
+    }
+    accessibilityElementsHidden = false
+    accessibilityElements = nil
+    if let aimControl {
+      aimControl.update(controller: controller)
+    } else {
+      let control = BubbleAimTouchControl(controller: controller)
+      control.frame = bounds
+      control.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+      addSubview(control)
+      aimControl = control
+    }
+  }
+
+  func cancelAim() {
+    aimControl?.cancelAim()
   }
 }
 
@@ -46,9 +87,6 @@ final class BubbleAimTouchControl: UIControl, FeedPanExcludingControl {
     if !controller.canFire { cancelAim() }
     // Keep the narrow area a hit-test destination while disabled so it never becomes a feed pan.
     isEnabled = controller.canFire
-    // Completion removes aiming from assistive navigation without changing native touch ownership.
-    isAccessibilityElement = controller.game.outcome == .playing
-    accessibilityElementsHidden = controller.game.outcome != .playing
     accessibilityValue = "Aim: \(Int(controller.aimDegrees.rounded())) degrees"
   }
 

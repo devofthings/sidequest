@@ -75,3 +75,6 @@ Completed Bubble checks require both direct aiming and native Slider to be absen
 
 
 The exported larger #138 failure video and synthesized events showed repeated upward gestures at95% width moving the board downward beside the native draggable scroll indicator. Reveal Bubble overflow through the measured gap10 points past its300-point board, bounded to at least32 points inside the viewport's right edge; preserve real input and full-containment assertions. This avoids the indicator's expanded hit region without changing app scrolling. Capture actual hierarchy and viewport on bounded reveal failure instead of adding retries. After reverse navigation at accessibility text, explicitly reveal Start before requiring complete reachability; largest text legitimately retains owned overflow.
+
+
+Completed Bubble win/loss/revisit checks retain full running-app hierarchy and all matching direct-aim/Slider element metadata before unchanged absence assertions. The larger r3 completed-direct lookup failed after a real three-shot win; the log establishes identified-element retention, not assistive traversal or completed Slider failure. Preserve this diagnostic evidence and actual Replay reachability checks when changing native completion composition.
