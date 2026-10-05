@@ -104,3 +104,9 @@ On October 5, 2026, the owner personally reset included usage and authorized thi
 ## Personal-test feedback #10
 
 Before selecting product refinements, read [the October 5 personal-test outcome](docs/MVP.md#personal-test-outcome). Prioritize coherent design, animations, and fun within the existing accepted #13 direction; #13 is closed and its merged baseline remains delivered. Keep adaptive frequency #119, geographic news #146, Snake #147, and original microgames #148 in Ideas until explicit approval; recording feedback authorizes no research or implementation of those proposals. Preserve manual paging, explicit tap-to-play, and the current five-game/news cadence until a bounded replacement is accepted.
+
+## Accepted refinement steering — October 5, 2026
+
+Follow the [recorded personal-test refinements](docs/MVP.md#accepted-personal-test-refinements--october-5-2026) and [decisions](docs/DECISIONS.md) for approved #159 vivid Chess/Memory artwork, #160 preview-surface start, #161 restrained interaction feedback, #162 standard 9×9 Sudoku, #118 difficulty support, #117 varied pocket Chess, and #163 horizontal Bubble aiming without visible degrees. These directions do not certify delivery or settle unselected difficulty/Chess rules. Current source and the immutable MVP release retain their separately recorded evidence. Optional sounds #164 and adaptive game/news frequency #119 remain Ideas; do not implement them without owner approval.
+
+For #160, a lightweight top-row hint and a transparent game-content-only tap surface replace the dedicated visible start button. Keep explicit activation, an inert initiating tap, accessible/keyboard Start game, native manual scrolling, fixed reservations, and stale-touch cancellation. [Preview policy](docs/GAME_PREVIEWS.md) owns the actionable implementation choices; private Figma drawings remain Proposed and their old button treatment is superseded in prose, not silently declared updated.

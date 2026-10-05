@@ -52,3 +52,7 @@ Render the shared success badge in the viewport-owned header title slot after an
 ## Pocket viewport budget #142
 
 The lead's agent-grill accepts one presentation-only context from `FeedCardController`'s actual positive native card bounds. Retain it across content updates and publish only real size changes; never derive it from UIScreen, hosting intrinsic height, scroll offset or game phase. Feed game-card presentation subtracts independently measured stable title/reserved-start chrome and padding/gaps, exposing the remaining game-content budget. This seam is groundwork for Bubble #138, which consumes it after #142. Keep the fixed success header and single owned content scroller unchanged. Root's normal375×667 probe measured579-point card height: Sudoku/Memory fit, while both Chess control stacks overflow. Leave Sudoku/Memory sources unchanged. Native/CI results remain pending.
+
+## Informational start hint #160
+
+The owner's surface-start direction supersedes the earlier explicit lime start-button styling. Feed composition renders a plain top-row Tap to play hint with semantic Start game activation and a transparent preview tap surface confined to game content; news and viewport navigation remain outside it. Retain the measured hint row in every phase, disabled actual initial boards, and one native content scroller. Existing native pans win over start taps. See [preview policy](../../docs/GAME_PREVIEWS.md).

@@ -17,6 +17,10 @@ Each game board contains named PREVIEW, PLAY, and COMPLETE groups inside an edit
 | Games / Chess | [Three states](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=15-2) | [Chess](figma-157/chess.jpg) | [SVG](figma-157/chess.svg) |
 | Games / Bubble | [Three states](https://www.figma.com/design/Ehy0Dmgc1CCV2iTRThwb49/Sidequest-%25E2%2580%2594-Design?node-id=14-129) | [Bubble](figma-157/bubble.jpg) | [SVG](figma-157/bubble.svg) |
 
+## Owner-approved interaction update #160
+
+On October 5, the owner replaced the dedicated visible start button with a tap-sensitive preview game surface and a lightweight overlay or top-row cue. [Current preview policy](../GAME_PREVIEWS.md) selects top-row informational text, accessible/keyboard Start game activation, transparent content-only tap capture, inert first taps, and native manual swiping. The SVGs and screenshots below retain the earlier button illustration; that treatment is superseded, and this documentation update does not claim the private Figma frames or prototype interactions were changed. Their fixed-board/control reservations remain applicable. #159 separately owns vivid Chess/Memory icon refinement; these artifacts remain Proposed.
+
 ## Visual judgment
 
 Refine the [delivered baseline](../DESIGN.md) using larger game names, short goals, tactile opaque objects, one prominent action, and readable status in a reserved strip. Lime indicates the primary action; lavender, coral, and cyan establish the game family. Selection also has a dark outline, and outcomes have text/checkmarks. The quiet news surface uses a serif headline and ordinary body text, making a deliberate reading interruption without new feed destinations. Noto Serif is the available Figma reference font; native implementation would retain the baseline's system serif. Inter in Figma is a system-font approximation, not a new bundled-font dependency.

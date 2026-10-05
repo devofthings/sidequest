@@ -24,7 +24,7 @@ The recorded MVP and test results describe that selected release. Later document
 
 ## What's playable?
 
-Game cards show their actual inactive boards before **Tap to play**; Memory stays face down. Starting enables play without moving or reshuffling the board. Skipping or backgrounding resets unfinished attempts; completed results survive revisits during the session. Current source requests one system success haptic and briefly shows a readable celebration after a solved/won attempt; Bubble losses and completed revisits stay quiet. Physical vibration remains unverified pending your iPhone test.
+Game cards show their actual inactive boards with a lightweight **Tap to play** hint; tap the preview game surface or activate its accessible Start game action. Memory stays face down. Starting enables play without moving or reshuffling the board. Skipping or backgrounding resets unfinished attempts; completed results survive revisits during the session. Current source requests one system success haptic and briefly shows a readable celebration after a solved/won attempt; Bubble losses and completed revisits stay quiet. Physical vibration remains unverified pending your iPhone test.
 
 Current #91 source adds a brief Card S introduction on cold launch while preparation and app access continue; Reduce Motion omits it. [Startup checks](docs/INSTALL.md#cold-launch-logo-introduction-91) distinguish the policy from pending native verification.
 

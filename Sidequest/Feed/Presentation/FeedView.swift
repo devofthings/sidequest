@@ -129,23 +129,35 @@ struct FeedView: View {
         GameCardLayout(
           title: game.kind.title,
           start: StableGameRegion {
-            startButton(runtime).disabled(true)
+            startHint(runtime).disabled(true)
           } content: {
-            if runtime.phase == .preview { startButton(runtime) }
+            if runtime.phase == .preview { startHint(runtime) }
           },
-          content: gameContent(game, runtime).disabled(runtime.phase == .preview)
+          content: gameContent(game, runtime)
+            .disabled(runtime.phase == .preview)
+            .overlay {
+              if runtime.phase == .preview {
+                GamePreviewSurface(runtime: runtime)
+              }
+            }
         )
       }
     }
   }
 
-  private func startButton(_ runtime: GameRuntime) -> some View {
-    Button("Tap to play", action: runtime.start)
-      .buttonStyle(SidequestButtonStyle(prominent: true))
-      .controlSize(.large)
-      .accessibilityHint("Starts this game without making a move.")
-      .accessibilityIdentifier("game.start")
-      .disabled(!runtime.isVisible)
+  private func startHint(_ runtime: GameRuntime) -> some View {
+    Button(action: runtime.start) {
+      Text("Tap to play")
+        .font(.subheadline.weight(.semibold))
+        .foregroundStyle(theme.secondaryInk)
+        .frame(maxWidth: .infinity, minHeight: 44)
+        .contentShape(Rectangle())
+    }
+    .buttonStyle(.plain)
+    .accessibilityLabel("Start game")
+    .accessibilityHint("Starts this game without making a move.")
+    .accessibilityIdentifier("game.start")
+    .disabled(!runtime.isVisible)
   }
 }
 
