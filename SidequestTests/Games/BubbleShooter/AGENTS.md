@@ -13,3 +13,6 @@ Reset verification compares observable frozen board, next color, shot counter an
 
 
 #138 mapping tests establish actual uniform-scale vertical/45-degree rays, angle clamps and rejection of nonfinite/out-of-area/launcher/downward points. Controller tests exercise public originating leases, no input on preview, replacement/cancel/Slider/reset/retirement invalidation and rejection after a same-attempt nonterminal Fire finishes. Beginning a lease without a valid initial ray makes no aim/shot mutation; the native test begins on the visible launcher then moves upward. The real guide is compared to reflected traceShot geometry without mutating board/revision. Use the existing named noncooperative gate, not sleeps or private tasks.
+
+
+#163 supersedes the historical #138 ray mapping assertions: horizontal position alone maps center/edges/interior at every valid vertical height and supported board scale, including the launcher. Reject nonfinite/out-of-region input without mutation. Existing controller originating-lease and real-trace tests remain required; no controller/rule changes are selected. Native tests observe the direct control's real accessibility value after gestures instead of a removed visible angle label.

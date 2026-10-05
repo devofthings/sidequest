@@ -34,7 +34,7 @@ final class BubbleAimSliderControl: UISlider {
     accessibilityIdentifier = "bubble.aim"
     accessibilityLabel = "Aim"
     accessibilityHint =
-      "Aim from 60 degrees left to 60 degrees right of vertical. The angle is shown above."
+      "Aim from 60 degrees left to 60 degrees right of vertical. The dotted guide shows the trajectory."
     addTarget(self, action: #selector(changed), for: .valueChanged)
     update(controller: controller, enabled: true)
   }

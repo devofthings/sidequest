@@ -88,7 +88,8 @@ final class BubbleFlowTests: XCTestCase {
       forDuration: 0.01,
       thenDragTo: direct.coordinate(withNormalizedOffset: CGVector(dx: 0.75, dy: 0.4)),
       withVelocity: .slow, thenHoldForDuration: 0.1)
-    XCTAssertNotEqual(app.staticTexts["bubble.angle"].label, "Aim: 0°")
+    XCTAssertNotEqual(
+      observedAim(in: app), "Aim: 0 degrees")
     XCTAssertEqual(direct.frame, directFrame)
     XCTAssertEqual(app.otherElements["bubble.board"].frame, boardFrame)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
@@ -96,7 +97,8 @@ final class BubbleFlowTests: XCTestCase {
     reveal(app.sliders["bubble.aim"], in: app)
     XCTAssertTrue(app.sliders["bubble.aim"].isHittable)
     app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: 0.75)
-    XCTAssertNotEqual(app.staticTexts["bubble.angle"].label, "Aim: 0°")
+    XCTAssertNotEqual(
+      observedAim(in: app), "Aim: 0 degrees")
     XCTAssertEqual(app.selectedFeedCardID, position)
     reveal(app.buttons["bubble.fire"], in: app)
     XCTAssertTrue(app.buttons["bubble.fire"].isHittable)
@@ -121,14 +123,15 @@ final class BubbleFlowTests: XCTestCase {
     let right = slider.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5))
     center.press(
       forDuration: 0.01, thenDragTo: right, withVelocity: .slow, thenHoldForDuration: 0.1)
-    let afterHorizontal = app.staticTexts["bubble.angle"].label
-    XCTAssertNotEqual(afterHorizontal, "Aim: 0°")
+    let afterHorizontal = observedAim(in: app)
+    XCTAssertNotEqual(afterHorizontal, "Aim: 0 degrees")
     XCTAssertEqual(app.selectedFeedCardID, position)
     slider.adjust(toNormalizedSliderPosition: 0.5)
     let diagonal = slider.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.65))
     center.press(
       forDuration: 0.01, thenDragTo: diagonal, withVelocity: .slow, thenHoldForDuration: 0.1)
-    XCTAssertNotEqual(app.staticTexts["bubble.angle"].label, "Aim: 0°")
+    XCTAssertNotEqual(
+      observedAim(in: app), "Aim: 0 degrees")
     XCTAssertEqual(app.selectedFeedCardID, position)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     fire(app, aim: 0.5, expectedShots: 1)
@@ -150,17 +153,23 @@ final class BubbleFlowTests: XCTestCase {
     let frames = [board.frame, aim.frame, slider.frame, fire.frame, viewport.frame]
     let position = app.selectedFeedCardID
     for (name, from, to) in [
-      ("launcher-origin", CGVector(dx: 0.5, dy: 0.8), CGVector(dx: 0.8, dy: 0.3)),
+      ("launcher-origin-horizontal", CGVector(dx: 0.5, dy: 0.8), CGVector(dx: 0.8, dy: 0.8)),
       ("horizontal", CGVector(dx: 0.5, dy: 0.2), CGVector(dx: 0.8, dy: 0.2)),
-      ("vertical", CGVector(dx: 0.7, dy: 0.1), CGVector(dx: 0.7, dy: 0.5)),
+      ("vertical", CGVector(dx: 0.8, dy: 0.1), CGVector(dx: 0.8, dy: 0.5)),
       ("diagonal", CGVector(dx: 0.5, dy: 0.1), CGVector(dx: 0.2, dy: 0.4)),
     ] {
-      let initialAngle = app.staticTexts["bubble.angle"].label
+      aim.coordinate(withNormalizedOffset: from).tap()
+      let initialAngle = observedAim(in: app)
       aim.coordinate(withNormalizedOffset: from).press(
         forDuration: 0.01, thenDragTo: aim.coordinate(withNormalizedOffset: to),
         withVelocity: .slow, thenHoldForDuration: 0.1)
       capture(app, name: "direct-aim-\(name)")
-      XCTAssertNotEqual(app.staticTexts["bubble.angle"].label, initialAngle)
+      if name == "vertical" {
+        XCTAssertEqual(observedAim(in: app), initialAngle)
+      } else {
+        XCTAssertNotEqual(observedAim(in: app), initialAngle)
+      }
+      XCTAssertFalse(app.staticTexts["bubble.angle"].exists)
       XCTAssertEqual(app.selectedFeedCardID, position)
       XCTAssertEqual([board.frame, aim.frame, slider.frame, fire.frame, viewport.frame], frames)
       XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
@@ -168,7 +177,7 @@ final class BubbleFlowTests: XCTestCase {
     }
     // Straight direct aim preserves the real first-shot solution, but release never shoots.
     aim.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1)).tap()
-    XCTAssertEqual(app.staticTexts["bubble.angle"].label, "Aim: 0°")
+    XCTAssertEqual(observedAim(in: app), "Aim: 0 degrees")
     fire.tap()
     waitForShots(1, in: app)
     XCTAssertEqual(app.selectedFeedCardID, position)
@@ -192,14 +201,15 @@ final class BubbleFlowTests: XCTestCase {
     start(app)
     let aim = app.otherElements["bubble.directAim"]
     aim.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.2)).tap()
-    XCTAssertNotEqual(app.staticTexts["bubble.angle"].label, "Aim: 0°")
+    XCTAssertNotEqual(
+      observedAim(in: app), "Aim: 0 degrees")
     app.buttons["bubble.fire"].tap()
     XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
     XCTAssertFalse(app.sliders["bubble.aim"].isEnabled)
     XCUIDevice.shared.press(.home)
     app.activate()
     XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
-    XCTAssertEqual(app.staticTexts["bubble.angle"].label, "Aim: 0°")
+    XCTAssertEqual(observedAim(in: app), "Aim: 0 degrees")
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     start(app)
     fire(app, aim: 0.5, expectedShots: 1)
@@ -244,7 +254,8 @@ final class BubbleFlowTests: XCTestCase {
       start(app)
       let direct = app.otherElements["bubble.directAim"]
       direct.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1)).tap()
-      XCTAssertEqual(app.staticTexts["bubble.angle"].label, "Aim: 0°")
+      XCTAssertEqual(
+        observedAim(in: app), "Aim: 0 degrees")
       XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
       reveal(app.buttons["bubble.fire"], in: app)
       app.buttons["bubble.fire"].tap()
@@ -259,6 +270,14 @@ final class BubbleFlowTests: XCTestCase {
       waitForShots(1, in: app)
       app.terminate()
     }
+  }
+
+  @MainActor
+  private func observedAim(in app: XCUIApplication) -> String {
+    let value = app.otherElements["bubble.directAim"].value as? String ?? ""
+    XCTAssertTrue(
+      value.hasPrefix("Aim: "), "Missing named accessible aim value: \(app.debugDescription)")
+    return value
   }
 
   @MainActor
@@ -329,7 +348,10 @@ final class BubbleFlowTests: XCTestCase {
     if aim != 0.5 { app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: 0.9) }
     app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: aim)
     if aim != 0.5 {
-      let angle = Double(app.staticTexts["bubble.angle"].label.dropFirst(5).dropLast())
+      let angle = Double(
+        observedAim(in: app).filter {
+          $0.isNumber || $0 == "-"
+        })
       XCTAssertNotNil(angle)
       XCTAssertTrue(
         (6...30).contains(angle ?? -60), "Actual aiming must reach the demonstrated winning window."

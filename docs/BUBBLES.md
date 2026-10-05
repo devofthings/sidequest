@@ -14,7 +14,7 @@ Controller and runtime tests cover actual animated win/loss, single-flight input
 
 ## Accessibility and motion
 
-Aim uses the native slider range and a separately labeled angle in degrees. R/B/G letters and dark fills make colors distinguishable. The board provides a VoiceOver summary with ordered row/position/color values; Fire and Replay are explicit controls, and the card can scroll independently of feed navigation. Under system Reduce Motion, the in-flight bubble stays at the launcher until committing its attachment; rules, timing, cancellation, and outcomes do not change.
+Aim uses the native slider range, with named direction/degree feedback on the direct touch control for assistive users; the simplified #163 interface removes visible numeric angle text. R/B/G letters and dark fills make colors distinguishable. The board provides a VoiceOver summary with ordered row/position/color values; Fire and Replay are explicit controls, and the card can scroll independently of feed navigation. Under system Reduce Motion, the in-flight bubble stays at the launcher until committing its attachment; rules, timing, cancellation, and outcomes do not change.
 
 ## Verification
 
@@ -55,3 +55,12 @@ At corrected source `2c07c0e0fb66cc5c14902d09bde28d38f426fc42`, all three small-
 
 
 The larger r3 run at `3788212f77feb55413a834117d97ceaeb6ef98b2` passed largest-text aim/Fire (39.560 seconds) and the actual generated three-shot route (36.710 seconds), but fixed-fixture completion failed after a real win because `bubble.directAim` still existed (22.966 seconds). Completed Slider absence was not reached; the log cannot establish VoiceOver traversal or whether the identified node was the native control or its wrapper. The next source correction retains a metadata-free fixed native touch-exclusion region, cancels and removes its actual aiming UIControl on completion, and creates that child again on Replay. Preview/pending flight keep the real disabled input. Completed win/loss/revisit tests retain full hierarchy and matching element metadata before unchanged absence assertions. Native completion, geometry, touch ownership, fresh review and exact-head verification of this correction remain pending.
+
+
+## Simplified horizontal aiming #163
+
+The owner requested left/right dragging with the dotted trajectory as sufficient visual guidance. This source change removes visible numeric aim text while retaining shots, next color, feedback and outcomes. Drag horizontally anywhere within the lower-board aiming region: its center aims straight up, and its left/right edges select the existing ±60° limits. Vertical movement within that region does not change aim. Launcher-height horizontal drags now work; invalid/out-of-area coordinates leave the previous aim unchanged.
+
+The real nonmutating reflected trajectory remains authoritative. Drag/release changes aim only; explicit Fire shoots, with unchanged originating leases, flight locks, cancellation, frozen reset/Replay and completed restoration. Keep the native 44-point Slider as an accessible/keyboard precision alternative. Its hint points to the dotted guide; the direct control supplies named degree feedback to assistive technology without decorative numeric text. Normal/largest text retain measured reservations and owned overflow.
+
+The lead accepted the implementation agent's agent-grill plan. Mapping tests cover center/edges/interior, scale independence, vertical invariance, continuity, launcher-height motion and invalid points. Updated running-app checks read actual direct-control accessibility values, assert visible angle absence, exercise true horizontal launcher dragging, and preserve explicit Fire, native Slider, production three-shot win, reset, completion/Replay and stable frames. Root-owned native execution, exact-head CI and independent review remain pending at author handoff. Historical #8/#138 results above certify their original source only; no new iPhone vibration, VoiceOver, release or rendered-fit claim is made here.

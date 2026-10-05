@@ -30,3 +30,8 @@ Verify actual normal/largest-text layouts and stable board/control frames for al
 ## Child integration status
 
 Compact Chess/shared viewport child142 merged through [PR143](https://github.com/devofthings/sidequest/pull/143) after seven focused cases passed on both small375×667 and larger simulators, fresh review and exact-head140-test native CI. Generator137's merged evidence is recorded above. Control child138 consumes that seam with direct lower-board aiming, a real reflected guide, explicit Fire/native Slider and compact stable chrome; its changed behavior and the new all-game whole-frame normal-size audit require actual verification before parent135 is complete. See [Bubble implementation/verification](BUBBLES.md#compact-direct-aiming-138). No new release or tier is implied.
+
+
+## Owner refinement: simplified aiming #163
+
+The October 5 owner request accepts horizontal drag with the real dotted trajectory instead of visible numeric angle text. Map left/center/right across the existing lower-board region to the unchanged −60°/0°/+60° range, independently of vertical position. Preserve explicit Fire, native 44-point Slider as assistive/keyboard precision alternative, narrow touch ownership, originating lease invalidation and frozen lifecycle. No rule, generation, tier or release change is included. See [implementation and pending verification](BUBBLES.md#simplified-horizontal-aiming-163); earlier #138 evidence remains historical rather than certification of this refinement.

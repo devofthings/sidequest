@@ -28,6 +28,8 @@ Game cards show their actual inactive boards with a lightweight **Tap to play** 
 
 Current #91 source adds a brief Card S introduction on cold launch while preparation and app access continue; Reduce Motion omits it. [Startup checks](docs/INSTALL.md#cold-launch-logo-introduction-91) distinguish the policy from pending native verification.
 
+Current Bubble source uses left/right dragging in the lower-board aiming area and a dotted trajectory, with no visible numeric angle. Releasing a drag does not shoot; **Fire** stays explicit. A native 44-point Slider remains available for assistive and keyboard precision. See [the refinement and verification status](docs/BUBBLES.md#simplified-horizontal-aiming-163).
+
 Current source supports full-card native vertical paging: swipe up/down directly on a card or use the compact **Feed navigation** menu. Overflowing content scrolls within its card; a new outward gesture at its top/bottom edge changes cards. See [feed navigation](docs/FEED.md#navigation-and-eligibility). Game boards and primary controls retain their geometry when feedback or results change; [stable layout](docs/GAME_LAYOUT.md) describes the current source correction and verification.
 
 | Game | Merged implementation | Details / next step |
@@ -46,12 +48,12 @@ Merged #104 source extends normal launch to endless generated Sudoku, frozen Mem
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 67 | 5,695 |
-| Unit tests | 31 | 4,391 |
-| UI tests | 16 | 2,773 |
-| **Total** | **114** | **12,859** |
+| App | 67 | 5,661 |
+| Unit tests | 31 | 4,396 |
+| UI tests | 16 | 2,796 |
+| **Total** | **114** | **12,853** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+10,409 / −613 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+10,403 / −613 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
