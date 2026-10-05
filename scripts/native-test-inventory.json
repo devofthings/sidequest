@@ -433,6 +433,28 @@
         "Sidequest/Resources/"
       ]
     },
+    "SidequestUITests/PreviewSurfaceStartTests/testEveryGameSurfaceTapStartsWithoutMakingItsFirstMoveAndSkipRequiresRestart": {
+      "lower_layer": "Preview start lease unit tests cover stale, retired and duplicate requests; native checks establish inert taps, gesture arbitration and owned overflow.",
+      "paths": [
+        "SidequestUITests/PreviewSurfaceStartTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/Games/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/PreviewSurfaceStartTests/testPreviewDragsAndOwnedOverflowNeverStartGames": {
+      "lower_layer": "Preview start lease unit tests cover stale, retired and duplicate requests; native checks establish inert taps, gesture arbitration and owned overflow.",
+      "paths": [
+        "SidequestUITests/PreviewSurfaceStartTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/Games/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
     "SidequestUITests/StableGameLayoutTests/testBubbleFeedbackCompletionAndReplayKeepBoardAndControlsStable": {
       "lower_layer": "Deterministic rules/controllers cover state transitions; actual SwiftUI board/control geometry requires this retained explicit native layout check.",
       "paths": [
@@ -529,20 +551,6 @@
         "Sidequest.xcodeproj/"
       ]
     },
-    "SidequestUITests/SudokuFlowTests/testNormalControlsHaveFullTouchAreasAndCellCornersSelect": {
-      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
-      "paths": [
-        "SidequestUITests/SudokuFlowTests.swift",
-        "SidequestUITests/FeedNavigationSupport.swift",
-        "Sidequest/Feed/",
-        "Sidequest/Core/",
-        "Sidequest/Games/Sudoku/",
-        "Sidequest.xcodeproj/",
-        "SidequestUITests/SystemAccessibilitySupport.swift",
-        "SidequestUITests/NewsPresentationTests.swift",
-        "Sidequest/Resources/"
-      ]
-    },
     "SidequestUITests/StartupIntroductionFlowTests/testColdLaunchAndForegroundKeepRealGameInactiveAndFeedPosition": {
       "lower_layer": "Deterministic startup introduction tests cover bounded timing, cancellation, stale callbacks, failure, and reduced-motion omission; this native flow checks accessible cold launch and explicit gameplay. Actual recordings establish the brief decoration.",
       "paths": [
@@ -569,6 +577,20 @@
         "Sidequest/Feed/",
         "Sidequest/Games/Sudoku/",
         "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/SudokuFlowTests/testNormalControlsHaveFullTouchAreasAndCellCornersSelect": {
+      "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
+      "paths": [
+        "SidequestUITests/SudokuFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/Feed/",
+        "Sidequest/Core/",
+        "Sidequest/Games/Sudoku/",
+        "Sidequest.xcodeproj/",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/NewsPresentationTests.swift",
+        "Sidequest/Resources/"
       ]
     }
   },

@@ -1,3 +1,4 @@
+import Foundation
 import Observation
 
 /// A retained presentation owner for one card's lifecycle, never a view's local state.
@@ -6,6 +7,8 @@ import Observation
 final class GameRuntime {
   private var lifecycle: GameLifecycle
   private var isRetired = false
+  // A held preview tap must not survive a hide/reset followed by a new visible preview.
+  private(set) var visibilityIdentity = UUID()
   private(set) var celebrationAttempt: GameAttemptID?
   @ObservationIgnored private var celebrationTask: Task<Void, Never>?
   @ObservationIgnored private let successHaptic: @MainActor () -> Void
@@ -41,6 +44,7 @@ final class GameRuntime {
 
   func setVisible(_ visible: Bool) {
     guard !isRetired else { return }
+    if visible != isVisible { visibilityIdentity = UUID() }
     if !visible { cancelCelebration() }
     deliver(lifecycle.setVisible(visible))
   }
@@ -102,6 +106,7 @@ final class GameRuntime {
   /// Evicted owners never accept visibility, replay, or input again, even through stale views.
   func retire() {
     guard !isRetired else { return }
+    visibilityIdentity = UUID()
     cancelCelebration()
     deliver(lifecycle.setVisible(false))
     isRetired = true

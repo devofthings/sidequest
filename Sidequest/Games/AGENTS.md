@@ -44,3 +44,7 @@ The owner approved a brief nonblocking celebration and short success haptic for 
 ## Pocket interaction correction #135
 
 The owner requires all four games to be pocket-sized. Follow [the accepted compact-interaction scope](../../docs/POCKET_BUBBLE.md): verify board and primary controls together at normal text, retain complete reachable content at accessibility sizes, preserve stable geometry and lifecycle. Do not infer rendered fit from grid dimensions. Bubble's previous one-shot default is superseded by generator child #137. Independently reviewed and verified children may change source while parent #135 remains open; generator delivery does not complete control/layout child #138 or the parent's all-game compactness audit. Keep each child's actual verification evidence and remaining parent acceptance separate.
+
+## Preview-surface start #160
+
+[Preview policy](../../docs/GAME_PREVIEWS.md) supersedes the dedicated start button: top-row informational hint, accessible/keyboard Start game, and transparent tap capture only over inactive game content. Keep the same disabled game view and frozen configuration; the initiating tap cannot make a move. Existing native pans own drag/scroll/page, and real visibility changes invalidate held requests. Reserve hint/board/control geometry across phases.

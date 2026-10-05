@@ -11,3 +11,7 @@ The native adapter regression gives a replacement pager a retired session reques
 `FeedNewsCadenceTests` verifies carried five-game cadence over varied preparation boundaries and complete demo-pool cycles, with unique appearance IDs and unchanged source snapshots. Preparing or repeating a candidate must leave the prior cadence value unchanged. See [demo policy](../../docs/DEMO_NEWS.md).
 
 `GameLayoutBudgetTests` cover the presentation-only native viewport minus independent stable chrome, real viewport changes and44-point board-target floors when content cannot fit. These values never enter feed-domain/game-rule/controller behavior. Actual containment and hit targets require root-owned native checks.
+
+## Preview start requests #160
+
+`PreviewStartRequestTests` use the real runtime and Sudoku controller to cover inert/duplicate activation, stale visibility leases after hide/return, idempotent host visibility, retirement, and completion. These deterministic tests do not establish UIKit tap/pan arbitration; actual native surface/scroll checks remain separately required.

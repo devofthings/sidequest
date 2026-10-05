@@ -7,9 +7,6 @@ final class GamePreviewTests: XCTestCase {
       let app = launch(fixture)
       assertPreview(app, fixture: fixture)
       let before = snapshot(app, fixture: fixture)
-      anchor(app, fixture: fixture).coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-        .tap()
-      XCTAssertEqual(snapshot(app, fixture: fixture), before)
       capture(app, name: "preview-\(fixture.rawValue)-normal")
       let frame = anchor(app, fixture: fixture).frame
       app.buttons["game.start"].tap()
@@ -212,7 +209,7 @@ final class GamePreviewTests: XCTestCase {
     case .bubble:
       XCTAssertFalse(app.buttons["bubble.fire"].isEnabled)
       XCTAssertFalse(app.sliders["bubble.aim"].isEnabled)
-      XCTAssertEqual(app.staticTexts["bubble.angle"].label, "Aim: 0°")
+      XCTAssertEqual(app.otherElements["bubble.directAim"].value as? String, "Aim: 0 degrees")
       XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
       XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Clear matching groups of three.")
     }
