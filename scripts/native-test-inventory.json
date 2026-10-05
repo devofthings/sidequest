@@ -326,7 +326,7 @@
         "Sidequest/Resources/"
       ]
     },
-    "SidequestUITests/GamePreviewTests/testAllInitialBoardsRejectPreviewInputAndResetAfterSkipAndBackground": {
+    "SidequestUITests/GamePreviewTests/testAllInitialBoardsAcceptFirstInputAndResetAfterSkipAndBackground": {
       "lower_layer": "Controller tests cover frozen values and input/task gates; this explicit native check proves visible initial boards, start/reset accessibility, and stable start geometry for all real adapters.",
       "paths": [
         "SidequestUITests/GamePreviewTests.swift",
@@ -348,7 +348,7 @@
         "Sidequest.xcodeproj/"
       ]
     },
-    "SidequestUITests/GamePreviewTests/testLargestTextKeepsEveryInitialBoardAndStartReachableWithoutMovingTheBoard": {
+    "SidequestUITests/GamePreviewTests/testLargestTextKeepsEveryInitialBoardAndFirstInputReachableWithoutMovingTheBoard": {
       "lower_layer": "Controller tests cover frozen values and input/task gates; this explicit native check proves visible initial boards, start/reset accessibility, and stable start geometry for all real adapters.",
       "paths": [
         "SidequestUITests/GamePreviewTests.swift",
@@ -451,7 +451,7 @@
         "Sidequest/Resources/"
       ]
     },
-    "SidequestUITests/PreviewSurfaceStartTests/testEveryGameSurfaceTapStartsWithoutMakingItsFirstMoveAndSkipRequiresRestart": {
+    "SidequestUITests/PreviewSurfaceStartTests/testEveryFirstGameActionStartsAndAppliesAndSkipRequiresRestart": {
       "lower_layer": "Preview start lease unit tests cover stale, retired and duplicate requests; native checks establish inert taps, gesture arbitration and owned overflow.",
       "paths": [
         "SidequestUITests/PreviewSurfaceStartTests.swift",
@@ -661,7 +661,7 @@
     "SidequestUITests/BubbleFlowTests/testShortBoardDragKeepsAttemptAndDirectSkipResetsPendingShot",
     "SidequestUITests/IntegrationFlowTests/testNativeImportsReplaceTheMixedDeckPersistAndRejectInvalidFiles",
     "SidequestUITests/EndlessFlowTests/testGeneratedPreviewInputSkipAndFirstNewsBoundary",
-    "SidequestUITests/MemoryFlowTests/testStartMakesNoFlipAndMatchingAllPairsRetainsCompletion",
+    "SidequestUITests/MemoryFlowTests/testFirstFlipStartsAndMatchingAllPairsRetainsCompletion",
     "SidequestUITests/MemoryFlowTests/testMismatchTurnsOverAndSkippingReturnsToUnflippedPreview",
     "SidequestUITests/MemoryFlowTests/testLargestTextKeepsEveryTileAndNavigationReachable"
   ],
