@@ -16,3 +16,7 @@ Reset verification compares observable frozen board, next color, shot counter an
 
 
 #163 supersedes the historical #138 ray mapping assertions: horizontal position alone maps center/edges/interior at every valid vertical height and supported board scale, including the launcher. Reject nonfinite/out-of-region input without mutation. Existing controller originating-lease and real-trace tests remain required; no controller/rule changes are selected. Native tests observe the direct control's real accessibility value after gestures instead of a removed visible angle label.
+
+## Attempt-budget verification #188
+
+Opt-in Easy8/Medium5/Hard3 configurations keep the original witnessed three-clearing-shot challenges and RNG consumption. Test generated and fallback witnesses through actual rules, including Hard's final permitted winning shot; injected nonwinning states isolate actual shot exhaustion from earlier danger loss. Reject mismatched tier metadata and invalid caps. Preserve first-action activation, stale leases, frozen reset, completed restoration and Replay with the existing noncooperative delay gate. No sampled aim-tolerance or human calibration claim is established by these tests. Root owns native execution; author format/doc checks are not gameplay evidence.

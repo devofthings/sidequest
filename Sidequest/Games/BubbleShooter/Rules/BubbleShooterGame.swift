@@ -14,7 +14,8 @@ enum BubbleOutcome: Equatable, Sendable {
 }
 
 enum BubbleShotError: Error, Equatable {
-  case invalidAngle, invalidTrajectory, invalidBoard, noActiveChallenge, staleShot
+  case invalidAngle, invalidTrajectory, invalidBoard, invalidConfiguration, noActiveChallenge,
+    staleShot
 }
 
 struct BubbleShot: Equatable, Sendable {
@@ -38,17 +39,37 @@ struct BubbleShooterGame: Equatable, Sendable {
   private let colors: [BubbleColor]
   private let initialBoard: [BubbleSlot: BubbleColor]
   static let shotLimit = 8
+  let maximumShots: Int
+  let difficulty: GameDifficulty?
+
+  static func maximumShots(for difficulty: GameDifficulty) -> Int {
+    switch difficulty {
+    case .easy: return 8
+    case .medium: return 5
+    case .hard: return 3
+    }
+  }
 
   var nextColor: BubbleColor { colors[shotsFired % colors.count] }
 
   init() {
+    maximumShots = Self.shotLimit
+    difficulty = nil
     board = Self.challenge
     initialBoard = Self.challenge
     colors = [.red, .blue, .green]
   }
 
   /// Deterministic injected boards support rules verification without UI or random state.
-  init(board: [BubbleSlot: BubbleColor], shotColors: [BubbleColor]) throws {
+  init(
+    board: [BubbleSlot: BubbleColor], shotColors: [BubbleColor],
+    maximumShots: Int = Self.shotLimit, difficulty: GameDifficulty? = nil
+  ) throws {
+    guard (1...Self.shotLimit).contains(maximumShots),
+      difficulty.map({ Self.maximumShots(for: $0) == maximumShots }) ?? true
+    else { throw BubbleShotError.invalidConfiguration }
+    self.maximumShots = maximumShots
+    self.difficulty = difficulty
     guard !shotColors.isEmpty, board.keys.allSatisfy(BubbleGeometry.slots.contains) else {
       throw BubbleShotError.invalidBoard
     }
@@ -56,6 +77,13 @@ struct BubbleShooterGame: Equatable, Sendable {
     initialBoard = board
     colors = shotColors
     if board.isEmpty { outcome = .won }
+  }
+
+  /// Configuration starts from the same frozen initial board and complete legacy queue.
+  func configured(for difficulty: GameDifficulty) throws -> Self {
+    try Self(
+      board: initialBoard, shotColors: colors,
+      maximumShots: Self.maximumShots(for: difficulty), difficulty: difficulty)
   }
 
   static let challenge: [BubbleSlot: BubbleColor] = [
@@ -104,7 +132,7 @@ struct BubbleShooterGame: Equatable, Sendable {
       outcome = .won
     } else if board.keys.contains(where: { $0.row == BubbleGeometry.rows - 1 }) {
       outcome = .lost(.dangerRow)
-    } else if shotsFired >= Self.shotLimit {
+    } else if shotsFired >= maximumShots {
       outcome = .lost(.shotLimit)
     }
     return BubbleShotResult(matched: matched, detached: detached, outcome: outcome)

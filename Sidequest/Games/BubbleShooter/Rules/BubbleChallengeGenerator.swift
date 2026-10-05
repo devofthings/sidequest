@@ -24,6 +24,33 @@ enum BubbleChallengeGenerator {
     return try fallback(using: &random)
   }
 
+  /// Opt-in tiers change attempts, preserving the original queue and every RNG draw.
+  static func generate<R: RandomNumberGenerator>(
+    difficulty: GameDifficulty, using random: inout R
+  ) throws -> BubbleChallenge {
+    try configured(generate(using: &random), for: difficulty)
+  }
+
+  static func fallback<R: RandomNumberGenerator>(
+    difficulty: GameDifficulty, using random: inout R
+  ) throws -> BubbleChallenge {
+    try configured(fallback(using: &random), for: difficulty)
+  }
+
+  private static func configured(
+    _ challenge: BubbleChallenge, for difficulty: GameDifficulty
+  ) throws -> BubbleChallenge {
+    let game = try challenge.game.configured(for: difficulty)
+    var replay = game
+    for angle in challenge.winningAngles {
+      _ = try replay.fire(angleRadians: angle * .pi / 180)
+    }
+    guard replay.outcome == .won, replay.shotsFired == witnessShotsPerAttempt else {
+      throw BubbleGenerationError.noAttainableChallenge
+    }
+    return BubbleChallenge(game: game, winningAngles: challenge.winningAngles)
+  }
+
   /// The fallback has the same three required color groups, never a trivial single-shot clear.
   static func fallback<R: RandomNumberGenerator>(using random: inout R) throws -> BubbleChallenge {
     guard let challenge = try candidate(pattern: 7, using: &random) else {

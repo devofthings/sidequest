@@ -111,3 +111,16 @@ After an eligible shot commits, only matched/detached removal with a still-playi
 ## First meaningful interaction #185
 
 The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.
+
+## Selected attempt-budget tiers #188
+
+The lead selected Easy8, Medium5, and Hard3 maximum shots for the original certified three-color, three-clearing-shot envelope. This supersedes the proposed sampled shortest-route/tolerance classifier for this rollout. Caps change actual losing rules; they are an engineering attempt budget, not a human rating. Extra attempts do not guarantee recoverable mistakes, and danger-row loss takes precedence over exhaustion. Keep production/default eight until coordinated feed rollout.
+
+Agent-grill self-assessment before implementation:
+
+| Question | Kind | Answer and evidence | Verification needed |
+| --- | --- | --- | --- |
+| How can legacy RNG remain exact? | Fact/technical choice | Existing generator consumes its full eight-color queue before actual three-shot witness replay. Opt-in configuration retains that original game/queue and consumes no extra randomness. | Compare board, witness, future RNG and all eight queued colors across tiers/seeds/fallbacks. |
+| What validates configuration? | Technical choice | Immutable game cap accepts 1...8 for deterministic rule fixtures; nonnil tier must match exactly8/5/3. Generator publishes only requested-tier certified three-shot games. | Reject zero, negative, over-eight and mismatched metadata; Hard wins before exhaustion on its last shot. |
+| Who owns reset and archives? | Fact | Controller resets the retained game value; completed archives already store that full value. No second lifecycle/configuration owner is needed. | First action, skip/reset, completed restoration and replay retain cap/tier; stale plans remain invalid. |
+| What stays deferred? | Scope | Mixed-feed labels/distribution, human calibration and sampled tolerance search are separate work. | Native/CI execution and independent review belong to the lead; source changes alone certify no delivery. |

@@ -225,6 +225,51 @@ final class BubbleShooterControllerTests: XCTestCase {
     XCTAssertNil(controller.aimTrajectory)
   }
 
+  func testConfiguredFirstAimResetCompletionRestorationAndReplayKeepFrozenTier() async throws {
+    for tier in [GameDifficulty.easy, .medium, .hard] {
+      var random = ChallengeRandom(seed: 188)
+      let challenge = try BubbleChallengeGenerator.generate(difficulty: tier, using: &random)
+      let gate = BubbleDelayGate()
+      let runtime = GameRuntime(activationPolicy: .firstInteraction)
+      let controller = BubbleShooterController(
+        runtime: runtime, game: challenge.game, pause: { try await gate.pause() })
+      runtime.setVisible(true)
+      controller.aim(degrees: challenge.winningAngles[0])
+      XCTAssertTrue(controller.canFire)
+      XCTAssertEqual(controller.game.maximumShots, challenge.game.maximumShots)
+      let oldLease = try XCTUnwrap(controller.beginAimDrag())
+      runtime.setVisible(false)
+      runtime.setVisible(true)
+      XCTAssertFalse(controller.updateAimDrag(oldLease, degrees: 30))
+      XCTAssertEqual(controller.game.difficulty, tier)
+      XCTAssertEqual(controller.game.board, challenge.game.board)
+      XCTAssertEqual(controller.game.shotsFired, 0)
+      for (index, angle) in challenge.winningAngles.enumerated() {
+        controller.aim(degrees: angle)
+        XCTAssertTrue(controller.fire())
+        await finishShot(gate, firstPause: index * 24 + 1)
+      }
+      let completed = controller.game
+      XCTAssertEqual(completed.outcome, .won)
+      XCTAssertEqual(completed.maximumShots, challenge.game.maximumShots)
+      runtime.setVisible(false)
+      runtime.setVisible(true)
+      XCTAssertEqual(controller.game, completed)
+      guard case .completed(let attempt) = runtime.phase else {
+        return XCTFail("Expected completed configured challenge")
+      }
+      let restored = BubbleShooterController(
+        runtime: GameRuntime(completed: attempt, activationPolicy: .firstInteraction),
+        game: completed)
+      XCTAssertEqual(restored.game, completed)
+      XCTAssertTrue(controller.replay())
+      XCTAssertEqual(controller.game.maximumShots, completed.maximumShots)
+      XCTAssertEqual(controller.game.difficulty, tier)
+      XCTAssertEqual(controller.game.board, challenge.game.board)
+      XCTAssertEqual(controller.game.shotsFired, 0)
+    }
+  }
+
   private func finishShot(_ gate: BubbleDelayGate, firstPause: Int) async {
     for number in firstPause..<(firstPause + 24) {
       await gate.waitUntilStarted(number)
