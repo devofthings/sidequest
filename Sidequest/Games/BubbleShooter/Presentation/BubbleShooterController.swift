@@ -73,7 +73,7 @@ final class BubbleShooterController {
               : "Cleared \(result.matched.count) matching and \(result.detached.count) detached bubbles."
           case .won:
             feedback = "Board cleared!"
-            runtime.complete(attempt: attempt)
+            runtime.complete(attempt: attempt, successful: true)
           case .lost:
             feedback = "Challenge ended. Try again."
             runtime.complete(attempt: attempt)

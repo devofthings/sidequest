@@ -37,3 +37,7 @@ For #106, DEBUG integration fixtures use the new `Sidequest Fixtures v2` folder 
 ## Visible inactive boards #88
 
 Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../../docs/GAME_PREVIEWS.md).
+
+## Feedback verification composition #86
+
+Both finite and rehydrating game composition use `GameFeedbackComposition.makeRuntime`. Production uses the runtime's standard 1.5-second celebration lifetime. Only Debug with `-sidequest-success-feedback-test` plus a recognized existing real-game fixture route injects a 10-second presentation lifetime for reliable XCTest observation. Game rules, move timing, completion gates, and native haptic requests remain unchanged; Release ignores this flag. Completed restoration receives only the completed attempt identity and never archives/replays presentation effects.

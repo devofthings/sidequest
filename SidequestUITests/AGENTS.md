@@ -39,3 +39,7 @@ Keep all eight geometry cases in the native inventory’s explicit extended cove
 ## Visible inactive boards #88
 
 Render the same game-owned initial board in preview and play, with gameplay disabled until the shared runtime accepts an explicit start. Preserve frozen configuration, face-down Memory, reset/completion behavior, and the reserved start footprint. Before changing this boundary, read [preview guidance](../docs/GAME_PREVIEWS.md).
+
+## Success feedback #86
+
+Existing real-game completion flows observe the readable `game.successCelebration` badge and its absence on completed revisit; Bubble failure stays silent. Debug's explicitly requested feedback fixture lengthens only presentation lifetime to ten seconds so XCTest latency cannot race production's brief decoration. Keep game rules and gameplay delays unchanged. The focused Memory system Reduce Motion case uses actual Settings, solves the real fixture, and backgrounds/returns to verify canceled presentation does not replay while completion remains. This new case stays extended; the three routine smoke cases remain unchanged. Capture ordinary unflagged presentation separately when checking production duration. Physical haptics still require an actual iPhone.

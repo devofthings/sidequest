@@ -56,16 +56,19 @@ final class SudokuFlowTests: XCTestCase {
 
   @MainActor
   func testSolvedBoardRemainsOnCardAndSurvivesRevisit() {
-    let app = launch()
+    let app = launch(successFeedback: true)
     app.buttons["game.start"].tap()
     for (cell, value) in [(2, 3), (4, 3), (7, 2), (8, 2), (11, 3), (13, 3), (14, 2)] {
       app.buttons["sudoku.cell.\(cell)"].tap()
       app.buttons["sudoku.number.\(value)"].tap()
     }
+    XCTAssertTrue(app.staticTexts["game.successCelebration"].waitForExistence(timeout: 5))
+    capture(app, name: "sudoku-success-celebration")
     XCTAssertEqual(app.staticTexts["sudoku.status"].label, "Sudoku solved!")
     XCTAssertEqual(app.selectedFeedCardID, "sample-game-sudoku")
     app.nextFeedCard()
     app.previousFeedCard()
+    XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
     XCTAssertEqual(app.staticTexts["sudoku.status"].label, "Sudoku solved!")
     XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertFalse(app.buttons["sudoku.cell.2"].isEnabled)
@@ -119,10 +122,12 @@ final class SudokuFlowTests: XCTestCase {
   }
 
   @MainActor
-  private func launch(largeText: Bool = false) -> XCUIApplication {
+  private func launch(largeText: Bool = false, successFeedback: Bool = false) -> XCUIApplication {
     continueAfterFailure = false
     let app = XCUIApplication()
-    app.launchArguments = ["-sidequest-sudoku-test"] + (largeText ? ["-sidequest-large-text"] : [])
+    app.launchArguments =
+      ["-sidequest-sudoku-test"] + (largeText ? ["-sidequest-large-text"] : [])
+      + (successFeedback ? ["-sidequest-success-feedback-test"] : [])
     app.launch()
     XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
     return app

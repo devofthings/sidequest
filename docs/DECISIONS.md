@@ -4,6 +4,7 @@ Record lightweight choices here. Use an ADR for consequential architectural or s
 
 | Decision | Status | Basis |
 | --- | --- | --- |
+| Brief game-win celebration and success haptic | Accepted; implementation #86 | Owner requested animation and iPhone success vibration on October 4. Request feedback once per successful visible attempt; no loss, skip, stale completion, revisit, or foreground repeat. Preserve manual navigation, completed results, stable geometry, accessibility, and Reduce Motion. Platform feedback stays outside pure rules. Physical vibration remains pending actual iPhone verification. |
 | Sidequest as the working project name | Accepted | User choice; public naming availability remains unresolved. |
 | Private GitHub repository | Accepted | User requested a private repository. |
 | README dashboard with reproducible source statistics | Accepted | User approved the proposed first pass with “go ahead” on October 4, 2026, then specified “no screenshot yet pls.” Issue [#93](https://github.com/devofthings/sidequest/issues/93) owns native/local badges, verified release/install links, game readiness, tracked Swift file/physical-line counts, and additions/deletions from an explicit release baseline. Keep recorded test evidence separate from source volume; refresh within feature PRs using [README.md](../README.md#code-snapshot). Screenshots remain deferred; no external metrics service or automated commits. |
@@ -91,4 +92,4 @@ On October 4, 2026, the owner clarified: "also tap to play should not hide the g
 
 ## Selected MVP design baseline October 5, 2026
 
-Under the owner’s design authorization, the lead selected bright arcade objects on calm light/dark surfaces, vivid game accents, semantic typography, and contained purposeful motion with Reduce Motion alternatives. See [DESIGN.md](DESIGN.md) and [research](research/mvp-design.md). Shared feed/news styling is implemented in #123 / PR #125. The #124 feature branch adds game surfaces and contained motion; its exact-head CI, independent review, and focused rendered/motion validation remain pending. The selected direction alone is not verified product behavior.
+Under the owner’s design authorization, the lead selected bright arcade objects on calm light/dark surfaces, vivid game accents, semantic typography, and contained purposeful motion with Reduce Motion alternatives. See [DESIGN.md](DESIGN.md) and [research](research/mvp-design.md). Shared feed/news styling is implemented in #123 / PR #125. Game surfaces and contained motion were merged in [PR #126](https://github.com/devofthings/sidequest/pull/126) after exact-head CI, fresh review, and focused simulator checks. The selected direction alone is not verified product behavior.

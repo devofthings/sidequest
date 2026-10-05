@@ -44,3 +44,7 @@ Use the researched [DESIGN.md](../../docs/DESIGN.md) direction for approved #13 
 ## Shared MVP style #123
 
 Use [shared presentation tokens](../Presentation/AGENTS.md) for the calm canvas, rounded headings, and explicit lime start action. Keep preview and play on the same top-anchored layout with the same measured start reservation. Transparent UIKit hosting backgrounds expose the opaque SwiftUI canvas; forward color-scheme contrast and Reduce Motion into separate hosting roots alongside Dynamic Type and appearance. Shared styling owns neither paging nor runtime eligibility.
+
+## Success feedback reservation #86
+
+Render the shared success badge in the already measured Tap-to-play reservation after an accepted successful attempt. The runtime owns whether it is present; the feed does not inspect rules or emit haptics on appearance/rendering. Preserve the full reservation, board geometry, manual paging, and propagated Reduce Motion. The badge is noninteractive and readable beyond color, while game-owned completion text remains authoritative after it expires.

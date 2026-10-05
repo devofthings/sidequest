@@ -40,7 +40,7 @@ final class MemoryController {
     rules = board
     switch result {
     case .mismatch: concealAfterDelay(attempt: attempt)
-    case .completed: runtime.complete(attempt: attempt)
+    case .completed: runtime.complete(attempt: attempt, successful: true)
     case .ignored, .revealed, .matched: break
     }
   }

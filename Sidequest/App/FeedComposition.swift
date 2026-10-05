@@ -211,7 +211,7 @@ final class FeedComposition {
     var games: [CardID: ComposedGame] = [:]
     for card in cards {
       if case .game(let game) = card {
-        let runtime = GameRuntime()
+        let runtime = GameFeedbackComposition.makeRuntime()
         #if DEBUG
           if useDemoGames {
             games[game.id] = .placeholder(PlaceholderGameController(runtime: runtime))

@@ -9,9 +9,15 @@ final class BubbleFlowTests: XCTestCase {
       fire(app, aim: aim, expectedShots: index + 1)
     }
     XCTAssertTrue(app.staticTexts["bubble.outcome"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts["game.successCelebration"].waitForExistence(timeout: 5))
+    let success = XCTAttachment(screenshot: app.screenshot())
+    success.name = "bubble-success-celebration"
+    success.lifetime = .keepAlways
+    add(success)
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
     app.nextFeedCard()
     app.previousFeedCard()
+    XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
     reveal(app.buttons["bubble.replay"], in: app)
     XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height + 0.001, 44)
@@ -32,6 +38,7 @@ final class BubbleFlowTests: XCTestCase {
     for count in 1...7 { fire(app, aim: 0.5, expectedShots: count) }
     XCTAssertTrue(app.staticTexts["bubble.outcome"].waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You lost")
+    XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
     reveal(app.buttons["bubble.replay"], in: app)
     XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height + 0.001, 44)
     XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.width + 0.001, 44)
@@ -172,7 +179,7 @@ final class BubbleFlowTests: XCTestCase {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launchArguments =
-      ["-sidequest-bubble-fixtures"]
+      ["-sidequest-bubble-fixtures", "-sidequest-success-feedback-test"]
       + (slowShot ? ["-sidequest-bubble-slow-shot"] : [])
       + (largeText ? ["-sidequest-large-text"] : [])
     app.launch()

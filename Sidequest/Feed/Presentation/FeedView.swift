@@ -117,7 +117,11 @@ struct FeedView: View {
           StableGameRegion {
             startButton(runtime).disabled(true)
           } content: {
-            if runtime.phase == .preview { startButton(runtime) }
+            if runtime.phase == .preview {
+              startButton(runtime)
+            } else {
+              SuccessCelebrationView(runtime: runtime)
+            }
           }
           gameContent(game, runtime)
             .disabled(runtime.phase == .preview)

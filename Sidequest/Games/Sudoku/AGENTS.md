@@ -37,3 +37,7 @@ Render the same game-owned initial board in preview and play, with gameplay disa
 Follow [the researched baseline](../../../docs/DESIGN.md). Animate only the selected cell surface and numeric text for 160 ms. Cells keep their reserved square footprint; fixed givens and inactive boards use explicit opaque ink/accent colors. Conflict feedback remains textual and uses a contrasting error ink. Completion keeps the existing reserved status text. All presentation preferences resolve the propagated override before the system value. Preview, reset, and offscreen transactions disable animation; Reduce Motion supplies no local animation. Completed restoration is static because values are rendered initially, rather than changed by appearance. Keep animations inside existing board/control footprints and leave lifecycle/input/rule mutations with the controller.
 
 Agent-grill self-assessment: Selection and numeric entry is a delegated presentation choice under #124, supported by the existing controller/runtime boundaries and DESIGN.md. Source inspection establishes no new rule or timing owner; exact-head unit/smoke CI and root-owned focused rendered/motion checks remain required before delivery. This record is not rendered verification.
+
+## Success feedback routing #86
+
+Mark runtime completion successful only after the board reports isComplete. Consume the shared runtime feedback boundary in [common game guidance](../AGENTS.md); keep rules, timing, retained results, and reset semantics unchanged. Appearance or restored completed values never emit success.

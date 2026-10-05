@@ -54,6 +54,7 @@ final class ChessFlowTests: XCTestCase {
     navigate(app, forward: true)
     XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
     navigate(app, forward: false)
+    XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
     XCTAssertTrue(app.staticTexts["chess.completed"].exists)
     XCTAssertFalse(app.buttons["game.start"].exists)
   }
@@ -94,6 +95,8 @@ final class ChessFlowTests: XCTestCase {
     XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
     XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
     submit(app, queen: queen, destination: mate)
+    XCTAssertTrue(app.staticTexts["game.successCelebration"].waitForExistence(timeout: 5))
+    capture(app, name: "chess-\(color)-success-celebration")
     XCTAssertTrue(app.staticTexts["chess.completed"].waitForExistence(timeout: 5))
     reveal(app.buttons["chess.square.\(queen)"], in: app)
     XCTAssertTrue(app.buttons["chess.square.\(queen)"].label.contains("Empty square"))
@@ -103,6 +106,7 @@ final class ChessFlowTests: XCTestCase {
     capture(app, name: "chess-\(color)-solved")
     navigate(app, forward: true)
     navigate(app, forward: false)
+    XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
     XCTAssertTrue(app.staticTexts["chess.completed"].exists)
     reveal(app.buttons["chess.square.\(mate)"], in: app)
     XCTAssertTrue(app.buttons["chess.square.\(mate)"].label.contains("queen"))
@@ -190,7 +194,7 @@ final class ChessFlowTests: XCTestCase {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launchArguments =
-      ["-sidequest-chess-\(color)-fixture"]
+      ["-sidequest-chess-\(color)-fixture", "-sidequest-success-feedback-test"]
       + (largeText ? ["-sidequest-large-text"] : [])
     app.launch()
     XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))

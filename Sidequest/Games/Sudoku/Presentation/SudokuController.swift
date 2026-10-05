@@ -36,7 +36,7 @@ final class SudokuController {
       board.setValue(value, at: selectedCell)
     else { return }
     self.board = board
-    if board.isComplete { runtime.complete(attempt: attempt) }
+    if board.isComplete { runtime.complete(attempt: attempt, successful: true) }
   }
 
   private func apply(_ effect: GameLifecycleEffect) {

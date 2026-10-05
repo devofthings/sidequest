@@ -3,7 +3,7 @@ import XCTest
 @MainActor
 final class MemoryFlowTests: XCTestCase {
   func testStartMakesNoFlipAndMatchingAllPairsRetainsCompletion() {
-    let app = launch()
+    let app = launch(successFeedback: true)
     XCTAssertTrue(app.buttons["game.start"].exists)
     XCTAssertTrue(app.buttons["memory.tile.0"].exists)
     XCTAssertFalse(app.buttons["memory.tile.0"].isEnabled)
@@ -18,12 +18,32 @@ final class MemoryFlowTests: XCTestCase {
     XCTAssertEqual(app.buttons["memory.tile.0"].label, "Matched star, card 1")
     XCTAssertFalse(app.buttons["memory.tile.0"].isEnabled)
     for index in 2..<12 { tapTile(index, app: app) }
+    XCTAssertTrue(app.staticTexts["game.successCelebration"].waitForExistence(timeout: 5))
+    capture(app, name: "memory-success-celebration")
     XCTAssertTrue(app.staticTexts["memory.completed"].waitForExistence(timeout: 5))
     app.nextFeedCard()
     app.previousFeedCard()
     XCTAssertTrue(app.staticTexts["memory.completed"].exists)
+    XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
     XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertEqual(app.staticTexts["memory.progress"].label, "6 of 6 pairs matched")
+  }
+
+  func testSuccessWithSystemReduceMotionDoesNotRepeatAfterBackground() {
+    continueAfterFailure = false
+    SystemAccessibilitySupport.withReduceMotion {
+      let app = launch(successFeedback: true)
+      app.buttons["game.start"].tap()
+      for index in 0..<12 { tapTile(index, app: app) }
+      XCTAssertTrue(app.staticTexts["game.successCelebration"].waitForExistence(timeout: 5))
+      capture(app, name: "memory-success-system-reduce-motion")
+      XCUIDevice.shared.press(.home)
+      app.activate()
+      XCTAssertTrue(app.staticTexts["memory.completed"].waitForExistence(timeout: 5))
+      XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
+      XCTAssertFalse(app.buttons["game.start"].exists)
+      app.terminate()
+    }
   }
 
   func testMismatchTurnsOverAndSkippingReturnsToUnflippedPreview() {
@@ -91,12 +111,13 @@ final class MemoryFlowTests: XCTestCase {
     add(attachment)
   }
 
-  private func launch(largeText: Bool = false) -> XCUIApplication {
+  private func launch(largeText: Bool = false, successFeedback: Bool = false) -> XCUIApplication {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launchArguments =
       ["-sidequest-memory-fixtures"]
       + (largeText ? ["-sidequest-large-text"] : [])
+      + (successFeedback ? ["-sidequest-success-feedback-test"] : [])
     app.launch()
     XCTAssertTrue(app.buttons["game.start"].waitForExistence(timeout: 5))
     return app
