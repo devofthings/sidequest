@@ -16,13 +16,29 @@ struct FeedView: View {
     SidequestTheme(scheme: environment.colorScheme, contrast: contrast)
   }
 
+  private var selectedGame: GameCard? {
+    guard case .game(let game) = controller.selectedCard else { return nil }
+    return game
+  }
+
+  private var selectedRuntime: GameRuntime? {
+    guard let selectedGame else { return nil }
+    return controller.runtimes[selectedGame.id]
+  }
+
   var body: some View {
     VStack(spacing: 8) {
       HStack {
-        Text("Sidequest")
-          .font(.system(.title2, design: .rounded, weight: .heavy))
-          .accessibilityAddTraits(.isHeader)
-          .accessibilityIdentifier("foundation.title")
+        ZStack(alignment: .leading) {
+          Text("Sidequest")
+            .font(.system(.title2, design: .rounded, weight: .heavy))
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityIdentifier("foundation.title")
+            .opacity(selectedRuntime?.celebrationAttempt == nil ? 1 : 0)
+            .accessibilityHidden(selectedRuntime?.celebrationAttempt != nil)
+          SuccessCelebrationView(
+            runtime: selectedRuntime, gameTitle: selectedGame?.kind.title ?? "Game")
+        }
         Spacer(minLength: 8)
         if let openNews {
           Button(action: openNews) {
@@ -119,8 +135,6 @@ struct FeedView: View {
           } content: {
             if runtime.phase == .preview {
               startButton(runtime)
-            } else {
-              SuccessCelebrationView(runtime: runtime)
             }
           }
           gameContent(game, runtime)

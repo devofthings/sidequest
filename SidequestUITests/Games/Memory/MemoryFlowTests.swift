@@ -71,10 +71,23 @@ final class MemoryFlowTests: XCTestCase {
   }
 
   func testLargestTextKeepsEveryTileAndNavigationReachable() {
-    let app = launch(largeText: true)
+    let app = launch(largeText: true, successFeedback: true)
     XCTAssertTrue(app.buttons["game.start"].isHittable)
     app.buttons["game.start"].tap()
-    for index in 0..<12 { tapTile(index, app: app) }
+    for index in 0..<11 { tapTile(index, app: app) }
+    let lastTile = app.buttons["memory.tile.11"]
+    reveal(lastTile, app: app)
+    let tileFrame = lastTile.frame
+    let viewport = app.scrollViews["feed.cardScroll"].frame
+    tapTile(11, app: app)
+    let badge = app.staticTexts["game.successCelebration"]
+    XCTAssertTrue(badge.waitForExistence(timeout: 5))
+    XCTAssertTrue(
+      app.frame.contains(badge.frame), "Largest-text celebration must be fully visible.")
+    XCTAssertLessThanOrEqual(badge.frame.maxY, viewport.minY + 1)
+    XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewport)
+    XCTAssertEqual(lastTile.frame, tileFrame)
+    capture(app, name: "largest-memory-viewport-success")
     XCTAssertTrue(app.staticTexts["memory.completed"].waitForExistence(timeout: 5))
     reveal(app.staticTexts["memory.completed"], app: app)
     capture(app, name: "largest-text-completed-board")

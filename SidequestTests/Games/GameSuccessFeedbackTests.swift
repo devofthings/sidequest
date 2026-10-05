@@ -1,3 +1,4 @@
+import Observation
 import XCTest
 
 @testable import Sidequest
@@ -108,6 +109,26 @@ final class GameSuccessFeedbackTests: XCTestCase {
     XCTAssertNil(runtime.celebrationAttempt)
     XCTAssertEqual(runtime.phase, .completed(fresh))
     XCTAssertEqual(haptics, 2)
+  }
+
+  func testProductionDelayExpiresWithoutAnInjectedFixture() async throws {
+    let runtime = GameRuntime(successHaptic: {})
+    runtime.installEffectHandler { _ in }
+    let attempt = try start(runtime)
+    runtime.complete(attempt: attempt, successful: true)
+    XCTAssertEqual(runtime.celebrationAttempt, attempt)
+    let expired = expectation(description: "Production celebration expires")
+    let began = ContinuousClock.now
+    withObservationTracking {
+      _ = runtime.celebrationAttempt
+    } onChange: {
+      expired.fulfill()
+    }
+    let result = await XCTWaiter.fulfillment(of: [expired], timeout: 5)
+    XCTAssertEqual(result, .completed)
+    XCTAssertGreaterThanOrEqual(began.duration(to: ContinuousClock.now), .seconds(1))
+    XCTAssertNil(runtime.celebrationAttempt)
+    XCTAssertEqual(runtime.phase, .completed(attempt))
   }
 
   func testFailedDelayClearsOnlyItsEligibleDecoration() async throws {
