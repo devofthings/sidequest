@@ -5,6 +5,7 @@ import SwiftUI
 struct SidequestApp: App {
   @State private var session: FeedSessionState
   @State private var startupRetry = 0
+  @State private var introduction = StartupIntroduction()
   #if DEBUG
     @State private var fixturesPrepared = false
   #endif
@@ -38,68 +39,72 @@ struct SidequestApp: App {
 
   var body: some Scene {
     WindowGroup {
-      Group {
-        switch session.state {
-        case .notStarted, .loading:
-          VStack(spacing: 16) {
-            Text("Sidequest")
-              .font(.largeTitle.bold())
-              .accessibilityAddTraits(.isHeader)
-              .accessibilityIdentifier("foundation.title")
-            ProgressView("Preparing news and games")
-              .accessibilityIdentifier("feed.loading")
-          }
-          .padding(24)
-        case .failed(let message):
-          VStack(spacing: 16) {
-            Text("Sidequest").font(.largeTitle.bold())
-              .accessibilityIdentifier("foundation.title")
-            Text(message).accessibilityIdentifier("foundation.error")
-            Button("Retry") {
-              session.retryPreparation()
-              startupRetry += 1
-            }
-            .frame(minHeight: 44)
-          }.padding(24)
-        case .ready(let composition):
-          content(composition)
-        }
-      }
-      .task(id: startupRetry) {
-        #if DEBUG
-          if !fixturesPrepared {
-            do {
-              try await IntegrationFixtures.prepare()
-              try Task.checkCancellation()
-              fixturesPrepared = true
-            } catch is CancellationError {
-              return
-            } catch {
-              guard !Task.isCancelled else { return }
-              session.fixturePreparationFailed()
-              return
-            }
-          }
-        #endif
-        await session.prepare(newsModel: newsModel)
-      }
-      .onDisappear { session.cancelPreparation() }
-      .sheet(
-        isPresented: Binding(
-          get: { session.libraryIsPresented },
-          set: { session.setLibraryPresented($0) })
-      ) {
-        NavigationStack {
-          NewsLibraryView(model: newsModel, automaticallyRestores: false)
-            .navigationTitle("News snapshots")
-            .toolbar {
-              ToolbarItem(placement: .topBarTrailing) {
-                Button("Done") { session.setLibraryPresented(false) }
-                  .frame(minWidth: 44, minHeight: 44)
-                  .accessibilityIdentifier("news.done")
+      StartupIntroductionView(introduction: introduction, content: startupContent)
+        .task(id: startupRetry) {
+          #if DEBUG
+            if !fixturesPrepared {
+              do {
+                try await IntegrationFixtures.prepare()
+                try Task.checkCancellation()
+                fixturesPrepared = true
+              } catch is CancellationError {
+                return
+              } catch {
+                guard !Task.isCancelled else { return }
+                session.fixturePreparationFailed()
+                return
               }
             }
+          #endif
+          await session.prepare(newsModel: newsModel)
         }
+        .onDisappear { session.cancelPreparation() }
+        .sheet(
+          isPresented: Binding(
+            get: { session.libraryIsPresented },
+            set: { session.setLibraryPresented($0) })
+        ) {
+          NavigationStack {
+            NewsLibraryView(model: newsModel, automaticallyRestores: false)
+              .navigationTitle("News snapshots")
+              .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                  Button("Done") { session.setLibraryPresented(false) }
+                    .frame(minWidth: 44, minHeight: 44)
+                    .accessibilityIdentifier("news.done")
+                }
+              }
+          }
+        }
+    }
+  }
+
+  private var startupContent: some View {
+    Group {
+      switch session.state {
+      case .notStarted, .loading:
+        VStack(spacing: 16) {
+          Text("Sidequest")
+            .font(.largeTitle.bold())
+            .accessibilityAddTraits(.isHeader)
+            .accessibilityIdentifier("foundation.title")
+          ProgressView("Preparing news and games")
+            .accessibilityIdentifier("feed.loading")
+        }
+        .padding(24)
+      case .failed(let message):
+        VStack(spacing: 16) {
+          Text("Sidequest").font(.largeTitle.bold())
+            .accessibilityIdentifier("foundation.title")
+          Text(message).accessibilityIdentifier("foundation.error")
+          Button("Retry") {
+            session.retryPreparation()
+            startupRetry += 1
+          }
+          .frame(minHeight: 44)
+        }.padding(24)
+      case .ready(let composition):
+        content(composition)
       }
     }
   }
