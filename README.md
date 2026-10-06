@@ -30,6 +30,8 @@ Current #91 source adds a brief Card S introduction on cold launch while prepara
 
 Current Bubble source uses left/right dragging in the lower-board aiming area and a dotted trajectory, with no visible numeric angle. Releasing a drag does not shoot; **Fire** stays explicit. A native 44-point Slider remains available for assistive and keyboard precision. See [the refinement and verification status](docs/BUBBLES.md#simplified-horizontal-aiming-163).
 
+Current #210 source gives the three-dot More options menu, news cards, and import library clean neutral styling in light and dark appearances, while game objects retain vivid colors. Actual rendering and exact-head verification evidence is recorded in [PR #221](https://github.com/devofthings/sidequest/pull/221); see [the selected utility direction](docs/DESIGN.md#clean-app-surroundings-210).
+
 Current source supports full-card native vertical paging: swipe up/down directly on a card or use the compact **More options** menu. Overflowing content scrolls within its card; a new outward gesture at its top/bottom edge changes cards. The same menu opens **News snapshots** for manual importing. See [feed navigation](docs/FEED.md#navigation-and-eligibility). Game boards and primary controls retain their geometry when feedback or results change; [stable layout](docs/GAME_LAYOUT.md) describes the current source correction and verification.
 
 | Game | Merged implementation | Details / next step |
@@ -48,12 +50,12 @@ Merged #104 source extends normal launch to endless generated games. Current #21
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 85 | 7,846 |
+| App | 85 | 7,863 |
 | Unit tests | 45 | 6,325 |
-| UI tests | 22 | 3,628 |
-| **Total** | **152** | **17,799** |
+| UI tests | 22 | 3,662 |
+| **Total** | **152** | **17,850** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+15,386 / −650 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+15,438 / −651 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.

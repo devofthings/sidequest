@@ -30,3 +30,17 @@ For #138, the shared native control marker carries touch ownership only. It lets
 The owner's October 5 request selects the saved private Foundations/News visual direction for bounded native refinement; see [the adoption record](../../docs/design/PRIVATE_FIGMA.md#selected-shared-native-refinement-182). `SidequestButtonStyle` accepts an optional accent fill from existing tokens. Its default remains unchanged for all existing game controls; accent fills use dark ink and an outline in both appearances, without changing eligibility, target size, or motion. Preserve existing palette values and the 44-point header controls. Native rendering remains a separate verification gate.
 
 For #194, GameLayoutBudget subtracts 32 points of outer padding and an explicit chrome gap (20 by default for legacy start chrome; zero for real first-interaction cards). Absent chrome consumes no height. Header changes never derive budget from game state.
+
+## Neutral app surroundings #210
+
+The owner authorized clean utility styling on October 6. Use `SidequestTheme.utilityCanvas` and `utilitySurface` for the feed backdrop, news, and import library, and `SidequestButtonStyle(neutral: true)` for their actions. Keep existing game accent and game surface tokens unchanged. More options uses a plain ellipsis inside its existing 44-point outlined footprint; actions, eligibility, measured header geometry, source attribution, and Reduce Motion behavior retain their current owners.
+
+Agent-grill self-assessment by `/root/neutral210`:
+
+| Question | Kind | Answer and evidence | Verification needed |
+| --- | --- | --- | --- |
+| Which colors implement the supplied direction? | Delegated technical choice | Opaque light gray `F7F7F8` / dark charcoal `111114` canvas; white / `242424` utility surface. Existing semantic ink and increased-contrast borders remain. Dedicated tokens preserve the game palette in SidequestTheme and match the selected static launch canvas under #215. | Actual light/dark/increased-contrast screenshots and source review. |
+| Can menu styling change interaction or geometry? | Fact / technical choice | FeedView already owns a 44-point menu with semantic More options and preserved action IDs. Retain those dimensions and actions while selecting neutral styling and a plain ellipsis. | Existing normal/largest-text menu-reset UI case and required smoke suite. |
+| Does this add settings or change reading behavior? | Fact | Issue #210 concerns utility styling only. NewsCardContent and NewsLibraryView retain provenance, picker, text selection, and import/reset behavior. | Existing news/menu checks, exact-head compilation, and visual inspection; no new feature or game-rule tests. |
+
+Implementation is ready within the owner-approved scope; executable and rendered validation remain with the lead.

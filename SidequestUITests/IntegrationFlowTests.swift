@@ -146,6 +146,9 @@ final class IntegrationFlowTests: XCTestCase {
       XCTAssertGreaterThanOrEqual(menu.frame.height + 0.001, 44)
       XCTAssertFalse(app.buttons["feed.news"].exists)
       let headerFrame = menu.frame
+      XCTAssertTrue(app.frame.contains(headerFrame))
+      captureUtilityScreen(
+        app, name: extra.isEmpty ? "Neutral menu normal" : "Neutral menu largest")
       let selected = app.selectedFeedCardID
       reveal(app.sliders["bubble.aim"], in: app)
       app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: 0.65)
@@ -154,6 +157,9 @@ final class IntegrationFlowTests: XCTestCase {
       XCTAssertNotEqual(changedAim.filter { !$0.isWhitespace }, "50%")
       openLibrary(app)
       XCTAssertTrue(app.buttons["news.import"].isHittable)
+      XCTAssertGreaterThanOrEqual(app.buttons["news.import"].frame.height + 0.001, 44)
+      captureUtilityScreen(
+        app, name: extra.isEmpty ? "Neutral library normal" : "Neutral library largest")
       closeLibrary(app)
       XCTAssertEqual(app.selectedFeedCardID, selected)
       XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
@@ -164,6 +170,13 @@ final class IntegrationFlowTests: XCTestCase {
       XCTAssertFalse(app.buttons["feed.news"].exists)
       app.terminate()
     }
+  }
+
+  private func captureUtilityScreen(_ app: XCUIApplication, name: String) {
+    let screenshot = XCTAttachment(screenshot: app.screenshot())
+    screenshot.name = name
+    screenshot.lifetime = .keepAlways
+    add(screenshot)
   }
 
   private func launch(extra: [String] = []) -> XCUIApplication {
@@ -236,14 +249,35 @@ final class IntegrationFlowTests: XCTestCase {
     for _ in 0..<maximumDrags {
       if element.exists && element.isHittable && scroll.frame.contains(element.frame) { return }
       let needsUp = element.frame.midY > scroll.frame.midY
-      let start = scroll.coordinate(
-        withNormalizedOffset: CGVector(dx: 0.8, dy: needsUp ? 0.75 : 0.25))
-      let end = scroll.coordinate(
-        withNormalizedOffset: CGVector(dx: 0.8, dy: needsUp ? 0.25 : 0.75))
+      let isBubbleControl =
+        element.identifier == "bubble.aim" || element.identifier == "bubble.fire"
+      let horizontal: CGFloat
+      if isBubbleControl {
+        // Bubble owns lower-board drags; use its outer gap, clear of the scroll indicator.
+        let board = app.otherElements["bubble.board"]
+        horizontal =
+          board.exists && !board.frame.isEmpty
+          ? min(scroll.frame.width - 32, board.frame.maxX - scroll.frame.minX + 10)
+          : scroll.frame.width - 32
+      } else {
+        horizontal = scroll.frame.width * 0.8
+      }
+      let startY = isBubbleControl ? (needsUp ? 0.65 : 0.35) : (needsUp ? 0.75 : 0.25)
+      let endY = isBubbleControl ? (needsUp ? 0.4 : 0.6) : (needsUp ? 0.25 : 0.75)
+      let origin = scroll.coordinate(withNormalizedOffset: .zero)
+      let start = origin.withOffset(CGVector(dx: horizontal, dy: scroll.frame.height * startY))
+      let end = origin.withOffset(CGVector(dx: horizontal, dy: scroll.frame.height * endY))
       start.press(forDuration: 0.01, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
     }
+    let diagnostic = XCTAttachment(string: app.debugDescription)
+    diagnostic.name = "integration-reveal-failed-hierarchy"
+    diagnostic.lifetime = .keepAlways
+    add(diagnostic)
+    captureUtilityScreen(app, name: "Integration reveal failed viewport")
     XCTAssertTrue(
-      scroll.frame.contains(element.frame), "Control must be completely in the viewport")
+      scroll.frame.contains(element.frame),
+      "Control must be completely in the viewport: target=\(element.frame), viewport=\(scroll.frame)"
+    )
     XCTAssertTrue(element.isHittable)
   }
 }

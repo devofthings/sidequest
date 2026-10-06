@@ -134,6 +134,7 @@ struct SidequestApp: App {
                 }
               }
           }
+          .tint(.primary)
         }
     }
   }

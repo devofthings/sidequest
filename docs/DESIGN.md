@@ -45,4 +45,10 @@ Successful game attempts request one standard native success haptic and show a l
 
 ## Header simplification #191
 
-The owner removes the dedicated newspaper button. Keep app/success identity and the vivid 44-point More options control in the header; News snapshots is a conditional action inside that existing menu. Remove the old button footprint, preserve the success reservation and game geometry, and retain the same import coordinator and source links. The [accepted decision](DECISIONS.md#news-access-191) owns this behavior; native rendering and interaction proof remain PR-specific.
+The owner removes the dedicated newspaper button. Keep app/success identity and the 44-point More options control in the header; owner-approved #210 supersedes its vivid treatment with neutral utility styling. News snapshots is a conditional action inside that existing menu. Remove the old button footprint, preserve the success reservation and game geometry, and retain the same import coordinator and source links. The [accepted decision](DECISIONS.md#news-access-191) owns this behavior; native rendering and interaction proof remain PR-specific.
+
+## Clean app surroundings #210
+
+The owner's October 6 instruction selects clean neutral app surroundings, with vivid colors concentrated in game objects and celebrations. The feed backdrop, More options, news surfaces and source actions, and import library use opaque light gray/white or dark charcoal utility colors with semantic ink and increased-contrast borders. The More options symbol becomes a simple ellipsis in its existing 44-point footprint. Existing game palette values, branding artwork, native menu behavior, article provenance, and game geometry remain unchanged.
+
+This supersedes the earlier lavender menu/separator/source-action and coral news badge treatment. The shared [presentation guidance](../Sidequest/Presentation/AGENTS.md#neutral-app-surroundings-210) records the selected tokens and implementation self-assessment. Verify actual light/dark/increased-contrast rendering and normal/largest-text menu navigation; executable evidence belongs to the PR handoff.

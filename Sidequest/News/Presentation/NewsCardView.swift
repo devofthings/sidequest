@@ -35,10 +35,10 @@ struct NewsCardContent: View {
       if snapshot.isSample {
         Label("Fictional sample", systemImage: "info.circle")
           .font(.caption.bold())
-          .foregroundStyle(SidequestTheme.darkInk)
+          .foregroundStyle(theme.secondaryInk)
           .padding(.horizontal, 10)
           .padding(.vertical, 6)
-          .background(SidequestTheme.coral, in: Capsule())
+          .background(theme.utilityCanvas, in: Capsule())
           .accessibilityIdentifier("news.sample")
       }
       if let image = snapshot.image { NewsImageView(image: image, load: imageLoader) }
@@ -60,7 +60,7 @@ struct NewsCardContent: View {
         }
       }
       Rectangle()
-        .fill(SidequestTheme.lavender)
+        .fill(theme.border)
         .frame(height: theme.borderWidth + 1)
         .accessibilityHidden(true)
       Text(snapshot.excerpt)
@@ -79,13 +79,13 @@ struct NewsCardContent: View {
           ? "Open fictional sample placeholder from \(snapshot.publisher)"
           : "Read original article from \(snapshot.publisher)"
       )
-      .buttonStyle(SidequestButtonStyle(accent: SidequestTheme.lavender))
+      .buttonStyle(SidequestButtonStyle(neutral: true))
       .accessibilityIdentifier("news.source")
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(20)
     .foregroundStyle(theme.ink)
-    .background(theme.surface, in: RoundedRectangle(cornerRadius: 24))
+    .background(theme.utilitySurface, in: RoundedRectangle(cornerRadius: 24))
     .overlay {
       RoundedRectangle(cornerRadius: 24)
         .strokeBorder(theme.border, lineWidth: theme.borderWidth)
