@@ -68,7 +68,7 @@ private struct CelebrationParticleMotion: AnimatableModifier {
   private var rotation: Double {
     switch style {
     case .pop, .orbit: 0
-    case .confetti: Double(index * 37) + Double(progress) * 240
+    case .confetti: Double(index * 30) + Double(progress) * 240
     case .rays: Double(index) * 30 + 90
     }
   }
@@ -81,7 +81,6 @@ private struct CelebrationParticleMotion: AnimatableModifier {
     let verticalRadius = Double(size.height) / 2 + 8 + travel
     return CGPoint(
       x: Double(size.width) / 2 + cos(angle) * horizontalRadius,
-      y: Double(size.height) / 2 + sin(angle) * verticalRadius
-        + (style == .confetti ? Double(progress * progress) * 30 : 0))
+      y: Double(size.height) / 2 + sin(angle) * verticalRadius)
   }
 }
