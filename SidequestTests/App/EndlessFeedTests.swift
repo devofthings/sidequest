@@ -57,10 +57,11 @@ final class EndlessFeedTests: XCTestCase {
     XCTAssertEqual(feed.selectedCard?.id, id)
     feed.setSceneActive(false)
     feed.setPagingBusy(false)
-    try await Task.sleep(for: .milliseconds(30))
     XCTAssertEqual(feed.cards, held)
     feed.setSceneActive(true)
     try await wait { feed.count > held.count }
+    XCTAssertEqual(feed.count, held.count + 8, "Only the current resumed generation may adopt")
+    XCTAssertEqual(Set(feed.cards.map(\.id)).count, feed.count)
     XCTAssertEqual(feed.selectedCard?.id, id)
     feed.retire()
   }

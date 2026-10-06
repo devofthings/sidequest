@@ -38,7 +38,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
   private let controller: FeedController
   private let pager = FeedPagingScrollView()
   private var content: (FeedCard) -> AnyView
-  private var pages: [Int: FeedCardController] = [:]
+  private var pages: [CardID: FeedCardController] = [:]
   private var window: [Int] = []
   private var pageHeight: CGFloat = 0
   private var lastRequestID: UUID?
@@ -93,7 +93,9 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
       if !isMoving { rebuildWindow() }
     }
     updateSelectedIdentity()
-    for (index, page) in pages {
+    for index in window {
+      guard controller.cards.indices.contains(index), let page = pages[controller.cards[index].id]
+      else { continue }
       page.update(content(controller.cards[index]))
       page.view.accessibilityElementsHidden = index != controller.selectedIndex
       page.view.isUserInteractionEnabled = index == controller.selectedIndex
@@ -139,19 +141,22 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
     guard let selected = controller.selectedIndex else { return }
     suppressCompletion = true
     let nextWindow = adjacentWindow()
-    for (index, page) in pages where !nextWindow.contains(index) {
+    let retainedIDs = Set(nextWindow.map { controller.cards[$0].id })
+    for (id, page) in pages where !retainedIDs.contains(id) {
       page.willMove(toParent: nil)
       page.view.removeFromSuperview()
       page.removeFromParent()
-      pages.removeValue(forKey: index)
+      pages.removeValue(forKey: id)
     }
-    for index in nextWindow where pages[index] == nil {
+    for index in nextWindow {
+      let id = controller.cards[index].id
+      guard pages[id] == nil else { continue }
       let page = FeedCardController(content: content(controller.cards[index]))
       addChild(page)
       pager.addSubview(page.view)
       page.scroller.panGestureRecognizer.require(toFail: pager.panGestureRecognizer)
       page.didMove(toParent: self)
-      pages[index] = page
+      pages[id] = page
     }
     window = nextWindow
     updateSelectedIdentity()
@@ -177,7 +182,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
     pager.contentSize = CGSize(
       width: pager.bounds.width, height: pageHeight * CGFloat(window.count))
     for (slot, index) in window.enumerated() {
-      pages[index]?.view.frame = CGRect(
+      pages[controller.cards[index].id]?.view.frame = CGRect(
         x: 0, y: CGFloat(slot) * pageHeight, width: pager.bounds.width, height: pageHeight)
     }
   }
