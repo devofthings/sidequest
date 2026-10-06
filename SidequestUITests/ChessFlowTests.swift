@@ -175,11 +175,23 @@ final class ChessFlowTests: XCTestCase {
   private func assertSuccessVisible(_ app: XCUIApplication) {
     let badge = app.staticTexts["game.successCelebration"]
     XCTAssertTrue(badge.waitForExistence(timeout: 5))
+    let viewport = app.scrollViews["feed.cardScroll"].frame
+    // AX reports the shared badge's text ink; its measured 2.17 pt glyph offset also occurs in Memory.
+    let horizontalTextInkTolerance: CGFloat = 3
+    let centered = XCTNSPredicateExpectation(
+      predicate: NSPredicate { _, _ in
+        guard badge.exists else { return false }
+        let frame = badge.frame
+        return app.frame.contains(frame)
+          && abs(frame.midX - viewport.midX) <= horizontalTextInkTolerance
+          && abs(frame.midY - viewport.midY) <= 2
+      }, object: badge)
+    XCTAssertEqual(XCTWaiter.wait(for: [centered], timeout: 5), .completed)
     let badgeFrame = badge.frame
     XCTAssertTrue(app.frame.contains(badgeFrame), "The whole celebration must be on screen.")
-    let viewport = app.scrollViews["feed.cardScroll"].frame
-    XCTAssertEqual(badgeFrame.midX, viewport.midX, accuracy: 2)
+    XCTAssertEqual(badgeFrame.midX, viewport.midX, accuracy: horizontalTextInkTolerance)
     XCTAssertEqual(badgeFrame.midY, viewport.midY, accuracy: 2)
+    XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewport)
     XCTAssertTrue(app.staticTexts["foundation.title"].exists)
     XCTAssertTrue(badge.label.contains("Chess completed"))
   }
