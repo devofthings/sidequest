@@ -50,12 +50,12 @@ Merged #104 source extends normal launch to endless generated games. Current #21
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 88 | 8,067 |
+| App | 88 | 8,068 |
 | Unit tests | 46 | 6,463 |
-| UI tests | 23 | 3,744 |
-| **Total** | **157** | **18,274** |
+| UI tests | 23 | 3,750 |
+| **Total** | **157** | **18,281** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+15,863 / −652 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+15,870 / −652 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.

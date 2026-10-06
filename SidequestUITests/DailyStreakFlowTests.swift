@@ -51,6 +51,12 @@ final class DailyStreakFlowTests: XCTestCase {
     XCTAssertTrue(indicator(app).isHittable)
     XCTAssertTrue(app.staticTexts["foundation.title"].isHittable)
     XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
+    XCTAssertLessThanOrEqual(indicator(app).frame.width, 73)
+    XCTAssertGreaterThanOrEqual(app.staticTexts["foundation.title"].frame.width, 180)
+    let screenshot = XCTAttachment(screenshot: app.screenshot())
+    screenshot.name = "daily-streak-largest-text-compact-header"
+    screenshot.lifetime = .keepAlways
+    add(screenshot)
     XCTAssertEqual(indicator(app).value as? String, "0 days")
     app.nextFeedCard()
     XCTAssertTrue(indicator(app).isHittable)
