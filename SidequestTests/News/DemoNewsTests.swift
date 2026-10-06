@@ -33,7 +33,7 @@ final class DemoNewsTests: XCTestCase {
     let store = LocalNewsStore(directory: directory)
     let demo = try await DemoNewsLoader.bundled()
     try await store.save(NewsSnapshotImporter.encode(Array(demo.suffix(1))))
-    let session = FeedSessionState()
+    let session = FeedSessionState(bidirectional: false)
     let model = NewsImportModel(
       store: store, usesDemoWhenMissing: true, beginReplacement: session.beginReplacement)
     await session.prepare(newsModel: model)
@@ -87,7 +87,7 @@ final class DemoNewsTests: XCTestCase {
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
     let broken = Data("corrupt private bytes".utf8)
     try broken.write(to: store.fileURL)
-    let session = FeedSessionState()
+    let session = FeedSessionState(bidirectional: false)
     let model = NewsImportModel(
       store: store, usesDemoWhenMissing: true, beginReplacement: session.beginReplacement)
     await session.prepare(newsModel: model)
@@ -120,7 +120,7 @@ final class DemoNewsTests: XCTestCase {
     let probe = DemoReadProbe()
     let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
     let store = LocalNewsStore(directory: directory)
-    let session = FeedSessionState()
+    let session = FeedSessionState(bidirectional: false)
     let model = NewsImportModel(
       store: store, usesDemoWhenMissing: true,
       loadDemo: { try await probe.load() }, beginReplacement: session.beginReplacement)

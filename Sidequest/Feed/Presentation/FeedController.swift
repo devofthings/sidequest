@@ -8,7 +8,11 @@ final class FeedController {
   private var hostIsAvailable = true
   private var isRetired = false
   private(set) var runtimes: [CardID: GameRuntime]
+  let autoContinue = FeedAutoContinue()
   let isEndless: Bool
+  private var pagingIsActive = false
+  @ObservationIgnored var nativePagingIsMoving: (() -> Bool)?
+  var pagingIsBusy: Bool { pagingIsActive || nativePagingIsMoving?() == true }
   var replenishmentMessage: String?
   @ObservationIgnored var physicalSwipeDidCommit: (() -> Void)?
   @ObservationIgnored var windowDidChange:
@@ -26,7 +30,10 @@ final class FeedController {
   var canGoBack: Bool { selection.canGoBack }
   var canGoForward: Bool { selection.canGoForward }
 
-  init(cards: [FeedCard], runtimes: [CardID: GameRuntime], isEndless: Bool = false) {
+  init(
+    cards: [FeedCard], runtimes: [CardID: GameRuntime], isEndless: Bool = false,
+    initialIndex: Int = 0
+  ) {
     // DeckBuilder has already validated card identity. Missing adapters are a
     // composition error, rather than a game that silently accepts no input.
     precondition(
@@ -35,22 +42,25 @@ final class FeedController {
           if case .game(let game) = card { return runtimes[game.id] != nil }
           return true
         }, "Every game card needs a retained runtime.")
-    selection = FeedSelection(cards: cards)
+    selection = FeedSelection(cards: cards, initialIndex: initialIndex)
     self.runtimes = runtimes
     self.isEndless = isEndless
   }
 
   func setSceneActive(_ active: Bool) {
+    if !active { autoContinue.cancel() }
     sceneIsActive = active
     updateVisibility()
   }
 
   func setHostAvailable(_ available: Bool) {
+    if !available { autoContinue.cancel() }
     hostIsAvailable = available
     updateVisibility()
   }
 
   func retire() {
+    autoContinue.cancel()
     isRetired = true
     for runtime in runtimes.values { runtime.retire() }
     demandDidChange?()
@@ -66,6 +76,25 @@ final class FeedController {
     selection = candidate
     updateVisibility()
     return true
+  }
+
+  /// Prepending is deferred until native indices are no longer held by a gesture.
+  @discardableResult
+  func prepend(_ cards: [FeedCard]) -> Bool {
+    guard !isRetired, !pagingIsBusy else { return false }
+    var candidate = selection
+    candidate.prepend(cards)
+    guard adoptWindow(candidate) else { return false }
+    selection = candidate
+    updateVisibility()
+    return true
+  }
+
+  func setPagingBusy(_ busy: Bool) {
+    guard pagingIsActive != busy else { return }
+    if busy { autoContinue.cancel() }
+    pagingIsActive = busy
+    if !busy { demandDidChange?() }
   }
 
   /// News-only updates do not reconcile owners or deliver visibility/reset effects.
@@ -107,6 +136,7 @@ final class FeedController {
     guard canNavigate else { return }
     var candidate = selection
     guard candidate.move(by: offset), adoptWindow(candidate) else { return }
+    autoContinue.cancel()
     selection = candidate
     updateVisibility()
     if origin == .physicalSwipe { physicalSwipeDidCommit?() }

@@ -167,7 +167,7 @@ final class VariedChessFlowTests: XCTestCase {
         "-sidequest-chess-\(color)-fixture", "-sidequest-chess-catalog",
         "hard-\(size == 3 ? "three" : "five")-\(color)",
       ] + (largeText ? ["-sidequest-large-text"] : [])
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.staticTexts["chess.selection"].waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
     XCTAssertFalse(app.buttons["game.start"].exists)

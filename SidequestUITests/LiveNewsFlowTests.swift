@@ -6,7 +6,7 @@ final class LiveNewsFlowTests: XCTestCase {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launchArguments = ["-sidequest-tagesschau-fixtures"]
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.selectedFeedCard.waitForExistence(timeout: 10))
     let selected = app.selectedFeedCardID
     app.openNewsLibrary()
@@ -41,7 +41,7 @@ final class LiveNewsFlowTests: XCTestCase {
       "-sidequest-tagesschau-fixtures",
       "-sidequest-tagesschau-refresh-failure", "-sidequest-tagesschau-image-failure",
     ]
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.selectedFeedCard.waitForExistence(timeout: 10))
     app.openNewsLibrary()
     let headline = app.staticTexts["news.headline"].firstMatch

@@ -106,3 +106,7 @@ Apply semantic primary tint to the news-library NavigationStack so the existing 
 ## Local daily participation #217
 
 The app retains one DailyStreakModel across feed/import replacements. Bind accepted physical-navigation and newly composed/reconstructed runtime success exactly once per owner; do not rebind game lifecycle effects. Opening, foreground refresh and calendar rollover update display only. Debug streak fixtures use a separate suite and clear only their own key under an explicit reset flag. See [streak guidance](../Streak/AGENTS.md).
+
+
+# Bidirectional generation #216
+Normal composition opts into separate forward/backward UUID namespaces and nonnegative sequence counters. Backward news boundaries precede each outward five-game group, preserving five-game intervals across startup. Deferred prepared batches adopt only while eligible and pager-idle; cancellation discards pending batches. Historical finite and forward-only test routes remain explicit.

@@ -85,7 +85,7 @@ final class PreviewSurfaceStartTests: XCTestCase {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launchArguments = [fixture.argument] + (largeText ? ["-sidequest-large-text"] : [])
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(boardTarget(app, fixture: fixture).waitForExistence(timeout: 5))
     return app
   }

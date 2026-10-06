@@ -102,3 +102,10 @@ Use the [neutral utility palette](../Presentation/AGENTS.md#neutral-app-surround
 ## Daily streak physical-navigation boundary #217
 
 Only a committed physical pager swipe qualifies daily participation. `FeedNavigationOrigin` defaults to programmatic; menu/accessible navigation and future automatic movement remain nonqualifying. Capture physical drag origin in the native pager, clear it after cancellation/programmatic requests, and notify only after accepted adjacent selection/window adoption. Never qualify in view appearance, scrolling text, or demand generation. Header indicator is informational and count/status cannot resize the reserved header geometry; see [streak guidance](../Streak/AGENTS.md).
+
+
+# Bidirectional feed #216
+Normal sessions seed cards above the initial game and replenish both directions. Prepending preserves the selected CardID and attempt; commit it only after native tracking/deceleration/requested paging settles. More options has no Previous/Next rows; semantic pager actions retain assistive navigation. See [ENDLESS.md](../../docs/ENDLESS.md).
+
+## Successful auto-continue #84
+The session enables a neutral three-second countdown by default, in a permanently reserved44-point header slot. Timer tap disables it for this session; More options can reenable. Only a newly successful visible attempt starts it. Cancel on physical paging, manual/programmatic movement, background, modal absence, replacement, leaving or disabling; completed revisits and losses stay quiet. Advance once through a controller-bound native request only if origin card/attempt and eligibility still match; no repeated retry or streak qualification. Composition fans out its single success observer to streak and countdown. Historical manual UI journeys explicitly disable the countdown through a Debug-only flag; dedicated countdown journeys exercise the same real three-second implementation.

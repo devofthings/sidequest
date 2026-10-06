@@ -127,7 +127,7 @@ final class SudokuFlowTests: XCTestCase {
     app.launchArguments =
       ["-sidequest-sudoku-test"] + (largeText ? ["-sidequest-large-text"] : [])
       + (successFeedback ? ["-sidequest-success-feedback-test"] : [])
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.buttons["sudoku.cell.2"].waitForExistence(timeout: 5))
     return app
   }

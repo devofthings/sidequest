@@ -15,6 +15,23 @@ struct FeedNewsCadence: Equatable, Sendable {
     newsCursor = 0
   }
 
+  /// Walking outward above the initial card crosses a news boundary before each five games.
+  func preparingBackward(_ games: [GameCard]) throws -> (cards: [FeedCard], next: Self) {
+    var next = self
+    var outward: [FeedCard] = []
+    for game in games {
+      if next.gameCount == 0, !next.pool.isEmpty {
+        let id = try CardID("news-\(sessionID.uuidString.lowercased())-\(next.appearanceOrdinal)")
+        outward.append(.news(FeedNewsCard(snapshot: next.pool[next.newsCursor], id: id)))
+        next.newsCursor = (next.newsCursor + 1) % next.pool.count
+        next.appearanceOrdinal += 1
+      }
+      outward.append(.game(game))
+      next.gameCount = (next.gameCount + 1) % 5
+    }
+    return (Array(outward.reversed()), next)
+  }
+
   func preparing(_ games: [GameCard]) throws -> (cards: [FeedCard], next: Self) {
     var next = self
     var cards: [FeedCard] = []

@@ -6,6 +6,31 @@ import XCTest
 @testable import Sidequest
 
 final class FeedHostTests: XCTestCase {
+  @MainActor
+  func testPrependPreservesPlayingIdentityAndDefersWhilePagerHoldsIndices() throws {
+    let ids = try [CardID("above"), CardID("current")]
+    let runtime = GameRuntime()
+    runtime.installEffectHandler { _ in }
+    let current = FeedCard.game(GameCard(id: ids[1], kind: .memory))
+    let above = FeedCard.game(GameCard(id: ids[0], kind: .chess))
+    let feed = FeedController(cards: [current], runtimes: [ids[1]: runtime], isEndless: true)
+    feed.setSceneActive(true)
+    runtime.start()
+    let phase = runtime.phase
+    feed.setPagingBusy(true)
+    XCTAssertFalse(feed.prepend([above]))
+    XCTAssertEqual(feed.selectedIndex, 0)
+    feed.setPagingBusy(false)
+    XCTAssertTrue(feed.prepend([above]))
+    XCTAssertEqual(feed.selectedIndex, 1)
+    XCTAssertEqual(feed.selectedCard?.id, ids[1])
+    XCTAssertEqual(runtime.phase, phase)
+    XCTAssertTrue(runtime.isVisible)
+    XCTAssertTrue(feed.canGoBack)
+    feed.retire()
+    XCTAssertFalse(feed.prepend([above]))
+  }
+
   func testEmptyAndSingleSelectionHaveBoundedNavigation() throws {
     var empty = FeedSelection(cards: [])
     XCTAssertNil(empty.card)

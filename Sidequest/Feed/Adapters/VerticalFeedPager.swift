@@ -52,6 +52,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
     self.controller = controller
     self.content = content
     super.init(nibName: nil, bundle: nil)
+    controller.nativePagingIsMoving = { [weak self] in self?.isMoving == true }
   }
 
   required init?(coder: NSCoder) { nil }
@@ -102,6 +103,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
       navigationIsAnimating = false
       lastRequestID = request?.id
       centerOnCommittedPage()
+      controller.setPagingBusy(false)
     }
     guard controller.canNavigate, let request, request.owner == ObjectIdentifier(controller),
       request.id != lastRequestID,
@@ -110,6 +112,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
     else { return }
     physicalDragIsPending = false
     lastRequestID = request.id
+    controller.setPagingBusy(true)
     navigationIsAnimating = !reduceMotion
     pager.setContentOffset(CGPoint(x: 0, y: CGFloat(slot) * pageHeight), animated: !reduceMotion)
     if reduceMotion { commitSettledPage() }
@@ -119,6 +122,8 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
     isStopped = true
     pager.delegate = nil
     pager.isScrollEnabled = false
+    controller.nativePagingIsMoving = nil
+    controller.setPagingBusy(false)
   }
 
   private var isMoving: Bool {
@@ -189,6 +194,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
 
   private func commitSettledPage() {
     navigationIsAnimating = false
+    defer { controller.setPagingBusy(false) }
     guard !isStopped, !suppressCompletion, controller.canNavigate, pageHeight > 0 else { return }
     let slot = Int((pager.contentOffset.y / pageHeight).rounded())
     guard window.indices.contains(slot) else {
@@ -204,6 +210,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
 
   func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
     physicalDragIsPending = controller.canNavigate
+    controller.setPagingBusy(true)
   }
 
   func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) { commitSettledPage() }

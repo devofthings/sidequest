@@ -1,6 +1,24 @@
 {
   "active_gate": "pre_design_smoke",
   "extended": {
+    "SidequestUITests/AutoContinueFlowTests/testBidirectionalStartupReplenishesAboveAndReturnsToTheOriginalCard": {
+      "lower_layer": "Deterministic bidirectional generation, cadence, ownership and held-paging tests cover deep boundaries; actual outward/reverse swipes certify the UIKit route.",
+      "paths": [
+        "Sidequest/Feed/",
+        "Sidequest/App/",
+        "SidequestUITests/AutoContinueFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift"
+      ]
+    },
+    "SidequestUITests/AutoContinueFlowTests/testWinAdvancesOnceAndTimerTapDisablesUntilReenabled": {
+      "lower_layer": "Deterministic countdown and feed lifecycle tests cover stale ticks and cancellation; real timer tapping and settled automatic paging remain native checks.",
+      "paths": [
+        "Sidequest/Feed/",
+        "Sidequest/App/",
+        "SidequestUITests/AutoContinueFlowTests.swift",
+        "SidequestUITests/FeedNavigationSupport.swift"
+      ]
+    },
     "SidequestUITests/BubbleFlowTests/testBackgroundDuringDirectAimedFlightReturnsToFrozenPreview": {
       "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
       "paths": [

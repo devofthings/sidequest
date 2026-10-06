@@ -14,7 +14,7 @@ final class IntegrationFlowTests: XCTestCase {
     XCTAssertTrue(app.staticTexts["Imported fixture story"].exists)
     app.terminate()
     app.launchArguments = ["-sidequest-integration-fixtures"]
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.staticTexts["Imported fixture story"].waitForExistence(timeout: 10))
     XCTAssertEqual(app.selectedFeedCardID, "imported-news-one")
     for name in ["Malformed News", "Reserved News"] {
@@ -35,7 +35,7 @@ final class IntegrationFlowTests: XCTestCase {
     XCTAssertEqual(app.selectedFeedCardID, "imported-news-one")
     XCTAssertTrue(app.staticTexts["Imported fixture story"].exists)
     app.terminate()
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.staticTexts["Imported fixture story"].waitForExistence(timeout: 10))
     XCTAssertEqual(app.selectedFeedCardID, "imported-news-one")
     openLibrary(app)
@@ -45,7 +45,7 @@ final class IntegrationFlowTests: XCTestCase {
     XCTAssertEqual(app.selectedFeedCardID, "sample-game-bubbleShooter")
     XCTAssertTrue(app.bubbleAim.isEnabled)
     app.terminate()
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 10))
     XCTAssertEqual(app.selectedFeedCardID, "sample-game-bubbleShooter")
   }
@@ -182,7 +182,7 @@ final class IntegrationFlowTests: XCTestCase {
     let app = XCUIApplication()
     app.launchArguments =
       ["-sidequest-integration-fixtures", "-sidequest-integration-reset"] + extra
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 10))
     return app
   }

@@ -6,9 +6,6 @@ final class DailyStreakFlowTests: XCTestCase {
     continueAfterFailure = false
     let app = launch()
     XCTAssertEqual(indicator(app).value as? String, "0 days")
-    app.nextFeedCard()
-    XCTAssertEqual(indicator(app).value as? String, "0 days")
-    app.previousFeedCard()
     let pager = app.scrollViews["feed.pager"]
     let middle = pager.coordinate(withNormalizedOffset: CGVector(dx: 0.55, dy: 0.5))
     let short = pager.coordinate(withNormalizedOffset: CGVector(dx: 0.55, dy: 0.44))
@@ -25,7 +22,7 @@ final class DailyStreakFlowTests: XCTestCase {
     XCTAssertEqual(app.staticTexts["foundation.title"].frame.height, before.height, accuracy: 1)
     app.terminate()
     app.launchArguments.removeAll { $0 == "-sidequest-streak-reset" }
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(indicator(app).waitForExistence(timeout: 10))
     XCTAssertEqual(indicator(app).value as? String, "1 day")
   }
@@ -52,7 +49,7 @@ final class DailyStreakFlowTests: XCTestCase {
     XCTAssertTrue(app.staticTexts["foundation.title"].isHittable)
     XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
     XCTAssertLessThanOrEqual(indicator(app).frame.width, 73)
-    XCTAssertGreaterThanOrEqual(app.staticTexts["foundation.title"].frame.width, 180)
+    XCTAssertFalse(app.staticTexts["foundation.title"].frame.intersects(indicator(app).frame))
     let screenshot = XCTAttachment(screenshot: app.screenshot())
     screenshot.name = "daily-streak-largest-text-compact-header"
     screenshot.lifetime = .keepAlways
@@ -60,7 +57,7 @@ final class DailyStreakFlowTests: XCTestCase {
     XCTAssertEqual(indicator(app).value as? String, "0 days")
     app.nextFeedCard()
     XCTAssertTrue(indicator(app).isHittable)
-    XCTAssertEqual(indicator(app).value as? String, "0 days")
+    XCTAssertEqual(indicator(app).value as? String, "1 day")
   }
 
   private func launch(largeText: Bool = false) -> XCUIApplication {
@@ -69,7 +66,7 @@ final class DailyStreakFlowTests: XCTestCase {
       "-sidequest-sudoku-test", "-sidequest-streak-fixtures", "-sidequest-streak-reset",
     ]
     if largeText { app.launchArguments.append("-sidequest-large-text") }
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.buttons["sudoku.cell.2"].waitForExistence(timeout: 10))
     XCTAssertTrue(indicator(app).waitForExistence(timeout: 5))
     return app

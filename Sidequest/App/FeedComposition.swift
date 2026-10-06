@@ -10,6 +10,10 @@ final class FeedComposition {
   private var descriptors: [CardID: GeneratedGameDescriptor] = [:]
   private var completed: [CardID: CompletedGameState] = [:]
   private var nextSequence = 0
+  private var backwardSequence = 0
+  private var backwardSessionID: UUID?
+  private var backwardCadence: FeedNewsCadence?
+  private var adoptingBatch = false
   private var generatedSessionID = UUID()
   private var generationSeed: UInt64 = 0
   private var orderedGeneration = false
@@ -37,12 +41,19 @@ final class FeedComposition {
     }
     self.streak = streak
     controller?.physicalSwipeDidCommit = { [weak streak] in streak?.qualify() }
-    for game in games.values { bindStreak(to: game.runtime) }
   }
 
-  private func bindStreak(to runtime: GameRuntime) {
-    guard let streak else { return }
-    runtime.installSuccessfulCompletionHandler { [weak streak] in streak?.qualify() }
+  private func bindCompletion(to runtime: GameRuntime) {
+    runtime.installSuccessfulCompletionHandler { [weak self, weak runtime] in
+      guard let self, let runtime else { return }
+      streak?.qualify()
+      guard let controller, controller.canNavigate,
+        case .game(let card) = controller.selectedCard,
+        controller.runtimes[card.id] === runtime,
+        case .completed(let attempt) = runtime.phase
+      else { return }
+      controller.autoContinue.start(cardID: card.id, attempt: attempt)
+    }
   }
 
   /// Adopt the latest story pool without rebuilding a game or changing feed history identity.
@@ -50,13 +61,14 @@ final class FeedComposition {
   func refreshNews(_ snapshots: [NewsSnapshot]) -> Bool {
     guard controller?.refreshNews(snapshots) == true else { return false }
     newsCadence?.refreshNews(snapshots)
+    backwardCadence?.refreshNews(snapshots)
     return true
   }
 
   @MainActor static func endless(
     news: [NewsSnapshot], chessPuzzles: [ChessPuzzle],
     sessionID: UUID = UUID(), seed: UInt64 = UInt64.random(in: .min ... .max),
-    ordered: Bool = false,
+    ordered: Bool = false, bidirectional: Bool = false,
     prepareBatch: @escaping GameBatchPreparation = { id, sequence, seed, puzzles, ordered in
       try await GameGenerationComposition.prepare(
         sessionID: id, sequence: sequence, seed: seed,
@@ -68,32 +80,54 @@ final class FeedComposition {
     try Task.checkCancellation()
     let cadence = FeedNewsCadence(pool: news, sessionID: sessionID)
     let prepared = try cadence.preparing(batch.descriptors.map(\.card))
-    let cards = prepared.cards
+    let backwardID = bidirectional ? UUID() : nil
+    let backwardBatch: GeneratedGameBatch?
+    let backwardPrepared: (cards: [FeedCard], next: FeedNewsCadence)?
+    if let backwardID {
+      backwardBatch = try await prepareBatch(backwardID, 0, seed ^ 0xBACC, chessPuzzles, ordered)
+      try Task.checkCancellation()
+      backwardPrepared = try FeedNewsCadence(pool: news, sessionID: backwardID)
+        .preparingBackward(backwardBatch?.descriptors.map(\.card) ?? [])
+    } else {
+      backwardBatch = nil
+      backwardPrepared = nil
+    }
+    let cards = (backwardPrepared?.cards ?? []) + prepared.cards
     var seen = Set<CardID>()
     for card in cards {
       guard seen.insert(card.id).inserted else {
         throw DeckConstructionError.duplicateCardID(card.id)
       }
     }
-    for descriptor in batch.descriptors {
+    for descriptor in batch.descriptors + (backwardBatch?.descriptors ?? []) {
       try PreparedGameReconstruction.validate(descriptor, completed: nil)
     }
     return try FeedComposition(
       cards: cards, chessPuzzles: chessPuzzles, batch: batch, cadence: prepared.next,
       sessionID: sessionID, seed: seed, ordered: ordered, prepareBatch: prepareBatch,
-      reconstruct: reconstruct)
+      reconstruct: reconstruct, backwardBatch: backwardBatch,
+      backwardCadence: backwardPrepared?.next, backwardSessionID: backwardID,
+      initialIndex: backwardPrepared?.cards.count ?? 0)
   }
 
   private init(
     cards: [FeedCard], chessPuzzles: [ChessPuzzle], batch: GeneratedGameBatch,
     cadence: FeedNewsCadence,
     sessionID: UUID, seed: UInt64, ordered: Bool, prepareBatch: @escaping GameBatchPreparation,
-    reconstruct: @escaping GameReconstruction
+    reconstruct: @escaping GameReconstruction,
+    backwardBatch: GeneratedGameBatch?, backwardCadence: FeedNewsCadence?,
+    backwardSessionID: UUID?, initialIndex: Int
   ) throws {
     self.chessPuzzles = chessPuzzles
     session = .loaded(cards)
     games = [:]
-    descriptors = Dictionary(uniqueKeysWithValues: batch.descriptors.map { ($0.card.id, $0) })
+    descriptors = Dictionary(
+      uniqueKeysWithValues: (batch.descriptors + (backwardBatch?.descriptors ?? [])).map {
+        ($0.card.id, $0)
+      })
+    self.backwardSessionID = backwardSessionID
+    self.backwardCadence = backwardCadence
+    backwardSequence = backwardBatch?.nextSequence ?? 0
     nextSequence = batch.nextSequence
     newsCadence = cadence
     generatedSessionID = sessionID
@@ -102,7 +136,8 @@ final class FeedComposition {
     self.reconstruct = reconstruct
     orderedGeneration = ordered
     knownIDs = Set(cards.map(\.id))
-    let feed = FeedController(cards: cards, runtimes: [:], isEndless: true)
+    let feed = FeedController(
+      cards: cards, runtimes: [:], isEndless: true, initialIndex: initialIndex)
     controller = feed
     feed.windowDidChange = { [weak self] cards in
       self?.prepareWindow(cards) ?? .failure(.preparationFailed)
@@ -144,26 +179,72 @@ final class FeedComposition {
     }
     completed = archives
     games.merge(staged) { existing, _ in existing }
-    for game in staged.values { bindStreak(to: game.runtime) }
+    for game in staged.values { bindCompletion(to: game.runtime) }
     return .success(games.mapValues(\.runtime))
   }
 
+  private func adoptBatch(_ batch: GeneratedGameBatch, backward: Bool) throws {
+    adoptingBatch = true
+    defer { adoptingBatch = false }
+    let sequence = backward ? backwardSequence : nextSequence
+    guard batch.nextSequence > sequence, !batch.descriptors.isEmpty else {
+      throw PreparedGameReconstruction.Failure.invalidDescriptor
+    }
+    var batchIDs = Set<CardID>()
+    for descriptor in batch.descriptors {
+      try PreparedGameReconstruction.validate(descriptor, completed: nil)
+      guard batchIDs.insert(descriptor.card.id).inserted else {
+        throw DeckConstructionError.duplicateCardID(descriptor.card.id)
+      }
+    }
+    guard let cadence = backward ? backwardCadence : newsCadence else {
+      throw PreparedGameReconstruction.Failure.invalidDescriptor
+    }
+    let prepared =
+      try backward
+      ? cadence.preparingBackward(batch.descriptors.map(\.card))
+      : cadence.preparing(batch.descriptors.map(\.card))
+    var additionIDs = knownIDs
+    for card in prepared.cards {
+      guard additionIDs.insert(card.id).inserted else {
+        throw DeckConstructionError.duplicateCardID(card.id)
+      }
+    }
+    let previousDescriptors = descriptors
+    for descriptor in batch.descriptors { descriptors[descriptor.card.id] = descriptor }
+    let accepted =
+      backward
+      ? controller?.prepend(prepared.cards) : controller?.append(prepared.cards)
+    guard accepted == true else {
+      descriptors = previousDescriptors
+      throw PreparedGameReconstruction.Failure.invalidDescriptor
+    }
+    knownIDs = additionIDs
+    if backward {
+      backwardCadence = prepared.next
+      backwardSequence = batch.nextSequence
+    } else {
+      newsCadence = prepared.next
+      nextSequence = batch.nextSequence
+    }
+  }
+
   private func replenishIfNeeded() {
-    guard let controller, controller.isEndless else { return }
+    guard let controller, controller.isEndless, !adoptingBatch else { return }
     guard controller.canNavigate else {
       generationTask?.cancel()
       generationTask = nil
       generationRequest = nil
       return
     }
-    guard controller.count - (controller.selectedIndex ?? 0) - 1 <= 4,
-      generationTask == nil, controller.replenishmentMessage == nil
-    else { return }
+    guard generationTask == nil, controller.replenishmentMessage == nil else { return }
+    let backward = backwardSessionID != nil && (controller.selectedIndex ?? 0) <= 4
+    guard backward || controller.count - (controller.selectedIndex ?? 0) - 1 <= 4 else { return }
     let request = UUID()
     generationRequest = request
-    let sessionID = generatedSessionID
-    let sequence = nextSequence
-    let seed = generationSeed
+    let sessionID = backward ? (backwardSessionID ?? generatedSessionID) : generatedSessionID
+    let sequence = backward ? backwardSequence : nextSequence
+    let seed = backward ? generationSeed ^ 0xBACC : generationSeed
     let puzzles = chessPuzzles
     let ordered = orderedGeneration
     let prepare = prepareBatch
@@ -172,35 +253,13 @@ final class FeedComposition {
         let batch = try await prepare(sessionID, sequence, seed, puzzles, ordered)
         try Task.checkCancellation()
         guard let self, generationRequest == request, controller.canNavigate else { return }
-        var batchIDs = Set<CardID>()
-        for descriptor in batch.descriptors {
-          try PreparedGameReconstruction.validate(descriptor, completed: nil)
-          guard batchIDs.insert(descriptor.card.id).inserted else {
-            throw DeckConstructionError.duplicateCardID(descriptor.card.id)
-          }
+        // UIKit tracking starts before its drag delegate callback; consult the native owner too.
+        while backward, controller.pagingIsBusy {
+          try await Task.sleep(for: .milliseconds(16))
+          try Task.checkCancellation()
+          guard generationRequest == request, controller.canNavigate else { return }
         }
-        guard batch.nextSequence > sequence else {
-          throw BubbleGenerationError.noAttainableChallenge
-        }
-        guard let cadence = newsCadence else { return }
-        let prepared = try cadence.preparing(batch.descriptors.map(\.card))
-        var additionIDs = knownIDs
-        for card in prepared.cards {
-          guard additionIDs.insert(card.id).inserted else {
-            throw DeckConstructionError.duplicateCardID(card.id)
-          }
-        }
-        let previousDescriptors = descriptors
-        for descriptor in batch.descriptors {
-          descriptors[descriptor.card.id] = descriptor
-        }
-        guard controller.append(prepared.cards) else {
-          descriptors = previousDescriptors
-          throw PreparedGameReconstruction.Failure.invalidDescriptor
-        }
-        knownIDs = additionIDs
-        newsCadence = prepared.next
-        nextSequence = batch.nextSequence
+        try adoptBatch(batch, backward: backward)
         generationTask = nil
         generationRequest = nil
       } catch {
@@ -375,6 +434,7 @@ final class FeedComposition {
     session = .loaded(cards)
     controller = FeedController(cards: cards, runtimes: games.mapValues(\.runtime))
     self.games = games
+    for game in games.values { bindCompletion(to: game.runtime) }
   }
   #if DEBUG
     convenience init(chessPuzzles: [ChessPuzzle]) {

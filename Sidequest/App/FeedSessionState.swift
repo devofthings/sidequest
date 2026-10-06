@@ -24,10 +24,11 @@ final class FeedSessionState {
   private var newsSceneIsActive = false
   var usesLiveNews: Bool { liveNewsEnabled }
 
+  private let bidirectional: Bool
   private let loadChess: @Sendable () async throws -> [ChessPuzzle]
 
   init(
-    useEndless: Bool = true,
+    useEndless: Bool = true, bidirectional: Bool = true,
     loadLiveNews: (@Sendable () async throws -> [NewsSnapshot])? = nil,
     prepareBatch: @escaping GameBatchPreparation = { id, sequence, seed, puzzles, ordered in
       try await GameGenerationComposition.prepare(
@@ -42,6 +43,7 @@ final class FeedSessionState {
     liveNewsEnabled = loadLiveNews != nil
     self.loadChess = loadChess
     self.useEndless = useEndless
+    self.bidirectional = bidirectional
     self.prepareBatch = prepareBatch
   }
 
@@ -130,12 +132,15 @@ final class FeedSessionState {
         return try await FeedComposition.endless(
           news: news, chessPuzzles: puzzles,
           sessionID: UUID(uuidString: "00000000-0000-0000-0000-000000000104") ?? UUID(), seed: 104,
-          ordered: true, prepareBatch: prepareBatch)
+          ordered: true,
+          bidirectional: ProcessInfo.processInfo.arguments.contains(
+            "-sidequest-bidirectional-test"),
+          prepareBatch: prepareBatch)
       }
     #endif
     if useEndless {
       return try await FeedComposition.endless(
-        news: news, chessPuzzles: puzzles, prepareBatch: prepareBatch)
+        news: news, chessPuzzles: puzzles, bidirectional: bidirectional, prepareBatch: prepareBatch)
     }
     return try FeedComposition(news: news, chessPuzzles: puzzles)
   }

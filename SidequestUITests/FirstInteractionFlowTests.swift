@@ -11,7 +11,7 @@ final class FirstInteractionFlowTests: XCTestCase {
     ] {
       let app = XCUIApplication()
       app.launchArguments = [fixture]
-      app.launch()
+      app.launchWithManualFeed()
       XCTAssertTrue(app.staticTexts["foundation.title"].waitForExistence(timeout: 10))
       let title =
         fixture.contains("sudoku")
@@ -79,7 +79,7 @@ final class FirstInteractionFlowTests: XCTestCase {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launchArguments = ["-sidequest-bubble-fixtures"]
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 10))
     XCTAssertFalse(app.buttons["game.start"].exists)
     app.shootBubble()

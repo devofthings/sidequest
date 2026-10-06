@@ -54,7 +54,7 @@ final class PagerFlowTests: XCTestCase {
     pager.swipeUp(velocity: .fast)
     XCTAssertEqual(app.selectedFeedCardID, visited[3])
     app.buttons["feed.navigation"].tap()
-    XCTAssertFalse(app.buttons["feed.next"].isEnabled)
+    XCTAssertFalse(app.buttons["feed.next"].exists)
     app.coordinate(withNormalizedOffset: CGVector(dx: 0.05, dy: 0.1)).tap()
     pager.swipeDown(velocity: .fast)
     app.waitForFeedCard(visited[2])

@@ -132,7 +132,7 @@ final class StandardSudokuFlowTests: XCTestCase {
     let app = XCUIApplication()
     app.launchArguments =
       ["-sidequest-standard-sudoku-test"] + (large ? ["-sidequest-large-text"] : [])
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.buttons["sudoku.cell.8"].waitForExistence(timeout: 5))
     return app
   }

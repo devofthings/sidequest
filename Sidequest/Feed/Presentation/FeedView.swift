@@ -33,20 +33,22 @@ struct FeedView: View {
         GameHeading(kind: selectedGame?.kind, difficulty: selectedGame?.difficulty)
         Spacer(minLength: 8)
         if let streak { DailyStreakIndicator(model: streak) }
+        autoContinueControl
         Menu {
           if let status = streak?.status { Text(status) }
+          Toggle(
+            "Auto-continue",
+            isOn: Binding(
+              get: { controller.autoContinue.enabled },
+              set: { controller.autoContinue.setEnabled($0) })
+          )
+          .accessibilityIdentifier("feed.autoContinueToggle")
           if let openNews {
             Button(action: openNews) {
               Label("News snapshots", systemImage: "newspaper")
             }
             .accessibilityIdentifier("feed.news")
           }
-          Button("Previous card") { requestPage(-1) }
-            .disabled(!controller.canGoBack || !controller.canNavigate)
-            .accessibilityIdentifier("feed.previous")
-          Button("Next card") { requestPage(1) }
-            .disabled(!controller.canGoForward || !controller.canNavigate)
-            .accessibilityIdentifier("feed.next")
         } label: {
           Label("More options", systemImage: "ellipsis")
             .labelStyle(.iconOnly)
@@ -76,6 +78,10 @@ struct FeedView: View {
           }
         )
         .id(ObjectIdentifier(controller))
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Card feed")
+        .accessibilityAction(named: Text("Previous card")) { requestPage(-1) }
+        .accessibilityAction(named: Text("Next card")) { requestPage(1) }
         .overlay {
           SuccessCelebrationView(
             runtime: selectedRuntime, gameTitle: selectedGame?.kind.title ?? "Game"
@@ -103,12 +109,53 @@ struct FeedView: View {
     .background(theme.utilityCanvas)
     .onChange(of: ObjectIdentifier(controller), initial: true) { _, _ in
       pageRequest = nil
+      #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-sidequest-disable-auto-continue") {
+          controller.autoContinue.setEnabled(false)
+        }
+      #endif
       controller.setSceneActive(scenePhase == .active)
+    }
+    .onChange(of: controller.autoContinue.advanceRequested) { _, request in
+      guard request != nil else { return }
+      let origin = controller.autoContinue.origin
+      let valid =
+        controller.canNavigate && !controller.pagingIsBusy
+        && controller.selectedCard?.id == origin?.cardID
+        && selectedRuntime?.phase == origin.map { .completed($0.attempt) }
+      controller.autoContinue.cancel()
+      if valid { requestPage(1) }
     }
     .onChange(of: scenePhase) { _, phase in
       controller.setSceneActive(phase == .active)
     }
     .onDisappear { controller.setSceneActive(false) }
+  }
+
+  private var autoContinueControl: some View {
+    Group {
+      if let remaining = controller.autoContinue.remaining {
+        Button {
+          controller.autoContinue.setEnabled(false)
+        } label: {
+          ZStack {
+            Circle().stroke(theme.ink.opacity(0.15), lineWidth: 3)
+            Circle().trim(from: 0, to: CGFloat(remaining) / 3)
+              .stroke(theme.ink, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+              .rotationEffect(.degrees(-90))
+              .animation(reduceMotion ? nil : .linear(duration: 1), value: remaining)
+            Text("\(remaining)").font(.system(size: 16, weight: .semibold, design: .rounded))
+          }.frame(width: 30, height: 30)
+            .frame(width: 44, height: 44).contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Disable auto-continue")
+        .accessibilityValue("\(remaining) seconds remaining")
+        .accessibilityIdentifier("feed.autoContinue")
+      } else {
+        Color.clear.frame(width: 44, height: 44).accessibilityHidden(true)
+      }
+    }
   }
 
   private func requestPage(_ step: Int) {

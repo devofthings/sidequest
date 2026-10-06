@@ -3,9 +3,10 @@ struct FeedSelection {
   private(set) var cards: [FeedCard]
   private(set) var index: Int?
 
-  init(cards: [FeedCard]) {
+  init(cards: [FeedCard], initialIndex: Int = 0) {
     self.cards = cards
-    index = cards.isEmpty ? nil : 0
+    precondition(cards.isEmpty || cards.indices.contains(initialIndex))
+    index = cards.isEmpty ? nil : initialIndex
   }
 
   var card: FeedCard? { index.map { cards[$0] } }
@@ -15,6 +16,11 @@ struct FeedSelection {
   mutating func append(_ additions: [FeedCard]) {
     cards.append(contentsOf: additions)
     if index == nil, !cards.isEmpty { index = 0 }
+  }
+
+  mutating func prepend(_ additions: [FeedCard]) {
+    cards.insert(contentsOf: additions, at: 0)
+    if let index { self.index = index + additions.count } else if !cards.isEmpty { index = 0 }
   }
 
   /// Refresh story values without moving cards or changing appearance identity.
