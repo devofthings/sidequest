@@ -1,42 +1,43 @@
-# Sidequest
+<p align="center">
+  <img src="Sidequest/Resources/Assets.xcassets/StartupLogo.imageset/CardS.png" alt="Sidequest logo" width="112" height="112">
+</p>
 
-[![PR verification](https://github.com/devofthings/sidequest/actions/workflows/verification.yml/badge.svg?event=pull_request)](https://github.com/devofthings/sidequest/actions/workflows/verification.yml)
-![iOS 17+ deployment target](docs/assets/readme/ios.svg)
-![Swift 6 language mode](docs/assets/readme/swift.svg)
+<h1 align="center">Sidequest</h1>
+<p align="center"><strong>A little play. A little perspective. One more swipe.</strong></p>
 
-A private SwiftUI iPhone app mixing short news and quick games in one swipeable feed. The first test: is switching between reading and playing enjoyable enough to come back?
+Turn a spare moment into a small adventure. Sidequest brings colorful pocket games and short news stories together in one iPhone feed. Solve a puzzle, pop some bubbles, catch up on a story, and discover what comes next.
 
-**[Install and run](docs/INSTALL.md)** · **[Project board](https://github.com/users/devofthings/projects/1)** · **[Issues](https://github.com/devofthings/sidequest/issues)**
+## Find your next little win
 
-## Try it
+| Think | Remember | Checkmate | Pop |
+| --- | --- | --- | --- |
+| **Sudoku** — classic 9×9 puzzles for a quick thinking break. | **Memory** — bright pairs to flip, spot, and match. | **Chess** — compact mate-in-one challenges with direct piece moves. | **Bubble shooter** — aim, release, and clear matching clusters. |
 
-Open `Sidequest.xcodeproj`, select the shared **Sidequest** scheme, and run on an iPhone simulator. The verified environment is Xcode 27.0 with an iOS 27.0 simulator on Apple silicon. The deployment target is iOS 17.0; execution on that version remains unverified.
+Easy, Medium, and Hard cards keep the mix varied. Start with your first move and swipe whenever you feel like a change. Scroll in either direction through an endless supply of local challenges.
 
-For your own iPhone, follow the [free Apple Account / Personal Team setup](docs/INSTALL.md#install-on-your-own-iphone). Local signing stays outside Git; free provisioning requires reinstallation after seven days. The owner has reported successful installation and basic play.
+## Small moments, satisfying rewards
 
-The retained [2026.10.14 simulator download](https://github.com/devofthings/sidequest/releases/tag/2026.10.14) is an older, immutable finite-deck MVP. Build current source for the refinements below. The unsigned simulator archive cannot be installed on an iPhone; see [download instructions and verification evidence](docs/INSTALL.md#download-a-simulator-preview).
+- **Feel every little win.** Colorful celebrations, playful motion, and tactile feedback make successful moves feel good.
+- **Keep your daily flame alive.** Solve a game or swipe to another card to count toward your daily streak.
+- **Keep the flow going.** A three-second countdown takes you to the next card after a win; tap the timer to turn it off.
+- **Take a reading break.** Tagesschau stories and images bring news into the mix, refreshed when you reopen the app.
 
-## What's playable
+Vivid games. Clean surroundings. Room to play.
 
-Swipe vertically in either direction through endless locally generated game cards. The first meaningful game interaction starts play immediately. Skipping resets unfinished attempts; revisiting preserves the card's challenge and completed results within the session. Game cards mix labeled Easy, Medium, and Hard challenges. A cancellable three-second timer auto-continues after a win; tap it to disable, or reenable Auto-continue in More options.
+## Try Sidequest
 
-| Game | Current source |
-| --- | --- |
-| [Sudoku](docs/SUDOKU.md) | Standard 9×9 puzzles with certified technique-based tiers |
-| [Memory](docs/MEMORY.md) | Three-, four-, and six-pair challenges |
-| [Chess](docs/CHESS.md) | Direct piece/destination play, varied cropped views, and standard 8×8 rules |
-| [Bubble shooter](docs/BUBBLES.md) | Drag-and-release shooting, trajectory aiming, and tiered shot budgets |
+Sidequest is a **private iPhone prototype**. Build the latest source with Xcode for your simulator or your own iPhone; a free Apple Account is enough for personal-device testing. There are currently no downloadable GitHub releases.
 
-[Tagesschau RSS excerpts and images](docs/TAGESSCHAU.md) appear at future five-game boundaries for a private German news test. Refresh runs at launch and foreground reopening; an in-memory cache keeps the latest valid articles if refresh fails. A fresh offline launch shows games. **More options → News snapshots** also supports private manual imports.
+**[Install and play](docs/INSTALL.md#install-on-your-own-iphone)** · **[Simulator setup](docs/INSTALL.md#build-and-test)**
 
-Games use vivid artwork, contained animations, and interaction feedback; app surroundings stay neutral. A static system launch screen shows the Sidequest logo. The [daily flame](docs/STREAK.md) counts a successful solve or committed physical card swipe once per local calendar day; opening alone and accessible or automatic navigation do not count.
+Tagesschau content is used for private testing. Public distribution and commercial news reuse remain unapproved.
 
-Accounts, synced preferences, and leaderboards remain phase-two scope. See the [MVP brief](docs/MVP.md) and [decisions](docs/DECISIONS.md) for accepted direction and proposals. Public news reuse and distribution are not approved.
+## The experiment behind Sidequest
 
-## Contribute with agents
+Sidequest is an experiment in **native SwiftUI and 100% agent-driven development**. The developer steers the product and tests the app on an iPhone; agents write the application code, tests, and documentation.
 
-Start with [AGENTS.md](AGENTS.md) and the assigned issue. It routes to checkout setup, coding guidance, tests, and fresh-agent review as needed. All changes use feature branches and reviewed PRs; routine verification runs on the exact PR commit, with no second main check.
+Work starts with a scoped GitHub issue. An agent implements it on a feature branch, a fresh agent independently reviews the change, and findings are fixed before merging. Automated checks verify the exact PR commit. Shared [agent instructions](AGENTS.md) and [recorded decisions](docs/DECISIONS.md) give each new agent the context to continue.
 
-[Installation](docs/INSTALL.md) owns runnable build/test commands. [Workflow](docs/WORKFLOW.md) owns task status and handoffs. [Decisions](docs/DECISIONS.md) owns durable choices; issues and PRs retain implementation and verification evidence.
+Pure game rules stay separate from the interface and replaceable adapters through hexagonal architecture. Build, signing, and verification instructions live in [Installation](docs/INSTALL.md); the iOS deployment target is 17.0, with actual execution evidence documented there.
 
-Sidequest is the working name; public naming availability has not been established.
+[Project board](https://github.com/users/devofthings/projects/1) · [Issues](https://github.com/devofthings/sidequest/issues) · [MVP brief](docs/MVP.md)

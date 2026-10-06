@@ -7,7 +7,7 @@
 
 ## README maintenance
 
-Keep [README.md](../README.md) a stable introduction, supported capabilities, installation entry point, and contributor router. Update material changes to those items in the same PR. Avoid per-ticket summaries, repeated test inventories, source counts, or release-cleanup history; link detailed evidence instead. Native workflow/platform badges may remain, with no credentials or private data in external URLs. Screenshots remain deferred.
+Keep [README.md](../README.md) a concise product pitch led by the selected logo and truthful playable experience, with installation links and a short visible technical section explaining the native SwiftUI experiment and 100% agent-driven workflow. This owner-selected #235 direction keeps technical instructions in linked documentation. Update material changes to those items in the same PR. Avoid per-ticket summaries, repeated test inventories, source counts, or release-cleanup history; link detailed evidence instead. Native workflow/platform badges may remain, with no credentials or private data in external URLs. Screenshots remain deferred.
 
 Source statistics are optional read-only output under [tooling guidance](../scripts/AGENTS.md#readme-statistics), not a required README update. The October 6 cleanup decision supersedes dashboard #93's automatic refresh policy; see [DECISIONS.md](DECISIONS.md).
 
