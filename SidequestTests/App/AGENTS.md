@@ -8,7 +8,7 @@ Use production `FeedSessionState`, throwing `FeedComposition`, and the News stor
 
 ## Static launch bundle #215
 
-StaticLaunchBundleTests verifies actual app Info, compiled storyboard/image geometry, and adaptive named colors. The obsolete timed introduction owner and its tests are removed. Native cold launch/foreground, large text, and actual Reduce Motion are extended UI checks; no timed decorative model remains. See [launch guidance](../../docs/design/LAUNCH.md).
+StaticLaunchBundleTests verifies actual app Info, compiled storyboard/image geometry, and full-screen logo-purple named color in both appearances. The obsolete timed introduction owner and its tests are removed. Native cold launch/foreground, large text, and actual Reduce Motion are extended UI checks; no timed decorative model remains. See [launch guidance](../../docs/design/LAUNCH.md).
 
 ## Standard Sudoku #170
 

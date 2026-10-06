@@ -44,7 +44,7 @@ Both finite and rehydrating game composition use `GameFeedbackComposition.makeRu
 
 ## Static system launch #215
 
-The owner authorized #215 on October 6, 2026, superseding the #91/#192 custom introduction. Use the existing byte-identical StartupLogo in a static launch storyboard, centered at 120 points on the neutral adaptive LaunchCanvas (light #F7F7F8, dark #111114). The system owns its duration; add no artificial wait, SwiftUI logo overlay, animation owner, or launch preference. Keep the root canvas under real preparation, failure/retry, and feed content. Preserve scene/news refresh tasks and first meaningful game interaction.
+The owner authorized #215 on October 6, 2026, superseding the #91/#192 custom introduction. Use the existing byte-identical StartupLogo in a static launch storyboard, centered at 120 points on LaunchPurple (#653BE8 in both appearances), as corrected by the owner under #226. The system owns its duration; add no artificial wait, SwiftUI logo overlay, animation owner, or launch preference. Keep the root canvas under real preparation, failure/retry, and feed content. Preserve scene/news refresh tasks and first meaningful game interaction.
 
 Agent-grill self-assessment: a launch storyboard fixes logo geometry independently of device size; the existing dictionary does not express a chosen logo size. Both app Info inputs name LaunchScreen, with no competing UILaunchScreen dictionary. Files/signing/icon configuration stays intact. [Launch guidance](../../docs/design/LAUNCH.md) records the decision table and planned compiled/resource/native checks. Static imagery has no motion to suppress; Reduce Motion retains its ordinary game behavior.
 
@@ -56,7 +56,7 @@ GameGenerationComposition explicitly selects mini only for the existing DEBUG en
 
 ## Launch canvas
 
-#215 supersedes #181's tinted canvas and custom introduction. Use the named neutral LaunchCanvas for the system storyboard and full-window SwiftUI background; selected logo bytes and app icon remain unchanged. See [launch guidance](../../docs/design/LAUNCH.md).
+#215 supersedes #181's tinted canvas and custom introduction. Use LaunchPurple for the system storyboard and neutral LaunchCanvas for the full-window SwiftUI background; selected logo bytes and app icon remain unchanged. See [launch guidance](../../docs/design/LAUNCH.md).
 
 ## First meaningful interaction #185
 

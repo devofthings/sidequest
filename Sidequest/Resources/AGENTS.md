@@ -12,7 +12,7 @@ Keep only original assets and fictional, redistributable samples here. `sample-n
 
 ## Static system launch #215
 
-StartupLogo remains byte-identical to the selected AppIcon. LaunchScreen.storyboard centers it at 120 points on LaunchCanvas, neutral light #F7F7F8/dark #111114. This supersedes the #91 decorative introduction and #181 tinted canvas; no shared game-palette change is implied. The storyboard belongs only to the app synchronized resources. Preserve logo bytes and follow [launch guidance](../../docs/design/LAUNCH.md) for compiled/native proof.
+StartupLogo remains byte-identical to the selected AppIcon. LaunchScreen.storyboard centers it at 120 points on LaunchPurple, the selected logo background #653BE8 in both appearances under #226. LaunchCanvas remains the neutral light #F7F7F8/dark #111114 app background; do not couple app surroundings to launch purple. This supersedes the #91 decorative introduction and #181 tinted canvas; no shared game-palette change is implied. The storyboard belongs only to the app synchronized resources. Preserve logo bytes and follow [launch guidance](../../docs/design/LAUNCH.md) for compiled/native proof.
 
 ## Historical launch canvas #181
 
