@@ -35,7 +35,7 @@ Maintain a concise decision record with these fields:
 | Question | Kind | Answer or pending decision | Evidence and rationale | Verification needed |
 | --- | --- | --- | --- | --- |
 
-Link specific files, issue criteria, official sources, or actual experiment results. Label planned validation as planned and proposals as proposed. Before handoff, put actionable development decisions in the closest applicable AGENTS.md, or link the authoritative decision/ADR there, following the repository's scoped-guidance rule. Edit only within the caller's authorized mutation scope; in a read-only session, return the proposed record for an authorized writer.
+Link specific files, issue criteria, official sources, or actual experiment results. Label planned validation as planned and proposals as proposed. Before handoff, record significant choices in the authoritative document. Update the closest applicable AGENTS.md only for durable future-agent constraints, linking shared decisions rather than copying them; routine implementation evidence belongs in the issue/PR under the repository's scoped-guidance rule. Edit only within the caller's authorized mutation scope; in a read-only session, return the proposed record for an authorized writer.
 
 The plan is **ready for implementation** when every question necessary to meet the issue's acceptance criteria is resolved within scope, its dependencies are satisfied, and the affected behavior has a feasible verification plan. If a necessary fact or human-owned decision remains open, report that specific prerequisite and continue independent work. Defer optional questions explicitly.
 

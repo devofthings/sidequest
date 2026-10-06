@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Print tracked Swift statistics; --write refreshes only the README stats block."""
+"""Print tracked Swift source statistics without modifying repository files."""
 
 import argparse
 from pathlib import Path
@@ -8,8 +8,6 @@ import subprocess
 import sys
 
 ROOTS = ("Sidequest", "SidequestTests", "SidequestUITests")
-START = "<!-- sidequest:stats:start -->"
-END = "<!-- sidequest:stats:end -->"
 
 
 def git(root, *args):
@@ -62,34 +60,17 @@ def statistics(root, baseline):
     return "\n".join(rows) + "\n"
 
 
-def refresh(readme, block):
-    original = readme.read_bytes()
-    start, end = START.encode(), END.encode()
-    if original.count(start) != 1 or original.count(end) != 1:
-        raise ValueError("README must contain exactly one start/end statistics marker pair")
-    first, last = original.index(start) + len(start), original.index(end)
-    if first > last:
-        raise ValueError("README statistics markers are reversed")
-    updated = original[:first] + b"\n" + block.encode("utf-8") + original[last:]
-    if updated != original:
-        readme.write_bytes(updated)
-
-
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--baseline", required=True, help="local release tag used for Swift additions/deletions")
-    parser.add_argument("--write", action="store_true", help="replace only the marked README statistics block")
     args = parser.parse_args()
     try:
         root = Path(git(Path.cwd(), "rev-parse", "--show-toplevel").decode().strip())
         block = statistics(root, args.baseline)
-        if args.write:
-            refresh(root / "README.md", block)
-        else:
-            print(block, end="")
+        print(block, end="")
     except (OSError, UnicodeError, ValueError, subprocess.CalledProcessError) as error:
         detail = error.stderr.decode(errors="replace").strip() if isinstance(error, subprocess.CalledProcessError) else str(error)
-        print(f"README statistics failed: {detail}", file=sys.stderr)
+        print(f"Source statistics failed: {detail}", file=sys.stderr)
         return 1
     return 0
 

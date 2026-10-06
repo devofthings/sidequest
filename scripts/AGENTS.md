@@ -32,7 +32,13 @@ Issue #7's fixture validator exhaustively compares canonical original Chess posi
 
 ## README statistics
 
-[readme-stats.py](readme-stats.py) counts Git-tracked first-party `.swift` files in the app/unit/UI roots and their physical LF-delimited lines, including blanks/comments and a final unterminated line. Compare Swift additions/deletions with an explicit local release tag; ignore non-Swift and untracked/private material and reject source symlinks. Default execution is read-only. Explicit `--write` replaces only one valid marked block in [README.md](../README.md), preserving outside bytes and refusing missing/duplicate/reversed markers. Keep it dependency-free and offline; no CI bot commits. Verify behavior with `python3 scripts/test-readme-stats.py` in disposable repositories. The generator reports source volume and never invents test coverage, release availability, or feature completion.
+[readme-stats.py](readme-stats.py) prints optional offline source metrics:
+
+```sh
+python3 scripts/readme-stats.py --baseline 2026.10.7
+```
+
+Count Git-tracked first-party Swift files and physical lines under app/unit/UI roots; compare changes with an explicit local release tag. Exclude untracked/private and non-Swift material, reject source symlinks, and never modify repository files. The former `--write` option is retired: no automatic README refresh or bot commits. Metrics describe source volume, not coverage, quality, or completion. Verify with `python3 scripts/test-readme-stats.py` in disposable repositories.
 
 ## Faster verification #90
 
