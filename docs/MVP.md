@@ -97,3 +97,7 @@ The owner approved replacing the top-bar Sidequest name with the current game's 
 ## Mixed classified feed #201
 
 The owner selected mixed labeled Easy/Medium/Hard cards. Game-owned foundations #177/#178/#187/#188 are merged. The integration opts normal production into certified standard Sudoku, Memory3/4/6 pairs, varied standard-rule Chess, and Bubble8/5/3-shot caps. Each game cycles all tiers over three appearances with a stable session offset; this is deterministic variety, not adaptive recommendation or measured human difficulty. Cards retain configuration and classification through reset/replay/revisit. Actual integrated native proof and delivery remain pending the #201 PR.
+
+## Proposed direct controls and Chess variety
+
+October 6 feedback is captured in [Idea #204](https://github.com/devofthings/sidequest/issues/204): playfield-first controls, fewer separate gameplay buttons, more varied Chess positions and visible board sizes. Gesture mechanics and a curated offline Lichess source remain proposed; current controls and rules are unchanged. See [the decision boundary](DECISIONS.md#direct-game-controls-and-chess-variety-204--proposed-october-6-2026).

@@ -115,3 +115,7 @@ For #160, a lightweight top-row hint and a transparent game-content-only tap sur
 ## First meaningful interaction #185
 
 The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.
+
+## Proposed direct controls and Chess variety #204
+
+The October 6 owner feedback requests playfield-first controls and more varied Pocket Chess experiences. Capture work is authorized; exact gestures, puzzle imports, and expanded rules remain proposals in [DECISIONS.md](docs/DECISIONS.md#direct-game-controls-and-chess-variety-204--proposed-october-6-2026) and Idea #204. Keep current behavior until implementation is explicitly approved. Preserve meaningful accessible actions and standard full-board legality when planning varied visible crops.
