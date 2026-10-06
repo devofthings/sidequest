@@ -2,9 +2,9 @@
 
 ## Verified foundation
 
-`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. Merged #104 source provides endless generated Sudoku, frozen Memory layouts, attainable Bubble challenges, and repeated validated Chess puzzles. Merged #106 source adds 30 clearly fictional demo stories only when saved news is absent, cycles the active pool after every five games, and removes the bottom counter. Valid saved news stays authoritative, saved empty news permits games only, and storage errors remain recoverable. **News snapshots** opens native Files imports. The immutable `2026.10.14` download and explicit historical Debug routes retain their finite decks; the release evidence below describes that download.
+`Sidequest.xcodeproj` contains the shared `Sidequest` scheme, iPhone app, app-hosted unit tests, and UI tests. Merged #104 source provides endless generated Sudoku, frozen Memory layouts, attainable Bubble challenges, and repeated validated Chess puzzles. Merged #106 source adds 30 clearly fictional demo stories only when saved news is absent, cycles the active pool after every five games, and removes the bottom counter. Valid saved news stays authoritative, saved empty news permits games only, and storage errors remain recoverable. **News snapshots** opens native Files imports. The historical `2026.10.14` source tag and explicit Debug routes retain their finite decks; the evidence below describes the formerly available download.
 
-The [2026.10.14 MVP](https://github.com/devofthings/sidequest/releases/tag/2026.10.14) passed 133 native tests and separate installations of freshly built tagged source and the downloaded ARM64 simulator archive. [Verified delivery](#verified-mvp-delivery) records the exact source, checksums, and evidence. [CI](CI.md) uses the same toolchain on a foreground self-hosted Mac runner. Seven older preview downloads were removed; Git tags/source remain. Routine verification runs on PRs; merging starts no automatic main job under #112. Explicit owner-authorized manual release verification/publication follows [RELEASES.md](RELEASES.md).
+The [historical 2026.10.14 source](https://github.com/devofthings/sidequest/tree/2026.10.14) passed 133 native tests and separate installations of freshly built tagged source and the downloaded ARM64 simulator archive. [Verified delivery](#verified-mvp-delivery) records the exact source, checksums, and evidence. [CI](CI.md) uses the same toolchain on a foreground self-hosted Mac runner. All GitHub releases and their assets were removed at the owner’s request on October 6, 2026; Git tags/source remain. Build current source for installation. Routine verification runs on PRs; merging starts no automatic main job under #112. Explicit owner-authorized manual release verification/publication follows [RELEASES.md](RELEASES.md).
 
 The owner chose simulator-first delivery in resolved [#79](https://github.com/devofthings/sidequest/issues/79). The owner reported successful iPhone installation and basic play on October 5, 2026; see [the report and its limits](#owner-reported-iphone-test). The documented source-signing route requires your local Apple Account and signing configuration; the simulator archive cannot run on a physical iPhone.
 
@@ -21,7 +21,7 @@ Use this toolchain for reproducible verification. Other Xcode versions/runtimes 
 
 ## Verified MVP delivery
 
-[2026.10.14](https://github.com/devofthings/sidequest/releases/tag/2026.10.14) was published October 4, 2026 at 05:19:00 UTC from `65bd39003a2a22dbb3c19f61cbb4b9e86c3c32b9`. Its manual workflow run `37178518287` was originally created at `2026-10-04T04:58:13Z`; live run number `14` establishes the calendar/build version.
+[2026.10.14 source tag](https://github.com/devofthings/sidequest/tree/2026.10.14) was published October 4, 2026 at 05:19:00 UTC from `65bd39003a2a22dbb3c19f61cbb4b9e86c3c32b9`. Its manual workflow run `37178518287` was originally created at `2026-10-04T04:58:13Z`; live run number `14` establishes the calendar/build version.
 
 | Check | Actual result |
 | --- | --- |
@@ -39,7 +39,7 @@ Current source also corrects feedback/result layout under [#108](https://github.
 
 ## Verified source refinements October 5
 
-These merged source refinements have their own simulator, independent-review and exact-head CI evidence. They do not replace the immutable `2026.10.14` release above or provide a new downloadable build. Publication remains held under [release policy](RELEASES.md). Each CI job passed repository checks, Debug compilation, all unit tests plus the three routine UI smoke cases, unsigned ARM64 Release compilation, and owned-simulator cleanup. The final PR source was verified before merge; no second main test was run.
+These merged source refinements have their own simulator, independent-review and exact-head CI evidence. They do not rewrite the historical `2026.10.14` evidence above. No downloadable build is currently available. Publication remains held under [release policy](RELEASES.md). Each CI job passed repository checks, Debug compilation, all unit tests plus the three routine UI smoke cases, unsigned ARM64 Release compilation, and owned-simulator cleanup. The final PR source was verified before merge; no second main test was run.
 
 | Refinement | Exact reviewed/tested head and base | Actual focused execution | Independent review and CI |
 | --- | --- | --- | --- |
@@ -142,36 +142,9 @@ Open Simulator to see the window. Normal launch shows Sidequest's shuffled news 
 
 ## Download a simulator preview
 
-The verified [2026.10.14 MVP](https://github.com/devofthings/sidequest/releases/tag/2026.10.14) includes its unsigned ARM64 simulator archive, build metadata, and checksums. The download requires an Apple-silicon Mac and the verified iOS 27.0 (24A434) runtime above; it cannot be installed directly on an iPhone. Use the exact selected tag below. Older preview downloads were removed, while their Git tags/source remain available. Physical iPhone installation uses the selected source and local Xcode signing below.
+There are currently **no downloadable GitHub releases**. On October 6, 2026, the owner requested deleting all releases and their assets, including `2026.10.14`. Git tags and source history remain; the [verified delivery record](#verified-mvp-delivery) below is historical evidence, not a currently available download.
 
-```sh
-SIDEQUEST_PREVIEW_TAG='2026.10.14'
-SIDEQUEST_PREVIEW_DIRECTORY="$(mktemp -d /private/tmp/sidequest-preview.XXXXXX)"
-gh release download "$SIDEQUEST_PREVIEW_TAG" --repo devofthings/sidequest \
-  --pattern 'Sidequest-simulator-arm64.zip' --pattern 'build-metadata.json' \
-  --pattern 'SHA256SUMS' --dir "$SIDEQUEST_PREVIEW_DIRECTORY"
-cd "$SIDEQUEST_PREVIEW_DIRECTORY"
-shasum -a 256 -c SHA256SUMS
-ditto -x -k Sidequest-simulator-arm64.zip "$SIDEQUEST_PREVIEW_DIRECTORY"
-```
-
-Require both checksums to pass before extracting/installing. Inspect `build-metadata.json` for the full commit, original verification link, runtime, and app identifier. New-format metadata also binds the original workflow run number and UTC creation timestamp to the selected tag; do not invent a tag from today’s date or treat an example version as available. Assign `SIDEQUEST_SIMULATOR_ID` from the available devices as above, boot it if needed, then install and launch:
-
-```sh
-xcrun simctl install "$SIDEQUEST_SIMULATOR_ID" "$SIDEQUEST_PREVIEW_DIRECTORY/Sidequest.app"
-xcrun simctl launch "$SIDEQUEST_SIMULATOR_ID" dev.devofthings.sidequest
-```
-
-For that version's source, use a fresh clone to preserve any existing work, fetch its tag, and check out the tag before opening Xcode:
-
-```sh
-gh repo clone devofthings/sidequest sidequest-preview-source
-cd sidequest-preview-source
-git fetch origin "refs/tags/$SIDEQUEST_PREVIEW_TAG:refs/tags/$SIDEQUEST_PREVIEW_TAG"
-git checkout --detach "$SIDEQUEST_PREVIEW_TAG"
-```
-
-Use the local signing steps below for a physical iPhone. [RELEASES.md](RELEASES.md) explains retry, traceability, and the first/second release demonstrations; an unmerged workflow or draft is not an available build.
+Build current source using [Build and test](#build-and-test) for a simulator or [Install on your own iPhone](#install-on-your-own-iphone) for your device. Simulator products cannot be installed on a physical iPhone. Future downloads require separately authorized publication under [RELEASES.md](RELEASES.md).
 
 ## Install on your own iPhone
 
