@@ -89,6 +89,15 @@
         "Sidequest/Resources/"
       ]
     },
+    "SidequestUITests/BubbleTargetTapFlowTests/testUpperAndLowerTargetsShootOnceWhileDragAndUpperSwipeRemainUsable": {
+      "lower_layer": "Deterministic target mapping and controller interaction leases cover invalid geometry and stale/canceled shots; real upper/lower taps and upper-board pan verify UIKit ownership.",
+      "paths": [
+        "Sidequest/Games/BubbleShooter/",
+        "Sidequest/Feed/",
+        "SidequestUITests/BubbleTargetTapFlowTests.swift",
+        "SidequestUITests/DirectGameInteractionSupport.swift"
+      ]
+    },
     "SidequestUITests/ChessFlowTests/testBackgroundRequiresFreshChessStart": {
       "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
       "paths": [

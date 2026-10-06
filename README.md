@@ -11,7 +11,7 @@ Turn a spare moment into a small adventure. Sidequest brings colorful pocket gam
 
 | Think | Remember | Checkmate | Pop |
 | --- | --- | --- | --- |
-| **Sudoku** — classic 9×9 puzzles for a quick thinking break. | **Memory** — bright pairs to flip, spot, and match. | **Chess** — compact mate-in-one challenges with direct piece moves. | **Bubble shooter** — aim, release, and clear matching clusters. |
+| **Sudoku** — classic 9×9 puzzles for a quick thinking break. | **Memory** — bright pairs to flip, spot, and match. | **Chess** — compact mate-in-one challenges with direct piece moves. | **Bubble shooter** — tap a target or drag to aim, and clear matching clusters. |
 
 Easy, Medium, and Hard cards keep the mix varied. Start with your first move and swipe whenever you feel like a change. Scroll in either direction through an endless supply of local challenges.
 
