@@ -47,7 +47,7 @@ final class FeedComposition {
     runtime.installSuccessfulCompletionHandler { [weak self, weak runtime] in
       guard let self, let runtime else { return }
       streak?.qualify()
-      guard let controller, controller.canNavigate,
+      guard let controller, controller.canNavigate, !controller.pagingIsBusy,
         case .game(let card) = controller.selectedCard,
         controller.runtimes[card.id] === runtime,
         case .completed(let attempt) = runtime.phase

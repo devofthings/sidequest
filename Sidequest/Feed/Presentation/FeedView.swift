@@ -140,10 +140,8 @@ struct FeedView: View {
         } label: {
           ZStack {
             Circle().stroke(theme.ink.opacity(0.15), lineWidth: 3)
-            Circle().trim(from: 0, to: CGFloat(remaining) / 3)
-              .stroke(theme.ink, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-              .rotationEffect(.degrees(-90))
-              .animation(reduceMotion ? nil : .linear(duration: 1), value: remaining)
+            AutoContinueRing(remaining: remaining, reduceMotion: reduceMotion, ink: theme.ink)
+              .id(controller.autoContinue.origin?.attempt.rawValue)
             Text("\(remaining)").font(.system(size: 16, weight: .semibold, design: .rounded))
           }.frame(width: 30, height: 30)
             .frame(width: 44, height: 44).contentShape(Rectangle())
@@ -209,5 +207,23 @@ extension GameKind {
     case .chess: "Chess"
     case .bubbleShooter: "Bubble shooter"
     }
+  }
+}
+
+/// Decorative depletion runs once across the entire countdown, independently of numeric ticks.
+private struct AutoContinueRing: View {
+  let remaining: Int
+  let reduceMotion: Bool
+  let ink: Color
+  @State private var fraction: CGFloat = 1
+
+  var body: some View {
+    Circle().trim(from: 0, to: reduceMotion ? CGFloat(remaining) / 3 : fraction)
+      .stroke(ink, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+      .rotationEffect(.degrees(-90))
+      .onAppear {
+        withAnimation(reduceMotion ? nil : .linear(duration: 3)) { fraction = 0 }
+      }
+      .accessibilityHidden(true)
   }
 }

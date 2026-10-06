@@ -5,6 +5,32 @@ import XCTest
 
 @MainActor
 final class FeedAutoContinueTests: XCTestCase {
+  func testSuccessDuringCanceledPagingNeverStartsOrRestartsCountdown() async throws {
+    let composition = try FeedComposition(
+      news: [], chessPuzzles: await ChessPuzzleLoader.bundled(),
+      shuffle: { cards in cards.sorted { $0.id.rawValue < $1.id.rawValue } })
+    let feed = try XCTUnwrap(composition.controller)
+    feed.setSceneActive(true)
+    while feed.selectedCard?.id.rawValue != "sample-game-chess-white" { feed.next() }
+    let card = try XCTUnwrap(feed.selectedCard)
+    guard case .chess(let chess) = composition.games[card.id] else {
+      return XCTFail("Expected Chess")
+    }
+    feed.setPagingBusy(true)
+    let origin = try XCTUnwrap(ChessSquare("g6"))
+    let destination = try XCTUnwrap(ChessSquare("g7"))
+    chess.tap(origin)
+    chess.tap(destination)
+    guard case .completed = chess.runtime.phase else { return XCTFail("Expected a real mate") }
+    XCTAssertNil(feed.autoContinue.remaining)
+    feed.setPagingBusy(false)
+    XCTAssertNil(feed.autoContinue.remaining)
+    feed.next()
+    feed.previous()
+    XCTAssertNil(feed.autoContinue.remaining)
+    feed.retire()
+  }
+
   func testThreeTicksRequestOneAdvanceAndCompletedRevisitsStayQuiet() async throws {
     let gate = CountdownGate()
     let timer = FeedAutoContinue(pause: { try await gate.pause() })
