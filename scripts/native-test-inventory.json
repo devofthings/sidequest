@@ -122,6 +122,36 @@
         "Sidequest/Games/Chess/"
       ]
     },
+    "SidequestUITests/DailyStreakFlowTests/testLargestTextKeepsStreakTitleAndMenuReachable": {
+      "lower_layer": "DailyStreakTests covers injected calendar, local persistence, successful completion and accepted navigation origin. This focused native journey verifies actual gestures, header accessibility, and relaunch.",
+      "paths": [
+        "Sidequest/Streak/",
+        "Sidequest/Feed/",
+        "Sidequest/App/",
+        "Sidequest/Games/Presentation/GameRuntime.swift",
+        "SidequestUITests/DailyStreakFlowTests.swift"
+      ]
+    },
+    "SidequestUITests/DailyStreakFlowTests/testOnlySettledPhysicalSwipeQualifiesAndRelaunchKeepsCount": {
+      "lower_layer": "DailyStreakTests covers injected calendar, local persistence, successful completion and accepted navigation origin. This focused native journey verifies actual gestures, header accessibility, and relaunch.",
+      "paths": [
+        "Sidequest/Streak/",
+        "Sidequest/Feed/",
+        "Sidequest/App/",
+        "Sidequest/Games/Presentation/GameRuntime.swift",
+        "SidequestUITests/DailyStreakFlowTests.swift"
+      ]
+    },
+    "SidequestUITests/DailyStreakFlowTests/testSuccessfulSolveQualifiesWithoutSwipeAndRevisitStaysQuiet": {
+      "lower_layer": "DailyStreakTests covers injected calendar, local persistence, successful completion and accepted navigation origin. This focused native journey verifies actual gestures, header accessibility, and relaunch.",
+      "paths": [
+        "Sidequest/Streak/",
+        "Sidequest/Feed/",
+        "Sidequest/App/",
+        "Sidequest/Games/Presentation/GameRuntime.swift",
+        "SidequestUITests/DailyStreakFlowTests.swift"
+      ]
+    },
     "SidequestUITests/EndlessFlowTests/testEndlessNativeImportsCyclePersistAndKeepHistoryAfterRejectionOrCancel": {
       "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
       "paths": [

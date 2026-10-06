@@ -8,6 +8,7 @@ Selected for [issue #29](https://github.com/devofthings/sidequest/issues/29). [F
 Sidequest.xcodeproj/           # Foundation-owned project and shared schemes
 Sidequest/
   App/                        # Entry point and composition root
+  Streak/                     # Local daily activity rules, persistence and indicator (#217)
   Core/                       # Shared cards, lifecycle contracts, and small ports
   Presentation/               # Shared SwiftUI palette and local control styling
   Feed/

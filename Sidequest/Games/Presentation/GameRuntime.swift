@@ -22,6 +22,7 @@ final class GameRuntime {
   @ObservationIgnored private let interactionTime: @MainActor () -> TimeInterval
   @ObservationIgnored private let successHaptic: @MainActor () -> Void
   @ObservationIgnored private let celebrationDelay: @MainActor @Sendable () async throws -> Void
+  @ObservationIgnored private var successfulCompletionHandler: (() -> Void)?
   @ObservationIgnored private var effectHandler: ((GameLifecycleEffect) -> Void)?
   @ObservationIgnored private let makeAttemptID: () -> GameAttemptID
 
@@ -57,6 +58,12 @@ final class GameRuntime {
   func installEffectHandler(_ handler: @escaping (GameLifecycleEffect) -> Void) {
     precondition(effectHandler == nil, "A game runtime has exactly one effect owner.")
     effectHandler = handler
+  }
+
+  /// Participation observes accepted success without taking ownership of lifecycle effects.
+  func installSuccessfulCompletionHandler(_ handler: @escaping () -> Void) {
+    precondition(successfulCompletionHandler == nil, "A runtime has one success observer.")
+    successfulCompletionHandler = handler
   }
 
   func setVisible(_ visible: Bool) {
@@ -134,6 +141,7 @@ final class GameRuntime {
     deliver(effect)
     // A synchronous stop handler may hide or retire this card before feedback is delivered.
     guard successful, !isRetired, isVisible, phase == .completed(attempt) else { return }
+    successfulCompletionHandler?()
     celebrationAttempt = attempt
     let delay = celebrationDelay
     celebrationTask = Task { @MainActor [weak self] in

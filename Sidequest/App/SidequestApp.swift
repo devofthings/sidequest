@@ -10,6 +10,7 @@ struct SidequestApp: App {
     @State private var fixturesPrepared = false
   #endif
   @State private var newsModel: NewsImportModel
+  @State private var streak = StreakComposition.makeModel()
 
   init() {
     let session = FeedSessionState(
@@ -113,9 +114,11 @@ struct SidequestApp: App {
           await session.refreshLiveNews(newsModel: newsModel)?.value
         }
         .onChange(of: scenePhase, initial: true) { _, phase in
+          streak.setSceneActive(phase == .active)
           session.setNewsSceneActive(phase == .active, newsModel: newsModel)
         }
         .onDisappear {
+          streak.setSceneActive(false)
           session.cancelPreparation()
           session.setNewsSceneActive(false, newsModel: newsModel)
         }
@@ -198,7 +201,10 @@ struct SidequestApp: App {
       VStack(spacing: 4) {
         FeedView(
           controller: controller, gameContent: composition.gameContent,
-          newsContent: composition.newsContent, openNews: { session.setLibraryPresented(true) })
+          newsContent: composition.newsContent, openNews: { session.setLibraryPresented(true) },
+          streak: streak
+        )
+        .onAppear { composition.installStreak(streak) }
         if !session.usesLiveNews, let message = newsModel.message {
           Text(message).font(.footnote)
             .accessibilityIdentifier("news.status")

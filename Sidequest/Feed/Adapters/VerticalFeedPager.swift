@@ -46,6 +46,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
   private var suppressCompletion = false
   private var settledIndex: Int?
   private var navigationIsAnimating = false
+  private var physicalDragIsPending = false
 
   init(controller: FeedController, content: @escaping (FeedCard) -> AnyView) {
     self.controller = controller
@@ -107,6 +108,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
       let selected = controller.selectedIndex,
       let slot = window.firstIndex(of: selected + request.step), pageHeight > 0
     else { return }
+    physicalDragIsPending = false
     lastRequestID = request.id
     navigationIsAnimating = !reduceMotion
     pager.setContentOffset(CGPoint(x: 0, y: CGFloat(slot) * pageHeight), animated: !reduceMotion)
@@ -152,6 +154,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
     layoutPages()
     centerOnCommittedPage()
     suppressCompletion = false
+    physicalDragIsPending = false
   }
 
   private func updateSelectedIdentity() {
@@ -181,6 +184,7 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
     suppressCompletion = true
     pager.setContentOffset(CGPoint(x: 0, y: CGFloat(slot) * pageHeight), animated: false)
     suppressCompletion = false
+    physicalDragIsPending = false
   }
 
   private func commitSettledPage() {
@@ -192,8 +196,14 @@ final class FeedPagerController: UIViewController, UIScrollViewDelegate {
       return
     }
     let index = window[slot]
-    controller.commitPage(at: index)
+    let origin: FeedNavigationOrigin = physicalDragIsPending ? .physicalSwipe : .programmatic
+    physicalDragIsPending = false
+    controller.commitPage(at: index, origin: origin)
     rebuildWindow()
+  }
+
+  func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    physicalDragIsPending = controller.canNavigate
   }
 
   func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) { commitSettledPage() }

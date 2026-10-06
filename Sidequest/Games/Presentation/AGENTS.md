@@ -33,3 +33,7 @@ Agent-grill self-assessment, approved by the lead: `feedbackForInteraction(attem
 ## First meaningful interaction #185
 
 The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.
+
+## Accepted success participation observer #217
+
+Composition may install exactly one separate successful-completion observer. Deliver it only after the existing accepted successful visible-completion gate and synchronous stop handler, independently of the single lifecycle effect binding. Loss, hidden/stale/duplicate completion and quiet completed restoration/revisit emit nothing. New reconstructed runtimes bind their own observer once; game rules retain no persistence dependency. See [streak guidance](../../Streak/AGENTS.md).

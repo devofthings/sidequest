@@ -6,6 +6,7 @@ struct FeedView: View {
   let gameContent: (GameCard, GameRuntime) -> AnyView
   let newsContent: (NewsSnapshot) -> AnyView
   var openNews: (() -> Void)? = nil
+  var streak: DailyStreakModel? = nil
   @Environment(\.scenePhase) private var scenePhase
   @Environment(\.self) private var environment
   @Environment(\.colorSchemeContrast) private var contrast
@@ -31,7 +32,9 @@ struct FeedView: View {
       HStack {
         GameHeading(kind: selectedGame?.kind, difficulty: selectedGame?.difficulty)
         Spacer(minLength: 8)
+        if let streak { DailyStreakIndicator(model: streak) }
         Menu {
+          if let status = streak?.status { Text(status) }
           if let openNews {
             Button(action: openNews) {
               Label("News snapshots", systemImage: "newspaper")

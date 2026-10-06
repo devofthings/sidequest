@@ -131,3 +131,5 @@ Varied original Chess catalog and immutable search-choice difficulty metadata ar
 Memory workload foundation #178 adds validated three/four/six-pair challenges with frozen seeds and configurations. Existing production remains six pairs; Easy/Medium/Hard are workload proxies pending separate mixed labeled feed integration. Actual native verification belongs to the PR evidence.
 
 Mixed difficulty integration is in progress under [#201](https://github.com/devofthings/sidequest/issues/201); the merged game foundations provide certified Sudoku tiers, Memory3/4/6 pairs, varied Chess puzzles, and Bubble8/5/3-shot budgets. See [difficulty boundaries](docs/pocket-games/DIFFICULTY.md); integrated labels and production exposure require the owning PR’s actual verification.
+
+Daily participation uses a local flame/count: a successful solve or committed physical swipe qualifies once per local calendar day. Menu navigation and opening alone do not count. See [streak behavior and local persistence](docs/STREAK.md).
