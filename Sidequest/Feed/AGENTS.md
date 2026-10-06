@@ -28,7 +28,7 @@ Interleave an available story pool after exactly five games, carrying cadence ac
 
 ## Stable playable cards #108
 
-Anchor playing/completed game content at the top of the viewport-sized host so changing text cannot re-center the game. Issue #88 makes previews top anchored with actual inactive game content and a measured start reservation. Preserve title/start semantics and the existing owned scroller/pager. Game adapters reserve their supported dynamic regions to preserve overflow extent; the feed does not inspect game states or fix text heights. See [stable layout](../../docs/GAME_LAYOUT.md).
+Under owner-approved #232, center fitting preview/playing/completed game compositions within the native card viewport. Preserve natural height and reachable top for overflowing content; the existing owned scroller retains overflow. Stable measured dynamic regions prevent feedback from shifting a centered board. This supersedes the historical #108/#88 top anchor. Preserve title/start semantics and the existing owned scroller/pager. Game adapters reserve their supported dynamic regions to preserve overflow extent; the feed does not inspect game states or fix text heights. See [stable layout](../../docs/GAME_LAYOUT.md).
 
 ## Visible inactive boards #88
 
@@ -43,7 +43,7 @@ The owner's repeated-skip recommendation idea is captured in [#119](https://gith
 Use the researched [DESIGN.md](../../docs/DESIGN.md) direction for approved #13 styling. Keep news still and readable, preview/play boards stable, shared start footprints, settled native paging, and Reduce Motion. Styling changes must preserve feed lifecycle and source attribution.
 ## Shared MVP style #123
 
-Use [shared presentation tokens](../Presentation/AGENTS.md) for the calm canvas, rounded headings, and explicit lime start action. Keep preview and play on the same top-anchored layout with the same measured start reservation. Transparent UIKit hosting backgrounds expose the opaque SwiftUI canvas; forward color-scheme contrast and Reduce Motion into separate hosting roots alongside Dynamic Type and appearance. Shared styling owns neither paging nor runtime eligibility.
+Use [shared presentation tokens](../Presentation/AGENTS.md) for the calm canvas, rounded headings, and explicit lime start action. Keep preview and play on the same centered fitting-content layout under #232, preserving the measured reservations and natural overflow height. Transparent UIKit hosting backgrounds expose the opaque SwiftUI canvas; forward color-scheme contrast and Reduce Motion into separate hosting roots alongside Dynamic Type and appearance. Shared styling owns neither paging nor runtime eligibility.
 
 ## Centered success feedback #193
 

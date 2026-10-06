@@ -32,5 +32,6 @@ struct GameCardLayout<Start: View, Content: View>: View {
     }
     .padding(16)
     .frame(maxWidth: .infinity, minHeight: viewport?.height, alignment: .center)
+    .fixedSize(horizontal: false, vertical: true)
   }
 }

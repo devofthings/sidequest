@@ -35,6 +35,7 @@ final class GameCardLayoutTests: XCTestCase {
       }
     let root = GameCardLayout(showsStart: false, start: EmptyView(), content: content)
       .environment(\.sidequestCardViewport, CGSize(width: 375, height: viewportHeight))
+      .ignoresSafeArea()
     let hosting = UIHostingController(rootView: root)
     // Match the production host: fixed width, natural height with a viewport minimum.
     hosting.view.bounds = CGRect(x: 0, y: 0, width: 375, height: viewportHeight)
@@ -45,6 +46,16 @@ final class GameCardLayoutTests: XCTestCase {
     let fitted = hosting.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     let hostHeight = max(viewportHeight, fitted.height)
     hosting.view.frame = CGRect(x: 0, y: 0, width: 375, height: hostHeight)
+    let scene = try XCTUnwrap(
+      UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
+    let window = UIWindow(windowScene: scene)
+    window.frame = hosting.view.frame
+    window.rootViewController = hosting
+    window.isHidden = false
+    defer {
+      window.isHidden = true
+      window.rootViewController = nil
+    }
     hosting.view.layoutIfNeeded()
     let result = await XCTWaiter.fulfillment(of: [ready], timeout: 3)
     XCTAssertEqual(result, .completed)
