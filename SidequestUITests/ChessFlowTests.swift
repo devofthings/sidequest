@@ -4,21 +4,15 @@ final class ChessFlowTests: XCTestCase {
   @MainActor
   func testCoordinateAlternativesHaveUsableTargetsAndAcceptEdgeTaps() {
     let app = launch(color: "white", successFeedback: false)
-    tapEdge(app.buttons["chess.piece.g6"], in: app)
-    XCTAssertTrue(app.staticTexts["chess.selection"].label.contains("g6"))
-    tapEdge(app.buttons["chess.file"], in: app)
-    XCTAssertTrue(app.buttons["File G"].waitForExistence(timeout: 3))
-    app.buttons["File G"].tap()
-    tapEdge(app.buttons["chess.rank"], in: app)
-    XCTAssertTrue(app.buttons["Rank 7"].waitForExistence(timeout: 3))
-    app.buttons["Rank 7"].tap()
-    reveal(app.buttons["chess.submit"], in: app)
+    let anchor = app.buttons["chess.square.e8"]
     let viewport = app.scrollViews["feed.cardScroll"].frame
-    let submitFrame = app.buttons["chess.submit"].frame
-    tapEdge(app.buttons["chess.submit"], in: app)
+    let boardFrame = anchor.frame
+    tapEdge(app.buttons["chess.square.g6"], in: app)
+    XCTAssertTrue(app.staticTexts["chess.selection"].label.contains("g6"))
+    tapEdge(app.buttons["chess.square.g7"], in: app)
     assertSuccessVisible(app)
     XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewport)
-    XCTAssertEqual(app.buttons["chess.submit"].frame, submitFrame)
+    XCTAssertEqual(anchor.frame, boardFrame)
     let expired = XCTNSPredicateExpectation(
       predicate: NSPredicate(format: "exists == false"),
       object: app.staticTexts["game.successCelebration"])
@@ -26,7 +20,7 @@ final class ChessFlowTests: XCTestCase {
     XCTAssertTrue(app.staticTexts["chess.completed"].exists)
     XCTAssertTrue(app.staticTexts["foundation.title"].exists)
     XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewport)
-    XCTAssertEqual(app.buttons["chess.submit"].frame, submitFrame)
+    XCTAssertEqual(anchor.frame, boardFrame)
   }
 
   @MainActor
@@ -39,9 +33,7 @@ final class ChessFlowTests: XCTestCase {
       let ranks = color == "white" ? [8, 7, 6, 5] : [4, 3, 2, 1]
       let board = ranks.flatMap { rank in files.map { app.buttons["chess.square.\($0)\(rank)"] } }
       let pieces = color == "white" ? ["f7", "g6"] : ["b3", "c2"]
-      let controls =
-        pieces.map { app.buttons["chess.piece.\($0)"] }
-        + [app.buttons["chess.file"], app.buttons["chess.rank"], app.buttons["chess.submit"]]
+      let controls = pieces.map { app.buttons["chess.square.\($0)"] }
       for target in board + controls {
         XCTAssertTrue(target.exists)
         XCTAssertTrue(viewport.contains(target.frame), "Full target must fit: \(target.identifier)")
@@ -55,7 +47,7 @@ final class ChessFlowTests: XCTestCase {
       attachment.name = "pocket-\(color)-normal-all-controls"
       attachment.lifetime = .keepAlways
       add(attachment)
-      app.buttons["chess.piece.\(queen)"].tap()
+      app.buttons["chess.square.\(queen)"].tap()
       XCTAssertTrue(app.staticTexts["chess.selection"].label.contains(queen))
       XCTAssertEqual(stableTargets.map(\.frame), before)
       XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewport)
@@ -89,8 +81,8 @@ final class ChessFlowTests: XCTestCase {
   func testLargestTextSupportsCoordinateSolutionAndNavigation() {
     let app = launch(color: "black", largeText: true)
     assertWindow(app, color: "black")
-    reveal(app.buttons["chess.piece.b3"], in: app)
-    XCTAssertTrue(app.buttons["chess.piece.b3"].isHittable)
+    reveal(app.buttons["chess.square.b3"], in: app)
+    XCTAssertTrue(app.buttons["chess.square.b3"].isHittable)
     XCTAssertTrue(app.buttons["feed.navigation"].isHittable)
     submit(app, queen: "b3", destination: "b2")
     assertSuccessVisible(app)
@@ -122,7 +114,7 @@ final class ChessFlowTests: XCTestCase {
     app.buttons["chess.square.\(opponent)"].tap()
     XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
     XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
-    XCTAssertTrue(app.buttons["chess.piece.\(queen)"].isEnabled)
+    XCTAssertTrue(app.buttons["chess.square.\(queen)"].isEnabled)
     submit(app, queen: queen, destination: wrong)
     reveal(app.staticTexts["chess.feedback"], in: app)
     XCTAssertTrue(app.staticTexts["chess.feedback"].label.contains("not checkmate"))
@@ -132,15 +124,15 @@ final class ChessFlowTests: XCTestCase {
     XCTAssertTrue(app.buttons["chess.square.\(wrong)"].label.contains("Empty square"))
     let outside = color == "white" ? "a6" : "h3"
     XCTAssertFalse(app.buttons["chess.square.\(outside)"].exists)
-    submit(app, queen: queen, destination: outside)
-    reveal(app.staticTexts["chess.feedback"], in: app)
-    XCTAssertTrue(app.staticTexts["chess.feedback"].label.contains("not checkmate"))
+    // Cropped-out legal destinations remain semantic accessibility actions; full-board legality
+    // is covered through the controller contract. Ordinary play uses visible destinations.
     assertWindow(app, color: color)
-    submit(app, queen: queen, destination: queen)
+    let illegal = color == "white" ? "e5" : "d4"
+    submit(app, queen: queen, destination: illegal)
     reveal(app.staticTexts["chess.feedback"], in: app)
     XCTAssertTrue(app.staticTexts["chess.feedback"].label.contains("not legal"))
-    reveal(app.buttons["chess.piece.\(queen)"], in: app)
-    app.buttons["chess.piece.\(queen)"].tap()
+    reveal(app.buttons["chess.square.\(queen)"], in: app)
+    app.buttons["chess.square.\(queen)"].tap()
     navigate(app, forward: true)
     navigate(app, forward: false)
     XCTAssertFalse(app.buttons["game.start"].exists)
@@ -189,7 +181,7 @@ final class ChessFlowTests: XCTestCase {
     XCTAssertEqual(badgeFrame.midX, viewport.midX, accuracy: 2)
     XCTAssertEqual(badgeFrame.midY, viewport.midY, accuracy: 2)
     XCTAssertTrue(app.staticTexts["foundation.title"].exists)
-    XCTAssertTrue(badge.label.contains("Chess puzzle completed"))
+    XCTAssertTrue(badge.label.contains("Chess completed"))
   }
 
   @MainActor
@@ -201,28 +193,16 @@ final class ChessFlowTests: XCTestCase {
 
   @MainActor
   private func submit(_ app: XCUIApplication, queen: String, destination: String) {
-    let piece = app.buttons["chess.piece.\(queen)"]
+    let piece = app.buttons["chess.square.\(queen)"]
     reveal(piece, in: app)
     piece.tap()
-    let file = app.buttons["chess.file"]
-    reveal(file, in: app)
-    file.tap()
-    let fileOption = app.buttons["File \(destination.prefix(1).uppercased())"]
-    XCTAssertTrue(fileOption.waitForExistence(timeout: 3))
-    fileOption.tap()
-    let rank = app.buttons["chess.rank"]
-    reveal(rank, in: app)
-    rank.tap()
-    let rankOption = app.buttons["Rank \(destination.suffix(1))"]
-    XCTAssertTrue(rankOption.waitForExistence(timeout: 3))
-    rankOption.tap()
-    let submit = app.buttons["chess.submit"]
-    reveal(submit, in: app)
-    XCTAssertTrue(submit.isEnabled)
+    let target = app.buttons["chess.square.\(destination)"]
+    reveal(target, in: app)
+    XCTAssertTrue(target.isEnabled)
     if app.launchArguments.contains("-sidequest-large-text") {
-      capture(app, name: "chess-largest-coordinate-submit")
+      capture(app, name: "chess-largest-board-destination")
     }
-    submit.tap()
+    target.tap()
   }
 
   @MainActor

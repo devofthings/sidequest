@@ -82,16 +82,13 @@ final class EndlessFlowTests: XCTestCase {
     XCTAssertTrue(app.staticTexts["chess.completed"].exists)
     app.nextFeedCard()
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
-    reveal(app.buttons["bubble.replay"], in: app)
-    app.buttons["bubble.replay"].tap()
-    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-    reveal(app.buttons["bubble.fire"], in: app)
-    app.buttons["bubble.fire"].tap()
-    XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
+    XCTAssertFalse(app.buttons["bubble.replay"].exists)
+    XCTAssertFalse(app.bubbleAim.exists)
+    // Completed results remain intact through library presentation and foreground reopening.
     openLibrary(app)
     closeLibrary(app)
-    XCTAssertFalse(app.buttons["game.start"].exists)
-    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
+    XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
+    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 3 of 8")
     XCUIDevice.shared.press(.home)
     app.activate()
     XCTAssertTrue(app.staticTexts["foundation.title"].waitForExistence(timeout: 5))
@@ -213,8 +210,8 @@ final class EndlessFlowTests: XCTestCase {
     for _ in 0..<3 { app.nextFeedCard() }
     app.waitForFeedCard(gameID(3))
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-    reveal(app.buttons["bubble.fire"], in: app)
-    app.buttons["bubble.fire"].tap()
+    reveal(app.bubbleAim, in: app)
+    app.shootBubble()
     waitForBubbleShots(1, in: app)
     XCTAssertFalse(app.staticTexts["bubble.outcome"].exists)
     app.nextFeedCard()
@@ -235,40 +232,21 @@ final class EndlessFlowTests: XCTestCase {
   }
 
   private func solveGeneratedBubble(_ app: XCUIApplication) {
-    // Alternate real route for seed104 avoids narrow endpoint aiming: 0°,0°, then a broad left window.
-    for (index, degrees) in [0, 0, -24].enumerated() {
-      if degrees == -24 {
-        let direct = app.otherElements["bubble.directAim"]
-        reveal(direct, in: app)
-        let boardFrame = app.otherElements["bubble.board"].frame
-        let viewportFrame = app.scrollViews["feed.cardScroll"].frame
-        // Horizontal position 30% of the aiming region selects 24 degrees left.
-        direct.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8)).press(
-          forDuration: 0.01,
-          thenDragTo: direct.coordinate(withNormalizedOffset: CGVector(dx: 0.3, dy: 0.8)),
-          withVelocity: .slow, thenHoldForDuration: 0.1)
-        XCTAssertEqual(app.otherElements["bubble.board"].frame, boardFrame)
-        XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewportFrame)
-        XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 2 of 8")
-      }
-      captureBubbleAim(app, name: "shot-\(index + 1)")
-      let actualLabel = app.otherElements["bubble.directAim"].value as? String ?? ""
-      XCTAssertTrue(actualLabel.hasPrefix("Aim: "), "Missing actual accessible aim value.")
-      if degrees == 0 {
-        XCTAssertEqual(
-          actualLabel, "Aim: 0 degrees", "Reset/default aim must remain unchanged before Fire.")
-      } else {
-        let actual = Int(actualLabel.filter { $0.isNumber || $0 == "-" })
-        XCTAssertTrue(
-          actual.map { (-35 ... -12).contains($0) } ?? false,
-          "The final real aim must reach the audited broad winning window; observed \(actualLabel)."
-        )
-      }
-      XCTAssertEqual(app.selectedFeedCardID, gameID(3))
-      reveal(app.buttons["bubble.fire"], in: app)
-      app.buttons["bubble.fire"].tap()
+    // Seed104 has the audited real three-shot route: 0°, 0°, then 24° left.
+    for (index, horizontal) in [0.5, 0.5, 0.3].enumerated() {
+      reveal(app.bubbleAim, in: app)
+      let boardFrame = app.otherElements["bubble.board"].frame
+      let viewportFrame = app.scrollViews["feed.cardScroll"].frame
+      app.shootBubble(at: horizontal)
       waitForBubbleShots(index + 1, in: app)
-      if index < 2 { XCTAssertFalse(app.staticTexts["bubble.outcome"].exists) }
+      XCTAssertEqual(app.otherElements["bubble.board"].frame, boardFrame)
+      XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewportFrame)
+      XCTAssertEqual(app.selectedFeedCardID, gameID(3))
+      captureBubbleAim(app, name: "shot-\(index + 1)")
+      if index < 2 {
+        XCTAssertEqual(app.bubbleAim.value as? String, "Aim: 0 degrees")
+        XCTAssertFalse(app.staticTexts["bubble.outcome"].exists)
+      }
     }
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
   }

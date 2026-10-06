@@ -167,8 +167,10 @@ struct BubbleShooterView: View {
         .accessibilityLabel("Bubble board")
         .accessibilityValue(boardDescription)
         .accessibilityIdentifier("bubble.board")
-        .accessibilityAction(named: Text("Replay")) {
-          if !isPlaying { controller.replay() }
+        .accessibilityActions {
+          if !isPlaying {
+            Button("Replay") { controller.replay() }
+          }
         }
       BubbleAimControl(controller: controller)
         .frame(height: boardWidth / 10 * BubbleAimMapping.regionHeight)
