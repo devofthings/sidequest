@@ -8,7 +8,7 @@ The agent acts as technical lead: selects ready work, resolves routine implement
 
 The explicit user start lifts the prior app-development hold for the confirmed MVP and its approved tickets. Scheduling will be decided separately; this plan creates no ongoing background execution. Spending and new feature ideas retain their separate approval boundaries.
 
-The lead asks for steering when a choice changes confirmed product scope or a ticket explicitly requires a user decision, such as backend selection, final branding, or the personal enjoyment test. Ask before spending, collecting credentials, or publishing outside authorized scope. Resolve routine code and verification choices autonomously and record development decisions in the applicable AGENTS.md.
+The lead asks for steering when a choice changes confirmed product scope or a ticket explicitly requires a user decision, such as backend selection, final branding, or the personal enjoyment test. Ask before spending, collecting credentials, or publishing outside authorized scope. Resolve routine code and verification choices autonomously. Record significant choices once in their authoritative document, and update scoped AGENTS.md only for durable future-agent rules under the [recording policy](../AGENTS.md#development-decisions-and-scoped-guidance).
 
 ## Readiness checks
 
@@ -32,8 +32,8 @@ The owner's October 5, 2026 instruction authorizes research-led vivid, modern MV
 
 ## Repeatable issue loop
 
-1. Read the latest documents and one issue, verify dependencies, and record its Project status. Check included usage before starting an issue or reviewer.
-2. Implement the bounded criteria on a feature branch, updating scoped guidance and affected installation instructions when behavior changes.
+1. Read the issue and task-relevant guidance, verify dependencies, and record its Project status. Check included usage before starting an issue or reviewer.
+2. Implement the bounded criteria on a feature branch. Update scoped guidance only for durable future-agent constraints, and installation instructions when setup or usage changes.
 3. Run proportionate actual verification. Record commands, results, environment, and checks that could not run; never replace evidence with an agent's assertion.
 4. Follow the complete fresh-agent review/fix loop in REVIEW.md. Preserve head/base-bound evidence; another review is needed after either changes. The user is not the fallback code reviewer.
 5. Merge only after the gates pass. Verify the merge, close only completed issues, update the board, and promote dependents.
@@ -43,7 +43,7 @@ If review cannot run or validation fails, keep the PR open and continue independ
 
 ## Included-usage boundary
 
-Apply the no-credits/no-resets rule and the owner-selected 1% reserve in root AGENTS.md. On October 4, 2026, the owner instructed "lets continue and keep the hold at 1%", superseding the earlier 10% reserve so authorized work can continue with ordinary included usage. Stop when any reported included window has 1% or less remaining, a limit is reached, or the allowance cannot be verified. Check all reported included windows, not just credit availability or a monthly spending allowance. A missing limit is unknown, not unlimited. Leave usage resets untouched and wait for the ordinary allowance renewal; do not switch to API-key billing, another paid provider, or credit-backed execution.
+Apply the no-credits/no-resets rule and the owner-selected 1% reserve in root AGENTS.md. On October 4, 2026, the owner instructed "lets continue and keep the hold at 1%", superseding the earlier 10% reserve so authorized work can continue with ordinary included usage. Checkpoint at 1% or less remaining in any reported included window, unless the owner explicitly changes that checkpoint for the current task. Temporary exceptions belong in issue/PR handoffs, not permanent instructions. Stop when included usage is unavailable or cannot be verified; a checkpoint exception does not authorize paid usage. Check all reported included windows, not just credit availability or a monthly spending allowance. A missing limit is unknown, not unlimited. Leave usage resets untouched and wait for the ordinary allowance renewal; do not switch to API-key billing, another paid provider, or credit-backed execution.
 
 This is an operational guardrail, not a hard billing guarantee. OpenAI documents that available credits can extend usage after included limits, and limits are shared across work. A running turn or another chat can consume allowance between checks. No account billing switch was changed, and the available tools here do not set an account-wide credit-spending prohibition. Before enabling unattended scheduling, verify an account-level configuration that prevents credit fallback. [Official OpenAI pricing and usage guidance](https://learn.chatgpt.com/docs/pricing).
 
