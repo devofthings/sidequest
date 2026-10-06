@@ -508,6 +508,15 @@
         "Sidequest/Games/"
       ]
     },
+    "SidequestUITests/MixedDifficultyFlowTests/testRealCompletionsSurviveCrossBatchEvictionAndQuietRestoration": {
+      "lower_layer": "MixedDifficultyTests proves typed archive compatibility, window retirement and frozen tier restoration; real generated seed201 completions verify native input and cross-batch quiet revisits.",
+      "paths": [
+        "SidequestUITests/MixedDifficultyFlowTests.swift",
+        "Sidequest/App/",
+        "Sidequest/Feed/",
+        "Sidequest/Games/"
+      ]
+    },
     "SidequestUITests/NewsPresentationTests/testOfflineSampleShowsSourceDateLabelAndImportPicker": {
       "lower_layer": "Existing deterministic rule/controller/feed tests cover deep combinations; this native scenario remains required for relevant changes.",
       "paths": [

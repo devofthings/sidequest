@@ -195,3 +195,7 @@ Agent-grill readiness with `/root/celebration_ready` resolved the technical boun
 ## Product-facing README and release cleanup #235
 
 Accepted October 6, 2026: remove every GitHub release and asset, preserving Git tags/source and historical evidence. The release list is now empty; current installation uses source plus local Xcode signing. No new publication is authorized. The owner requests a prettier, promotional README: lead with the selected logo, app experience and truthful playable capabilities, then link installation and disclose contributor details. Keep instructions and verification history in their authoritative docs.
+
+## Largest-text header correction #201
+
+Lead-selected necessary accessibility correction from actual native failure: at accessibility Dynamic Type sizes, use the full-width stable game heading above the same streak/timer/menu action row. Normal horizontal layout remains. Preserve measured title/tier reservations, full readable text and phase-stable viewport geometry; no new action or smaller font is selected. Actual native evidence belongs to the final #201 PR.

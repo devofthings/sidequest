@@ -138,3 +138,7 @@ The first #210 focused native run passed the normal menu/library/reset flow but 
 
 ## Manual and automatic navigation fixtures #84 / #216
 FeedNavigationSupport uses real outward paging swipes, including owned overflow before settlement. These helpers qualify the physical-only daily streak. Historical interaction journeys call launchWithManualFeed, setting the Debug-only disable-auto-continue flag; countdown journeys use the ordinary real three-second behavior. More options has no Previous/Next controls; assistive custom pager actions remain programmatic and nonqualifying. Retained fixture modes do not change production defaults or test gates.
+
+## Final mixed difficulty verification #201
+
+Extended mixed-tier journeys now perform real first input at largest text for all games and real seed201 completions through UI, then cross to game12 to evict every original adapter before quiet frozen restoration. Original audited fixture answers stay in tests; no production answer export or completion injection. Reveal in the owned scroller toward the target and assert selected identity after every gesture. The three-smoke routine gate remains unchanged.

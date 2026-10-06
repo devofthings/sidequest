@@ -84,7 +84,14 @@ final class MixedDifficultyFlowTests: XCTestCase {
         XCTAssertEqual(app.staticTexts["game.difficulty"].label, "Difficulty: Hard")
         let control: XCUIElement
         switch index % 4 {
-        case 0: control = app.buttons["sudoku.number.9"]
+        case 0:
+          let editable = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@ AND value == %@", "sudoku.cell.", "Empty")
+          ).firstMatch
+          let cell = Int(editable.identifier.dropFirst("sudoku.cell.".count)) ?? -1
+          XCTAssertGreaterThanOrEqual(cell, 0)
+          selectSudoku(row: cell / 9 + 1, column: cell % 9 + 1, app: app)
+          control = app.buttons["sudoku.number.9"]
         case 1: control = app.buttons["memory.tile.0"]
         case 2:
           control =
@@ -101,11 +108,116 @@ final class MixedDifficultyFlowTests: XCTestCase {
         XCTAssertTrue(control.isHittable)
         XCTAssertGreaterThanOrEqual(control.frame.height, 44)
         let frame = control.frame
-        if index % 4 == 1 { control.tap() }
+        let heading = app.staticTexts["foundation.title"].frame
+        let viewport = app.scrollViews["feed.pager"].frame
+        XCTAssertTrue(app.frame.contains(heading))
+        XCTAssertTrue(app.frame.contains(app.staticTexts["game.difficulty"].frame))
+        XCTAssertGreaterThanOrEqual(viewport.minY, heading.maxY)
+        switch index % 4 {
+        case 0:
+          control.tap()
+          XCTAssertTrue(app.buttons["sudoku.clear"].isEnabled)
+        case 1:
+          control.tap()
+          XCTAssertTrue(control.label.hasPrefix("Revealed "))
+        case 2:
+          control.tap()
+          XCTAssertEqual(app.staticTexts["chess.selection"].label, "Selected: \(control.label)")
+        default:
+          app.shootBubble(at: 0.6)
+          waitForShots(1, cap: 3, app: app)
+        }
+        XCTAssertEqual(app.staticTexts["foundation.title"].frame, heading)
+        XCTAssertEqual(app.scrollViews["feed.pager"].frame, viewport)
+        capture(app, name: "mixed-hard-largest-\(index)")
         XCTAssertEqual(control.frame.minY, frame.minY, accuracy: 1)
         XCTAssertEqual(app.staticTexts["game.difficulty"].label, "Difficulty: Hard")
       }
       app.nextFeedCard()
+    }
+    app.terminate()
+  }
+
+  func testRealCompletionsSurviveCrossBatchEvictionAndQuietRestoration() {
+    continueAfterFailure = false
+    let app = launch()
+    var ids: [String] = []
+    var tiers: [String] = []
+    let answers = [
+      (0, 4), (4, 9), (10, 9), (14, 8), (20, 8), (24, 5),
+      (30, 9), (34, 8), (40, 8), (50, 5), (60, 8), (70, 5),
+    ]
+    for index in 0..<4 {
+      ids.append(app.selectedFeedCardID)
+      tiers.append(app.staticTexts["game.difficulty"].label)
+      switch index {
+      case 0:
+        for (cell, digit) in answers {
+          let target = app.buttons["sudoku.cell.\(cell)"]
+          XCTAssertEqual(target.value as? String, "Empty")
+          target.tap()
+          app.buttons["sudoku.number.\(digit)"].tap()
+          XCTAssertEqual(target.value as? String, "\(digit)")
+        }
+        XCTAssertEqual(app.staticTexts["sudoku.status"].label, "Sudoku solved!")
+      case 1:
+        for (left, right) in [(0, 2), (1, 6), (3, 4), (5, 7)] {
+          app.buttons["memory.tile.\(left)"].tap()
+          app.buttons["memory.tile.\(right)"].tap()
+          XCTAssertTrue(app.buttons["memory.tile.\(right)"].label.hasPrefix("Matched "))
+        }
+        XCTAssertTrue(app.staticTexts["memory.completed"].exists)
+      case 2:
+        app.buttons["chess.square.c2"].tap()
+        app.buttons["chess.square.b2"].tap()
+        XCTAssertTrue(app.staticTexts["chess.completed"].exists)
+      default:
+        // Audited seed201 route: -55,-60,-60 degrees; interior -59.4 remains winning.
+        for (shot, horizontal) in [0.5 - 55.0 / 120, 0.005, 0.005].enumerated() {
+          reveal(app.bubbleAim, app: app)
+          app.shootBubble(at: horizontal)
+          waitForShots(shot + 1, cap: 8, app: app)
+        }
+        XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
+      }
+      capture(app, name: "mixed-real-completion-\(index)")
+      app.nextFeedCard()
+    }
+    // The owner window is selected ±1. Crossing to game12 evicts all four original adapters.
+    let distant = "game-00000000-0000-0000-0000-000000000201-12"
+    for _ in 0..<10 {
+      if app.selectedFeedCardID == distant { break }
+      app.nextFeedCard()
+    }
+    XCTAssertEqual(app.selectedFeedCardID, distant)
+    for _ in 0..<14 { app.previousFeedCard() }
+    for index in 0..<4 {
+      XCTAssertEqual(app.selectedFeedCardID, ids[index])
+      XCTAssertEqual(app.staticTexts["game.difficulty"].label, tiers[index])
+      XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
+      switch index {
+      case 0:
+        XCTAssertEqual(app.staticTexts["sudoku.status"].label, "Sudoku solved!")
+        for (cell, digit) in answers {
+          XCTAssertEqual(app.buttons["sudoku.cell.\(cell)"].value as? String, "\(digit)")
+        }
+        XCTAssertFalse(app.buttons["sudoku.number.9"].isEnabled)
+      case 1:
+        for tile in 0..<8 {
+          XCTAssertTrue(app.buttons["memory.tile.\(tile)"].label.hasPrefix("Matched "))
+          XCTAssertFalse(app.buttons["memory.tile.\(tile)"].isEnabled)
+        }
+      case 2:
+        XCTAssertTrue(app.staticTexts["chess.completed"].exists)
+        XCTAssertTrue(app.buttons["chess.square.b2"].label.contains("queen"))
+        XCTAssertFalse(app.buttons["chess.square.b2"].isEnabled)
+      default:
+        XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
+        XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 3 of 8")
+        XCTAssertFalse(app.bubbleAim.exists)
+      }
+      capture(app, name: "mixed-restored-completion-\(index)")
+      if index < 3 { app.nextFeedCard() }
     }
     app.terminate()
   }
@@ -119,19 +231,50 @@ final class MixedDifficultyFlowTests: XCTestCase {
   }
 
   private func reveal(_ element: XCUIElement, app: XCUIApplication) {
-    let viewport = app.scrollViews["feed.pager"].frame
+    let selected = app.selectedFeedCardID
     for _ in 0..<12 {
-      if element.exists, element.isHittable,
-        element.frame.minY >= viewport.minY, element.frame.maxY <= viewport.maxY
-      {
-        return
-      }
-      let start = app.coordinate(withNormalizedOffset: .zero).withOffset(
-        CGVector(dx: viewport.minX + 8, dy: viewport.minY + viewport.height * 0.85))
-      let end = app.coordinate(withNormalizedOffset: .zero).withOffset(
-        CGVector(dx: viewport.minX + 8, dy: viewport.minY + viewport.height * 0.25))
-      start.press(forDuration: 0.1, thenDragTo: end)
+      let viewport = app.scrollViews["feed.cardScroll"].frame
+      if element.exists, element.isHittable, viewport.contains(element.frame) { return }
+      let above = element.exists && element.frame.minY < viewport.minY
+      let origin = app.coordinate(withNormalizedOffset: .zero)
+      let start = origin.withOffset(
+        CGVector(
+          dx: viewport.minX + 8,
+          dy: viewport.minY + viewport.height * (above ? 0.35 : 0.75)))
+      let end = origin.withOffset(
+        CGVector(
+          dx: viewport.minX + 8,
+          dy: viewport.minY + viewport.height * (above ? 0.65 : 0.35)))
+      start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
+      XCTAssertEqual(app.selectedFeedCardID, selected, "Owned scrolling must retain the card")
     }
-    XCTFail("Primary control was not reachable within the owned content scroller")
+    capture(app, name: "mixed-reveal-failure")
+    let hierarchy = XCTAttachment(string: app.debugDescription)
+    hierarchy.lifetime = .keepAlways
+    add(hierarchy)
+    XCTFail("Primary control \(element.identifier) not reachable: \(element.frame)")
+  }
+
+  private func selectSudoku(row: Int, column: Int, app: XCUIApplication) {
+    reveal(app.buttons["sudoku.row"], app: app)
+    app.buttons["sudoku.row"].tap()
+    app.buttons["sudoku.row.\(row)"].tap()
+    reveal(app.buttons["sudoku.column"], app: app)
+    app.buttons["sudoku.column"].tap()
+    app.buttons["sudoku.column.\(column)"].tap()
+  }
+
+  private func waitForShots(_ count: Int, cap: Int, app: XCUIApplication) {
+    let committed = XCTNSPredicateExpectation(
+      predicate: NSPredicate(format: "label == %@", "Shots: \(count) of \(cap)"),
+      object: app.staticTexts["bubble.shots"])
+    XCTAssertEqual(XCTWaiter.wait(for: [committed], timeout: 10), .completed)
+  }
+
+  private func capture(_ app: XCUIApplication, name: String) {
+    let attachment = XCTAttachment(screenshot: app.screenshot())
+    attachment.name = name
+    attachment.lifetime = .keepAlways
+    add(attachment)
   }
 }

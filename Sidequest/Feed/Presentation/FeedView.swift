@@ -29,38 +29,8 @@ struct FeedView: View {
 
   var body: some View {
     VStack(spacing: 8) {
-      HStack {
-        GameHeading(kind: selectedGame?.kind, difficulty: selectedGame?.difficulty)
-        Spacer(minLength: 8)
-        if let streak { DailyStreakIndicator(model: streak) }
-        autoContinueControl
-        Menu {
-          if let status = streak?.status { Text(status) }
-          Toggle(
-            "Auto-continue",
-            isOn: Binding(
-              get: { controller.autoContinue.enabled },
-              set: { controller.autoContinue.setEnabled($0) })
-          )
-          .accessibilityIdentifier("feed.autoContinueToggle")
-          if let openNews {
-            Button(action: openNews) {
-              Label("News snapshots", systemImage: "newspaper")
-            }
-            .accessibilityIdentifier("feed.news")
-          }
-        } label: {
-          Label("More options", systemImage: "ellipsis")
-            .labelStyle(.iconOnly)
-            .frame(minWidth: 44, minHeight: 44)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(SidequestButtonStyle(compact: true, neutral: true))
-        .tint(theme.ink)
-        .accessibilityLabel("More options")
-        .accessibilityIdentifier("feed.navigation")
-      }
-      .padding(.horizontal, 16)
+      header
+        .padding(.horizontal, 16)
       if controller.selectedCard != nil {
         VerticalFeedPager(
           controller: controller, request: pageRequest, reduceMotion: reduceMotion,
@@ -130,6 +100,56 @@ struct FeedView: View {
       controller.setSceneActive(phase == .active)
     }
     .onDisappear { controller.setSceneActive(false) }
+  }
+
+  @ViewBuilder
+  private var header: some View {
+    if environment.dynamicTypeSize.isAccessibilitySize {
+      VStack(alignment: .leading, spacing: 8) {
+        GameHeading(kind: selectedGame?.kind, difficulty: selectedGame?.difficulty)
+        HStack {
+          Spacer(minLength: 0)
+          headerActions
+        }
+      }
+    } else {
+      HStack {
+        GameHeading(kind: selectedGame?.kind, difficulty: selectedGame?.difficulty)
+        Spacer(minLength: 8)
+        headerActions
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var headerActions: some View {
+    if let streak { DailyStreakIndicator(model: streak) }
+    autoContinueControl
+    Menu {
+      if let status = streak?.status { Text(status) }
+      Toggle(
+        "Auto-continue",
+        isOn: Binding(
+          get: { controller.autoContinue.enabled },
+          set: { controller.autoContinue.setEnabled($0) })
+      )
+      .accessibilityIdentifier("feed.autoContinueToggle")
+      if let openNews {
+        Button(action: openNews) {
+          Label("News snapshots", systemImage: "newspaper")
+        }
+        .accessibilityIdentifier("feed.news")
+      }
+    } label: {
+      Label("More options", systemImage: "ellipsis")
+        .labelStyle(.iconOnly)
+        .frame(minWidth: 44, minHeight: 44)
+        .contentShape(Rectangle())
+    }
+    .buttonStyle(SidequestButtonStyle(compact: true, neutral: true))
+    .tint(theme.ink)
+    .accessibilityLabel("More options")
+    .accessibilityIdentifier("feed.navigation")
   }
 
   private var autoContinueControl: some View {
