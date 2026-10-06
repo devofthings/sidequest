@@ -44,10 +44,14 @@ Use the [shared presentation palette](../Presentation/AGENTS.md), an opaque roun
 
 ## Selected reading hierarchy #182
 
-The accepted private News reference is translated into a static coral fictional-sample badge, system-serif headline, compact publisher/date group, lavender reading separator, and full-width existing source action. Badge and separator are noninteractive; preserve every attribution, timestamp, source URL, sample-placeholder wording, and selectable excerpt. Reuse existing semantic colors/text styles and the card-owned overflow scroller. Never replace the sample-placeholder link with a fabricated original article or import the drawing's illustrative article into production.
+The accepted private News reference established the system-serif headline, compact publisher/date group, sample badge, reading separator, and full-width source action. Owner-approved #210 supersedes its coral/lavender utility colors with the neutral palette; hierarchy and behavior remain. Badge and separator are noninteractive; preserve every attribution, timestamp, source URL, sample-placeholder wording, and selectable excerpt. Reuse existing semantic colors/text styles and the card-owned overflow scroller. Never replace the sample-placeholder link with a fabricated original article or import the drawing's illustrative article into production.
 
 ## Private live news #213
 
 The owner authorized implementation and personal image testing on October 6. Normal cold launch uses official Tagesschau RSS, without a fictional fallback or loading saved imports. Games prepare independently of network access. Refresh on foreground activation, retaining the last valid in-memory feed on failure; no article/image archive or disk URL cache. Keep saved private imports intact. A successful explicit import selects manual news for the current session and invalidates live refresh; the next launch selects Tagesschau again. Public distribution remains outside this personal test.
 
 Readiness used the project agent-grill with `/root/tagesschau_readiness`: source metadata supplies images/complete credits, so no article scraping is needed. Refresh changes news payloads/pool synchronously in the existing composition, preserving appearance IDs, selection, all game owners/challenges/completions, and cadence count. An initially offline/pending feed is games-only; articles enter at future five-game generation boundaries, without retroactive deck insertion. Bound ephemeral HTTPS transport and external XML/HTML parsing; tests use original offline fixtures. See [private news decisions](../../docs/TAGESSCHAU.md).
+
+## Neutral reading and library utilities #210
+
+Use the [neutral utility palette](../Presentation/AGENTS.md#neutral-app-surroundings-210) for article surfaces, sample badges, separators, source actions, import controls, and library background. Preserve source links/credits/dates, sample semantics, selectable text, fixed image reservations, and import lifecycle. Utility tint follows semantic ink in both appearances.

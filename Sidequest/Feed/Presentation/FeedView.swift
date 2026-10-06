@@ -45,12 +45,13 @@ struct FeedView: View {
             .disabled(!controller.canGoForward || !controller.canNavigate)
             .accessibilityIdentifier("feed.next")
         } label: {
-          Label("More options", systemImage: "ellipsis.circle")
+          Label("More options", systemImage: "ellipsis")
             .labelStyle(.iconOnly)
             .frame(minWidth: 44, minHeight: 44)
             .contentShape(Rectangle())
         }
-        .buttonStyle(SidequestButtonStyle(compact: true, accent: SidequestTheme.lavender))
+        .buttonStyle(SidequestButtonStyle(compact: true, neutral: true))
+        .tint(theme.ink)
         .accessibilityLabel("More options")
         .accessibilityIdentifier("feed.navigation")
       }
@@ -62,7 +63,7 @@ struct FeedView: View {
             AnyView(
               cardContent(card)
                 .foregroundStyle(theme.ink)
-                .background(theme.canvas)
+                .background(theme.utilityCanvas)
                 .environment(\.dynamicTypeSize, environment.dynamicTypeSize)
                 .environment(\.colorScheme, environment.colorScheme)
                 .environment(\.sidequestContrast, contrast)
@@ -96,7 +97,7 @@ struct FeedView: View {
     }
     .padding(.vertical, 8)
     .foregroundStyle(theme.ink)
-    .background(theme.canvas)
+    .background(theme.utilityCanvas)
     .onChange(of: ObjectIdentifier(controller), initial: true) { _, _ in
       pageRequest = nil
       controller.setSceneActive(scenePhase == .active)

@@ -146,6 +146,9 @@ final class IntegrationFlowTests: XCTestCase {
       XCTAssertGreaterThanOrEqual(menu.frame.height + 0.001, 44)
       XCTAssertFalse(app.buttons["feed.news"].exists)
       let headerFrame = menu.frame
+      XCTAssertTrue(app.frame.contains(headerFrame))
+      captureUtilityScreen(
+        app, name: extra.isEmpty ? "Neutral menu normal" : "Neutral menu largest")
       let selected = app.selectedFeedCardID
       reveal(app.sliders["bubble.aim"], in: app)
       app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: 0.65)
@@ -154,6 +157,9 @@ final class IntegrationFlowTests: XCTestCase {
       XCTAssertNotEqual(changedAim.filter { !$0.isWhitespace }, "50%")
       openLibrary(app)
       XCTAssertTrue(app.buttons["news.import"].isHittable)
+      XCTAssertGreaterThanOrEqual(app.buttons["news.import"].frame.height + 0.001, 44)
+      captureUtilityScreen(
+        app, name: extra.isEmpty ? "Neutral library normal" : "Neutral library largest")
       closeLibrary(app)
       XCTAssertEqual(app.selectedFeedCardID, selected)
       XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
@@ -164,6 +170,13 @@ final class IntegrationFlowTests: XCTestCase {
       XCTAssertFalse(app.buttons["feed.news"].exists)
       app.terminate()
     }
+  }
+
+  private func captureUtilityScreen(_ app: XCUIApplication, name: String) {
+    let screenshot = XCTAttachment(screenshot: app.screenshot())
+    screenshot.name = name
+    screenshot.lifetime = .keepAlways
+    add(screenshot)
   }
 
   private func launch(extra: [String] = []) -> XCUIApplication {

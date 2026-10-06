@@ -10,14 +10,20 @@ struct NewsLibraryView: View {
     _model = State(initialValue: model)
     self.automaticallyRestores = automaticallyRestores
   }
+  @Environment(\.colorScheme) private var scheme
+  @Environment(\.colorSchemeContrast) private var contrast
+
+  private var theme: SidequestTheme {
+    SidequestTheme(scheme: scheme, contrast: contrast)
+  }
+
   @State private var showsImporter = false
   @State private var importTask: Task<Void, Never>?
 
   var body: some View {
     VStack(spacing: 12) {
       Button("Import news JSON") { showsImporter = true }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.large)
+        .buttonStyle(SidequestButtonStyle(neutral: true))
         .frame(minHeight: 44)
         .disabled(model.isBusy)
         .accessibilityIdentifier("news.import")
@@ -51,6 +57,9 @@ struct NewsLibraryView: View {
       }
     }
     .padding(.top, 12)
+    .foregroundStyle(theme.ink)
+    .tint(theme.ink)
+    .background(theme.utilityCanvas)
     .task { if automaticallyRestores { await model.restore() } }
     .fileImporter(isPresented: $showsImporter, allowedContentTypes: [.json]) { result in
       switch result {

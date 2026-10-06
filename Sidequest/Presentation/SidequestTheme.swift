@@ -6,6 +6,8 @@ struct SidequestTheme {
   let contrast: ColorSchemeContrast
 
   var canvas: Color { scheme == .dark ? Self.color(0x101427) : Self.color(0xF5F3FF) }
+  var utilityCanvas: Color { scheme == .dark ? Self.color(0x111114) : Self.color(0xF7F7F8) }
+  var utilitySurface: Color { scheme == .dark ? Self.color(0x242424) : .white }
   var surface: Color { scheme == .dark ? Self.color(0x1B2037) : .white }
   var ink: Color { scheme == .dark ? Self.color(0xF8FAFC) : Self.darkInk }
   var secondaryInk: Color { scheme == .dark ? Self.color(0xCBD5E1) : Self.color(0x475569) }
@@ -29,6 +31,7 @@ struct SidequestTheme {
 struct SidequestButtonStyle: ButtonStyle {
   var prominent = false
   var compact = false
+  var neutral = false
   var accent: Color? = nil
   @Environment(\.colorScheme) private var scheme
   @Environment(\.colorSchemeContrast) private var systemContrast
@@ -48,7 +51,10 @@ struct SidequestButtonStyle: ButtonStyle {
       .padding(.vertical, compact ? 0 : (prominent ? 12 : 8))
       .frame(minHeight: 44)
       .foregroundStyle(usesAccent ? SidequestTheme.darkInk : theme.ink)
-      .background(accent ?? (prominent ? SidequestTheme.lime : theme.surface))
+      .background(
+        accent
+          ?? (prominent ? SidequestTheme.lime : (neutral ? theme.utilitySurface : theme.surface))
+      )
       .clipShape(RoundedRectangle(cornerRadius: 16))
       .overlay {
         RoundedRectangle(cornerRadius: 16)

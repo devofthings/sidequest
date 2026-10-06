@@ -59,7 +59,7 @@ Historically, #160 superseded the earlier explicit lime start-button styling; #1
 
 ## Selected shared chrome #182
 
-Use leading heavy rounded game headings and vivid existing-token fills for the existing header actions. Shared styling leaves the prior start cue unchanged; the owner's selected first-game-interaction start behavior is separately owned by [#185](https://github.com/devofthings/sidequest/issues/185). Do not add a new button row, resize the header, or alter the game-content budget when styling. Game adapters own their board/control geometry.
+Use leading heavy rounded game headings. Owner-approved #210 supersedes the vivid header-action fills with neutral utility styling; see shared presentation guidance. Shared styling leaves the prior start cue unchanged; the owner's selected first-game-interaction start behavior is separately owned by [#185](https://github.com/devofthings/sidequest/issues/185). Do not add a new button row, resize the header, or alter the game-content budget when styling. Game adapters own their board/control geometry.
 ## First meaningful interaction #185
 
 The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](../../docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.
@@ -95,3 +95,7 @@ For #201, the header consumes the shared GameHeading with the settled card’s o
 ## Private live-news refresh #213
 
 Refresh a nonempty accepted story pool synchronously through `FeedComposition.refreshNews`. Existing news appearances receive current snapshots in appearance order while retaining their IDs; game values, selection, retained runtime owners, attempts, and archived completions stay unchanged. Reset only the future pool cursor, preserving the partial five-game count and increasing appearance ordinal. Pending generation reads the latest cadence after its preparation await. Empty updates and retired controllers reject adoption, retaining the last good stories. This seam never reconciles a game window or delivers lifecycle visibility effects.
+
+## Neutral header and canvas #210
+
+Use the [neutral utility palette](../Presentation/AGENTS.md#neutral-app-surroundings-210) for the feed backdrop and More options. Preserve the existing 44-point menu footprint, accessibility identifiers, menu actions, heading measurements, and game-owned vivid objects.
