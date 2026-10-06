@@ -101,3 +101,6 @@ The owner selected mixed labeled Easy/Medium/Hard cards. Game-owned foundations 
 ## Static launch refinement #215
 
 Owner authorization on October 6 selects the existing logo on a static system launch screen and removes the custom introduction. Neutral app canvas, direct preparation/feed transition, first meaningful interaction, and live-news refresh remain separate from system-owned launch duration. See [launch policy and verification evidence](design/LAUNCH.md).
+## Approved daily activity refinement #217
+
+The owner authorized a local daily flame/count on October 6, 2026. Solving one game or physically swiping to another card qualifies a calendar day; menu Previous/Next and app opening do not. Consecutive days count once, and a missed day breaks the streak. This is local-only, informational, and distinct from game-success combos. See [selected streak policy](STREAK.md) and [PR #223](https://github.com/devofthings/sidequest/pull/223) for actual verification.

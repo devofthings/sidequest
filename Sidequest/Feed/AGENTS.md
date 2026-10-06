@@ -99,3 +99,6 @@ Refresh a nonempty accepted story pool synchronously through `FeedComposition.re
 ## Neutral header and canvas #210
 
 Use the [neutral utility palette](../Presentation/AGENTS.md#neutral-app-surroundings-210) for the feed backdrop and More options. Preserve the existing 44-point menu footprint, accessibility identifiers, menu actions, heading measurements, and game-owned vivid objects.
+## Daily streak physical-navigation boundary #217
+
+Only a committed physical pager swipe qualifies daily participation. `FeedNavigationOrigin` defaults to programmatic; menu/accessible navigation and future automatic movement remain nonqualifying. Capture physical drag origin in the native pager, clear it after cancellation/programmatic requests, and notify only after accepted adjacent selection/window adoption. Never qualify in view appearance, scrolling text, or demand generation. Header indicator is informational and count/status cannot resize the reserved header geometry; see [streak guidance](../Streak/AGENTS.md).

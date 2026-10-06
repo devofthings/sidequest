@@ -22,11 +22,28 @@ final class FeedComposition {
   private var generationRequest: UUID?
   private var knownIDs = Set<CardID>()
   private var newsCadence: FeedNewsCadence?
+  private var streak: DailyStreakModel?
 
   var cachedAdapterCount: Int { games.count }
   var generatedDescriptors: [CardID: GeneratedGameDescriptor] { descriptors }
 
   deinit { generationTask?.cancel() }
+
+  /// The app retains participation across imports; every newly reconstructed runtime binds once.
+  func installStreak(_ streak: DailyStreakModel) {
+    if let existing = self.streak {
+      precondition(existing === streak)
+      return
+    }
+    self.streak = streak
+    controller?.physicalSwipeDidCommit = { [weak streak] in streak?.qualify() }
+    for game in games.values { bindStreak(to: game.runtime) }
+  }
+
+  private func bindStreak(to runtime: GameRuntime) {
+    guard let streak else { return }
+    runtime.installSuccessfulCompletionHandler { [weak streak] in streak?.qualify() }
+  }
 
   /// Adopt the latest story pool without rebuilding a game or changing feed history identity.
   @discardableResult
@@ -127,6 +144,7 @@ final class FeedComposition {
     }
     completed = archives
     games.merge(staged) { existing, _ in existing }
+    for game in staged.values { bindStreak(to: game.runtime) }
     return .success(games.mapValues(\.runtime))
   }
 

@@ -103,3 +103,6 @@ Readiness used the project agent-grill with `/root/tagesschau_readiness`: source
 ## Neutral library navigation #210
 
 Apply semantic primary tint to the news-library NavigationStack so the existing Done action follows the neutral utility direction in both appearances. The retained modal availability/reset owner and toolbar footprint remain unchanged. See [utility styling](../Presentation/AGENTS.md#neutral-app-surroundings-210).
+## Local daily participation #217
+
+The app retains one DailyStreakModel across feed/import replacements. Bind accepted physical-navigation and newly composed/reconstructed runtime success exactly once per owner; do not rebind game lifecycle effects. Opening, foreground refresh and calendar rollover update display only. Debug streak fixtures use a separate suite and clear only their own key under an explicit reset flag. See [streak guidance](../Streak/AGENTS.md).

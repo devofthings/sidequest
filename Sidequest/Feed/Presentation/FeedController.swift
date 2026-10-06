@@ -10,6 +10,7 @@ final class FeedController {
   private(set) var runtimes: [CardID: GameRuntime]
   let isEndless: Bool
   var replenishmentMessage: String?
+  @ObservationIgnored var physicalSwipeDidCommit: (() -> Void)?
   @ObservationIgnored var windowDidChange:
     (([FeedCard]) -> Result<[CardID: GameRuntime], FeedWindowError>)?
   @ObservationIgnored var demandDidChange: (() -> Void)?
@@ -92,22 +93,23 @@ final class FeedController {
     }
   }
 
-  func commitPage(at index: Int) {
+  func commitPage(at index: Int, origin: FeedNavigationOrigin = .programmatic) {
     guard selection.cards.indices.contains(index), let current = selection.index,
       abs(index - current) == 1
     else { return }
-    move(by: index - current)
+    move(by: index - current, origin: origin)
   }
 
   func next() { move(by: 1) }
   func previous() { move(by: -1) }
 
-  private func move(by offset: Int) {
+  private func move(by offset: Int, origin: FeedNavigationOrigin = .programmatic) {
     guard canNavigate else { return }
     var candidate = selection
     guard candidate.move(by: offset), adoptWindow(candidate) else { return }
     selection = candidate
     updateVisibility()
+    if origin == .physicalSwipe { physicalSwipeDidCommit?() }
   }
 
   private func updateVisibility() {
@@ -128,3 +130,6 @@ final class FeedController {
 
 /// Feed presentation knows only whether an adjacent game window can be prepared.
 enum FeedWindowError: Error { case preparationFailed }
+
+/// Programmatic/menu movement never qualifies the owner-selected physical-swipe streak.
+enum FeedNavigationOrigin { case physicalSwipe, programmatic }
