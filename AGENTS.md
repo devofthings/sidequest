@@ -1,6 +1,6 @@
 # Working on Sidequest
 
-Sidequest is a private SwiftUI iPhone app mixing news and four quick games. Issues own task scope, the [Project](https://github.com/users/devofthings/projects/1) owns status, and repository documents own product decisions. The owner has authorized implementation, feature-branch commits/pushes, and gated PR merging. Public distribution, spending, and recurring runs require separate authorization.
+Sidequest is a private SwiftUI iPhone app mixing news and four quick games. Issues own task scope, the [Improvements Project](https://github.com/users/devofthings/projects/2) owns new work status, and repository documents own product decisions. The owner has authorized implementation, feature-branch commits/pushes, and gated PR merging. Public distribution, spending, and recurring runs require separate authorization.
 
 ## Context for new chats
 

@@ -40,4 +40,4 @@ Work starts with a scoped GitHub issue. An agent implements it on a feature bran
 
 Pure game rules stay separate from the interface and replaceable adapters through hexagonal architecture. Build, signing, and verification instructions live in [Installation](docs/INSTALL.md); the iOS deployment target is 17.0, with actual execution evidence documented there.
 
-[Project board](https://github.com/users/devofthings/projects/1) · [Issues](https://github.com/devofthings/sidequest/issues) · [MVP brief](docs/MVP.md)
+[Improvements board](https://github.com/users/devofthings/projects/2) · [Issues](https://github.com/devofthings/sidequest/issues) · [MVP brief](docs/MVP.md)

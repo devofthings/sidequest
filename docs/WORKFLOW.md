@@ -1,6 +1,8 @@
 # Task workflow
 
-The private [Sidequest MVP board](https://github.com/users/devofthings/projects/1) tracks workflow status. GitHub Issues own acceptance criteria and dependencies; repository documents own product scope and decisions.
+The private [Sidequest Improvements board](https://github.com/users/devofthings/projects/2) tracks post-MVP ideas and approved new work. The [MVP board](https://github.com/users/devofthings/projects/1) retains completed delivery history. GitHub Issues own acceptance criteria and dependencies; repository documents own product scope and decisions.
+
+The owner selected this split on October 6, 2026. Route new proposals and future approved improvements to the Improvements board; preserve existing issues, comments, and dependencies when moving a card. Ideas remain unselected until explicit owner agreement, including research, design, and prototypes. Creating the new board does not approve its proposals.
 
 | Status | Meaning |
 | --- | --- |
@@ -25,7 +27,7 @@ After each resolved issue or ticket, follow the [chat checkpoint](../AGENTS.md#a
 
 ## Project updates
 
-Publish a native status update in the private [Sidequest Project](https://github.com/users/devofthings/projects/1) after a completed ticket or a related batch of milestones, when a blocker or required decision meaningfully changes, and at an active work-session handoff if there is new progress. The lead coordinates one update for parallel work. Read the latest update and issue/PR state before posting; skip duplicate or unchanged reports.
+Publish a native status update in the private Project containing the affected work after a completed ticket or a related batch of milestones, when a blocker or required decision meaningfully changes, and at an active work-session handoff if there is new progress. The lead coordinates one update for parallel work. Read the latest update and issue/PR state before posting; skip duplicate or unchanged reports.
 
 Keep each update short and understandable without reading agent logs. Include the date, completed work with evidence links, work in progress or review, next planned action, blockers or required user decisions, and actual validation/build availability. Distinguish proposals, open PRs, and planned checks from merged work and verified results. Describe planned actions as pending when dependencies or another explicit hold apply; avoid invented deadlines or unsupported completion percentages.
 
