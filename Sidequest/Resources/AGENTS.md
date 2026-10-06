@@ -16,4 +16,4 @@ StartupLogo remains byte-identical to the selected AppIcon. LaunchScreen.storybo
 
 ## Historical launch canvas #181
 
-#181 used light #F5F3FF/dark #101427 to match the earlier shared palette. #215 supersedes that launch treatment with the neutral adaptive canvas above; game palette values remain independent and unchanged. Preserve historical release/source evidence without applying the old colors or shared-palette coupling to current launch resources.
+#181 used light #F5F3FF/dark #101427 to match the earlier shared palette. #215 superseded that launch treatment with a neutral adaptive canvas; #226 now selects full-screen logo purple for the system launch only; game palette values remain independent and unchanged. Preserve historical release/source evidence without applying the old colors or shared-palette coupling to current launch resources.
