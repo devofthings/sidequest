@@ -23,11 +23,27 @@ final class StaticLaunchBundleTests: XCTestCase {
     XCTAssertEqual(image.center.x, view.bounds.midX, accuracy: 0.5)
     XCTAssertEqual(image.center.y, view.bounds.midY, accuracy: 0.5)
     let color = try XCTUnwrap(UIColor(named: "LaunchCanvas", in: .main, compatibleWith: nil))
-    XCTAssertEqual(
+    assertComponents(
       color.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
-      UIColor(red: 247 / 255, green: 247 / 255, blue: 248 / 255, alpha: 1))
-    XCTAssertEqual(
+      expected: (247, 247, 248))
+    assertComponents(
       color.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark)),
-      UIColor(red: 17 / 255, green: 17 / 255, blue: 20 / 255, alpha: 1))
+      expected: (17, 17, 20))
+  }
+
+  private func assertComponents(
+    _ color: UIColor, expected: (CGFloat, CGFloat, CGFloat),
+    file: StaticString = #filePath, line: UInt = #line
+  ) {
+    var red: CGFloat = 0
+    var green: CGFloat = 0
+    var blue: CGFloat = 0
+    var alpha: CGFloat = 0
+    XCTAssertTrue(
+      color.getRed(&red, green: &green, blue: &blue, alpha: &alpha), file: file, line: line)
+    XCTAssertEqual(red, expected.0 / 255, accuracy: 1 / 255, file: file, line: line)
+    XCTAssertEqual(green, expected.1 / 255, accuracy: 1 / 255, file: file, line: line)
+    XCTAssertEqual(blue, expected.2 / 255, accuracy: 1 / 255, file: file, line: line)
+    XCTAssertEqual(alpha, 1, accuracy: 1 / 255, file: file, line: line)
   }
 }
