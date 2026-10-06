@@ -25,6 +25,22 @@ final class FirstInteractionFlowTests: XCTestCase {
       let headerY = header.frame.minY
       let navigationFrame = app.buttons["feed.navigation"].frame
       XCTAssertFalse(app.buttons["game.start"].exists)
+      let anchorID =
+        fixture.contains("sudoku")
+        ? "sudoku.cell.0"
+        : fixture.contains("memory")
+          ? "memory.tile.0"
+          : fixture.contains("chess")
+            ? "chess.square.\(fixture.contains("black") ? "a4" : "e8")"
+            : "bubble.board"
+      let anchor = app.descendants(matching: .any).matching(identifier: anchorID).firstMatch
+      XCTAssertTrue(anchor.exists)
+      let boardFrame = anchor.frame
+      let viewport = app.scrollViews["feed.cardScroll"].frame
+      let capture = XCTAttachment(screenshot: app.screenshot())
+      capture.name = "centered-\(fixture)"
+      capture.lifetime = .keepAlways
+      add(capture)
       if fixture.contains("sudoku") {
         let cell = app.buttons["sudoku.cell.2"]
         XCTAssertTrue(cell.isEnabled)
@@ -50,6 +66,9 @@ final class FirstInteractionFlowTests: XCTestCase {
           app.staticTexts["bubble.feedback"].label == "Shot in flight."
             || app.staticTexts["bubble.shots"].label != "Shots: 0 of 8")
       }
+      XCTAssertEqual(
+        anchor.frame, boardFrame, "First interaction must not shift the centered board")
+      XCTAssertEqual(app.scrollViews["feed.cardScroll"].frame, viewport)
       XCTAssertEqual(header.frame.minY, headerY)
       XCTAssertEqual(app.buttons["feed.navigation"].frame, navigationFrame)
       app.nextFeedCard()

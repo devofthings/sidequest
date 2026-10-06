@@ -4,7 +4,7 @@ Approved bug [#108](https://github.com/devofthings/sidequest/issues/108) correct
 
 ## Presentation boundary
 
-Issue #88 extends the same top anchor to actual visible inactive previews. The explicit **Tap to play** action sits above the board and keeps its measured footprint after starting; see [preview guidance](GAME_PREVIEWS.md). News, pager geometry, game rules, attempt lifecycle, and five-game/news cadence remain unchanged.
+Historical issue #88 extended the top anchor to actual visible inactive previews. Owner-approved #232 supersedes that anchor with centered fitting content, as described below. The explicit **Tap to play** action sits above the board and keeps its measured footprint after starting; see [preview guidance](GAME_PREVIEWS.md). News, pager geometry, game rules, attempt lifecycle, and five-game/news cadence remain unchanged.
 
 `StableGameRegion` reserves the natural size of the supported text alternatives at the current width, font, and Dynamic Type setting. Reservations are invisible, inaccessible, and noninteractive. Actual messages remain fully readable; no fixed text height, line limit, or shrinking text hides feedback. When changing message copy or styling, update the corresponding reservation. The existing card scroller owns overflow on smaller viewports and at larger text sizes.
 
@@ -36,3 +36,9 @@ Normal Chess uses a square extent with44-point cell floors and compact action ro
 
 
 For #138, Bubble uses the remaining rectangular budget for its10:12 board (minimum200-point width), independently reserving instructions, concise/full accessible status, all feedback and Slider/action rows at the actual content width. The narrow normal action width supersedes only the historical full-width Fire footprint;44-point minimum height and frozen Replay position remain. Accessibility sizes keep natural stacked overflow. The lead's seven-case normal/large Chess focused runs passed on small and larger simulators before PR143 merged; this evidence does not certify Bubble or all-game parent135. New whole-frame containment and same-offset Start tests must be executed on the changed source.
+
+## Centered game content #232
+
+On October 6, the owner requested games aligned in the middle of the screen. Center the complete stable game composition—its instructions, board, and reserved feedback/input—in the available native card viewport below the fixed app header. The shared GameCardLayout uses the actual viewport as a minimum height, preserving intrinsic content height. Taller content starts at its normal top padding and remains scrollable; it is not centered into a clipped negative offset. News and header alignment stay unchanged.
+
+Agent-grill readiness with `/root/center232_ready` confirmed the existing native host's fixed-width/minimum-height constraints and viewport environment are the appropriate boundary. StableGameRegion reservations remain required: input, text feedback, and completion must not change the centered group's natural extent or shift its board. No game rules, lifecycle, preview activation, budget, or gesture arbitration changes are selected. Planned verification uses actual hosted fitting/overflow geometry, real all-four first actions and stable board/header frames, plus existing largest-text Chess reachability/completion.
