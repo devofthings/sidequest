@@ -757,6 +757,22 @@
         "Sidequest/Resources/"
       ]
     },
+    "SidequestUITests/VariedCelebrationFlowTests/testFourStylesAfterRealChessWinsKeepTheBoardStable": {
+      "lower_layer": "Deterministic accepted-success selection and cancellation tests cover lifecycle; actual real Chess wins certify varied readable overlays, stable geometry and system Reduce Motion.",
+      "paths": [
+        "Sidequest/Games/Presentation/",
+        "Sidequest/App/",
+        "SidequestUITests/VariedCelebrationFlowTests.swift"
+      ]
+    },
+    "SidequestUITests/VariedCelebrationFlowTests/testLargestTextStylesWithActualReduceMotion": {
+      "lower_layer": "Deterministic accepted-success selection and cancellation tests cover lifecycle; actual real Chess wins certify varied readable overlays, stable geometry and system Reduce Motion.",
+      "paths": [
+        "Sidequest/Games/Presentation/",
+        "Sidequest/App/",
+        "SidequestUITests/VariedCelebrationFlowTests.swift"
+      ]
+    },
     "SidequestUITests/VariedChessFlowTests/testFiveSquareBothColorsFitAndCoordinateMoves": {
       "lower_layer": "Validated original catalog/domain/controller tests cover standard legal moves, metadata, and lifecycle; actual 3\u00d73/5\u00d75 rendering, full coordinate controls, and largest text require this focused native flow.",
       "paths": [

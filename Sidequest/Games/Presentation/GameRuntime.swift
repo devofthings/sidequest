@@ -16,6 +16,7 @@ final class GameRuntime {
   // A held preview tap must not survive a hide/reset followed by a new visible preview.
   private(set) var visibilityIdentity = UUID()
   private(set) var celebrationAttempt: GameAttemptID?
+  private(set) var celebrationStyle: SuccessCelebrationStyle?
   @ObservationIgnored private var celebrationTask: Task<Void, Never>?
   @ObservationIgnored private var lastInteractionTime: TimeInterval?
   @ObservationIgnored private let interactionHaptic: @MainActor () -> Void
@@ -23,6 +24,7 @@ final class GameRuntime {
   @ObservationIgnored private let successHaptic: @MainActor () -> Void
   @ObservationIgnored private let celebrationDelay: @MainActor @Sendable () async throws -> Void
   @ObservationIgnored private var successfulCompletionHandler: (() -> Void)?
+  @ObservationIgnored private var chooseCelebration: () -> SuccessCelebrationStyle = { .pop }
   @ObservationIgnored private var effectHandler: ((GameLifecycleEffect) -> Void)?
   @ObservationIgnored private let makeAttemptID: () -> GameAttemptID
 
@@ -61,9 +63,13 @@ final class GameRuntime {
   }
 
   /// Participation observes accepted success without taking ownership of lifecycle effects.
-  func installSuccessfulCompletionHandler(_ handler: @escaping () -> Void) {
+  func installSuccessfulCompletionHandler(
+    _ handler: @escaping () -> Void,
+    chooseCelebration: @escaping () -> SuccessCelebrationStyle = { .pop }
+  ) {
     precondition(successfulCompletionHandler == nil, "A runtime has one success observer.")
     successfulCompletionHandler = handler
+    self.chooseCelebration = chooseCelebration
   }
 
   func setVisible(_ visible: Bool) {
@@ -142,6 +148,8 @@ final class GameRuntime {
     // A synchronous stop handler may hide or retire this card before feedback is delivered.
     guard successful, !isRetired, isVisible, phase == .completed(attempt) else { return }
     successfulCompletionHandler?()
+    guard !isRetired, isVisible, phase == .completed(attempt) else { return }
+    celebrationStyle = chooseCelebration()
     celebrationAttempt = attempt
     let delay = celebrationDelay
     celebrationTask = Task { @MainActor [weak self] in
@@ -152,6 +160,7 @@ final class GameRuntime {
         self.celebrationAttempt == attempt, self.phase == .completed(attempt)
       else { return }
       self.celebrationAttempt = nil
+      self.celebrationStyle = nil
       self.celebrationTask = nil
     }
     successHaptic()
@@ -161,6 +170,7 @@ final class GameRuntime {
     celebrationTask?.cancel()
     celebrationTask = nil
     celebrationAttempt = nil
+    celebrationStyle = nil
   }
 
   /// Evicted owners never accept visibility, replay, or input again, even through stale views.

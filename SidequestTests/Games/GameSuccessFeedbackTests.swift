@@ -5,6 +5,62 @@ import XCTest
 
 @MainActor
 final class GameSuccessFeedbackTests: XCTestCase {
+  func testSequenceCyclesWithoutRepeatsAndOnlyAcceptedWinsConsumeStyles() throws {
+    var sequence = SuccessCelebrationSequence(startingWith: .orbit)
+    let expected: [SuccessCelebrationStyle] = [.orbit, .rays, .pop, .confetti, .orbit]
+    var chosen = 0
+    for style in expected {
+      let runtime = runtime()
+      runtime.installSuccessfulCompletionHandler(
+        {},
+        chooseCelebration: {
+          chosen += 1
+          return sequence.next()
+        })
+      let attempt = try start(runtime)
+      runtime.complete(attempt: GameAttemptID(), successful: true)
+      XCTAssertNil(runtime.celebrationStyle)
+      runtime.complete(attempt: attempt, successful: true)
+      XCTAssertEqual(runtime.celebrationStyle, style)
+      runtime.complete(attempt: attempt, successful: true)
+      XCTAssertEqual(runtime.celebrationStyle, style)
+      runtime.setVisible(false)
+      XCTAssertNil(runtime.celebrationStyle)
+      runtime.setVisible(true)
+      runtime.complete(attempt: attempt, successful: true)
+      XCTAssertNil(runtime.celebrationStyle)
+    }
+    XCTAssertEqual(chosen, expected.count)
+    let failed = runtime()
+    failed.installSuccessfulCompletionHandler(
+      {},
+      chooseCelebration: {
+        chosen += 1
+        return sequence.next()
+      })
+    failed.complete(attempt: try start(failed), successful: false)
+    XCTAssertNil(failed.celebrationStyle)
+    XCTAssertEqual(chosen, expected.count)
+  }
+
+  func testSuccessObserverCanHideBeforeStyleSelection() throws {
+    let runtime = runtime()
+    var selections = 0
+    runtime.installSuccessfulCompletionHandler(
+      { [weak runtime] in
+        runtime?.setVisible(false)
+      },
+      chooseCelebration: {
+        selections += 1
+        return .confetti
+      })
+    runtime.complete(attempt: try start(runtime), successful: true)
+    XCTAssertEqual(selections, 0)
+    XCTAssertNil(runtime.celebrationAttempt)
+    XCTAssertNil(runtime.celebrationStyle)
+    XCTAssertNil(runtime.celebrationStyle)
+  }
+
   func testVisibleSuccessEmitsOnceAndRevisitDoesNotReplay() throws {
     var haptics = 0
     let runtime = runtime(successHaptic: { haptics += 1 })
@@ -15,11 +71,13 @@ final class GameSuccessFeedbackTests: XCTestCase {
     runtime.complete(attempt: attempt, successful: true)
     runtime.setVisible(false)
     XCTAssertNil(runtime.celebrationAttempt)
+    XCTAssertNil(runtime.celebrationStyle)
     runtime.setVisible(true)
     runtime.start()
     runtime.complete(attempt: attempt, successful: true)
     XCTAssertEqual(haptics, 1)
     XCTAssertNil(runtime.celebrationAttempt)
+    XCTAssertNil(runtime.celebrationStyle)
     XCTAssertEqual(runtime.phase, .completed(attempt))
   }
 
@@ -35,6 +93,7 @@ final class GameSuccessFeedbackTests: XCTestCase {
     runtime.complete(attempt: fresh, successful: false)
     XCTAssertEqual(runtime.phase, .completed(fresh))
     XCTAssertNil(runtime.celebrationAttempt)
+    XCTAssertNil(runtime.celebrationStyle)
     XCTAssertEqual(haptics, 0)
   }
 
@@ -52,6 +111,7 @@ final class GameSuccessFeedbackTests: XCTestCase {
     runtime.setVisible(true)
     runtime.complete(attempt: attempt, successful: true)
     XCTAssertNil(runtime.celebrationAttempt)
+    XCTAssertNil(runtime.celebrationStyle)
     XCTAssertEqual(haptics, 0)
   }
 
@@ -68,6 +128,7 @@ final class GameSuccessFeedbackTests: XCTestCase {
       let attempt = try start(runtime)
       runtime.complete(attempt: attempt, successful: true)
       XCTAssertNil(runtime.celebrationAttempt)
+      XCTAssertNil(runtime.celebrationStyle)
       XCTAssertEqual(haptics, 0)
     }
   }
@@ -82,6 +143,7 @@ final class GameSuccessFeedbackTests: XCTestCase {
     gate.resume(1)
     await gate.waitUntilReturned(1)
     XCTAssertNil(runtime.celebrationAttempt)
+    XCTAssertNil(runtime.celebrationStyle)
     XCTAssertEqual(runtime.phase, .completed(attempt))
   }
 
@@ -90,23 +152,29 @@ final class GameSuccessFeedbackTests: XCTestCase {
     var haptics = 0
     let runtime = runtime(
       successHaptic: { haptics += 1 }, celebrationDelay: { try await gate.pause() })
+    var sequence = SuccessCelebrationSequence(startingWith: .confetti)
+    runtime.installSuccessfulCompletionHandler({}, chooseCelebration: { sequence.next() })
     let old = try start(runtime)
     runtime.complete(attempt: old, successful: true)
+    XCTAssertEqual(runtime.celebrationStyle, .confetti)
     await gate.waitUntilStarted(1)
     XCTAssertTrue(runtime.replay())
     XCTAssertNil(runtime.celebrationAttempt)
+    XCTAssertNil(runtime.celebrationStyle)
     guard case .playing(let fresh) = runtime.phase else { return XCTFail("Expected replay") }
     runtime.complete(attempt: fresh, successful: true)
     await gate.waitUntilStarted(2)
     gate.resume(1)
     await gate.waitUntilReturned(1)
     XCTAssertEqual(runtime.celebrationAttempt, fresh)
+    XCTAssertEqual(runtime.celebrationStyle, .orbit)
     XCTAssertEqual(haptics, 2)
     runtime.setVisible(false)
     gate.resume(2)
     await gate.waitUntilReturned(2)
     runtime.setVisible(true)
     XCTAssertNil(runtime.celebrationAttempt)
+    XCTAssertNil(runtime.celebrationStyle)
     XCTAssertEqual(runtime.phase, .completed(fresh))
     XCTAssertEqual(haptics, 2)
   }
@@ -128,6 +196,7 @@ final class GameSuccessFeedbackTests: XCTestCase {
     XCTAssertEqual(result, .completed)
     XCTAssertGreaterThanOrEqual(began.duration(to: ContinuousClock.now), .seconds(1))
     XCTAssertNil(runtime.celebrationAttempt)
+    XCTAssertNil(runtime.celebrationStyle)
     XCTAssertEqual(runtime.phase, .completed(attempt))
   }
 
@@ -140,6 +209,7 @@ final class GameSuccessFeedbackTests: XCTestCase {
     gate.resume(1)
     await gate.waitUntilReturned(1)
     XCTAssertNil(runtime.celebrationAttempt)
+    XCTAssertNil(runtime.celebrationStyle)
     XCTAssertEqual(runtime.phase, .completed(attempt))
   }
 
