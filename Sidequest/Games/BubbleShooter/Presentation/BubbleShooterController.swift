@@ -85,6 +85,14 @@ final class BubbleShooterController {
     if aimLease == lease { aimLease = nil }
   }
 
+  /// Only a current originating drag can release a shot; canceled/stale gestures cannot fire.
+  @discardableResult
+  func releaseAimDrag(_ lease: BubbleAimLease, degrees: Double) -> Bool {
+    guard updateAimDrag(lease, degrees: degrees) else { return false }
+    aimLease = nil
+    return fire()
+  }
+
   @discardableResult
   func fire(visibility: UUID? = nil) -> Bool {
     guard canAimOrFire, runtime.prepareInteraction(visibility: visibility), canFire, let attempt

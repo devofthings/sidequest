@@ -37,7 +37,6 @@ struct BubbleShooterView: View {
       board.frame(width: boardWidth, height: boardWidth * 1.2)
       status
       feedback
-      actionControls
     }
     .frame(maxWidth: .infinity)
     .background(alignment: .top) {
@@ -47,7 +46,6 @@ struct BubbleShooterView: View {
           instructions
           status
           feedback
-          actionControls
         }
         .frame(maxWidth: .infinity)
         .hidden().accessibilityHidden(true).allowsHitTesting(false)
@@ -66,7 +64,7 @@ struct BubbleShooterView: View {
   }
 
   private var instructions: some View {
-    Text("Drag to aim · Fire to shoot")
+    Text("Drag to aim · Release to shoot")
       .font(.callout).fixedSize(horizontal: false, vertical: true)
   }
 
@@ -149,57 +147,6 @@ struct BubbleShooterView: View {
     }
   }
 
-  private var actionControls: some View {
-    Group {
-      if compact {
-        HStack(spacing: 12) {
-          aimSlider
-          fireButton.frame(width: 96)
-        }
-      } else {
-        VStack(spacing: 12) {
-          aimSlider
-          fireButton
-        }
-      }
-    }
-  }
-
-  private var aimSlider: some View {
-    StableGameRegion {
-      slider.disabled(true)
-    } content: {
-      if isPlaying { slider }
-    }
-  }
-
-  private var slider: some View {
-    BubbleAimSlider(controller: controller)
-      .frame(minWidth: 44, minHeight: 44)
-      .disabled(!controller.canAimOrFire)
-  }
-
-  private var fireButton: some View {
-    let visibility = controller.runtime.visibilityIdentity
-    return Button {
-      if isPlaying { controller.fire(visibility: visibility) } else { controller.replay() }
-    } label: {
-      StableGameRegion {
-        ZStack {
-          Text("Fire")
-          Text("Replay")
-        }
-      } content: {
-        Text(isPlaying ? "Fire" : "Replay")
-      }
-      .frame(maxWidth: .infinity, minHeight: 44)
-    }
-    .buttonStyle(SidequestButtonStyle(prominent: true, compact: true))
-    .controlSize(.large).frame(minHeight: 44)
-    .disabled(isPlaying ? !controller.canAimOrFire : !controller.runtime.isVisible)
-    .accessibilityIdentifier(isPlaying ? "bubble.fire" : "bubble.replay")
-  }
-
   private var isPlaying: Bool { controller.game.outcome == .playing }
 
   private var feedbackMessages: [String] {
@@ -220,6 +167,11 @@ struct BubbleShooterView: View {
         .accessibilityLabel("Bubble board")
         .accessibilityValue(boardDescription)
         .accessibilityIdentifier("bubble.board")
+        .accessibilityActions {
+          if !isPlaying {
+            Button("Replay") { controller.replay() }
+          }
+        }
       BubbleAimControl(controller: controller)
         .frame(height: boardWidth / 10 * BubbleAimMapping.regionHeight)
         .accessibilityHidden(!isPlaying)

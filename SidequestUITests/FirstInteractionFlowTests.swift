@@ -18,7 +18,7 @@ final class FirstInteractionFlowTests: XCTestCase {
         ? "Sudoku"
         : fixture.contains("memory")
           ? "Memory"
-          : fixture.contains("chess") ? "Chess puzzle" : "Bubble shooter"
+          : fixture.contains("chess") ? "Chess" : "Bubble shooter"
       let header = app.staticTexts["foundation.title"]
       XCTAssertEqual(header.label, title)
       XCTAssertEqual(app.staticTexts.matching(NSPredicate(format: "label == %@", title)).count, 1)
@@ -39,17 +39,16 @@ final class FirstInteractionFlowTests: XCTestCase {
         card.tap()
         XCTAssertFalse(card.label.contains("Hidden"))
       } else if fixture.contains("chess") {
-        let queen = app.buttons.matching(
-          NSPredicate(format: "identifier BEGINSWITH %@", "chess.piece.")
-        ).firstMatch
+        let queen = app.buttons["chess.square.\(fixture.contains("black") ? "b3" : "g6")"]
         XCTAssertTrue(queen.isEnabled)
         queen.tap()
         XCTAssertTrue(app.staticTexts["chess.selection"].label.hasPrefix("Selected:"))
       } else {
-        XCTAssertTrue(app.sliders["bubble.aim"].isEnabled)
-        app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: 0.75)
-        XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-        XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
+        XCTAssertTrue(app.bubbleAim.isEnabled)
+        app.shootBubble(at: 0.75)
+        XCTAssertTrue(
+          app.staticTexts["bubble.feedback"].label == "Shot in flight."
+            || app.staticTexts["bubble.shots"].label != "Shots: 0 of 8")
       }
       XCTAssertEqual(header.frame.minY, headerY)
       XCTAssertEqual(app.buttons["feed.navigation"].frame, navigationFrame)
@@ -69,10 +68,8 @@ final class FirstInteractionFlowTests: XCTestCase {
       } else if fixture.contains("chess") {
         XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
       } else {
-        let resetValue = (app.sliders["bubble.aim"].value as? String)?.filter {
-          !$0.isWhitespace
-        }
-        XCTAssertEqual(resetValue, "50%")
+        XCTAssertEqual(app.bubbleAim.value as? String, "Aim: 0 degrees")
+        XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
       }
       app.terminate()
     }
@@ -83,15 +80,15 @@ final class FirstInteractionFlowTests: XCTestCase {
     let app = XCUIApplication()
     app.launchArguments = ["-sidequest-bubble-fixtures"]
     app.launch()
-    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 10))
+    XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 10))
     XCTAssertFalse(app.buttons["game.start"].exists)
-    app.buttons["bubble.fire"].tap()
+    app.shootBubble()
     XCTAssertTrue(
       app.staticTexts["bubble.feedback"].label == "Shot in flight."
         || app.staticTexts["bubble.shots"].label != "Shots: 0 of 8")
     XCUIDevice.shared.press(.home)
     app.activate()
-    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
   }
 }

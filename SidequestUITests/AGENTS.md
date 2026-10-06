@@ -1,5 +1,9 @@
 # UI tests
 
+## Direct game input
+
+Owner-approved #206/#207 supersede historical Slider, Fire, visible Replay, piece-list, coordinate-menu, and Submit requirements below. Use real board piece/destination taps for Chess and lower-board drag/release for Bubble. Query `bubble.directAim` across element types because its assistive traits include adjustable and button. Release outside the owned region must consume no shot; an inside release fires exactly once. Preserve existing native cases and inventory classifications, full containment, stable geometry, genuine win/loss, background/skip cancellation, and completed revisits. Replay and legal destinations outside a crop retain controller/unit coverage and semantic assistive actions; they do not add visible controls or a board-tap replay feature.
+
 This filesystem-synchronized root belongs only to `SidequestUITests`. XCTest UI tests launch and interact with the running app through accessibility. The foundation verifies launch and the accessible heading; critical news/game/start/skip flows are added when their owning issues implement them. Follow [verification policy](../AGENTS.md#verification).
 
 Load deterministic fictional inputs from this target's `Fixtures`, isolated from app and unit-test resources. Target-wide `*.md` exclusion keeps scoped guidance out of products. Mark UI-test methods `@MainActor` instead of changing the pure-core isolation defaults.
@@ -124,7 +128,7 @@ MixedDifficultyTests covers actual classified generation, all-tier scheduling, l
 
 ## Largest-text celebration metric #203
 
-Memory's largest-text centering check observes the accessible text ink, not the surrounding decorative capsule. Actual #197 execution measured a 2.17-point horizontal ink offset despite a visually centered capsule. Use a named 3-point horizontal ink tolerance only; retain 2-point vertical tolerance, full containment, and unchanged board/control geometry. Await the real center condition with an XCTest predicate instead of sampling an unfinished spring or inserting sleeps. Actual rerun and exact-head gates remain required; the original failed run stays failed.
+Shared success-badge centering checks observe the accessible text ink, not the surrounding decorative capsule; apply the same metric to Memory and Chess. Actual #197 execution measured a 2.17-point horizontal ink offset despite a visually centered capsule. Use a named 3-point horizontal ink tolerance only; retain 2-point vertical tolerance, full containment, and unchanged board/control geometry. Await the real center condition with an XCTest predicate instead of sampling an unfinished spring or inserting sleeps. Actual rerun and exact-head gates remain required; the original failed run stays failed.
 
 ## Neutral utility rendering #210
 

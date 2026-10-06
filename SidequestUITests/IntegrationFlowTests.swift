@@ -43,17 +43,17 @@ final class IntegrationFlowTests: XCTestCase {
     waitForMessage("Imported 0 news snapshots.", in: app)
     closeLibrary(app)
     XCTAssertEqual(app.selectedFeedCardID, "sample-game-bubbleShooter")
-    XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
+    XCTAssertTrue(app.bubbleAim.isEnabled)
     app.terminate()
     app.launch()
-    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 10))
+    XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 10))
     XCTAssertEqual(app.selectedFeedCardID, "sample-game-bubbleShooter")
   }
 
   func testLibraryAndBackgroundCancelPendingRealGamesAndCompletionSurvivesCancel() {
     let app = launch(extra: ["-sidequest-bubble-slow-shot"])
-    reveal(app.buttons["bubble.fire"], in: app)
-    app.buttons["bubble.fire"].tap()
+    reveal(app.bubbleAim, in: app)
+    app.shootBubble()
     XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
     openLibrary(app)
     XCUIDevice.shared.press(.home)
@@ -63,10 +63,8 @@ final class IntegrationFlowTests: XCTestCase {
     XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     for (index, aim) in [0.5, 0.5, 0.65].enumerated() {
-      reveal(app.sliders["bubble.aim"], in: app)
-      app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: aim)
-      reveal(app.buttons["bubble.fire"], in: app)
-      app.buttons["bubble.fire"].tap()
+      reveal(app.bubbleAim, in: app)
+      app.shootBubble(at: aim)
       let committed = expectation(
         for: NSPredicate(format: "label == %@", "Shots: \(index + 1) of 8"),
         evaluatedWith: app.staticTexts["bubble.shots"])
@@ -150,11 +148,11 @@ final class IntegrationFlowTests: XCTestCase {
       captureUtilityScreen(
         app, name: extra.isEmpty ? "Neutral menu normal" : "Neutral menu largest")
       let selected = app.selectedFeedCardID
-      reveal(app.sliders["bubble.aim"], in: app)
-      app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: 0.65)
-      let changedAim = app.sliders["bubble.aim"].value as? String ?? ""
+      reveal(app.bubbleAim, in: app)
+      app.cancelBubbleShot(at: 0.65)
+      let changedAim = app.bubbleAim.value as? String ?? ""
       XCTAssertFalse(changedAim.isEmpty)
-      XCTAssertNotEqual(changedAim.filter { !$0.isWhitespace }, "50%")
+      XCTAssertNotEqual(changedAim, "Aim: 0 degrees")
       openLibrary(app)
       XCTAssertTrue(app.buttons["news.import"].isHittable)
       XCTAssertGreaterThanOrEqual(app.buttons["news.import"].frame.height + 0.001, 44)
@@ -163,8 +161,8 @@ final class IntegrationFlowTests: XCTestCase {
       closeLibrary(app)
       XCTAssertEqual(app.selectedFeedCardID, selected)
       XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-      let aimValue = app.sliders["bubble.aim"].value as? String ?? ""
-      XCTAssertEqual(aimValue.filter { !$0.isWhitespace }, "50%")
+      let aimValue = app.bubbleAim.value as? String ?? ""
+      XCTAssertEqual(aimValue, "Aim: 0 degrees")
       XCTAssertEqual(menu.frame, headerFrame)
       XCTAssertTrue(menu.isHittable)
       XCTAssertFalse(app.buttons["feed.news"].exists)
@@ -185,7 +183,7 @@ final class IntegrationFlowTests: XCTestCase {
     app.launchArguments =
       ["-sidequest-integration-fixtures", "-sidequest-integration-reset"] + extra
     app.launch()
-    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 10))
+    XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 10))
     return app
   }
 
@@ -250,7 +248,7 @@ final class IntegrationFlowTests: XCTestCase {
       if element.exists && element.isHittable && scroll.frame.contains(element.frame) { return }
       let needsUp = element.frame.midY > scroll.frame.midY
       let isBubbleControl =
-        element.identifier == "bubble.aim" || element.identifier == "bubble.fire"
+        element.identifier == "bubble.directAim"
       let horizontal: CGFloat
       if isBubbleControl {
         // Bubble owns lower-board drags; use its outer gap, clear of the scroll indicator.

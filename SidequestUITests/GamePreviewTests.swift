@@ -139,13 +139,9 @@ final class GamePreviewTests: XCTestCase {
     case .memory: completeBoard(app, fixture: fixture)
     case .chessWhite, .chessBlack:
       (fixture == .chessWhite ? ["f7", "g6"] : ["b3", "c2"]).map {
-        app.buttons["chess.piece.\($0)"]
-      } + [app.buttons["chess.file"], app.buttons["chess.rank"], app.buttons["chess.submit"]]
-    case .bubble:
-      [
-        app.otherElements["bubble.directAim"], app.sliders["bubble.aim"],
-        app.buttons["bubble.fire"],
-      ]
+        app.buttons["chess.square.\($0)"]
+      }
+    case .bubble: [app.bubbleAim]
     }
   }
 
@@ -203,11 +199,12 @@ final class GamePreviewTests: XCTestCase {
     case .chessWhite, .chessBlack:
       XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
       XCTAssertFalse(app.staticTexts["chess.feedback"].exists)
-      XCTAssertFalse(app.buttons["chess.submit"].isEnabled)
+      XCTAssertFalse(app.buttons["chess.submit"].exists)
     case .bubble:
-      XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
-      XCTAssertTrue(app.sliders["bubble.aim"].isEnabled)
-      XCTAssertEqual(app.otherElements["bubble.directAim"].value as? String, "Aim: 0 degrees")
+      XCTAssertTrue(app.bubbleAim.isEnabled)
+      XCTAssertFalse(app.buttons["bubble.fire"].exists)
+      XCTAssertFalse(app.sliders["bubble.aim"].exists)
+      XCTAssertEqual(app.bubbleAim.value as? String, "Aim: 0 degrees")
       XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
       XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Clear matching groups of three.")
     }
@@ -229,7 +226,7 @@ final class GamePreviewTests: XCTestCase {
     case .memory: app.buttons["memory.tile.11"]
     case .chessWhite: app.buttons["chess.square.h5"]
     case .chessBlack: app.buttons["chess.square.d1"]
-    case .bubble: app.buttons["bubble.fire"]
+    case .bubble: app.bubbleAim
     }
   }
 
@@ -251,9 +248,9 @@ final class GamePreviewTests: XCTestCase {
     switch fixture {
     case .sudoku: app.buttons["sudoku.cell.2"]
     case .memory: app.buttons["memory.tile.0"]
-    case .chessWhite: app.buttons["chess.piece.g6"]
-    case .chessBlack: app.buttons["chess.piece.b3"]
-    case .bubble: app.otherElements["bubble.directAim"]
+    case .chessWhite: app.buttons["chess.square.g6"]
+    case .chessBlack: app.buttons["chess.square.b3"]
+    case .bubble: app.bubbleAim
     }
   }
 
@@ -262,14 +259,14 @@ final class GamePreviewTests: XCTestCase {
     switch fixture {
     case .sudoku: element = app.buttons["sudoku.cell.2"]
     case .memory: element = app.buttons["memory.tile.0"]
-    case .chessWhite: element = app.buttons["chess.piece.g6"]
-    case .chessBlack: element = app.buttons["chess.piece.b3"]
-    case .bubble: element = app.otherElements["bubble.directAim"]
+    case .chessWhite: element = app.buttons["chess.square.g6"]
+    case .chessBlack: element = app.buttons["chess.square.b3"]
+    case .bubble: element = app.bubbleAim
     }
     reveal(element, in: app)
     XCTAssertTrue(element.isEnabled)
     if fixture == .bubble {
-      element.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.2)).tap()
+      app.cancelBubbleShot(at: 0.7)
     } else {
       element.tap()
     }

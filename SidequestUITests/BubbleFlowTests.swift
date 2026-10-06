@@ -21,19 +21,15 @@ final class BubbleFlowTests: XCTestCase {
     XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
     assertCompletedAimAbsent(app)
-    reveal(app.buttons["bubble.replay"], in: app)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height + 0.001, 44)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.width + 0.001, 44)
-    XCTAssertTrue(app.buttons["bubble.replay"].isEnabled)
-    app.buttons["bubble.replay"].tap()
-    XCTAssertFalse(app.staticTexts["bubble.outcome"].exists)
+    XCTAssertFalse(app.buttons["bubble.replay"].exists)
+    // Replay remains an assistive custom action; ordinary completed revisits keep the result.
+    app.terminate()
+    app.launch()
+    XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     XCTAssertTrue(
       (app.otherElements["bubble.board"].value as? String)?.hasPrefix("9 bubbles remaining.")
         == true)
-    XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
-    XCTAssertTrue(app.otherElements["bubble.directAim"].exists)
-    XCTAssertTrue(app.sliders["bubble.aim"].exists)
   }
 
   @MainActor
@@ -45,31 +41,27 @@ final class BubbleFlowTests: XCTestCase {
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You lost")
     assertCompletedAimAbsent(app)
     XCTAssertFalse(app.staticTexts["game.successCelebration"].exists)
-    reveal(app.buttons["bubble.replay"], in: app)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.height + 0.001, 44)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.replay"].frame.width + 0.001, 44)
-    XCTAssertTrue(app.buttons["bubble.replay"].isEnabled)
-    app.buttons["bubble.replay"].tap()
-    XCTAssertFalse(app.staticTexts["bubble.outcome"].exists)
+    XCTAssertFalse(app.buttons["bubble.replay"].exists)
+    app.terminate()
+    app.launch()
+    XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-    XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
-    XCTAssertTrue(app.otherElements["bubble.directAim"].exists)
-    XCTAssertTrue(app.sliders["bubble.aim"].exists)
+    XCTAssertTrue(app.bubbleAim.isEnabled)
   }
 
   @MainActor
   func testSkippingAnActiveShotReturnsToPreviewAndCannotCommitLate() {
     let app = launch(slowShot: true)
     start(app)
-    reveal(app.buttons["bubble.fire"], in: app)
-    app.buttons["bubble.fire"].tap()
+    reveal(app.bubbleAim, in: app)
+    app.shootBubble()
     XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
-    XCTAssertFalse(app.buttons["bubble.fire"].isEnabled)
+    XCTAssertFalse(app.bubbleAim.isEnabled)
     app.nextFeedCard()
     app.previousFeedCard()
-    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 5))
-    XCTAssertTrue(app.buttons["bubble.fire"].exists)
-    XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
+    XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 5))
+    XCTAssertTrue(app.bubbleAim.exists)
+    XCTAssertTrue(app.bubbleAim.isEnabled)
     start(app)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     // Finishing a fresh current shot also proves the old animation never commits into this attempt.
@@ -82,61 +74,43 @@ final class BubbleFlowTests: XCTestCase {
     let app = launch(largeText: true)
     start(app)
     let position = app.selectedFeedCardID
-    let direct = app.otherElements["bubble.directAim"]
+    let direct = app.bubbleAim
     reveal(direct, in: app)
     let directFrame = direct.frame
     let boardFrame = app.otherElements["bubble.board"].frame
-    direct.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1)).press(
-      forDuration: 0.01,
-      thenDragTo: direct.coordinate(withNormalizedOffset: CGVector(dx: 0.75, dy: 0.4)),
-      withVelocity: .slow, thenHoldForDuration: 0.1)
-    XCTAssertNotEqual(
-      observedAim(in: app), "Aim: 0 degrees")
+    XCTAssertGreaterThanOrEqual(directFrame.width, 44)
+    XCTAssertGreaterThanOrEqual(directFrame.height, 44)
+    app.shootBubble(at: 0.75)
+    waitForShots(1, in: app)
+    XCTAssertNotEqual(observedAim(in: app), "Aim: 0 degrees")
     XCTAssertEqual(direct.frame, directFrame)
     XCTAssertEqual(app.otherElements["bubble.board"].frame, boardFrame)
-    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-    XCTAssertEqual(app.selectedFeedCardID, position)
-    reveal(app.sliders["bubble.aim"], in: app)
-    XCTAssertTrue(app.sliders["bubble.aim"].isHittable)
-    app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: 0.75)
-    XCTAssertNotEqual(
-      observedAim(in: app), "Aim: 0 degrees")
-    XCTAssertEqual(app.selectedFeedCardID, position)
-    reveal(app.buttons["bubble.fire"], in: app)
-    XCTAssertTrue(app.buttons["bubble.fire"].isHittable)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.fire"].frame.height + 0.001, 44)
-    app.buttons["bubble.fire"].tap()
-    waitForShots(1, in: app)
     XCTAssertEqual(app.selectedFeedCardID, position)
     app.nextFeedCard()
     app.previousFeedCard()
-    reveal(app.buttons["bubble.fire"], in: app)
-    XCTAssertTrue(app.buttons["bubble.fire"].isHittable)
+    reveal(app.bubbleAim, in: app)
+    XCTAssertTrue(app.bubbleAim.isHittable)
+    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
   }
 
   @MainActor
   func testNativeHorizontalAndDiagonalAimDragsDoNotPage() {
     let app = launch()
     start(app)
-    let slider = app.sliders["bubble.aim"]
-    reveal(slider, in: app)
+    let aim = app.bubbleAim
+    reveal(aim, in: app)
     let position = app.selectedFeedCardID
-    let center = slider.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
-    let right = slider.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5))
-    center.press(
-      forDuration: 0.01, thenDragTo: right, withVelocity: .slow, thenHoldForDuration: 0.1)
-    let afterHorizontal = observedAim(in: app)
-    XCTAssertNotEqual(afterHorizontal, "Aim: 0 degrees")
-    XCTAssertEqual(app.selectedFeedCardID, position)
-    slider.adjust(toNormalizedSliderPosition: 0.5)
-    let diagonal = slider.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.65))
-    center.press(
-      forDuration: 0.01, thenDragTo: diagonal, withVelocity: .slow, thenHoldForDuration: 0.1)
-    XCTAssertNotEqual(
-      observedAim(in: app), "Aim: 0 degrees")
-    XCTAssertEqual(app.selectedFeedCardID, position)
-    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-    fire(app, aim: 0.5, expectedShots: 1)
+    for (count, endpoint) in [CGVector(dx: 0.8, dy: 0.5), CGVector(dx: 0.2, dy: 0.65)].enumerated()
+    {
+      let center = aim.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+      center.press(
+        forDuration: 0.01, thenDragTo: aim.coordinate(withNormalizedOffset: endpoint),
+        withVelocity: .slow, thenHoldForDuration: 0.1)
+      waitForShots(count + 1, in: app)
+      XCTAssertNotEqual(observedAim(in: app), "Aim: 0 degrees")
+      XCTAssertEqual(app.selectedFeedCardID, position)
+    }
+    fire(app, aim: 0.5, expectedShots: 3)
     XCTAssertEqual(app.selectedFeedCardID, position)
   }
 
@@ -144,64 +118,44 @@ final class BubbleFlowTests: XCTestCase {
   func testDirectAimHorizontalVerticalAndDiagonalStayInTheirOwnedAreaUntilFire() {
     let app = launch()
     start(app)
-    let aim = app.otherElements["bubble.directAim"]
+    let aim = app.bubbleAim
     let board = app.otherElements["bubble.board"]
-    let slider = app.sliders["bubble.aim"]
-    let fire = app.buttons["bubble.fire"]
     let viewport = app.scrollViews["feed.cardScroll"]
-    XCTAssertTrue(aim.exists)
     XCTAssertGreaterThanOrEqual(aim.frame.width + 0.001, 44)
     XCTAssertGreaterThanOrEqual(aim.frame.height + 0.001, 44)
-    let frames = [board.frame, aim.frame, slider.frame, fire.frame, viewport.frame]
+    let frames = [board.frame, aim.frame, viewport.frame]
     let position = app.selectedFeedCardID
-    for (name, from, to) in [
+    for (index, gesture) in [
       ("launcher-origin-horizontal", CGVector(dx: 0.5, dy: 0.8), CGVector(dx: 0.8, dy: 0.8)),
       ("horizontal", CGVector(dx: 0.5, dy: 0.2), CGVector(dx: 0.8, dy: 0.2)),
       ("vertical", CGVector(dx: 0.8, dy: 0.1), CGVector(dx: 0.8, dy: 0.5)),
       ("diagonal", CGVector(dx: 0.5, dy: 0.1), CGVector(dx: 0.2, dy: 0.4)),
-    ] {
-      aim.coordinate(withNormalizedOffset: from).tap()
-      let initialAngle = observedAim(in: app)
-      aim.coordinate(withNormalizedOffset: from).press(
-        forDuration: 0.01, thenDragTo: aim.coordinate(withNormalizedOffset: to),
-        withVelocity: .slow, thenHoldForDuration: 0.1)
-      capture(app, name: "direct-aim-\(name)")
-      if name == "vertical" {
-        XCTAssertEqual(observedAim(in: app), initialAngle)
-      } else {
-        XCTAssertNotEqual(observedAim(in: app), initialAngle)
+    ].enumerated() {
+      let (name, from, to) = gesture
+      if index > 0 {
+        app.nextFeedCard()
+        app.previousFeedCard()
+        XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
       }
+      aim.coordinate(withNormalizedOffset: from).press(
+        forDuration: 0.01,
+        thenDragTo: aim.coordinate(withNormalizedOffset: to), withVelocity: .slow,
+        thenHoldForDuration: 0.1)
+      waitForShots(1, in: app)
+      capture(app, name: "direct-release-\(name)")
+      let expectedDegrees = Int(((to.dx - 0.5) * 120).rounded())
+      XCTAssertEqual(observedAim(in: app), "Aim: \(expectedDegrees) degrees")
       XCTAssertFalse(app.staticTexts["bubble.angle"].exists)
       XCTAssertEqual(app.selectedFeedCardID, position)
-      XCTAssertEqual([board.frame, aim.frame, slider.frame, fire.frame, viewport.frame], frames)
-      XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-      XCTAssertTrue(fire.isEnabled)
+      XCTAssertEqual([board.frame, aim.frame, viewport.frame], frames)
     }
-    // Straight direct aim preserves the real first-shot solution, but release never shoots.
-    aim.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1)).tap()
-    XCTAssertEqual(observedAim(in: app), "Aim: 0 degrees")
-    fire.tap()
-    waitForShots(1, in: app)
-    XCTAssertEqual(app.selectedFeedCardID, position)
-    XCTAssertEqual([board.frame, aim.frame, slider.frame, fire.frame, viewport.frame], frames)
-    // Page through measured card padding, outside both native aiming controls. A fixed 5% x
-    // can intersect the full-width Slider after the simplified chrome changes its vertical position.
-    let pager = app.scrollViews["feed.pager"]
-    let x = max(pager.frame.minX + 4, min(aim.frame.minX, slider.frame.minX, fire.frame.minX) - 8)
-    let startPoint = CGPoint(x: x, y: pager.frame.minY + pager.frame.height * 0.85)
-    XCTAssertTrue(pager.frame.contains(startPoint))
-    XCTAssertFalse(aim.frame.contains(startPoint))
-    XCTAssertFalse(slider.frame.contains(startPoint))
-    XCTAssertFalse(fire.frame.contains(startPoint))
-    let origin = pager.coordinate(withNormalizedOffset: .zero)
-    origin.withOffset(CGVector(dx: x - pager.frame.minX, dy: pager.frame.height * 0.85)).press(
-      forDuration: 0.01,
-      thenDragTo: origin.withOffset(
-        CGVector(dx: x - pager.frame.minX, dy: pager.frame.height * 0.05)),
-      withVelocity: .fast, thenHoldForDuration: 0.1)
+    // A release beyond the narrow area cancels without consuming another shot.
+    app.cancelBubbleShot()
+    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 1 of 8")
+    app.nextFeedCard()
     waitForPosition("sample-news-garden", in: app)
     app.previousFeedCard()
-    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
   }
 
@@ -209,16 +163,13 @@ final class BubbleFlowTests: XCTestCase {
   func testBackgroundDuringDirectAimedFlightReturnsToFrozenPreview() {
     let app = launch(slowShot: true)
     start(app)
-    let aim = app.otherElements["bubble.directAim"]
-    aim.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.2)).tap()
-    XCTAssertNotEqual(
-      observedAim(in: app), "Aim: 0 degrees")
-    app.buttons["bubble.fire"].tap()
+    app.shootBubble(at: 0.7)
+    XCTAssertNotEqual(observedAim(in: app), "Aim: 0 degrees")
     XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
-    XCTAssertFalse(app.sliders["bubble.aim"].isEnabled)
+    XCTAssertFalse(app.bubbleAim.isEnabled)
     XCUIDevice.shared.press(.home)
     app.activate()
-    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 5))
     XCTAssertEqual(observedAim(in: app), "Aim: 0 degrees")
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     start(app)
@@ -238,8 +189,8 @@ final class BubbleFlowTests: XCTestCase {
     XCTAssertEqual(app.selectedFeedCardID, "sample-game-bubbleShooter")
     XCTAssertFalse(app.buttons["game.start"].exists)
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-    reveal(app.buttons["bubble.fire"], in: app)
-    app.buttons["bubble.fire"].tap()
+    reveal(app.bubbleAim, in: app)
+    app.shootBubble()
     XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
     let pager = app.scrollViews["feed.pager"]
     for _ in 0..<3 {
@@ -250,8 +201,8 @@ final class BubbleFlowTests: XCTestCase {
     pager.swipeDown(velocity: .fast)
     waitForPosition("sample-game-bubbleShooter", in: app)
     XCTAssertFalse(app.buttons["game.start"].exists)
-    XCTAssertTrue(app.buttons["bubble.fire"].exists)
-    XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
+    XCTAssertTrue(app.bubbleAim.exists)
+    XCTAssertTrue(app.bubbleAim.isEnabled)
     start(app)
     fire(app, aim: 0.5, expectedShots: 1)
   }
@@ -262,13 +213,12 @@ final class BubbleFlowTests: XCTestCase {
     SystemAccessibilitySupport.withReduceMotion {
       let app = launch(slowShot: true)
       start(app)
-      let direct = app.otherElements["bubble.directAim"]
-      direct.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1)).tap()
+      app.cancelBubbleShot()
       XCTAssertEqual(
         observedAim(in: app), "Aim: 0 degrees")
       XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-      reveal(app.buttons["bubble.fire"], in: app)
-      app.buttons["bubble.fire"].tap()
+      reveal(app.bubbleAim, in: app)
+      app.shootBubble()
       XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
       let first = app.otherElements["bubble.board"].screenshot()
       let second = app.otherElements["bubble.board"].screenshot()
@@ -284,7 +234,7 @@ final class BubbleFlowTests: XCTestCase {
 
   @MainActor
   private func observedAim(in app: XCUIApplication) -> String {
-    let value = app.otherElements["bubble.directAim"].value as? String ?? ""
+    let value = app.bubbleAim.value as? String ?? ""
     XCTAssertTrue(
       value.hasPrefix("Aim: "), "Missing named accessible aim value: \(app.debugDescription)")
     return value
@@ -307,7 +257,7 @@ final class BubbleFlowTests: XCTestCase {
     diagnostic.name = "bubble-completed-aim-hierarchy"
     diagnostic.lifetime = .keepAlways
     add(diagnostic)
-    XCTAssertFalse(app.otherElements["bubble.directAim"].exists)
+    XCTAssertFalse(app.bubbleAim.exists)
     XCTAssertFalse(app.sliders["bubble.aim"].exists)
     XCTAssertEqual(directControls.count, 0)
     XCTAssertEqual(sliders.count, 0)
@@ -338,20 +288,20 @@ final class BubbleFlowTests: XCTestCase {
       + (slowShot ? ["-sidequest-bubble-slow-shot"] : [])
       + (largeText ? ["-sidequest-large-text"] : [])
     app.launch()
-    XCTAssertTrue(app.buttons["bubble.fire"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 5))
     XCTAssertTrue(app.staticTexts["Bubble shooter"].exists)
-    XCTAssertTrue(app.buttons["bubble.fire"].exists)
-    XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
+    XCTAssertTrue(app.bubbleAim.exists)
+    XCTAssertTrue(app.bubbleAim.isEnabled)
     return app
   }
 
   @MainActor
   private func start(_ app: XCUIApplication) {
-    let direct = app.otherElements["bubble.directAim"]
+    let direct = app.bubbleAim
     reveal(direct, in: app)
-    direct.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.2)).tap()
+    app.cancelBubbleShot(at: 0.7)
     XCTAssertNotEqual(observedAim(in: app), "Aim: 0 degrees")
-    direct.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+    app.cancelBubbleShot()
     XCTAssertEqual(observedAim(in: app), "Aim: 0 degrees")
     XCTAssertTrue(app.otherElements["bubble.board"].waitForExistence(timeout: 5))
     XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
@@ -359,25 +309,16 @@ final class BubbleFlowTests: XCTestCase {
 
   @MainActor
   private func fire(_ app: XCUIApplication, aim: Double, expectedShots: Int) {
-    reveal(app.sliders["bubble.aim"], in: app)
-    if aim != 0.5 { app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: 0.9) }
-    app.sliders["bubble.aim"].adjust(toNormalizedSliderPosition: aim)
-    if aim != 0.5 {
-      let angle = Double(
-        observedAim(in: app).filter {
-          $0.isNumber || $0 == "-"
-        })
-      XCTAssertNotNil(angle)
-      XCTAssertTrue(
-        (6...30).contains(angle ?? -60), "Actual aiming must reach the demonstrated winning window."
-      )
-    }
-    reveal(app.buttons["bubble.fire"], in: app)
-    XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.fire"].frame.height + 0.001, 44)
-    XCTAssertGreaterThanOrEqual(app.buttons["bubble.fire"].frame.width + 0.001, 44)
-    app.buttons["bubble.fire"].tap()
+    reveal(app.bubbleAim, in: app)
+    XCTAssertGreaterThanOrEqual(app.bubbleAim.frame.height + 0.001, 44)
+    XCTAssertGreaterThanOrEqual(app.bubbleAim.frame.width + 0.001, 44)
+    app.shootBubble(at: aim)
     waitForShots(expectedShots, in: app)
+    if aim != 0.5, app.bubbleAim.exists {
+      let angle = Double(observedAim(in: app).filter { $0.isNumber || $0 == "-" })
+      XCTAssertTrue(
+        (6...30).contains(angle ?? -60), "Real touch must reach the winning aim window.")
+    }
   }
 
   @MainActor

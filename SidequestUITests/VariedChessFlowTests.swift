@@ -38,10 +38,7 @@ final class VariedChessFlowTests: XCTestCase {
       let mate = color == "white" ? "a5" : "a4"
       let outside = color == "white" ? "h1" : "h8"
       let board = assertWindow(app, size: 5, color: color)
-      let controls = [
-        "chess.piece.\(queen)", "chess.file", "chess.rank", "chess.submit",
-      ]
-      .map { app.buttons[$0] }
+      let controls = [app.buttons["chess.square.\(queen)"]]
       let viewport = app.scrollViews["feed.cardScroll"].frame
       for target in board + controls {
         assertTarget(target, viewport: viewport)
@@ -51,7 +48,8 @@ final class VariedChessFlowTests: XCTestCase {
       let frames = stableBoard.map(\.frame)
       XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
       XCTAssertFalse(app.buttons["chess.square.\(outside)"].exists)
-      submit(app, queen: queen, destination: outside)
+      let nonmate = color == "white" ? "e2" : "e7"
+      submit(app, queen: queen, destination: nonmate)
       XCTAssertTrue(app.staticTexts["chess.feedback"].label.contains("not checkmate"))
       XCTAssertTrue(app.buttons["chess.square.\(queen)"].label.contains("queen"))
       XCTAssertEqual(stableBoard.map(\.frame), frames)
@@ -95,23 +93,14 @@ final class VariedChessFlowTests: XCTestCase {
 
   @MainActor
   private func submit(_ app: XCUIApplication, queen: String, destination: String) {
-    for (identifier, option) in [
-      ("chess.piece.\(queen)", nil),
-      ("chess.file", "File \(destination.prefix(1).uppercased())"),
-      ("chess.rank", "Rank \(destination.suffix(1))"),
-      ("chess.submit", nil),
-    ] {
-      let control = app.buttons[identifier]
+    for coordinate in [queen, destination] {
+      let control = app.buttons["chess.square.\(coordinate)"]
       reveal(control, in: app)
       assertTarget(control, viewport: app.scrollViews["feed.cardScroll"].frame)
       XCTAssertTrue(control.isEnabled)
       control.tap()
-      if identifier == "chess.piece.\(queen)" {
+      if coordinate == queen {
         XCTAssertTrue(app.staticTexts["chess.selection"].label.contains(queen))
-      }
-      if let option {
-        XCTAssertTrue(app.buttons[option].waitForExistence(timeout: 3))
-        app.buttons[option].tap()
       }
     }
   }

@@ -98,35 +98,29 @@ final class StableGameLayoutTests: XCTestCase {
     let app = launch("-sidequest-chess-white-fixture", largeText: largeText)
     // An unselected square avoids measuring the selected square's decorative outline.
     let board = app.buttons["chess.square.e8"]
-    let file = app.buttons["chess.file"]
-    let submit = app.buttons["chess.submit"]
     let queen = app.buttons["chess.square.g6"]
+    let destination = app.buttons["chess.square.g7"]
+    let targets = [board, app.buttons["chess.square.h5"]]
     reveal(queen, in: app)
-    let selectionBaseline = frames([board, file, submit], in: app)
+    let selectionBaseline = frames(targets, in: app)
     queen.tap()
     XCTAssertTrue(app.staticTexts["chess.selection"].label.contains("g6"))
-    assertStable(
-      [board, file, submit], baseline: selectionBaseline, in: app, state: "Chess selection")
-    chooseDestination(rank: 6, in: app)
-    reveal(submit, in: app)
-    let feedbackBaseline = frames([board, file, submit], in: app)
-    submit.tap()
+    assertStable(targets, baseline: selectionBaseline, in: app, state: "Chess selection")
+    let illegal = app.buttons["chess.square.e5"]
+    reveal(illegal, in: app)
+    let feedbackBaseline = frames(targets, in: app)
+    illegal.tap()
     XCTAssertEqual(
       app.staticTexts["chess.feedback"].label, "That move is not legal. Try another move.")
-    assertStable(
-      [board, file, submit], baseline: feedbackBaseline, in: app, state: "Chess feedback")
-    let piece = app.buttons["chess.piece.g6"]
-    reveal(piece, in: app)
-    piece.tap()
-    chooseDestination(rank: 7, in: app)
-    reveal(submit, in: app)
-    let completionBaseline = frames([board, file, submit], in: app)
-    submit.tap()
+    assertStable(targets, baseline: feedbackBaseline, in: app, state: "Chess feedback")
+    reveal(queen, in: app)
+    queen.tap()
+    reveal(destination, in: app)
+    let completionBaseline = frames(targets, in: app)
+    destination.tap()
     XCTAssertEqual(app.staticTexts["chess.completed"].label, "Checkmate! White wins.")
-    assertStable(
-      [board, file, submit], baseline: completionBaseline, in: app, state: "Chess completion")
-    XCTAssertFalse(file.isEnabled)
-    XCTAssertFalse(submit.isEnabled)
+    assertStable(targets, baseline: completionBaseline, in: app, state: "Chess completion")
+    XCTAssertFalse(destination.isEnabled)
     reveal(app.staticTexts["chess.completed"], in: app)
     capture(app, name: "stable-chess-\(largeText ? "largest" : "normal")")
   }
@@ -134,39 +128,32 @@ final class StableGameLayoutTests: XCTestCase {
   private func checkBubble(largeText: Bool) {
     let app = launch("-sidequest-bubble-fixtures", largeText: largeText, slowShot: true)
     let board = app.otherElements["bubble.board"]
-    let aim = app.sliders["bubble.aim"]
-    let fire = app.buttons["bubble.fire"]
-    reveal(fire, in: app)
-    let feedbackBaseline = frames([board, aim, fire], in: app)
-    fire.tap()
+    let aim = app.bubbleAim
+    reveal(aim, in: app)
+    let feedbackBaseline = frames([board, aim], in: app)
+    app.shootBubble()
     XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Shot in flight.")
-    assertStable([board, aim, fire], baseline: feedbackBaseline, in: app, state: "Bubble flight")
+    assertStable([board, aim], baseline: feedbackBaseline, in: app, state: "Bubble flight")
     waitForShots(1, in: app)
     XCTAssertTrue(app.staticTexts["bubble.feedback"].label.hasPrefix("Cleared"))
-    assertStable(
-      [board, aim, fire], baseline: feedbackBaseline, in: app, state: "Bubble long feedback")
-    fire.tap()
+    assertStable([board, aim], baseline: feedbackBaseline, in: app, state: "Bubble long feedback")
+    app.shootBubble()
     waitForShots(2, in: app)
-    reveal(aim, in: app)
-    aim.adjust(toNormalizedSliderPosition: 0.65)
-    reveal(fire, in: app)
-    let completionBaseline = frames([board, fire], in: app)
-    fire.tap()
+    let completionBaseline = frames([board], in: app)
+    app.shootBubble(at: 0.65)
     XCTAssertTrue(app.staticTexts["bubble.outcome"].waitForExistence(timeout: 12))
     XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
-    let replay = app.buttons["bubble.replay"]
-    assertStable(
-      [board, replay], baseline: completionBaseline, in: app, state: "Bubble completion")
+    assertStable([board], baseline: completionBaseline, in: app, state: "Bubble completion")
     XCTAssertFalse(aim.exists)
-    XCTAssertFalse(fire.exists)
+    XCTAssertFalse(app.buttons["bubble.fire"].exists)
     reveal(app.staticTexts["bubble.feedback"], in: app)
     XCTAssertEqual(app.staticTexts["bubble.feedback"].label, "Board cleared!")
     capture(app, name: "stable-bubble-\(largeText ? "largest" : "normal")")
-    reveal(replay, in: app)
-    let replayBaseline = frames([board, replay], in: app)
-    replay.tap()
-    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-    assertStable([board, fire], baseline: replayBaseline, in: app, state: "Bubble replay")
+    app.nextFeedCard()
+    app.previousFeedCard()
+    reveal(board, in: app)
+    XCTAssertEqual(app.staticTexts["bubble.outcome"].label, "You won!")
+    XCTAssertFalse(aim.exists)
   }
 
   private struct FrameBaseline {
@@ -196,21 +183,6 @@ final class StableGameLayoutTests: XCTestCase {
       XCTAssertEqual(current.width, original.width, accuracy: 0.5, state, file: file, line: line)
       XCTAssertEqual(current.height, original.height, accuracy: 0.5, state, file: file, line: line)
     }
-  }
-
-  private func chooseDestination(rank: Int, in app: XCUIApplication) {
-    let file = app.buttons["chess.file"]
-    reveal(file, in: app)
-    file.tap()
-    let fileChoice = app.buttons["File G"]
-    XCTAssertTrue(fileChoice.waitForExistence(timeout: 3))
-    fileChoice.tap()
-    let rankControl = app.buttons["chess.rank"]
-    reveal(rankControl, in: app)
-    rankControl.tap()
-    let rankChoice = app.buttons["Rank \(rank)"]
-    XCTAssertTrue(rankChoice.waitForExistence(timeout: 3))
-    rankChoice.tap()
   }
 
   private func waitForShots(_ count: Int, in app: XCUIApplication) {

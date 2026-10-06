@@ -104,3 +104,7 @@ Owner authorization on October 6 selects the existing logo on a static system la
 ## Approved daily activity refinement #217
 
 The owner authorized a local daily flame/count on October 6, 2026. Solving one game or physically swiping to another card qualifies a calendar day; menu Previous/Next and app opening do not. Consecutive days count once, and a missed day breaks the streak. This is local-only, informational, and distinct from game-success combos. See [selected streak policy](STREAK.md) and [PR #223](https://github.com/devofthings/sidequest/pull/223) for actual verification.
+
+## Direct-play refinement — October 6
+
+The owner authorizes removing redundant controls: Chess is named “Chess” and evaluates piece/destination taps immediately; Bubble uses lower-board drag and inside release to shoot. Meaningful Sudoku digits/clear and Memory tiles remain. Assistive playfield actions preserve accessible alternatives. This supersedes older separate Chess Submit and Bubble Fire requirements, not their rules or certified difficulty.

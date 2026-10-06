@@ -147,6 +147,30 @@ final class BubbleShooterControllerTests: XCTestCase {
     XCTAssertTrue(controller.feedback.contains("Could not fire"))
   }
 
+  func testReleaseShootsOnceAndCanceledOrStaleDragNeverShoots() async throws {
+    let gate = BubbleDelayGate()
+    let runtime = GameRuntime(activationPolicy: .firstInteraction)
+    let controller = BubbleShooterController(runtime: runtime, pause: { try await gate.pause() })
+    runtime.setVisible(true)
+    let first = try XCTUnwrap(controller.beginAimDrag())
+    XCTAssertEqual(controller.game.shotsFired, 0)
+    XCTAssertFalse(controller.releaseAimDrag(first, degrees: .nan))
+    XCTAssertTrue(controller.releaseAimDrag(first, degrees: 0))
+    XCTAssertNotNil(controller.flight)
+    XCTAssertFalse(controller.releaseAimDrag(first, degrees: 30))
+    await finishShot(gate, firstPause: 1)
+    XCTAssertEqual(controller.game.shotsFired, 1)
+    let canceled = try XCTUnwrap(controller.beginAimDrag())
+    controller.endAimDrag(canceled)
+    XCTAssertFalse(controller.releaseAimDrag(canceled, degrees: 0))
+    let stale = try XCTUnwrap(controller.beginAimDrag())
+    runtime.setVisible(false)
+    runtime.setVisible(true)
+    XCTAssertFalse(controller.releaseAimDrag(stale, degrees: 0))
+    XCTAssertNil(controller.flight)
+    XCTAssertEqual(controller.game.shotsFired, 0)
+  }
+
   func testOriginatingDragCannotResumeAfterFireFinishesWithinTheSameAttempt() async throws {
     let gate = BubbleDelayGate()
     let runtime = GameRuntime()

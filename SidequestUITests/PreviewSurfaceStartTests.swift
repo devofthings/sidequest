@@ -114,8 +114,8 @@ final class PreviewSurfaceStartTests: XCTestCase {
       app.buttons["chess.square.\(square)"].tap()
       XCTAssertTrue(app.staticTexts["chess.selection"].label.contains(square))
     case .bubble:
-      let aim = app.otherElements["bubble.directAim"]
-      aim.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.2)).tap()
+      let aim = app.bubbleAim
+      app.cancelBubbleShot(at: 0.7)
       XCTAssertNotEqual(aim.value as? String, "Aim: 0 degrees")
       XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     }
@@ -144,10 +144,10 @@ final class PreviewSurfaceStartTests: XCTestCase {
       XCTAssertEqual(app.staticTexts["memory.progress"].label, "0 of 6 pairs matched")
     case .chessWhite, .chessBlack:
       XCTAssertEqual(app.staticTexts["chess.selection"].label, "No piece selected")
-      XCTAssertFalse(app.buttons["chess.submit"].isEnabled)
+      XCTAssertFalse(app.buttons["chess.submit"].exists)
     case .bubble:
       XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
-      XCTAssertEqual(app.otherElements["bubble.directAim"].value as? String, "Aim: 0 degrees")
+      XCTAssertEqual(app.bubbleAim.value as? String, "Aim: 0 degrees")
     }
   }
 }

@@ -55,16 +55,18 @@ final class MixedDifficultyFlowTests: XCTestCase {
         piece.tap()
         XCTAssertEqual(app.staticTexts["chess.selection"].label, "Selected: \(piece.label)")
       default:
-        XCTAssertTrue(app.buttons["bubble.fire"].exists)
-        XCTAssertTrue(app.buttons["bubble.fire"].isEnabled)
+        XCTAssertTrue(app.bubbleAim.exists)
+        XCTAssertTrue(app.bubbleAim.isEnabled)
         let cap = tier == "Easy" ? 8 : (tier == "Medium" ? 5 : 3)
         XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of \(cap)")
-        let aim = app.sliders["bubble.aim"]
+        let aim = app.bubbleAim
         XCTAssertTrue(aim.exists)
-        let oldValue = aim.value as? String
-        aim.adjust(toNormalizedSliderPosition: 0.6)
-        XCTAssertNotEqual(aim.value as? String, oldValue)
-        XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of \(cap)")
+        app.shootBubble(at: 0.6)
+        XCTAssertNotEqual(aim.value as? String, "Aim: 0 degrees")
+        let committed = XCTNSPredicateExpectation(
+          predicate: NSPredicate(format: "label == %@", "Shots: 1 of \(cap)"),
+          object: app.staticTexts["bubble.shots"])
+        XCTAssertEqual(XCTWaiter.wait(for: [committed], timeout: 10), .completed)
       }
       app.nextFeedCard()
     }
@@ -84,8 +86,15 @@ final class MixedDifficultyFlowTests: XCTestCase {
         switch index % 4 {
         case 0: control = app.buttons["sudoku.number.9"]
         case 1: control = app.buttons["memory.tile.0"]
-        case 2: control = app.buttons["chess.submit"]
-        default: control = app.buttons["bubble.fire"]
+        case 2:
+          control =
+            app.buttons.matching(
+              NSPredicate(
+                format: "identifier BEGINSWITH %@ AND label CONTAINS[c] %@", "chess.square.",
+                "queen"
+              )
+            ).firstMatch
+        default: control = app.bubbleAim
         }
         reveal(control, app: app)
         XCTAssertTrue(control.exists)

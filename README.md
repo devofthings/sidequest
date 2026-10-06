@@ -24,8 +24,8 @@ Swipe vertically through endless locally generated game cards. The first meaning
 | --- | --- |
 | [Sudoku](docs/SUDOKU.md) | Standard 9×9 puzzles with certified technique-based tiers |
 | [Memory](docs/MEMORY.md) | Three-, four-, and six-pair challenges |
-| [Chess](docs/CHESS.md) | Original puzzles with varied cropped views and standard 8×8 rules |
-| [Bubble shooter](docs/BUBBLES.md) | Compact matching challenges, trajectory aiming, and tiered shot budgets |
+| [Chess](docs/CHESS.md) | Direct piece/destination play, varied cropped views, and standard 8×8 rules |
+| [Bubble shooter](docs/BUBBLES.md) | Drag-and-release shooting, trajectory aiming, and tiered shot budgets |
 
 [Tagesschau RSS excerpts and images](docs/TAGESSCHAU.md) appear at future five-game boundaries for a private German news test. Refresh runs at launch and foreground reopening; an in-memory cache keeps the latest valid articles if refresh fails. A fresh offline launch shows games. **More options → News snapshots** also supports private manual imports.
 
