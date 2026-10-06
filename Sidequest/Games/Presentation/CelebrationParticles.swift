@@ -15,19 +15,27 @@ extension SuccessCelebrationStyle {
 struct CelebrationParticles: View {
   let style: SuccessCelebrationStyle
   @State private var progress: CGFloat = 0
+  @State private var finished = false
 
   var body: some View {
     GeometryReader { geometry in
-      ForEach(0..<12) { index in
-        particle(index)
-          .foregroundStyle(index.isMultiple(of: 2) ? style.accent : SidequestTheme.cyan)
-          .modifier(
-            CelebrationParticleMotion(
-              style: style, index: index, size: geometry.size, progress: progress))
+      if !finished {
+        ForEach(0..<12) { index in
+          particle(index)
+            .foregroundStyle(index.isMultiple(of: 2) ? style.accent : SidequestTheme.cyan)
+            .modifier(
+              CelebrationParticleMotion(
+                style: style, index: index, size: geometry.size, progress: progress))
+        }
       }
     }
     .onAppear {
-      withAnimation(.easeOut(duration: 0.85)) { progress = 1 }
+      withAnimation(.easeOut(duration: 0.85)) {
+        progress = 1
+      } completion: {
+        // Remove invisible geometry as well as pixels; decoration cannot enlarge the AX badge.
+        finished = true
+      }
     }
   }
 

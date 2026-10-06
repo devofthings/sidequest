@@ -19,7 +19,7 @@ The user approved extending production beyond its finite deck on October 4, 2026
 
 ## Stable presentation #108
 
-Use the shared `StableGameRegion` for state-dependent text that could change board/control geometry. Reserve every supported message at its actual font, width, and Dynamic Type size; update reservations with copy/styling changes. Keep full visible feedback, hide reservations from accessibility/input, and retain game-owned completion control footprints. Playable feed roots anchor at the top; the pager retains overflow ownership. Follow [stable layout guidance](../../docs/GAME_LAYOUT.md) for the accepted choices, actual reproduction, and verification limits.
+Use the shared `StableGameRegion` for state-dependent text that could change board/control geometry. Reserve every supported message at its actual font, width, and Dynamic Type size; update reservations with copy/styling changes. Keep full visible feedback, hide reservations from accessibility/input, and retain game-owned completion control footprints. Under owner-approved #232, fitting playable content centers in the available card viewport; taller content keeps its natural height and reachable top in the owned scroller. Keep stable reservations so state changes cannot recenter a board. Follow [stable layout guidance](../../docs/GAME_LAYOUT.md) for the accepted choices, actual reproduction, and verification limits.
 
 ## Visible inactive boards #88
 

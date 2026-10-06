@@ -31,6 +31,7 @@ struct GameCardLayout<Start: View, Content: View>: View {
       content.environment(\.sidequestGameLayoutBudget, budget)
     }
     .padding(16)
-    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    .frame(maxWidth: .infinity, minHeight: viewport?.height, alignment: .center)
+    .fixedSize(horizontal: false, vertical: true)
   }
 }
