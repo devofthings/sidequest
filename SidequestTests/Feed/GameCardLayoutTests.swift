@@ -38,12 +38,13 @@ final class GameCardLayoutTests: XCTestCase {
       .ignoresSafeArea()
     let hosting = UIHostingController(rootView: root)
     // Match the production host: fixed width, natural height with a viewport minimum.
+    hosting.view.translatesAutoresizingMaskIntoConstraints = false
     hosting.view.bounds = CGRect(x: 0, y: 0, width: 375, height: viewportHeight)
     NSLayoutConstraint.activate([
       hosting.view.widthAnchor.constraint(equalToConstant: 375),
       hosting.view.heightAnchor.constraint(greaterThanOrEqualToConstant: viewportHeight),
     ])
-    let fitted = hosting.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+    let fitted = hosting.sizeThatFits(in: CGSize(width: 375, height: viewportHeight))
     let hostHeight = max(viewportHeight, fitted.height)
     hosting.view.frame = CGRect(x: 0, y: 0, width: 375, height: hostHeight)
     let scene = try XCTUnwrap(
