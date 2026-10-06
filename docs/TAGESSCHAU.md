@@ -24,4 +24,6 @@ Explicit Files imports remain available under More options → News snapshots, a
 
 ## Verification
 
-Implementation verification pending; readiness is not delivery evidence.
+The actual bounded transport/parser read 40 valid RSS articles with 40 image metadata entries on October 6, without storing article captures. Initial integration unit verification passed all 219 cases. The first native build caught a missing `try` in a test fixture; focused image/foreground tests subsequently exposed the cold-launch captured-scene-phase race. Both were corrected. Independent review also identified request cleanup during a failed leased import; cleanup now runs on every matching-request exit with a controlled regression test. Final exact-head native verification and independent review are pending.
+
+Repeatable tests inject original RSS/image data and suspended transports. Debug test-host detection makes the live source unavailable without substituting fictional production news; deterministic fixture arguments explicitly select their own source. Network errors appear in News snapshots rather than changing the gameplay viewport.

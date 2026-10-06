@@ -134,6 +134,39 @@ final class LiveNewsRefreshTests: XCTestCase {
     XCTAssertTrue(try current(fixture.session) === replacement)
   }
 
+  func testLiveResponseDuringFailedImportReleasesRequestAndAllowsRetry() async throws {
+    let transport = SuspendedLiveNews()
+    let manual = try snapshot("failed-manual-import")
+    let fixture = try await makeSession(transport, imported: [manual], suspendSaves: true)
+    await fixture.session.prepare(newsModel: fixture.model)
+    let original = try current(fixture.session)
+    fixture.session.setNewsSceneActive(true, newsModel: fixture.model)
+    await transport.waitForRequest(1)
+    let leasedResponse = try XCTUnwrap(fixture.session.refreshLiveNews(newsModel: fixture.model))
+    let importing = Task {
+      await fixture.model.importFile(at: URL(fileURLWithPath: "/fictional-failing-import.json"))
+    }
+    await fixture.store.waitForSave()
+    await transport.finish(1, .success([try snapshot("response-during-save-lease")]))
+    await leasedResponse.value
+    XCTAssertTrue(fixture.model.snapshots.isEmpty, "The import lease excludes live adoption")
+    await fixture.store.finishSave(.failure(LiveNewsFailure.offline))
+    await importing.value
+    XCTAssertTrue(fixture.session.usesLiveNews)
+    XCTAssertTrue(try current(fixture.session) === original)
+    XCTAssertTrue(fixture.model.message?.hasPrefix("Import failed.") ?? false)
+    let persisted = await fixture.store.savedBytes
+    XCTAssertNil(persisted)
+    let retry = try XCTUnwrap(fixture.session.refreshLiveNews(newsModel: fixture.model))
+    await transport.waitForRequest(2)
+    let recovered = try snapshot("live-after-failed-import")
+    await transport.finish(2, .success([recovered]))
+    await retry.value
+    XCTAssertEqual(fixture.model.snapshots, [recovered])
+    XCTAssertNil(fixture.model.message)
+    XCTAssertTrue(try current(fixture.session) === original)
+  }
+
   private struct Fixture {
     let session: FeedSessionState
     let model: NewsImportModel
@@ -146,11 +179,11 @@ final class LiveNewsRefreshTests: XCTestCase {
     return fixture
   }
 
-  private func makeSession(_ transport: SuspendedLiveNews, imported: [NewsSnapshot] = [])
-    async throws -> Fixture
-  {
+  private func makeSession(
+    _ transport: SuspendedLiveNews, imported: [NewsSnapshot] = [], suspendSaves: Bool = false
+  ) async throws -> Fixture {
     let puzzles = try await ChessPuzzleLoader.bundled()
-    let store = LiveRefreshStorage()
+    let store = LiveRefreshStorage(suspendSaves: suspendSaves)
     let session = FeedSessionState(
       useEndless: false, loadLiveNews: { try await transport.load() }, loadChess: { puzzles })
     let payload = ValidatedNewsImport(
@@ -198,11 +231,39 @@ private enum LiveNewsFailure: Error {
 private actor LiveRefreshStorage: NewsSnapshotStorage {
   private(set) var loadCount = 0
   private(set) var savedBytes: Data?
+  private let suspendSaves: Bool
+  private var saveArrived = false
+  private var saveArrival: CheckedContinuation<Void, Never>?
+  private var pendingSave: CheckedContinuation<Void, Error>?
+
+  init(suspendSaves: Bool = false) { self.suspendSaves = suspendSaves }
+
   func load() async throws -> [NewsSnapshot]? {
     loadCount += 1
     return nil
   }
-  func save(_ data: Data) async throws { savedBytes = data }
+  func save(_ data: Data) async throws {
+    if suspendSaves {
+      try await withCheckedThrowingContinuation {
+        (continuation: CheckedContinuation<Void, Error>) in
+        pendingSave = continuation
+        saveArrived = true
+        saveArrival?.resume()
+        saveArrival = nil
+      }
+    }
+    savedBytes = data
+  }
+
+  func waitForSave() async {
+    if saveArrived { return }
+    await withCheckedContinuation { saveArrival = $0 }
+  }
+
+  func finishSave(_ result: Result<Void, Error>) {
+    pendingSave?.resume(with: result)
+    pendingSave = nil
+  }
 }
 
 /// Deliberately ignores cancellation so tests exercise the session's stale-response boundary.

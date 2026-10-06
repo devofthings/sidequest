@@ -23,7 +23,6 @@ struct NewsImageView: View {
         .overlay {
           if let loaded {
             Image(uiImage: loaded).resizable().scaledToFill()
-              .accessibilityIdentifier("news.imageLoaded")
           } else {
             Rectangle().fill(.secondary.opacity(0.08))
               .overlay {
@@ -37,6 +36,11 @@ struct NewsImageView: View {
         }
         .clipped()
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .ignore)
+        .accessibilityAddTraits(.isImage)
+        .accessibilityValue(
+          loaded != nil ? "Image loaded" : failed ? "Image unavailable" : "Loading image"
+        )
         .accessibilityLabel(image.description.isEmpty ? "Article image" : image.description)
         .accessibilityIdentifier("news.image")
       if !image.credit.isEmpty {

@@ -11,11 +11,18 @@ final class LiveNewsFlowTests: XCTestCase {
     let selected = app.selectedFeedCardID
     app.openNewsLibrary()
     let headline = app.staticTexts["news.headline"].firstMatch
-    XCTAssertTrue(headline.waitForExistence(timeout: 10))
+    XCTAssertTrue(headline.waitForExistence(timeout: 10), app.debugDescription)
     let before = headline.label
     XCTAssertTrue(
       app.staticTexts["news.imageCredit"].firstMatch.label.contains("Sidequest test artwork"))
-    XCTAssertTrue(app.images["news.imageLoaded"].firstMatch.waitForExistence(timeout: 10))
+    let image = app.images["news.image"].firstMatch
+    let loaded = XCTNSPredicateExpectation(
+      predicate: NSPredicate(format: "value == %@", "Image loaded"), object: image)
+    XCTAssertEqual(XCTWaiter.wait(for: [loaded], timeout: 10), .completed)
+    let screenshot = XCTAttachment(screenshot: app.screenshot())
+    screenshot.name = "Original news image and attribution"
+    screenshot.lifetime = .keepAlways
+    add(screenshot)
     XCTAssertTrue(app.links["news.source"].firstMatch.exists)
     XCTAssertFalse(app.staticTexts["news.sample"].firstMatch.exists)
     XCUIDevice.shared.press(.home)
@@ -38,7 +45,7 @@ final class LiveNewsFlowTests: XCTestCase {
     XCTAssertTrue(app.selectedFeedCard.waitForExistence(timeout: 10))
     app.openNewsLibrary()
     let headline = app.staticTexts["news.headline"].firstMatch
-    XCTAssertTrue(headline.waitForExistence(timeout: 10))
+    XCTAssertTrue(headline.waitForExistence(timeout: 10), app.debugDescription)
     let before = headline.label
     XCUIDevice.shared.press(.home)
     app.activate()
@@ -48,6 +55,9 @@ final class LiveNewsFlowTests: XCTestCase {
     XCTAssertEqual(headline.label, before)
     XCTAssertTrue(app.links["news.source"].firstMatch.exists)
     XCTAssertTrue(app.staticTexts["news.imageCredit"].firstMatch.exists)
-    XCTAssertFalse(app.images["news.imageLoaded"].firstMatch.exists)
+    let image = app.images["news.image"].firstMatch
+    let unavailable = XCTNSPredicateExpectation(
+      predicate: NSPredicate(format: "value == %@", "Image unavailable"), object: image)
+    XCTAssertEqual(XCTWaiter.wait(for: [unavailable], timeout: 10), .completed)
   }
 }

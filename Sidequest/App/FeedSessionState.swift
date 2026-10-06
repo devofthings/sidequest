@@ -157,6 +157,12 @@ final class FeedSessionState {
     let identity = UUID()
     liveNewsRequest = identity
     liveNewsTask = Task { [weak self] in
+      defer {
+        if let self, liveNewsRequest == identity {
+          liveNewsTask = nil
+          liveNewsRequest = nil
+        }
+      }
       do {
         let snapshots = try await loadLiveNews()
         try Task.checkCancellation()
@@ -176,9 +182,6 @@ final class FeedSessionState {
         else { return }
         newsModel.showLiveRefreshError()
       }
-      guard let self, liveNewsRequest == identity else { return }
-      liveNewsTask = nil
-      liveNewsRequest = nil
     }
     return liveNewsTask
   }

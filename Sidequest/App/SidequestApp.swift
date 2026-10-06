@@ -56,6 +56,9 @@ struct SidequestApp: App {
       if CommandLine.arguments.contains("-sidequest-tagesschau-fixtures") {
         return try await TagesschauFixtures.source.load()
       }
+      if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+        throw NewsFeedError.invalidResponse
+      }
     #endif
     return try await TagesschauNewsSource().load()
   }
@@ -63,7 +66,6 @@ struct SidequestApp: App {
   private static var usesLiveNews: Bool {
     #if DEBUG
       if CommandLine.arguments.contains("-sidequest-tagesschau-fixtures") { return true }
-      if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil { return false }
       // Existing deterministic routes retain their historical source and never access the network.
       if CommandLine.arguments.contains(where: {
         $0.hasPrefix("-sidequest-")
@@ -107,10 +109,9 @@ struct SidequestApp: App {
             }
           #endif
           await session.prepare(newsModel: newsModel)
-          session.setNewsSceneActive(scenePhase == .active, newsModel: newsModel)
-          session.refreshLiveNews(newsModel: newsModel)
+          await session.refreshLiveNews(newsModel: newsModel)?.value
         }
-        .onChange(of: scenePhase) { _, phase in
+        .onChange(of: scenePhase, initial: true) { _, phase in
           session.setNewsSceneActive(phase == .active, newsModel: newsModel)
         }
         .onDisappear {
