@@ -106,7 +106,7 @@ On October 4, 2026, the owner clarified: "also tap to play should not hide the g
 
 Under the owner’s design authorization, the lead selected bright arcade objects on calm light/dark surfaces, vivid game accents, semantic typography, and contained purposeful motion with Reduce Motion alternatives. See [DESIGN.md](DESIGN.md) and [research](research/mvp-design.md). Shared feed/news styling is implemented in #123 / PR #125. Game surfaces and contained motion were merged in [PR #126](https://github.com/devofthings/sidequest/pull/126) after exact-head CI, fresh review, and focused simulator checks. The selected direction alone is not verified product behavior.
 
-## Logo opening introduction #91
+## Logo opening introduction #91 — superseded by #215
 
 The owner authorized a logo startup animation after selected logo integration. With original Card S integrated under #14/PR133, the lead selects a native decorative overlay lasting 80 ms plus 350 ms fade, nominal 430 ms total, with restrained opacity and scale (0.96→1). It is noninteractive and hidden from accessibility; real loading/error/feed semantics remain available and startup preparation runs independently. System Reduce Motion omits the introduction immediately. An App-retained owner accepts once per cold process launch; background, disappearance or cancellation permanently dismisses it, and Retry/import/foreground cannot replay. Reuse byte-identical selected artwork in a normal logo imageset. Implementation is independent of the parallel game work; actual motion/startup/CI and fresh review remain required before delivery.
 
@@ -167,3 +167,7 @@ The owner authorized replacing normal fictional news with official Tagesschau RS
 ## Clean app surroundings #210
 
 On October 6, the owner authorized the three-dot menu ticket alongside launch-screen and streak work. The supplied direction keeps vivid, poppy colors in games and uses clean neutral styling for surrounding app controls. The lead-selected utility palette uses light `#F7F7F8` / dark `#111114` canvas, white / dark `#242424` surfaces, existing semantic ink, and increased-contrast borders. This matches the selected static launch canvas under #215 without changing game palette values. More options retains its 44-point footprint and existing actions; news cards and import utilities retain provenance, links, picker behavior, and lifecycle. See [implementation guidance and pending validation](DESIGN.md#clean-app-surroundings-210). This direction supersedes the earlier lavender menu/news accents, without adding settings features.
+
+## Static system launch #215 — accepted October 6, 2026
+
+The owner authorized the launch-screen ticket after selecting a static system logo and removing the custom animation. Keep existing Card S artwork centered at 120 points in LaunchScreen.storyboard, with neutral adaptive #F7F7F8/#111114 canvas matching the real app root. Remove StartupIntroduction ownership, artificial hold/fade and obsolete timing tests. Preserve preparation/error/retry, live-news refresh, meaningful-input game activation and signing. This supersedes #91/#192's custom overlay and #181's tinted launch canvas. See [readiness and verification](design/LAUNCH.md); actual new Debug/Release/native evidence remains separate from historical builds.

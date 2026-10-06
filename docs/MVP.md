@@ -97,3 +97,7 @@ The owner approved replacing the top-bar Sidequest name with the current game's 
 ## Mixed classified feed #201
 
 The owner selected mixed labeled Easy/Medium/Hard cards. Game-owned foundations #177/#178/#187/#188 are merged. The integration opts normal production into certified standard Sudoku, Memory3/4/6 pairs, varied standard-rule Chess, and Bubble8/5/3-shot caps. Each game cycles all tiers over three appearances with a stable session offset; this is deterministic variety, not adaptive recommendation or measured human difficulty. Cards retain configuration and classification through reset/replay/revisit. Actual integrated native proof and delivery remain pending the #201 PR.
+
+## Static launch refinement #215
+
+Owner authorization on October 6 selects the existing logo on a static system launch screen and removes the custom introduction. Neutral app canvas, direct preparation/feed transition, first meaningful interaction, and live-news refresh remain separate from system-owned launch duration. See [launch policy and verification evidence](design/LAUNCH.md).

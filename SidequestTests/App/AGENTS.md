@@ -6,9 +6,9 @@ Use production `FeedSessionState`, throwing `FeedComposition`, and the News stor
 
 `EndlessFeedTests` owns seeded generation sweeps, thousands of navigation steps, bounded adapters/hosted-owner release, all-game completed restoration including Bubble loss/Replay, frozen reset, and actual appearance collisions and permitted game-like source IDs. `EndlessConcurrencyTests` suspends actual preparation/read/save dependencies to verify cancellation, stale origin, retry, and the exclusive durable-save/adoption lease without noncooperative results mutating a newer session. Finite historical session checks select `useEndless: false` explicitly.
 
-## Cold-launch introduction #91
+## Static launch bundle #215
 
-`StartupIntroductionTests` uses controlled named pause arrivals to verify the owner-approved #192 150 ms visible/450 ms fading policy, one cold presentation, cancellation during fading, permanently consumed dismissal, late noncooperative callbacks, immediate Reduce Motion omission, and delay failure. Keep these tests independent of real clock timing and preparation; native recordings and running-app checks own rendered timing and accessible gameplay evidence.
+StaticLaunchBundleTests verifies actual app Info, compiled storyboard/image geometry, and adaptive named colors. The obsolete timed introduction owner and its tests are removed. Native cold launch/foreground, large text, and actual Reduce Motion are extended UI checks; no timed decorative model remains. See [launch guidance](../../docs/design/LAUNCH.md).
 
 ## Standard Sudoku #170
 

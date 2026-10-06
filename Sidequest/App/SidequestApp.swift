@@ -6,7 +6,6 @@ struct SidequestApp: App {
   @Environment(\.scenePhase) private var scenePhase
   @State private var session: FeedSessionState
   @State private var startupRetry = 0
-  @State private var introduction = StartupIntroduction()
   #if DEBUG
     @State private var fixturesPrepared = false
   #endif
@@ -91,7 +90,9 @@ struct SidequestApp: App {
 
   var body: some Scene {
     WindowGroup {
-      StartupIntroductionView(introduction: introduction, content: startupContent)
+      startupContent
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color("LaunchCanvas").ignoresSafeArea())
         .task(id: startupRetry) {
           #if DEBUG
             if !fixturesPrepared {
