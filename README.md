@@ -36,12 +36,12 @@ Current source supports full-card native vertical paging: swipe up/down directly
 
 | Game | Merged implementation | Details / next step |
 | --- | --- | --- |
-| Pocket Sudoku | Standard9×9 source; historical4×4 fixtures | [Rules, controls, and checks](docs/SUDOKU.md) |
-| Memory pairs | Playable six-pair board | [Rules, controls, and checks](docs/MEMORY.md) |
-| Chess puzzles | Fixed 4×4 focus, compact normal controls, full 8×8 rules | [Rules, accessible controls, and exhaustive fixture checks](docs/CHESS.md) |
-| Bubble shooter | Compact attainable three-group challenges, within eight shots | [Rules, aiming, win/loss, and replay checks](docs/BUBBLES.md) |
+| Pocket Sudoku | Standard 9×9 with certified Easy/Medium/Hard variants; historical 4×4 fixtures | [Rules, controls, and checks](docs/SUDOKU.md) |
+| Memory pairs | Frozen three/four/six-pair Easy/Medium/Hard challenges | [Rules, controls, and checks](docs/MEMORY.md) |
+| Chess puzzles | Varied original puzzles and cropped focus areas; standard 8×8 rules | [Rules, accessible controls, and exhaustive fixture checks](docs/CHESS.md) |
+| Bubble shooter | Compact attainable three-group challenges; Easy/Medium/Hard limits of 8/5/3 shots | [Rules, aiming, win/loss, and replay checks](docs/BUBBLES.md) |
 
-Current source includes a compatible [9×9 Sudoku rule foundation](docs/SUDOKU.md#standard-format-foundation-162--partial-source-support). Standard 9×9 presentation and production exposure are merged through [PR #172](https://github.com/devofthings/sidequest/pull/172), with [final focused checks, independent review and exact-head CI](docs/INSTALL.md#verified-source-refinements-october-5). Historical mini fixtures remain 4×4. Opt-in Sudoku technique certificates and original12/13/20-blank Easy/Medium/Hard challenges are implemented under #187, with seeded digit variants recertified against actual givens; native verification remains pending. Opt-in Bubble configurations add frozen8/5/3-shot attempt budgets under #188; native delivery proof remains pending, and production retains eight shots. Production mixed tiers and labels are still deferred. The owner selected mixed Easy/Medium/Hard game cards with a label on each game, without a manual selector or automatic progression; see [the research and accepted exposure](docs/pocket-games/DIFFICULTY.md).
+Current production mixes labeled Easy/Medium/Hard cards through [PR #202](https://github.com/devofthings/sidequest/pull/202): certified 9×9 Sudoku variants with 12/13/20 editable cells, Memory with three/four/six pairs, varied original Chess puzzles and cropped focus areas, and Bubble with 8/5/3-shot budgets. Each card keeps its challenge and tier across reset/revisit. These are bounded technical classifications, not measured human difficulty; no manual selector or automatic progression is introduced. Historical mini fixtures remain 4×4. See [difficulty boundaries](docs/pocket-games/DIFFICULTY.md) and the PR's actual verification; [#201](https://github.com/devofthings/sidequest/issues/201) retains its remaining extended native acceptance work.
 
 Merged #104 source extends normal launch to endless generated games. Current #213 source replaces normal fictional articles with official Tagesschau RSS excerpts and images for a private German news test, refreshing at launch and foreground reopening without replacing games. Latest valid articles remain in memory if refresh fails; fresh offline launches show games only. News enters at future five-game generation boundaries. [Private news policy and test steps](docs/TAGESSCHAU.md) describe source attribution, image credits, cache and distribution limits. More options → News snapshots still supports private JSON imports, selecting manual news for the session without overwriting saved files through RSS. Historical offline fixtures remain deterministic. The immutable `2026.10.14` download retains its original finite deck. Accounts, synced preferences and leaderboards remain phase-two scope. See [MVP.md](docs/MVP.md).
 
@@ -50,12 +50,12 @@ Merged #104 source extends normal launch to endless generated games. Current #21
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 83 | 7,785 |
-| Unit tests | 45 | 6,271 |
-| UI tests | 22 | 3,669 |
-| **Total** | **150** | **17,725** |
+| App | 88 | 8,067 |
+| Unit tests | 46 | 6,463 |
+| UI tests | 23 | 3,744 |
+| **Total** | **157** | **18,274** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+15,313 / −651 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+15,863 / −652 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.
@@ -89,9 +89,9 @@ Agents start with [AGENTS.md](AGENTS.md), the [MVP brief](docs/MVP.md), [decisio
 - [Demo news and cadence](docs/DEMO_NEWS.md): original fictional stories, nil-only fallback, unique appearances, and five-game cadence.
 - [Endless feed](docs/ENDLESS.md): local generation, stable history, completed restoration, atomic replacement, and verification.
 - [Pocket Sudoku](docs/SUDOKU.md): standard9×9 source, historical4×4 fixtures, controls, validation, and lifecycle.
-- [Difficulty criteria](docs/pocket-games/DIFFICULTY.md): selected Sudoku technique, Chess mate-count, Memory pair-count, and Bubble shot-budget criteria, proof plans, and accepted mixed-feed exposure; production integration remains deferred.
-- [Memory pairs](docs/MEMORY.md): compatible six-pair production, configurable three/four/six-pair workloads, delayed mismatches, and attempt reset.
-- [Chess puzzles](docs/CHESS.md): original one-move puzzles, accessible coordinates, and exhaustive fixture validation.
+- [Difficulty criteria](docs/pocket-games/DIFFICULTY.md): selected Sudoku technique, Chess mate-count, Memory pair-count, and Bubble shot-budget criteria, proof boundaries, and implemented mixed-feed exposure.
+- [Memory pairs](docs/MEMORY.md): mixed three/four/six-pair workloads, delayed mismatches, and attempt reset.
+- [Chess puzzles](docs/CHESS.md): varied original puzzles, cropped focus areas, accessible coordinates, and exhaustive fixture validation.
 - [Bubble shooter](docs/BUBBLES.md): aiming, connected matches, bounded win/loss, flight cancellation, and replay.
 - [Source structure](docs/STRUCTURE.md): folder ownership, game grouping, scoped guidance, and verified foundation source discovery.
 - [Review gates](docs/REVIEW_GATES.md): reproducible validation, durable review evidence, and pinned merges.
@@ -110,11 +110,11 @@ Sidequest is the working project name. Public naming availability has not been e
 
 Until design agreement, verification uses [all unit tests and three UI smoke cases](docs/TESTING.md) on one owned simulator that is [deleted after the run](docs/TESTING.md#owned-simulator-cleanup-114), current-source Debug compilation, and exact-head PR checks before merge. Merging starts no automatic main job under the owner's [PR-only decision](docs/CI.md#verification-contract). Longer UI journeys remain available explicitly. The approved 123-case PR gate passed in 3 minutes 45 seconds, and main's full-gate fallback passed in 3 minutes 41 seconds with fresh install/launch and Release verification; [recorded evidence](docs/TESTING.md#measured-temporary-gate-ci) distinguishes these from the historical broader benchmark. Historical main inheritance remains available for explicitly owner-authorized manual releases; [#90](https://github.com/devofthings/sidequest/issues/90) records its proof. Focused checks do not replace exact-head CI.
 
-The [design baseline](https://github.com/devofthings/sidequest/issues/13) guides vivid, modern visuals and animations for a pitch-ready MVP. The [researched baseline](docs/DESIGN.md) is selected. Shared feed/news styling is implemented; #124 adds vivid game surfaces and contained motion, with actual verification recorded in its PR. The owner selected the [pocket-game specification](docs/pocket-games/README.md): Chess uses fixed 4×4 focus windows with standard 8×8 rules and full-board coordinate controls; the original mini Sudoku choice is superseded by standard #170 while Memory remains six pairs. Difficulty remains a separate specification.
+The [researched design baseline](docs/DESIGN.md) guides vivid game artwork and contained animations. Current app surroundings use the clean neutral #210 palette; game objects retain vivid colors. Standard 9×9 Sudoku and mixed challenge tiers supersede the initial mini-only, fixed-focus configuration. See the game documents and linked PRs for source-specific verification.
 
 The initial [compact-game and harder Bubble follow-up](docs/POCKET_BUBBLE.md), [#135](https://github.com/devofthings/sidequest/issues/135), is complete: harder generation (#137), compact Chess/viewport controls (#142), and direct Bubble controls plus the all-game fit audit (#138 / [PR #144](https://github.com/devofthings/sidequest/pull/144)) are merged with actual native evidence. The current [#163 horizontal aiming refinement](docs/BUBBLES.md#simplified-horizontal-aiming-163) removes visible numeric angle text; its corrected native check, fresh independent review, and exact-head CI passed before [PR #165](https://github.com/devofthings/sidequest/pull/165) merged. These source changes do not alter the immutable `2026.10.14` download.
 
-The [private Figma refinement](docs/design/PRIVATE_FIGMA.md) preserves original #157 state boards and actual browser screenshots. The owner selected its shared visual direction for #182: vivid header actions, rounded game hierarchy, and a quiet reading surface with clear provenance. Source refinements are prepared; actual native rendering and exact-head verification remain pending. Logo/startup integration is merged through [PR #184](https://github.com/devofthings/sidequest/pull/184); its [launch guidance](docs/design/LAUNCH.md) records the bounded implementation.
+The [private Figma refinement](docs/design/PRIVATE_FIGMA.md) preserves original #157 state boards and actual browser screenshots. Its older vivid header actions are superseded by the implemented neutral app surroundings in [PR #221](https://github.com/devofthings/sidequest/pull/221); the private design file is not evidence that current source and drawings are synchronized. The static system logo launch in [PR #222](https://github.com/devofthings/sidequest/pull/222) supersedes the earlier custom startup animation; see [launch guidance](docs/design/LAUNCH.md).
 
 [Proposed icon family](docs/design/ICONS.md) includes original Chess pieces, Memory artwork, and existing app-action examples in private Figma. The lead selected Memory and current Chess artwork for bounded #171 implementation under the existing autonomous design authorization; native Memory and current Chess adoption is merged through PR173, with [actual simulator/review/CI evidence](docs/INSTALL.md#verified-source-refinements-october-5).
 
@@ -122,14 +122,8 @@ Committed game feedback adds restrained interaction haptics for Sudoku entries, 
 
 Original Memory faces and both-side King/Queen silhouettes are implemented in native source through [PR #173](https://github.com/devofthings/sidequest/pull/173); [game artwork guidance](docs/design/NATIVE_GAME_ART.md) records the design. Its source-bound checks are separate from the final combined Sudoku verification; the private Figma sheet alone does not verify app rendering.
 
-Current source follow-up #170 exposes standard 9×9 Sudoku with digits 1–9, compact overview and full-size coordinate alternatives; generated cards use at most 12 editable cells as a bounded baseline, without difficulty labels. Historical mini fixtures and release evidence remain unchanged. Source49b3db9 passed all three focused native flows; final-head 375-point normal/largest checks, fresh review and exact-head CI passed before [PR #172](https://github.com/devofthings/sidequest/pull/172) merged. See [delivered refinement evidence](docs/INSTALL.md#verified-source-refinements-october-5) and [Sudoku](docs/SUDOKU.md).
+Standard 9×9 Sudoku presentation first merged through [PR #172](https://github.com/devofthings/sidequest/pull/172), with its historical 12-blank baseline and recorded [native refinement evidence](docs/INSTALL.md#verified-source-refinements-october-5). Current mixed generation additionally uses the certified Medium/Hard variants described above; this does not change historical mini fixtures or the immutable release.
 
-The owner selected first-interaction activation under [#185](https://github.com/devofthings/sidequest/issues/185): the first valid game action starts and applies immediately. Implementation and verification remain pending; see [the policy](docs/GAME_PREVIEWS.md).
-
-Varied original Chess catalog and immutable search-choice difficulty metadata are available for the approved shared rollout; see [Chess catalog](docs/CHESS.md#varied-catalog-source-177). Production adoption and native validation remain pending.
-
-Memory workload foundation #178 adds validated three/four/six-pair challenges with frozen seeds and configurations. Existing production remains six pairs; Easy/Medium/Hard are workload proxies pending separate mixed labeled feed integration. Actual native verification belongs to the PR evidence.
-
-Mixed difficulty integration is in progress under [#201](https://github.com/devofthings/sidequest/issues/201); the merged game foundations provide certified Sudoku tiers, Memory3/4/6 pairs, varied Chess puzzles, and Bubble8/5/3-shot budgets. See [difficulty boundaries](docs/pocket-games/DIFFICULTY.md); integrated labels and production exposure require the owning PR’s actual verification.
+First-interaction activation is implemented through [PR #186](https://github.com/devofthings/sidequest/pull/186): the first valid game action starts and applies immediately, while appearance and scrolling never start play. See [the policy](docs/GAME_PREVIEWS.md). Mixed source uses the merged Chess catalog, frozen Memory workload variants, and Sudoku/Bubble classifications; [PR #202](https://github.com/devofthings/sidequest/pull/202) records integrated labels and source-bound checks, while #201 keeps its remaining extended verification scope.
 
 Daily participation uses a local flame/count: a successful solve or committed physical swipe qualifies once per local calendar day. Menu navigation and opening alone do not count. See [streak behavior and local persistence](docs/STREAK.md).
