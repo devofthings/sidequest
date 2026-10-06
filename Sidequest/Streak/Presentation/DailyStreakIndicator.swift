@@ -16,7 +16,7 @@ struct DailyStreakIndicator: View {
     }
     // This informational badge reserves room for the exact spoken value without taking
     // space from scalable game headings or the primary 44-point navigation target.
-    .font(.system(size: min(scaledFontSize, 18), design: .rounded, weight: .semibold))
+    .font(.system(size: min(scaledFontSize, 18), weight: .semibold, design: .rounded))
     .frame(width: 72, alignment: .leading)
     .foregroundStyle(.secondary)
     .accessibilityElement(children: .ignore)
