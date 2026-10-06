@@ -32,8 +32,8 @@ The owner's October 5, 2026 instruction authorizes research-led vivid, modern MV
 
 ## Repeatable issue loop
 
-1. Read the latest documents and one issue, verify dependencies, and record its Project status. Check included usage before starting an issue or reviewer.
-2. Implement the bounded criteria on a feature branch, updating scoped guidance and affected installation instructions when behavior changes.
+1. Read the issue and task-relevant guidance, verify dependencies, and record its Project status. Check included usage before starting an issue or reviewer.
+2. Implement the bounded criteria on a feature branch. Update scoped guidance only for durable future-agent constraints, and installation instructions when setup or usage changes.
 3. Run proportionate actual verification. Record commands, results, environment, and checks that could not run; never replace evidence with an agent's assertion.
 4. Follow the complete fresh-agent review/fix loop in REVIEW.md. Preserve head/base-bound evidence; another review is needed after either changes. The user is not the fallback code reviewer.
 5. Merge only after the gates pass. Verify the merge, close only completed issues, update the board, and promote dependents.
