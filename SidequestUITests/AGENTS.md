@@ -81,7 +81,7 @@ Completed Bubble win/loss/revisit checks retain full running-app hierarchy and a
 
 ## Cold-launch introduction #91
 
-`StartupIntroductionFlowTests` uses the real Sudoku route to verify accessible cold launch, disabled initial gameplay, preserved feed selection after background/foreground, and explicit Start followed by real input. Its second case uses `SystemAccessibilitySupport.withReduceMotion` to change and restore actual native Settings. Keep both cases in explicit extended coverage; the three routine smoke cases remain unchanged. XCTest semantics do not prove a 430 ms decorative animation: retain actual normal/reduced-motion cold-launch recordings separately, without introducing a test-only accessibility element or extending production timing. [App guidance](../Sidequest/App/AGENTS.md#cold-launch-logo-introduction-91) owns the policy; physical-device and VoiceOver results require actual testing.
+`StaticLaunchFlowTests` retains real Sudoku cold-launch/foreground and actual native Reduce Motion coverage, plus largest text. The system launch is static and the obsolete custom introduction model is removed under #215. Keep these three cases extended; routine smoke remains exactly three existing cases. Native recordings own static launch appearance and absence of a second custom logo. See [launch guidance](../docs/design/LAUNCH.md).
 
 ## Preview surface start #160
 

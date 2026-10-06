@@ -42,11 +42,11 @@ Render the same game-owned initial board in preview and play, with gameplay disa
 
 Both finite and rehydrating game composition use `GameFeedbackComposition.makeRuntime`. Production uses the runtime's standard 1.5-second celebration lifetime. Only Debug with `-sidequest-success-feedback-test` plus a recognized existing real-game fixture route injects a 10-second presentation lifetime for reliable XCTest observation. Game rules, move timing, completion gates, and native haptic requests remain unchanged; Release ignores this flag. Completed restoration receives only the completed attempt identity and never archives/replays presentation effects.
 
-## Cold-launch logo introduction #91
+## Static system launch #215
 
-The owner authorized a logo opening animation after selected Card S integration #14/PR133; the lead now starts this independent ticket in parallel with game work. Reuse the selected PNG bytes in a dedicated logo imageset. An App-retained presentation owner stays outside loading/error/ready, retry and session replacement. Prepare news/games in parallel without a minimum wait. Render only a brief noninteractive, accessibility-hidden decorative overlay: owner-approved #192 150 ms static introduction and 450 ms ease-in-out opacity fade without scale, maximum 600 ms nominal production clock. This supersedes the original 80/350 ms opacity/scale policy to soften the owner-reported abrupt fade. System Reduce Motion omits it immediately. Underlying loading/error/feed controls remain accessible; no game start, shot, page or haptic is introduced.
+The owner authorized #215 on October 6, 2026, superseding the #91/#192 custom introduction. Use the existing byte-identical StartupLogo in a static launch storyboard, centered at 120 points on the neutral adaptive LaunchCanvas (light #F7F7F8, dark #111114). The system owns its duration; add no artificial wait, SwiftUI logo overlay, animation owner, or launch preference. Keep the root canvas under real preparation, failure/retry, and feed content. Preserve scene/news refresh tasks and first meaningful game interaction.
 
-Agent-grill decision: Use a structured root task keyed by permanent finished state; mark consumed before the first suspension. Background/disappearance/Reduce Motion dismissal permanently finishes the model and cancels the root task, with post-await cancellation/phase checks rejecting late callbacks. Initial inactive scene is not a background event. Never recreate intro ownership on Retry/import/foreground, and never use a persisted onboarding preference. Actual launch timing/motion and device VoiceOver remain pending root verification.
+Agent-grill self-assessment: a launch storyboard fixes logo geometry independently of device size; the existing dictionary does not express a chosen logo size. Both app Info inputs name LaunchScreen, with no competing UILaunchScreen dictionary. Files/signing/icon configuration stays intact. [Launch guidance](../../docs/design/LAUNCH.md) records the decision table and planned compiled/resource/native checks. Static imagery has no motion to suppress; Reduce Motion retains its ordinary game behavior.
 
 ## Standard Sudoku #170
 
@@ -54,9 +54,9 @@ Production generated Sudoku uses standard9×9 with at most12 editable cells unde
 
 GameGenerationComposition explicitly selects mini only for the existing DEBUG endless fixture route, preserving its historical4×4 completion assertions. GeneratedGameBatch takes an explicit configuration with standard as its default; normal/Release production uses standard. The new standard route exercises the same9×9 rules/controller/view through deterministic original input.
 
-## Branded launch canvas #181
+## Launch canvas
 
-Owner-approved #181 keeps the selected Card S introduction and its #91 lifetime unchanged. The root fills the window with the `LaunchCanvas` named color, including safe areas, underneath loading, failure, and ready states. It matches the static system launch background and current shared palette (light `#F5F3FF`, dark `#101427`). Keep preparation and input independent of the introduction. Loading/error titles use rounded system type; Retry uses the existing accessible prominent button style. Before changing launch assets, configuration, or timing, read [launch guidance](../../docs/design/LAUNCH.md).
+#215 supersedes #181's tinted canvas and custom introduction. Use the named neutral LaunchCanvas for the system storyboard and full-window SwiftUI background; selected logo bytes and app icon remain unchanged. See [launch guidance](../../docs/design/LAUNCH.md).
 
 ## First meaningful interaction #185
 

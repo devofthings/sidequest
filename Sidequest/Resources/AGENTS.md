@@ -10,9 +10,9 @@ Keep only original assets and fictional, redistributable samples here. `sample-n
 
 `Assets.xcassets/AppIcon.appiconset` owns the original Card S selected by the owner on October 5, 2026. [Identity guidance](../../docs/logo-concepts/README.md) links approval, editable SVG, provenance, and the local rendering command. Keep its 1024-pixel Any PNG opaque and unmasked; dark/tinted styles use Apple's automatic system treatment. Preserve the app's `AppIcon` build-setting name, signing configuration, and target membership. Actual Home Screen checks for light/dark/tinted are a merge requirement, not established by the bitmap proof.
 
-## Startup logo #91
+## Static system launch #215
 
-`Assets.xcassets/StartupLogo.imageset/CardS.png` is a byte-identical copy of the selected `AppIcon.appiconset/AppIcon.png`, exposed as a normal image for the brief decorative startup introduction. Preserve that provenance when changing the selected artwork; do not redesign or rerender it independently. [App guidance](../App/AGENTS.md) owns introduction timing, cancellation, accessibility, and Reduce Motion behavior.
+StartupLogo remains byte-identical to the selected AppIcon. LaunchScreen.storyboard centers it at 120 points on LaunchCanvas, neutral light #F7F7F8/dark #111114. This supersedes the #91 decorative introduction and #181 tinted canvas; no shared game-palette change is implied. The storyboard belongs only to the app synchronized resources. Preserve logo bytes and follow [launch guidance](../../docs/design/LAUNCH.md) for compiled/native proof.
 
 ## Launch canvas #181
 

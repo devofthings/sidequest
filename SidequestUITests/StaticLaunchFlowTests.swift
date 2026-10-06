@@ -1,7 +1,7 @@
 import XCTest
 
 @MainActor
-final class StartupIntroductionFlowTests: XCTestCase {
+final class StaticLaunchFlowTests: XCTestCase {
   func testColdLaunchAndForegroundKeepRealGameInactiveAndFeedPosition() {
     assertColdLaunchAndForegroundKeepRealGameInactiveAndFeedPosition()
   }
@@ -12,9 +12,16 @@ final class StartupIntroductionFlowTests: XCTestCase {
     }
   }
 
-  private func assertColdLaunchAndForegroundKeepRealGameInactiveAndFeedPosition() {
+  func testLargestTextColdLaunchRemainsUsable() {
+    assertColdLaunchAndForegroundKeepRealGameInactiveAndFeedPosition(largeText: true)
+  }
+
+  private func assertColdLaunchAndForegroundKeepRealGameInactiveAndFeedPosition(
+    largeText: Bool = false
+  ) {
     let app = XCUIApplication()
     app.launchArguments = ["-sidequest-sudoku-test"]
+    if largeText { app.launchArguments.append("-sidequest-large-text") }
     app.launch()
     XCTAssertTrue(app.buttons["sudoku.cell.2"].waitForExistence(timeout: 10))
     XCTAssertTrue(app.buttons["sudoku.cell.2"].isHittable)

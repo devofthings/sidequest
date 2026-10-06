@@ -26,7 +26,7 @@ The recorded MVP and test results describe that selected release. Later document
 
 Game cards show their actual inactive boards; the first meaningful interaction starts play and applies that action immediately. Memory stays face down until a flip. The selected game name appears in the top bar, with instructions above the board and no duplicate card headline. Skipping or backgrounding resets unfinished attempts; completed results survive revisits during the session. Current source requests one system success haptic and briefly shows a larger centered celebration with a Reduce Motion alternative after a solved/won attempt; Bubble losses and completed revisits stay quiet. Physical vibration remains unverified pending your iPhone test.
 
-Current #91 source adds a brief Card S introduction on cold launch while preparation and app access continue; Reduce Motion omits it. The #181 [launch canvas](docs/design/LAUNCH.md) matches the static system background to the app in light and dark appearances; native verification is pending. [Startup checks](docs/INSTALL.md#cold-launch-logo-introduction-91) distinguish the policy from pending native verification.
+Current #215 source uses a static system logo on a neutral adaptive [launch canvas](docs/design/LAUNCH.md), with direct transition into app preparation/feed and no custom hold or fade. Existing artwork, first-input activation, and signing remain unchanged.
 
 Current Bubble source uses left/right dragging in the lower-board aiming area and a dotted trajectory, with no visible numeric angle. Releasing a drag does not shoot; **Fire** stays explicit. A native 44-point Slider remains available for assistive and keyboard precision. See [the refinement and verification status](docs/BUBBLES.md#simplified-horizontal-aiming-163).
 
@@ -50,12 +50,12 @@ Merged #104 source extends normal launch to endless generated games. Current #21
 <!-- sidequest:stats:start -->
 | Swift source | Files | Physical lines |
 | --- | ---: | ---: |
-| App | 85 | 7,863 |
-| Unit tests | 45 | 6,325 |
-| UI tests | 22 | 3,662 |
-| **Total** | **152** | **17,850** |
+| App | 83 | 7,785 |
+| Unit tests | 45 | 6,255 |
+| UI tests | 22 | 3,669 |
+| **Total** | **150** | **17,709** |
 
-Swift changes since `2026.10.7` (`5dc0320e2757`): **+15,438 / −651 lines**.
+Swift changes since `2026.10.7` (`5dc0320e2757`): **+15,297 / −651 lines**.
 <!-- sidequest:stats:end -->
 
 These are physical lines, including blanks and comments, in Git-tracked `.swift` files under the app, unit-test, and UI-test roots. Counts describe source volume, not coverage or quality. Untracked files and personal news are excluded. Changes compare working-tree Swift source with the explicit release baseline above; README edits do not count toward that comparison. File moves count as additions/deletions.

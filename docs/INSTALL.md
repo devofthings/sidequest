@@ -263,7 +263,7 @@ On a Bubble card, Tap to play must preserve the inactive board. Drag from the la
 
 Current #91 source uses the selected Card S PNG in a brief decorative overlay while normal preparation and loading/error/feed access continue independently. Owner-approved #192 updates its nominal clock to 150 ms visible plus a 450 ms ease-in-out opacity fade without zoom (600 ms total); system Reduce Motion omits it immediately. Background, cancellation, or disappearance consumes it permanently for that cold process launch. Retry, news import, foreground return, and feed changes cannot replay it or start a game. Build commands, signing, and the immutable `2026.10.14` download remain unchanged.
 
-Five deterministic policy tests and two extended `StartupIntroductionFlowTests` cases cover the model and real cold-launch/background/explicit Sudoku input semantics, including actual system Reduce Motion. They do not measure the subsecond decoration; normal/reduced-motion recordings, actual app compilation, current-head CI, and fresh review remain pending lead-owned verification. The three-case routine UI smoke gate is unchanged. Physical-device timing and VoiceOver are unverified. See [the selected policy](DECISIONS.md#logo-opening-introduction-91).
+Historical #91 used five deterministic introduction policy tests and two extended cold-launch/foreground UI cases. #215 removes that obsolete timed owner; current static launch checks are documented below.
 
 ## Branded launch canvas #181
 
@@ -282,3 +282,7 @@ The integration is not yet certified by native execution. Planned focused comman
 ## Private Tagesschau personal test #213
 
 Current source replaces normal fake articles with a live German Tagesschau RSS feed. Reopen the app to refresh; network access is optional for games. The latest valid articles are cached only for the running session, and source images load when displayed. No news/image assets are archived or bundled in Git. See [personal test steps and limitations](TAGESSCHAU.md#personal-test). This source change does not create a new release download. Build on your iPhone using the existing free Personal Team signing instructions above.
+
+## Static system logo launch #215
+
+Current source replaces the custom logo introduction with the system-owned static LaunchScreen storyboard: existing centered 120-point logo, neutral light/dark LaunchCanvas, direct transition to preparation/feed. There is no app-owned logo hold/fade. Both Debug and Release name the storyboard; signing and Debug Files configuration stay intact. [Launch guidance](design/LAUNCH.md) records readiness, compiled-resource checks and personal-iPhone steps. StaticLaunchBundleTests and three extended StaticLaunchFlowTests cover resources, cold launch/foreground, largest text, and actual Reduce Motion; actual execution results are recorded in [PR #222](https://github.com/devofthings/sidequest/pull/222). Historical #91/#181/#192 evidence above belongs to earlier source.

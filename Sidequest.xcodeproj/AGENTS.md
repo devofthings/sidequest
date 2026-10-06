@@ -11,6 +11,6 @@ Xcode27’s generated Info omitted the file-sharing key despite the build settin
 
 Selected identity #14 adds `ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon` only to the app Debug/Release configurations. The filesystem-synchronized resource catalog owns the bitmap and slot; this requires no new explicit target membership, test setting, signing identity, or bundle-identifier change. Follow [identity guidance](../docs/logo-concepts/README.md) for source/provenance and automatic dark/tinted treatment; validate actual built icon metadata and appearance before merging.
 
-## Static launch background #181
+## Static system launch #215
 
-Both app configurations merge an explicit `UILaunchScreen` dictionary with `UIColorName = LaunchCanvas`; Release uses the minimal `ReleaseInfo.plist`, while Debug preserves its existing Files keys. Empty automatic launch-screen generation is removed to avoid replacing the named-color dictionary. Keep app metadata generation and signing unchanged. Validate actual compiled Debug/Release Info and named-color resources under [launch guidance](../docs/design/LAUNCH.md); source plist validity alone does not prove runtime appearance.
+Both app configurations merge UILaunchStoryboardName = LaunchScreen instead of the prior UILaunchScreen dictionary. Debug retains Files keys; metadata generation/signing/icon settings stay intact. The synchronized app resource root owns the storyboard. Validate actual compiled Debug/Release metadata and storyboard/assets under [launch guidance](../docs/design/LAUNCH.md).

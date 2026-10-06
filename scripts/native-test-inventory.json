@@ -653,10 +653,10 @@
         "SidequestUITests/StandardSudokuFlowTests.swift"
       ]
     },
-    "SidequestUITests/StartupIntroductionFlowTests/testColdLaunchAndForegroundKeepRealGameInactiveAndFeedPosition": {
-      "lower_layer": "Deterministic startup introduction tests cover bounded timing, cancellation, stale callbacks, failure, and reduced-motion omission; this native flow checks accessible cold launch and explicit gameplay. Actual recordings establish the brief decoration.",
+    "SidequestUITests/StaticLaunchFlowTests/testColdLaunchAndForegroundKeepRealGameInactiveAndFeedPosition": {
+      "lower_layer": "Compiled-bundle unit tests verify static storyboard/logo geometry and adaptive canvas. This native case verifies cold launch, foreground preservation and meaningful input; actual recordings establish launch appearance.",
       "paths": [
-        "SidequestUITests/StartupIntroductionFlowTests.swift",
+        "SidequestUITests/StaticLaunchFlowTests.swift",
         "SidequestUITests/SystemAccessibilitySupport.swift",
         "SidequestUITests/FeedNavigationSupport.swift",
         "Sidequest/App/",
@@ -667,10 +667,24 @@
         "Sidequest.xcodeproj/"
       ]
     },
-    "SidequestUITests/StartupIntroductionFlowTests/testSystemReduceMotionKeepsColdLaunchAndForegroundUsable": {
-      "lower_layer": "Deterministic startup introduction tests cover bounded timing, cancellation, stale callbacks, failure, and reduced-motion omission; this native flow checks accessible cold launch and explicit gameplay. Actual recordings establish the brief decoration.",
+    "SidequestUITests/StaticLaunchFlowTests/testLargestTextColdLaunchRemainsUsable": {
+      "lower_layer": "Compiled-bundle unit tests verify static storyboard/logo geometry and adaptive canvas. This native case verifies cold launch, foreground preservation and meaningful input; actual recordings establish launch appearance.",
       "paths": [
-        "SidequestUITests/StartupIntroductionFlowTests.swift",
+        "SidequestUITests/StaticLaunchFlowTests.swift",
+        "SidequestUITests/SystemAccessibilitySupport.swift",
+        "SidequestUITests/FeedNavigationSupport.swift",
+        "Sidequest/App/",
+        "Sidequest/Resources/",
+        "Sidequest/Core/",
+        "Sidequest/Feed/",
+        "Sidequest/Games/Sudoku/",
+        "Sidequest.xcodeproj/"
+      ]
+    },
+    "SidequestUITests/StaticLaunchFlowTests/testSystemReduceMotionKeepsColdLaunchAndForegroundUsable": {
+      "lower_layer": "Compiled-bundle unit tests verify static storyboard/logo geometry and adaptive canvas. This native case verifies cold launch, foreground preservation and meaningful input; actual recordings establish launch appearance.",
+      "paths": [
+        "SidequestUITests/StaticLaunchFlowTests.swift",
         "SidequestUITests/SystemAccessibilitySupport.swift",
         "SidequestUITests/FeedNavigationSupport.swift",
         "Sidequest/App/",
