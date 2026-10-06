@@ -20,10 +20,10 @@ final class VariedCelebrationFlowTests: XCTestCase {
       }
       let upwards = queen.frame.maxY > scroll.frame.maxY
       let start = scroll.coordinate(
-        withNormalizedOffset: CGVector(dx: 0.01, dy: upwards ? 0.85 : 0.2))
+        withNormalizedOffset: CGVector(dx: 0.5, dy: upwards ? 0.65 : 0.35))
       let end = scroll.coordinate(
-        withNormalizedOffset: CGVector(dx: 0.01, dy: upwards ? 0.25 : 0.8))
-      start.press(forDuration: 0.01, thenDragTo: end)
+        withNormalizedOffset: CGVector(dx: 0.5, dy: upwards ? 0.4 : 0.6))
+      start.press(forDuration: 0, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0)
     }
     XCTFail("Both real move targets must be fully contained before measuring stable geometry")
   }
