@@ -51,8 +51,8 @@ private struct CelebrationParticleMotion: AnimatableModifier {
   let style: SuccessCelebrationStyle
   let index: Int
   let size: CGSize
-  var progress: CGFloat
-  var animatableData: CGFloat {
+  nonisolated var progress: CGFloat
+  nonisolated var animatableData: CGFloat {
     get { progress }
     set { progress = newValue }
   }

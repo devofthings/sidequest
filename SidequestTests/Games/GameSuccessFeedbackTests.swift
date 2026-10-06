@@ -58,7 +58,6 @@ final class GameSuccessFeedbackTests: XCTestCase {
     XCTAssertEqual(selections, 0)
     XCTAssertNil(runtime.celebrationAttempt)
     XCTAssertNil(runtime.celebrationStyle)
-    XCTAssertNil(runtime.celebrationStyle)
   }
 
   func testVisibleSuccessEmitsOnceAndRevisitDoesNotReplay() throws {
