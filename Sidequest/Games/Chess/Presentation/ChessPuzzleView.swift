@@ -42,8 +42,6 @@ struct ChessPuzzleView: View {
         board
       }
       selection
-      pieceControls
-      coordinateControls
       feedback
     }
     .frame(maxWidth: .infinity)
@@ -53,8 +51,6 @@ struct ChessPuzzleView: View {
         VStack(spacing: spacing) {
           instructions
           selection
-          pieceControls
-          coordinateControls
           feedback
         }
         .frame(maxWidth: .infinity)
@@ -189,6 +185,21 @@ struct ChessPuzzleView: View {
         .disabled(!controller.canSelectPiece)
         .accessibilityLabel("\(piece?.label ?? "Empty square") on \(square.coordinate)")
         .accessibilityIdentifier("chess.square.\(square.coordinate)")
+        .accessibilityActions {
+          if piece?.side == controller.puzzle.sideToMove {
+            ForEach(
+              controller.puzzle.legalMoves.filter { $0.origin == square }
+                .sorted { $0.destination.coordinate < $1.destination.coordinate }, id: \.self
+            ) { move in
+              Button("Move to \(move.destination.coordinate)") {
+                if controller.attempt?.selectedSquare != square {
+                  controller.tap(square, visibility: visibility)
+                }
+                controller.tap(move.destination, visibility: visibility)
+              }
+            }
+          }
+        }
       }
     }
     .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -204,110 +215,6 @@ struct ChessPuzzleView: View {
     ChessSquare.displayOrder.filter {
       controller.puzzle.board[$0]?.side == controller.puzzle.sideToMove
     }
-  }
-
-  private var pieceControls: some View {
-    Group {
-      if compact {
-        HStack(spacing: 8) { pieceButtons }
-      } else {
-        VStack(spacing: 8) {
-          Text("Select a piece").font(.headline)
-          pieceButtons
-        }
-      }
-    }
-  }
-
-  private var pieceButtons: some View {
-    let visibility = controller.runtime.visibilityIdentity
-    return ForEach(movingSquares, id: \.self) { square in
-      Button {
-        controller.tap(square, visibility: visibility)
-      } label: {
-        let piece = controller.puzzle.board[square]
-        Text(
-          compact
-            ? "\(piece?.kind.rawValue.capitalized ?? "Piece") \(square.coordinate)"
-            : "\(piece?.label ?? "Piece") on \(square.coordinate)"
-        )
-        .font(compact ? .subheadline : .headline)
-        .fixedSize(horizontal: false, vertical: true)
-        .frame(maxWidth: .infinity, minHeight: 44)
-        .contentShape(Rectangle())
-      }
-      .buttonStyle(SidequestButtonStyle(compact: true))
-      .disabled(!controller.canSelectPiece)
-      .accessibilityLabel(
-        "\(controller.puzzle.board[square]?.label ?? "Piece") on \(square.coordinate)"
-      )
-      .accessibilityIdentifier("chess.piece.\(square.coordinate)")
-    }
-  }
-
-  private var coordinateControls: some View {
-    Group {
-      if compact {
-        HStack(spacing: 8) { destinationControls }
-      } else {
-        VStack(spacing: 8) {
-          Text("Choose the destination").font(.headline)
-            .fixedSize(horizontal: false, vertical: true)
-          destinationControls
-        }
-      }
-    }
-    .buttonStyle(SidequestButtonStyle(compact: true))
-    .disabled(!controller.canAcceptInput || controller.attempt?.selectedSquare == nil)
-  }
-
-  private var destinationControls: some View {
-    let visibility = controller.runtime.visibilityIdentity
-    return Group {
-      Menu {
-        ForEach(0..<8) { file in
-          let name = String("abcdefgh".dropFirst(file).prefix(1))
-          Button("File \(name.uppercased())") {
-            controller.selectFile(file, visibility: visibility)
-          }
-          .accessibilityIdentifier("chess.file.\(name)")
-        }
-      } label: {
-        Text(
-          controller.destinationFile.map {
-            "File: \(String("abcdefgh".dropFirst($0).prefix(1)).uppercased())"
-          } ?? "File: —"
-        )
-        .frame(maxWidth: .infinity, minHeight: 44)
-        .contentShape(Rectangle())
-      }
-      .accessibilityIdentifier("chess.file")
-      .accessibilityHint("Choose a destination file from A through H.")
-      Menu {
-        ForEach(0..<8) { rank in
-          Button("Rank \(rank + 1)") { controller.selectRank(rank, visibility: visibility) }
-            .accessibilityIdentifier("chess.rank.\(rank + 1)")
-        }
-      } label: {
-        Text(controller.destinationRank.map { "Rank: \($0 + 1)" } ?? "Rank: —")
-          .frame(maxWidth: .infinity, minHeight: 44)
-          .contentShape(Rectangle())
-      }
-      .accessibilityIdentifier("chess.rank")
-      .accessibilityHint("Choose a destination rank from 1 through 8.")
-      Button {
-        controller.submitCoordinates(visibility: visibility)
-      } label: {
-        Text(compact ? "Submit" : "Submit move")
-          .frame(maxWidth: .infinity, minHeight: 44)
-          .contentShape(Rectangle())
-      }
-      .buttonStyle(SidequestButtonStyle(prominent: true, compact: true))
-      .disabled(!controller.canSubmitCoordinates)
-      .accessibilityLabel("Submit move")
-      .accessibilityIdentifier("chess.submit")
-    }
-    .font(compact ? .subheadline : .headline)
   }
 
   private var selectionLabel: String {

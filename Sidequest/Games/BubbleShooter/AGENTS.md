@@ -128,3 +128,7 @@ Agent-grill self-assessment before implementation:
 ## Completed archive configuration #201
 
 Composition may compare immutable original board, full color queue, cap, and tier through hasSameChallenge(as:). Current board/outcome/revision are attempt state and cannot establish challenge identity. Reject incompatible archives instead of dropping completion.
+
+## Direct aim and release #206
+
+Owner authorization October 6 supersedes historical explicit Fire/Slider requirements above. Keep the narrow lower-board native touch region and horizontal mapping. A release inside that region fires once through its current attempt/interaction lease; canceled, outside, stale, hidden, completed, or in-flight release cannot fire. Remove visible Fire/angle/Replay controls; retain adjustable aim and activate-to-fire accessibility on the playfield and a completed-board Replay action. Physics, shot caps, generation, feedback, fixed geometry, and reset/restoration remain unchanged. This does not implement dynamic descending-board Idea #212.

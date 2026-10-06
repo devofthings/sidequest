@@ -68,3 +68,7 @@ The separate original `Sidequest/Resources/chess-challenges.json` contains ten K
 `ChessPuzzleLoader.bundledCatalog(in:)` provides off-actor immutable metadata-required configurations for subsequent feed integration. The historical resource and `bundled(in:)` still provide exactly two fixtures. Validated focus areas never follow selection or completion and are never rule boundaries. Difficulty uses the accepted alternative-mate proxy (Easy≥3, Medium2, Hard1); checking-nonmate sets are measurements. Neither crop size nor this first-pass proxy establishes a human difficulty rating.
 
 This catalog and generalized view are source implementation. Production selection and labels remain with shared integration; actual app-hosted tests, small/normal/largest rendered checks, exact-head CI and fresh review must be recorded by the lead before delivery. No physical-device evidence is claimed.
+
+## Direct board play #207
+
+Owner-selected October 6: display “Chess”; tap a piece then destination to evaluate immediately. Remove duplicate piece/file/rank/Submit controls. Legal-destination accessibility actions on each moving piece include off-crop destinations; full standard-board rules and original challenge validation remain unchanged. Native direct-input and lifecycle evidence belongs to the PR.

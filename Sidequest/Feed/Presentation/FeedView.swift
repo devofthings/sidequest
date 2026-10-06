@@ -159,7 +159,7 @@ extension GameKind {
     switch self {
     case .sudoku: "Sudoku"
     case .memory: "Memory"
-    case .chess: "Chess puzzle"
+    case .chess: "Chess"
     case .bubbleShooter: "Bubble shooter"
     }
   }

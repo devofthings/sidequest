@@ -59,7 +59,7 @@ final class BubbleAimTouchRegion: UIView, FeedPanExcludingControl {
   }
 }
 
-/// A single tracked finger owns aiming only. Fire remains a separate explicit action.
+/// One originating finger owns aim and release-to-shoot; cancellation never fires.
 @MainActor
 final class BubbleAimTouchControl: UIControl, FeedPanExcludingControl {
   private var controller: BubbleShooterController
@@ -72,10 +72,10 @@ final class BubbleAimTouchControl: UIControl, FeedPanExcludingControl {
     isMultipleTouchEnabled = false
     isAccessibilityElement = true
     accessibilityIdentifier = "bubble.directAim"
-    accessibilityLabel = "Touch aiming area"
+    accessibilityLabel = "Aim and shoot bubble"
     accessibilityHint =
-      "Drag left or right to aim. Use the Aim slider for precise adjustment. Fire shoots the bubble."
-    accessibilityTraits = [.allowsDirectInteraction]
+      "Drag left or right, then release inside the aiming area to shoot. Adjust the angle or activate to shoot."
+    accessibilityTraits = [.adjustable, .button, .allowsDirectInteraction]
     update(controller: controller)
   }
 
@@ -118,10 +118,26 @@ final class BubbleAimTouchControl: UIControl, FeedPanExcludingControl {
   }
 
   override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
-    if let touch, let lease, let degrees = mapped(touch) {
-      controller.updateAimDrag(lease, degrees: degrees)
+    guard let touch, let lease, let degrees = mapped(touch) else {
+      cancelAim()
+      return
     }
-    cancelAim()
+    self.lease = nil
+    controller.releaseAimDrag(lease, degrees: degrees)
+  }
+
+  override func accessibilityIncrement() {
+    controller.aim(degrees: controller.aimDegrees + 5)
+    update(controller: controller)
+  }
+
+  override func accessibilityDecrement() {
+    controller.aim(degrees: controller.aimDegrees - 5)
+    update(controller: controller)
+  }
+
+  override func accessibilityActivate() -> Bool {
+    controller.fire()
   }
 
   override func cancelTracking(with event: UIEvent?) {
