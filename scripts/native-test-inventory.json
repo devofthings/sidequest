@@ -401,6 +401,24 @@
         "Sidequest/App/"
       ]
     },
+    "SidequestUITests/LiveNewsFlowTests/testFailedRefreshAndImageKeepReadableArticle": {
+      "lower_layer": "Offline parser, refresh-owner and feed-preservation units cover data and races; this native flow verifies image/credit rendering and foreground refresh.",
+      "paths": [
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/Feed/",
+        "SidequestUITests/LiveNewsFlowTests.swift"
+      ]
+    },
+    "SidequestUITests/LiveNewsFlowTests/testImageCreditAndForegroundRefreshKeepSelectedCard": {
+      "lower_layer": "Offline parser, refresh-owner and feed-preservation units cover data and races; this native flow verifies image/credit rendering and foreground refresh.",
+      "paths": [
+        "Sidequest/News/",
+        "Sidequest/App/",
+        "Sidequest/Feed/",
+        "SidequestUITests/LiveNewsFlowTests.swift"
+      ]
+    },
     "SidequestUITests/MemoryFlowTests/testSuccessWithSystemReduceMotionDoesNotRepeatAfterBackground": {
       "lower_layer": "GameSuccessFeedbackTests cover once-per-attempt, cancellation, failed/stale completion, restored state, and replay. This focused native case verifies actual system Reduce Motion and background cancellation of visible successful Memory feedback.",
       "paths": [

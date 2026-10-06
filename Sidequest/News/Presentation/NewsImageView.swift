@@ -23,6 +23,7 @@ struct NewsImageView: View {
         .overlay {
           if let loaded {
             Image(uiImage: loaded).resizable().scaledToFill()
+              .accessibilityIdentifier("news.imageLoaded")
           } else {
             Rectangle().fill(.secondary.opacity(0.08))
               .overlay {

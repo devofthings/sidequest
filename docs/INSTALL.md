@@ -278,3 +278,7 @@ At author handoff, source plist/asset validation, strict Swift lint, documentati
 ## Mixed difficulty verification #201
 
 The integration is not yet certified by native execution. Planned focused command: `python3 scripts/run-native-tests.py --unit --ui MixedDifficultyFlowTests --output /private/tmp/sidequest-201-native`. This covers the complete unit suite and two extended mixed-tier journeys, without changing the three required smoke cases. The DEBUG route `-sidequest-mixed-difficulties-test` uses ordered seed201 and a dedicated fictional-news test store; Release ignores the route. Normal production opts into the same certified generation. Use the existing free Personal Team installation steps to test the reviewed branch after its exact-head CI and independent review pass.
+
+## Private Tagesschau personal test #213
+
+Current source replaces normal fake articles with a live German Tagesschau RSS feed. Reopen the app to refresh; network access is optional for games. The latest valid articles are cached only for the running session, and source images load when displayed. No news/image assets are archived or bundled in Git. See [personal test steps and limitations](TAGESSCHAU.md#personal-test). This source change does not create a new release download. Build on your iPhone using the existing free Personal Team signing instructions above.

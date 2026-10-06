@@ -125,6 +125,13 @@ final class NewsImportModel {
     }
   }
 
+  func showLiveRefreshError() {
+    message =
+      snapshots.isEmpty
+      ? "News is unavailable. Games are ready; reopen the app to retry."
+      : "Could not refresh news. Showing the latest articles from this session."
+  }
+
   func showPickerError() {
     message = "Could not select that file. Choose an accessible JSON file in Files."
   }

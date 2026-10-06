@@ -93,3 +93,9 @@ The lead accepted a bounded main-actor reconstruction closure at the real fallib
 The plan is ready within delegated scope; these answers establish implementation choices, not passing native evidence or independent review.
 
 Restored Bubble aim validates the controller’s exact closed degree range [-60,60]. Converting the radians limit back into degrees rounds slightly below60 and rejects legitimate endpoint witnesses, preventing completed reverse navigation. Preserve exact endpoint acceptance and reject nonfinite/out-of-range archives; the regression exercises reconstruction and Replay, not weakened navigation assertions.
+
+## Private live news #213
+
+The owner authorized implementation and personal image testing on October 6. Normal cold launch uses official Tagesschau RSS, without a fictional fallback or loading saved imports. Games prepare independently of network access. Refresh on foreground activation, retaining the last valid in-memory feed on failure; no article/image archive or disk URL cache. Keep saved private imports intact. A successful explicit import selects manual news for the current session and invalidates live refresh; the next launch selects Tagesschau again. Public distribution remains outside this personal test.
+
+Readiness used the project agent-grill with `/root/tagesschau_readiness`: source metadata supplies images/complete credits, so no article scraping is needed. Refresh changes news payloads/pool synchronously in the existing composition, preserving appearance IDs, selection, all game owners/challenges/completions, and cadence count. An initially offline/pending feed is games-only; articles enter at future five-game generation boundaries, without retroactive deck insertion. Bound ephemeral HTTPS transport and external XML/HTML parsing; tests use original offline fixtures. See [private news decisions](../../docs/TAGESSCHAU.md).

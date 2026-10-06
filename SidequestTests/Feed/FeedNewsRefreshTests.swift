@@ -114,7 +114,7 @@ final class FeedNewsRefreshTests: XCTestCase {
     XCTAssertNil(composition.games[id])
     let descriptors = composition.generatedDescriptors.mapValues(\.card)
     let cardIDs = feed.cards.map(\.id)
-    XCTAssertTrue(composition.refreshNews([story("new")]))
+    XCTAssertTrue(composition.refreshNews([try story("new")]))
     XCTAssertEqual(feed.cards.map(\.id), cardIDs)
     XCTAssertEqual(composition.generatedDescriptors.mapValues(\.card), descriptors)
     for _ in 0..<3 { feed.previous() }

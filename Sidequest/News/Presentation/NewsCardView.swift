@@ -21,6 +21,15 @@ struct NewsCardContent: View {
     SidequestTheme(scheme: scheme, contrast: contrastOverride ?? systemContrast)
   }
 
+  private var imageLoader: @Sendable (URL) async throws -> Data {
+    #if DEBUG
+      if CommandLine.arguments.contains("-sidequest-tagesschau-fixtures") {
+        return { url in try await TagesschauFixtures.imageData(url) }
+      }
+    #endif
+    return NewsImageDecoder.load
+  }
+
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       if snapshot.isSample {
@@ -32,6 +41,7 @@ struct NewsCardContent: View {
           .background(SidequestTheme.coral, in: Capsule())
           .accessibilityIdentifier("news.sample")
       }
+      if let image = snapshot.image { NewsImageView(image: image, load: imageLoader) }
       Text(snapshot.headline)
         .font(.system(.title2, design: .serif, weight: .heavy))
         .accessibilityIdentifier("news.headline")
