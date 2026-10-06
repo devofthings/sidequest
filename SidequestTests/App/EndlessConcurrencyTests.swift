@@ -127,7 +127,7 @@ final class EndlessConcurrencyTests: XCTestCase {
   }
 
   func testImportCapturesOriginBeforeNoncooperativeReadAndCannotSaveIntoNewSession() async throws {
-    let session = FeedSessionState()
+    let session = FeedSessionState(bidirectional: false)
     let store = EndlessStorage()
     let read = EndlessReadGate()
     let model = NewsImportModel(
@@ -155,12 +155,14 @@ final class EndlessConcurrencyTests: XCTestCase {
   func testStaleSuspendedReplacementPreparationNeverSaves() async throws {
     let gate = GameBatchGate()
     let store = EndlessStorage()
-    let session = FeedSessionState(prepareBatch: { id, sequence, seed, puzzles, ordered in
-      try await gate.pauseAfterFirst()
-      return try await GeneratedGameBatch.prepare(
-        sessionID: id, sequence: sequence, seed: seed,
-        chessPuzzles: puzzles, ordered: ordered)
-    })
+    let session = FeedSessionState(
+      bidirectional: false,
+      prepareBatch: { id, sequence, seed, puzzles, ordered in
+        try await gate.pauseAfterFirst()
+        return try await GeneratedGameBatch.prepare(
+          sessionID: id, sequence: sequence, seed: seed,
+          chessPuzzles: puzzles, ordered: ordered)
+      })
     let data = try imported([])
     let model = NewsImportModel(
       store: store, beginReplacement: session.beginReplacement,
@@ -188,7 +190,7 @@ final class EndlessConcurrencyTests: XCTestCase {
 
   func testSaveLeaseSerializesReplacementAndCanceledDurableSuccessStillAdopts() async throws {
     let store = EndlessStorage(pauseSave: true)
-    let session = FeedSessionState()
+    let session = FeedSessionState(bidirectional: false)
     let data = try imported([])
     let model = NewsImportModel(
       store: store, beginReplacement: session.beginReplacement,
@@ -214,7 +216,7 @@ final class EndlessConcurrencyTests: XCTestCase {
 
   func testFailedSaveReleasesLeaseAndKeepsTheCurrentSession() async throws {
     let store = EndlessStorage(rejectSave: true)
-    let session = FeedSessionState()
+    let session = FeedSessionState(bidirectional: false)
     let data = try imported([])
     let model = NewsImportModel(
       store: store, beginReplacement: session.beginReplacement,

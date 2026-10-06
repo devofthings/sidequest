@@ -2,8 +2,8 @@ import XCTest
 
 @MainActor
 extension XCUIApplication {
-  func nextFeedCard() { navigateFeed(using: "feed.next") }
-  func previousFeedCard() { navigateFeed(using: "feed.previous") }
+  func nextFeedCard() { navigateFeed(forward: true) }
+  func previousFeedCard() { navigateFeed(forward: false) }
 
   func openNewsLibrary(file: StaticString = #filePath, line: UInt = #line) {
     let menu = buttons["feed.navigation"]
@@ -33,20 +33,26 @@ extension XCUIApplication {
       "Expected settled card \(id)", file: file, line: line)
   }
 
-  private func navigateFeed(using identifier: String) {
-    let previous = selectedFeedCard.identifier
-    buttons["feed.navigation"].tap()
-    let action = buttons[identifier]
-    XCTAssertTrue(action.exists || action.waitForExistence(timeout: 3))
-    XCTAssertTrue(action.isEnabled)
-    action.tap()
-    XCTAssertTrue(
-      buttons["feed.navigation"].exists
-        || buttons["feed.navigation"].waitForExistence(timeout: 3))
-    if selectedFeedCard.exists, selectedFeedCard.identifier != previous { return }
-    let settled = XCTNSPredicateExpectation(
-      predicate: NSPredicate(format: "exists == true AND identifier != %@", previous),
-      object: selectedFeedCard)
-    XCTAssertEqual(XCTWaiter.wait(for: [settled], timeout: 10), .completed)
+  /// Historical interaction journeys explicitly keep manual navigation; timer gets its own route.
+  func launchWithManualFeed() {
+    if !launchArguments.contains("-sidequest-disable-auto-continue") {
+      launchArguments.append("-sidequest-disable-auto-continue")
+    }
+    launch()
+  }
+
+  private func navigateFeed(forward: Bool) {
+    let previous = selectedFeedCardID
+    let pager = scrollViews["feed.pager"]
+    XCTAssertTrue(pager.exists)
+    for _ in 0..<12 {
+      let start = pager.coordinate(
+        withNormalizedOffset: CGVector(dx: 0.01, dy: forward ? 0.85 : 0.15))
+      let end = pager.coordinate(
+        withNormalizedOffset: CGVector(dx: 0.01, dy: forward ? 0.15 : 0.85))
+      start.press(forDuration: 0.01, thenDragTo: end, withVelocity: .fast, thenHoldForDuration: 0.1)
+      if selectedFeedCardID != previous { return }
+    }
+    XCTFail("Physical swipe did not reach an adjacent card from \(previous)")
   }
 }

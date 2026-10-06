@@ -7,6 +7,65 @@ import XCTest
 
 @MainActor
 final class EndlessFeedTests: XCTestCase {
+  func testBidirectionalStartupAndRepeatedBackwardBatchesRetainIdentityAndBoundedOwners()
+    async throws
+  {
+    let composition = try await FeedComposition.endless(
+      news: DemoNewsLoader.bundled(), chessPuzzles: ChessPuzzleLoader.bundled(),
+      seed: 216, ordered: true, bidirectional: true)
+    let feed = try XCTUnwrap(composition.controller)
+    let initial = feed.cards
+    let initialID = try XCTUnwrap(feed.selectedCard?.id)
+    XCTAssertTrue(feed.canGoBack)
+    feed.setSceneActive(true)
+    for _ in 0..<80 {
+      if !feed.canGoBack { try await wait { feed.canGoBack } }
+      feed.previous()
+      await Task.yield()
+      XCTAssertLessThanOrEqual(composition.cachedAdapterCount, 3)
+      XCTAssertEqual(Set(feed.cards.map(\.id)).count, feed.count)
+    }
+    XCTAssertGreaterThan(feed.count, initial.count)
+    while feed.selectedCard?.id != initialID {
+      feed.next()
+      await Task.yield()
+    }
+    let start = try XCTUnwrap(feed.cards.firstIndex(where: { $0.id == initial[0].id }))
+    XCTAssertEqual(Array(feed.cards[start..<(start + initial.count)]), initial)
+    feed.retire()
+  }
+
+  func testBackwardPreparedBatchCannotShiftIndicesDuringHeldPagingOrAfterBackground() async throws {
+    let preparation = BackwardPreparationSignal()
+    let composition = try await FeedComposition.endless(
+      news: [], chessPuzzles: ChessPuzzleLoader.bundled(), seed: 216,
+      ordered: true, bidirectional: true,
+      prepareBatch: { id, sequence, seed, puzzles, ordered in
+        let batch = try await GeneratedGameBatch.prepare(
+          sessionID: id, sequence: sequence, seed: seed, chessPuzzles: puzzles, ordered: ordered)
+        if sequence > 0 { await preparation.markPrepared() }
+        return batch
+      })
+    let feed = try XCTUnwrap(composition.controller)
+    feed.setSceneActive(true)
+    feed.setPagingBusy(true)
+    for _ in 0..<4 { feed.previous() }
+    let held = feed.cards
+    let id = feed.selectedCard?.id
+    await preparation.waitUntilPrepared()
+    XCTAssertEqual(feed.cards, held)
+    XCTAssertEqual(feed.selectedCard?.id, id)
+    feed.setSceneActive(false)
+    feed.setPagingBusy(false)
+    XCTAssertEqual(feed.cards, held)
+    feed.setSceneActive(true)
+    try await wait { feed.count > held.count }
+    XCTAssertEqual(feed.count, held.count + 8, "Only the current resumed generation may adopt")
+    XCTAssertEqual(Set(feed.cards.map(\.id)).count, feed.count)
+    XCTAssertEqual(feed.selectedCard?.id, id)
+    feed.retire()
+  }
+
   func testSeededGeneratorsProduceDiverseValidFrozenChallenges() throws {
     var sudoku = Set<[Int]>()
     var memory = Set<[String]>()
@@ -392,5 +451,19 @@ final class EndlessFeedTests: XCTestCase {
       publisher: "Sidequest fixture",
       sourceURL: XCTUnwrap(URL(string: "https://example.com/endless")),
       capturedAt: Date(timeIntervalSince1970: 1_700_000_000), isSample: true)
+  }
+}
+
+private actor BackwardPreparationSignal {
+  private var prepared = false
+  private var continuation: CheckedContinuation<Void, Never>?
+  func markPrepared() {
+    prepared = true
+    continuation?.resume()
+    continuation = nil
+  }
+  func waitUntilPrepared() async {
+    if prepared { return }
+    await withCheckedContinuation { continuation = $0 }
   }
 }

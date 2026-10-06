@@ -315,7 +315,7 @@ final class GamePreviewTests: XCTestCase {
       [fixture.argument]
       + (largeText ? ["-sidequest-large-text"] : [])
       + (fixture == .bubble ? ["-sidequest-bubble-slow-shot"] : [])
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(anchor(app, fixture: fixture).waitForExistence(timeout: 5))
     return app
   }

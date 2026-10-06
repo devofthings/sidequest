@@ -18,7 +18,7 @@ The retained [2026.10.14 simulator download](https://github.com/devofthings/side
 
 ## What's playable
 
-Swipe vertically through endless locally generated game cards. The first meaningful game interaction starts play immediately. Skipping resets unfinished attempts; revisiting preserves the card's challenge and completed results within the session. Game cards mix labeled Easy, Medium, and Hard challenges.
+Swipe vertically in either direction through endless locally generated game cards. The first meaningful game interaction starts play immediately. Skipping resets unfinished attempts; revisiting preserves the card's challenge and completed results within the session. Game cards mix labeled Easy, Medium, and Hard challenges. A cancellable three-second timer auto-continues after a win; tap it to disable, or reenable Auto-continue in More options.
 
 | Game | Current source |
 | --- | --- |
@@ -29,7 +29,7 @@ Swipe vertically through endless locally generated game cards. The first meaning
 
 [Tagesschau RSS excerpts and images](docs/TAGESSCHAU.md) appear at future five-game boundaries for a private German news test. Refresh runs at launch and foreground reopening; an in-memory cache keeps the latest valid articles if refresh fails. A fresh offline launch shows games. **More options → News snapshots** also supports private manual imports.
 
-Games use vivid artwork, contained animations, and interaction feedback; app surroundings stay neutral. A static system launch screen shows the Sidequest logo. The [daily flame](docs/STREAK.md) counts a successful solve or committed physical card swipe once per local calendar day; opening alone and menu navigation do not count.
+Games use vivid artwork, contained animations, and interaction feedback; app surroundings stay neutral. A static system launch screen shows the Sidequest logo. The [daily flame](docs/STREAK.md) counts a successful solve or committed physical card swipe once per local calendar day; opening alone and accessible or automatic navigation do not count.
 
 Accounts, synced preferences, and leaderboards remain phase-two scope. See the [MVP brief](docs/MVP.md) and [decisions](docs/DECISIONS.md) for accepted direction and proposals. Public news reuse and distribution are not approved.
 

@@ -287,7 +287,7 @@ final class BubbleFlowTests: XCTestCase {
       ["-sidequest-bubble-fixtures", "-sidequest-success-feedback-test"]
       + (slowShot ? ["-sidequest-bubble-slow-shot"] : [])
       + (largeText ? ["-sidequest-large-text"] : [])
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.bubbleAim.waitForExistence(timeout: 5))
     XCTAssertTrue(app.staticTexts["Bubble shooter"].exists)
     XCTAssertTrue(app.bubbleAim.exists)

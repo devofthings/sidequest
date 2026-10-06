@@ -6,6 +6,61 @@ import XCTest
 @testable import Sidequest
 
 final class FeedHostTests: XCTestCase {
+  @MainActor
+  func testPrependPreservesPlayingIdentityAndDefersWhilePagerHoldsIndices() throws {
+    let ids = try [CardID("above"), CardID("current")]
+    let runtime = GameRuntime()
+    runtime.installEffectHandler { _ in }
+    let current = FeedCard.game(GameCard(id: ids[1], kind: .memory))
+    let above = FeedCard.game(GameCard(id: ids[0], kind: .chess))
+    let feed = FeedController(cards: [current], runtimes: [ids[1]: runtime], isEndless: true)
+    feed.setSceneActive(true)
+    runtime.start()
+    let phase = runtime.phase
+    feed.setPagingBusy(true)
+    XCTAssertFalse(feed.prepend([above]))
+    XCTAssertEqual(feed.selectedIndex, 0)
+    feed.setPagingBusy(false)
+    XCTAssertTrue(feed.prepend([above]))
+    XCTAssertEqual(feed.selectedIndex, 1)
+    XCTAssertEqual(feed.selectedCard?.id, ids[1])
+    XCTAssertEqual(runtime.phase, phase)
+    XCTAssertTrue(runtime.isVisible)
+    XCTAssertTrue(feed.canGoBack)
+    feed.retire()
+    XCTAssertFalse(feed.prepend([above]))
+  }
+
+  @MainActor
+  func testNativePrependRetainsTheSelectedHostingRootAndContentOffset() throws {
+    let ids = try (0..<12).map { try CardID("stable-\($0)") }
+    let cards = ids.map { FeedCard.game(GameCard(id: $0, kind: .memory)) }
+    let feed = FeedController(
+      cards: Array(cards.suffix(3)), runtimes: [:], isEndless: true, initialIndex: 1)
+    feed.setSceneActive(true)
+    let render: (FeedCard) -> AnyView = { _ in AnyView(Color.clear.frame(height: 1600)) }
+    let pager = FeedPagerController(controller: feed, content: render)
+    pager.loadViewIfNeeded()
+    pager.view.frame = CGRect(x: 0, y: 0, width: 390, height: 600)
+    pager.view.setNeedsLayout()
+    pager.view.layoutIfNeeded()
+    pager.update(content: render, request: nil, reduceMotion: true)
+    let root = try XCTUnwrap(pager.children.first { $0.view.frame.minY == 600 })
+    let scroller = try XCTUnwrap(root.view.subviews.compactMap { $0 as? UIScrollView }.first)
+    scroller.contentSize = CGSize(width: 390, height: 1600)
+    scroller.setContentOffset(CGPoint(x: 0, y: 240), animated: false)
+    let selectedID = feed.selectedCard?.id
+    XCTAssertTrue(feed.prepend(Array(cards.prefix(9))))
+    pager.update(content: render, request: nil, reduceMotion: true)
+    pager.view.layoutIfNeeded()
+    XCTAssertEqual(feed.selectedCard?.id, selectedID)
+    XCTAssertTrue(pager.children.contains { $0 === root })
+    XCTAssertEqual(scroller.contentOffset.y, 240)
+    XCTAssertEqual(pager.children.count, 3)
+    pager.stop()
+    feed.retire()
+  }
+
   func testEmptyAndSingleSelectionHaveBoundedNavigation() throws {
     var empty = FeedSelection(cards: [])
     XCTAssertNil(empty.card)

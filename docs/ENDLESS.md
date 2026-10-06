@@ -49,3 +49,15 @@ For #104, both PR and main/manual native verification budgets were increased to 
 
 
 Reviewed generation child137 merged through [PR139](https://github.com/devofthings/sidequest/pull/139); its normal-production real three-shot/reset/completed-revisit flow passed before integration and exact-head native CI passed. Control child138 leaves descriptors, generation/witness bounds, cache/archive identity and frozen Replay unchanged. A controller-local drag lease is transient input ownership, never retained in completed snapshots; reconstructed owners start without a held gesture. Parent135's full compactness verification remains separate.
+
+## Bidirectional scrolling #216
+
+The owner approved newly generated history above the initial card and endless scrolling in either direction. Normal startup seeds both sides, selects the first forward game, and replenishes at four remaining cards on either edge. Independent UUID namespaces and nonnegative sequence counters keep challenge IDs distinct. Backward batches are stored in reverse outward order, with news boundaries aligned to retain five games between articles across the starting seam. No history is persisted between launches.
+
+Preparation completing during a physical swipe is held until settlement; inserting cards preserves selected identity and its existing attempt, without a reset or streak event. The three-dot menu omits Previous/Next; named pager accessibility actions use ordinary settled programmatic requests. Existing cancellation, retry, bounded heavy adapters and completed restoration remain required. Verification belongs to the owning PR.
+
+## Successful auto-continue #84
+
+Normal sessions enable a three-second neutral3–2–1 circular timer after a new successful visible attempt. Tap it to disable auto-continue for the session; the More options toggle reenables it for future wins. Countdown chrome has a constant44-point slot and Reduce Motion uses numeric ticks without ring animation. A session-owned cancelable task validates its request after every tick. Composition uses the existing single success observer for both participation and countdown.
+
+Manual paging, background, modal presentation, leaving, session replacement and disable cancel advancement. Completed revisits, news, losses and stale callbacks do not start timers. At expiry, the view validates originating card/attempt and eligibility and makes one ordinary native page request; unavailable next cards retain the result with no repeated movement. Automatic movement never counts as a physical swipe for the streak. Deterministic countdown gates and native timer/direct paging journeys verify these boundaries; no release is implied.

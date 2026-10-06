@@ -131,7 +131,7 @@ final class EndlessFlowTests: XCTestCase {
     app.waitForFeedCard(newsID(0))
     app.terminate()
     app.launchArguments = ["-sidequest-integration-fixtures", "-sidequest-endless-fixtures"]
-    app.launch()
+    app.launchWithManualFeed()
     app.waitForFeedCard(gameID(0))
     for _ in 0..<5 { app.nextFeedCard() }
     app.waitForFeedCard(newsID(0))
@@ -145,7 +145,7 @@ final class EndlessFlowTests: XCTestCase {
     app.waitForFeedCard(gameID(17))
     XCTAssertFalse(app.staticTexts["news.sample"].exists)
     app.terminate()
-    app.launch()
+    app.launchWithManualFeed()
     app.waitForFeedCard(gameID(0))
     XCTAssertFalse(app.buttons["game.start"].exists)
     for _ in 0..<5 { app.nextFeedCard() }
@@ -273,7 +273,7 @@ final class EndlessFlowTests: XCTestCase {
         "-sidequest-integration-fixtures", "-sidequest-integration-reset",
         "-sidequest-endless-fixtures",
       ] + (slowShot ? ["-sidequest-bubble-slow-shot"] : []) + extra
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.staticTexts["foundation.title"].waitForExistence(timeout: 10))
     return app
   }

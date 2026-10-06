@@ -113,7 +113,7 @@ final class MixedDifficultyFlowTests: XCTestCase {
   private func launch(extra: [String] = []) -> XCUIApplication {
     let app = XCUIApplication()
     app.launchArguments = ["-sidequest-mixed-difficulties-test"] + extra
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.buttons["feed.navigation"].waitForExistence(timeout: 10))
     return app
   }

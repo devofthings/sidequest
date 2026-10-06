@@ -45,6 +45,39 @@ final class FeedNewsCadenceTests: XCTestCase {
     XCTAssertEqual(try NewsSnapshotImporter.encode(stories), original)
   }
 
+  func testBackwardAndForwardNewsKeepFiveGameIntervalsAcrossTheStartupSeam() async throws {
+    let pool = try await DemoNewsLoader.bundled()
+    var backward = FeedNewsCadence(pool: pool, sessionID: UUID())
+    var forward = FeedNewsCadence(pool: pool, sessionID: UUID())
+    var cards: [FeedCard] = []
+    for batch in 0..<5 {
+      let games = try (0..<8).map { GameCard(id: try CardID("back-\(batch)-\($0)"), kind: .memory) }
+      let prepared = try backward.preparingBackward(games)
+      cards.insert(contentsOf: prepared.cards, at: 0)
+      backward = prepared.next
+    }
+    for batch in 0..<5 {
+      let games = try (0..<8).map {
+        GameCard(id: try CardID("forward-\(batch)-\($0)"), kind: .memory)
+      }
+      let prepared = try forward.preparing(games)
+      cards += prepared.cards
+      forward = prepared.next
+    }
+    var seenNews = false
+    var games = 0
+    for card in cards {
+      if case .game = card {
+        games += 1
+      } else {
+        if seenNews { XCTAssertEqual(games, 5) }
+        seenNews = true
+        games = 0
+      }
+    }
+    XCTAssertEqual(Set(cards.map(\.id)).count, cards.count)
+  }
+
   func testEmptyPoolKeepsEveryGameAndFiniteAppearanceDefaultsToSourceID() async throws {
     let games = try (0..<17).map { GameCard(id: try CardID("empty-\($0)"), kind: .sudoku) }
     let cadence = FeedNewsCadence(pool: [], sessionID: UUID())

@@ -90,16 +90,16 @@ final class FeedFlowTests: XCTestCase {
     let games = launch(argument: "-sidequest-feed-games-only")
     XCTAssertTrue(games.buttons["game.start"].waitForExistence(timeout: 5))
     games.buttons["feed.navigation"].tap()
-    XCTAssertFalse(games.buttons["feed.previous"].isEnabled)
+    XCTAssertFalse(games.buttons["feed.previous"].exists)
     games.coordinate(withNormalizedOffset: CGVector(dx: 0.05, dy: 0.1)).tap()
     for _ in 0..<3 { games.nextFeedCard() }
     games.buttons["feed.navigation"].tap()
-    XCTAssertFalse(games.buttons["feed.next"].isEnabled)
+    XCTAssertFalse(games.buttons["feed.next"].exists)
     games.coordinate(withNormalizedOffset: CGVector(dx: 0.05, dy: 0.1)).tap()
     XCTAssertFalse(games.staticTexts["feed.position"].exists)
     games.previousFeedCard()
     games.buttons["feed.navigation"].tap()
-    XCTAssertTrue(games.buttons["feed.next"].isEnabled)
+    XCTAssertFalse(games.buttons["feed.next"].exists)
     games.coordinate(withNormalizedOffset: CGVector(dx: 0.05, dy: 0.1)).tap()
   }
 
@@ -110,7 +110,7 @@ final class FeedFlowTests: XCTestCase {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launchArguments = [argument] + (largeText ? ["-sidequest-large-text"] : [])
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.staticTexts["foundation.title"].waitForExistence(timeout: 5))
     return app
   }

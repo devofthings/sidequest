@@ -270,7 +270,7 @@ final class ChessFlowTests: XCTestCase {
       ["-sidequest-chess-\(color)-fixture"]
       + (successFeedback ? ["-sidequest-success-feedback-test"] : [])
       + (largeText ? ["-sidequest-large-text"] : [])
-    app.launch()
+    app.launchWithManualFeed()
     XCTAssertTrue(app.staticTexts["chess.selection"].waitForExistence(timeout: 5))
     return app
   }
