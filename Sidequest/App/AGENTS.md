@@ -110,3 +110,5 @@ The app retains one DailyStreakModel across feed/import replacements. Bind accep
 
 # Bidirectional generation #216
 Normal composition opts into separate forward/backward UUID namespaces and nonnegative sequence counters. Backward news boundaries precede each outward five-game group, preserving five-game intervals across startup. Deferred prepared batches adopt only while eligible and pager-idle; cancellation discards pending batches. Historical finite and forward-only test routes remain explicit.
+
+For #230, Debug may select an initial celebration style with `-sidequest-celebration-style 0...3` only alongside the existing real White Chess and success-feedback fixture flags. This changes presentation only; solve through real board input. Release ignores the modifier and randomizes the session's initial style. Composition retains the variation cycle across adapter eviction/reconstruction, independent of archived results.

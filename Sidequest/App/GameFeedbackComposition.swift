@@ -2,6 +2,22 @@ import Foundation
 
 @MainActor
 enum GameFeedbackComposition {
+  static var initialCelebrationStyle: SuccessCelebrationStyle {
+    #if DEBUG
+      let arguments = CommandLine.arguments
+      if arguments.contains("-sidequest-success-feedback-test"),
+        arguments.contains("-sidequest-chess-white-fixture"),
+        let flag = arguments.firstIndex(of: "-sidequest-celebration-style"),
+        arguments.indices.contains(flag + 1),
+        let index = Int(arguments[flag + 1]),
+        let style = SuccessCelebrationStyle(rawValue: index)
+      {
+        return style
+      }
+    #endif
+    return SuccessCelebrationStyle.allCases.randomElement() ?? .pop
+  }
+
   static func makeRuntime(completed: GameAttemptID? = nil) -> GameRuntime {
     #if DEBUG
       let arguments = CommandLine.arguments

@@ -27,6 +27,8 @@ final class FeedComposition {
   private var knownIDs = Set<CardID>()
   private var newsCadence: FeedNewsCadence?
   private var streak: DailyStreakModel?
+  private var celebrations = SuccessCelebrationSequence(
+    startingWith: GameFeedbackComposition.initialCelebrationStyle)
 
   var cachedAdapterCount: Int { games.count }
   var generatedDescriptors: [CardID: GeneratedGameDescriptor] { descriptors }
@@ -44,16 +46,17 @@ final class FeedComposition {
   }
 
   private func bindCompletion(to runtime: GameRuntime) {
-    runtime.installSuccessfulCompletionHandler { [weak self, weak runtime] in
-      guard let self, let runtime else { return }
-      streak?.qualify()
-      guard let controller, controller.canNavigate, !controller.pagingIsBusy,
-        case .game(let card) = controller.selectedCard,
-        controller.runtimes[card.id] === runtime,
-        case .completed(let attempt) = runtime.phase
-      else { return }
-      controller.autoContinue.start(cardID: card.id, attempt: attempt)
-    }
+    runtime.installSuccessfulCompletionHandler(
+      { [weak self, weak runtime] in
+        guard let self, let runtime else { return }
+        streak?.qualify()
+        guard let controller, controller.canNavigate, !controller.pagingIsBusy,
+          case .game(let card) = controller.selectedCard,
+          controller.runtimes[card.id] === runtime,
+          case .completed(let attempt) = runtime.phase
+        else { return }
+        controller.autoContinue.start(cardID: card.id, attempt: attempt)
+      }, chooseCelebration: { [weak self] in self?.celebrations.next() ?? .pop })
   }
 
   /// Adopt the latest story pool without rebuilding a game or changing feed history identity.

@@ -37,3 +37,7 @@ The owner selected first interaction starts and applies the same action, superse
 ## Accepted success participation observer #217
 
 Composition may install exactly one separate successful-completion observer. Deliver it only after the existing accepted successful visible-completion gate and synchronous stop handler, independently of the single lifecycle effect binding. Loss, hidden/stale/duplicate completion and quiet completed restoration/revisit emit nothing. New reconstructed runtimes bind their own observer once; game rules retain no persistence dependency. See [streak guidance](../../Streak/AGENTS.md).
+
+## Varied success #230
+
+[The selected celebration decision](../../../docs/DECISIONS.md#varied-success-celebrations-230) supersedes the fixed Nice/lime treatment. Composition owns the ephemeral four-style cycle; select only after accepted visible success, never during rendering or restoration. Freeze style with the attempt and clear both together. Key one-shot decorative progress by attempt identity; Reduce Motion removes all particle travel/rotation. Keep the existing runtime lifetime, viewport center, pass-through input, stable game geometry and haptic gate. Do not archive styles or add a second timer/observer.
