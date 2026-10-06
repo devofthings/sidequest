@@ -9,10 +9,12 @@ struct NewsSnapshot: Equatable, Codable, Sendable {
   let capturedAt: Date
   let publishedAt: Date?
   let isSample: Bool
+  let image: NewsImage?
 
   init(
     id: CardID, headline: String, excerpt: String, publisher: String,
-    sourceURL: URL, capturedAt: Date, publishedAt: Date? = nil, isSample: Bool
+    sourceURL: URL, capturedAt: Date, publishedAt: Date? = nil, isSample: Bool,
+    image: NewsImage? = nil
   ) throws {
     for (field, value) in [("headline", headline), ("excerpt", excerpt), ("publisher", publisher)] {
       guard !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
@@ -37,10 +39,11 @@ struct NewsSnapshot: Equatable, Codable, Sendable {
     self.capturedAt = capturedAt
     self.publishedAt = publishedAt
     self.isSample = isSample
+    self.image = image
   }
 
   private enum CodingKeys: String, CodingKey {
-    case id, headline, excerpt, publisher, sourceURL, capturedAt, publishedAt, isSample
+    case id, headline, excerpt, publisher, sourceURL, capturedAt, publishedAt, isSample, image
   }
 
   init(from decoder: any Decoder) throws {
@@ -53,7 +56,8 @@ struct NewsSnapshot: Equatable, Codable, Sendable {
       sourceURL: values.decode(URL.self, forKey: .sourceURL),
       capturedAt: values.decode(Date.self, forKey: .capturedAt),
       publishedAt: values.decodeIfPresent(Date.self, forKey: .publishedAt),
-      isSample: values.decode(Bool.self, forKey: .isSample)
+      isSample: values.decode(Bool.self, forKey: .isSample),
+      image: values.decodeIfPresent(NewsImage.self, forKey: .image)
     )
   }
 }
