@@ -30,7 +30,7 @@ Current #91 source adds a brief Card S introduction on cold launch while prepara
 
 Current Bubble source uses left/right dragging in the lower-board aiming area and a dotted trajectory, with no visible numeric angle. Releasing a drag does not shoot; **Fire** stays explicit. A native 44-point Slider remains available for assistive and keyboard precision. See [the refinement and verification status](docs/BUBBLES.md#simplified-horizontal-aiming-163).
 
-Current #210 source gives the three-dot More options menu, news cards, and import library clean neutral styling in light and dark appearances, while game objects retain vivid colors. Native rendering and exact-head validation remain pending in the owning PR; see [the selected utility direction](docs/DESIGN.md#clean-app-surroundings-210).
+Current #210 source gives the three-dot More options menu, news cards, and import library clean neutral styling in light and dark appearances, while game objects retain vivid colors. Actual rendering and exact-head verification evidence is recorded in [PR #221](https://github.com/devofthings/sidequest/pull/221); see [the selected utility direction](docs/DESIGN.md#clean-app-surroundings-210).
 
 Current source supports full-card native vertical paging: swipe up/down directly on a card or use the compact **More options** menu. Overflowing content scrolls within its card; a new outward gesture at its top/bottom edge changes cards. The same menu opens **News snapshots** for manual importing. See [feed navigation](docs/FEED.md#navigation-and-eligibility). Game boards and primary controls retain their geometry when feedback or results change; [stable layout](docs/GAME_LAYOUT.md) describes the current source correction and verification.
 
