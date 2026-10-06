@@ -175,3 +175,13 @@ The owner authorized the launch-screen ticket after selecting a static system lo
 ## Daily local participation streak #217 — October 6, 2026
 
 Accepted: a compact daily flame/count qualifies after a successful game solve or one committed **physical** swipe to another feed card, in either direction. The owner chose current local calendar days and excluded menu/accessible Previous/Next. Opening alone and automatic movement do not qualify. Consecutive days increment once; a missed day resets the next qualification to 1. The lead selects the offline validated UserDefaults record, clock-rollback high-water policy and stable informational indicator described in [STREAK.md](STREAK.md); no backend, notification or streak-freeze feature is added. [PR #223](https://github.com/devofthings/sidequest/pull/223) owns actual verification evidence.
+
+## Purple native launch correction #226
+
+Accepted October 6, 2026: the owner requests full-screen purple from the selected logo on the static native splash. Use Card S #653BE8 in both appearances, keep the centered logo and system-owned duration, and retain neutral app surroundings. This supersedes #215's neutral launch canvas only; see [launch policy](design/LAUNCH.md).
+
+## Approved direct-play and feed batch — October 6, 2026
+
+The owner explicitly selects implementation of direct game controls (#206/#207), the name “Chess,” bidirectional endless scrolling with no Previous/Next menu items (#216), and auto-continue (#84). This supersedes their prior Ideas-only status and manual-only navigation after success. No new game kind or dynamic descending Bubble rules (#212) is selected. Stop after this bounded batch and #86 evidence reconciliation.
+
+Selected technical defaults: tap a Chess piece then destination to evaluate immediately; drag within Bubble's existing playfield aim area and release inside to shoot once, with cancellation/outside release never firing; retain assistive actions without redundant visible controls. Keep meaningful Sudoku digit/clear input. Earlier cards are newly generated, not persisted session history. Preserve challenge/result identity, bounded adapters, five-game/news cadence, and viewport stability in both directions. Accessible pager actions replace menu navigation. Auto-continue is enabled by default with a neutral three-second ring and 3–2–1 count; tap disables for the session, a menu toggle re-enables it. Only a fresh visible win qualifies; leaving/background/modal/replacement/disable cancels it, and completed revisits never restart it. Automatic paging does not count as a physical streak swipe. #86 physical haptic acceptance remains owner evidence.

@@ -24,7 +24,7 @@
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="launch-safe-area"/>
-                        <color key="backgroundColor" name="LaunchCanvas"/>
+                        <color key="backgroundColor" name="LaunchPurple"/>
                         <constraints>
                             <constraint firstItem="launch-logo" firstAttribute="centerX" secondItem="launch-view" secondAttribute="centerX" id="logo-center-x"/>
                             <constraint firstItem="launch-logo" firstAttribute="centerY" secondItem="launch-view" secondAttribute="centerY" id="logo-center-y"/>
@@ -37,8 +37,8 @@
     </scenes>
     <resources>
         <image name="StartupLogo" width="1024" height="1024"/>
-        <namedColor name="LaunchCanvas">
-            <color red="0.96862745098" green="0.96862745098" blue="0.97254901961" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <namedColor name="LaunchPurple">
+            <color red="0.39607843137" green="0.23137254902" blue="0.90980392157" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>

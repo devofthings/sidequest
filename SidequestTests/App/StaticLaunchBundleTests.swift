@@ -22,13 +22,16 @@ final class StaticLaunchBundleTests: XCTestCase {
     XCTAssertEqual(image.frame.height, 120, accuracy: 0.5)
     XCTAssertEqual(image.center.x, view.bounds.midX, accuracy: 0.5)
     XCTAssertEqual(image.center.y, view.bounds.midY, accuracy: 0.5)
-    let color = try XCTUnwrap(UIColor(named: "LaunchCanvas", in: .main, compatibleWith: nil))
+    let color = try XCTUnwrap(UIColor(named: "LaunchPurple", in: .main, compatibleWith: nil))
+    assertComponents(
+      try XCTUnwrap(view.backgroundColor).resolvedColor(
+        with: UITraitCollection(userInterfaceStyle: .light)), expected: (101, 59, 232))
     assertComponents(
       color.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light)),
-      expected: (247, 247, 248))
+      expected: (101, 59, 232))
     assertComponents(
       color.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark)),
-      expected: (17, 17, 20))
+      expected: (101, 59, 232))
   }
 
   private func assertComponents(
