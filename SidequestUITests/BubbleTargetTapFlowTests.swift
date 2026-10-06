@@ -19,11 +19,16 @@ final class BubbleTargetTapFlowTests: XCTestCase {
     waitForShots(2, app: app)
     XCTAssertEqual(aim.value as? String, "Aim: -45 degrees")
     XCTAssertEqual(board.frame, initial)
+    // Check drag on a fresh attempt: the two target shots can leave this fixture near completion.
+    let selected = app.selectedFeedCardID
+    app.nextFeedCard()
+    app.previousFeedCard()
+    XCTAssertEqual(app.selectedFeedCardID, selected)
+    XCTAssertEqual(app.staticTexts["bubble.shots"].label, "Shots: 0 of 8")
     app.shootBubble(at: 0.65)
-    waitForShots(3, app: app)
+    waitForShots(1, app: app)
     XCTAssertEqual(aim.value as? String, "Aim: 18 degrees")
     XCTAssertEqual(board.frame, initial)
-    let selected = app.selectedFeedCardID
     let start = board.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
     let end = board.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1))
     start.press(

@@ -173,6 +173,7 @@ struct BubbleShooterView: View {
           }
         }
       BubbleAimControl(controller: controller)
+        .disabled(!controller.canAimOrFire)
         .frame(height: boardWidth / 10 * 12)
         .accessibilityHidden(!isPlaying)
     }

@@ -186,6 +186,12 @@ final class BubbleAimTouchControl: UIControl, FeedPanExcludingControl {
     if !controller.canAimOrFire { cancelAim() }
     // Keep the narrow area a hit-test destination while disabled so it never becomes a feed pan.
     isEnabled = controller.canAimOrFire
+    // A nested control must expose its disabled state explicitly to assistive clients.
+    if isEnabled {
+      accessibilityTraits.remove(.notEnabled)
+    } else {
+      accessibilityTraits.insert(.notEnabled)
+    }
     accessibilityValue = "Aim: \(Int(controller.aimDegrees.rounded())) degrees"
   }
 
