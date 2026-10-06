@@ -115,3 +115,7 @@ For #160, a lightweight top-row hint and a transparent game-content-only tap sur
 ## First meaningful interaction #185
 
 The owner selected first interaction starts and applies the same action, superseding #160's inert tap/hint for real games. Follow [the authoritative preview policy](docs/GAME_PREVIEWS.md). Validate meaningful input before synchronous runtime preparation; capture visibility identity for held callbacks and preserve attempt/lease cancellation. No appearance/scroll activation, swallowed first action, real-fixture bypass or new lifecycle owner. Keep the static empty chrome reservation and native accessible controls. Actual native/CI proof remains pending in the owning PR.
+
+## Private live news #213
+
+The owner authorized official Tagesschau RSS excerpts and images for personal testing, replacing the normal fictional fallback. Preserve source links and provided credits, memory-only caching, foreground refresh and game identity/history. Historical test fixtures remain offline, and saved private imports remain intact. See [private news decisions](docs/TAGESSCHAU.md). Public distribution and commercial reuse remain unapproved.

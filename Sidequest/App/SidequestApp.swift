@@ -3,6 +3,7 @@ import SwiftUI
 @main
 @MainActor
 struct SidequestApp: App {
+  @Environment(\.scenePhase) private var scenePhase
   @State private var session: FeedSessionState
   @State private var startupRetry = 0
   @State private var introduction = StartupIntroduction()
@@ -13,6 +14,7 @@ struct SidequestApp: App {
 
   init() {
     let session = FeedSessionState(
+      loadLiveNews: Self.usesLiveNews ? Self.loadNews : nil,
       prepareBatch: { id, sequence, seed, puzzles, ordered in
         let mixed: Bool
         #if DEBUG
@@ -45,8 +47,34 @@ struct SidequestApp: App {
     #endif
     _newsModel = State(
       initialValue: NewsImportModel(
-        store: store, usesDemoWhenMissing: Self.usesDemoNews,
+        store: store, usesDemoWhenMissing: !Self.usesLiveNews && Self.usesDemoNews,
         beginReplacement: session.beginReplacement))
+  }
+
+  private static let loadNews: @Sendable () async throws -> [NewsSnapshot] = {
+    #if DEBUG
+      if CommandLine.arguments.contains("-sidequest-tagesschau-fixtures") {
+        return try await TagesschauFixtures.source.load()
+      }
+      if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+        throw NewsFeedError.invalidResponse
+      }
+    #endif
+    return try await TagesschauNewsSource().load()
+  }
+
+  private static var usesLiveNews: Bool {
+    #if DEBUG
+      if CommandLine.arguments.contains("-sidequest-tagesschau-fixtures") { return true }
+      // Existing deterministic routes retain their historical source and never access the network.
+      if CommandLine.arguments.contains(where: {
+        $0.hasPrefix("-sidequest-")
+          && ($0.contains("fixture") || $0.contains("test") || $0.contains("preview"))
+      }) {
+        return false
+      }
+    #endif
+    return true
   }
 
   private static var usesDemoNews: Bool {
@@ -81,8 +109,15 @@ struct SidequestApp: App {
             }
           #endif
           await session.prepare(newsModel: newsModel)
+          await session.refreshLiveNews(newsModel: newsModel)?.value
         }
-        .onDisappear { session.cancelPreparation() }
+        .onChange(of: scenePhase, initial: true) { _, phase in
+          session.setNewsSceneActive(phase == .active, newsModel: newsModel)
+        }
+        .onDisappear {
+          session.cancelPreparation()
+          session.setNewsSceneActive(false, newsModel: newsModel)
+        }
         .sheet(
           isPresented: Binding(
             get: { session.libraryIsPresented },
@@ -162,7 +197,7 @@ struct SidequestApp: App {
         FeedView(
           controller: controller, gameContent: composition.gameContent,
           newsContent: composition.newsContent, openNews: { session.setLibraryPresented(true) })
-        if let message = newsModel.message {
+        if !session.usesLiveNews, let message = newsModel.message {
           Text(message).font(.footnote)
             .accessibilityIdentifier("news.status")
             .padding(.horizontal, 16)

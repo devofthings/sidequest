@@ -28,6 +28,14 @@ final class FeedComposition {
 
   deinit { generationTask?.cancel() }
 
+  /// Adopt the latest story pool without rebuilding a game or changing feed history identity.
+  @discardableResult
+  func refreshNews(_ snapshots: [NewsSnapshot]) -> Bool {
+    guard controller?.refreshNews(snapshots) == true else { return false }
+    newsCadence?.refreshNews(snapshots)
+    return true
+  }
+
   @MainActor static func endless(
     news: [NewsSnapshot], chessPuzzles: [ChessPuzzle],
     sessionID: UUID = UUID(), seed: UInt64 = UInt64.random(in: .min ... .max),

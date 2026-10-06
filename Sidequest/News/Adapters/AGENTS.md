@@ -1,0 +1,5 @@
+# Live news adapters #213
+
+The owner approved a private personal Tagesschau RSS/image test. Use only the official HTTPS feed and image host, with bounded ephemeral transport, no cookies/credentials/disk caches, and no article scraping. Parse source data off MainActor; XML external entities/DTDs are rejected and embedded HTML is inert. Preserve headlines, excerpts, dates, links, image descriptions and complete credits. Malformed/empty feeds fail rather than becoming a fabricated success; individual invalid articles may be omitted. Existing imported bytes are never modified by this adapter.
+
+Images load only while their owned presentation task is eligible. Reserve a fixed16:9 footprint, cancel stale work, reject unsafe redirects and bound downloaded bytes and decoded image dimensions. Missing images preserve readable text and attribution. Test fixtures are original fictional RSS, not copied Tagesschau articles/images. These rules do not authorize public redistribution or a persistent archive.

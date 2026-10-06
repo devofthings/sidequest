@@ -17,10 +17,18 @@ final class FeedSessionState {
   private let prepareBatch: GameBatchPreparation
   private let useEndless: Bool
   private var replacementLease: UUID?
+  private let loadLiveNews: (@Sendable () async throws -> [NewsSnapshot])?
+  private var liveNewsEnabled: Bool
+  private var liveNewsTask: Task<Void, Never>?
+  private var liveNewsRequest: UUID?
+  private var newsSceneIsActive = false
+  var usesLiveNews: Bool { liveNewsEnabled }
+
   private let loadChess: @Sendable () async throws -> [ChessPuzzle]
 
   init(
     useEndless: Bool = true,
+    loadLiveNews: (@Sendable () async throws -> [NewsSnapshot])? = nil,
     prepareBatch: @escaping GameBatchPreparation = { id, sequence, seed, puzzles, ordered in
       try await GameGenerationComposition.prepare(
         sessionID: id, sequence: sequence, seed: seed,
@@ -30,6 +38,8 @@ final class FeedSessionState {
       try await ChessPuzzleLoader.bundled()
     }
   ) {
+    self.loadLiveNews = loadLiveNews
+    liveNewsEnabled = loadLiveNews != nil
     self.loadChess = loadChess
     self.useEndless = useEndless
     self.prepareBatch = prepareBatch
@@ -52,7 +62,7 @@ final class FeedSessionState {
       let news: [NewsSnapshot]
       var message: String?
       do {
-        news = try await newsModel.loadResolvedSnapshots()
+        news = liveNewsEnabled ? [] : try await newsModel.loadResolvedSnapshots()
       } catch is CancellationError {
         throw CancellationError()
       } catch {
@@ -130,6 +140,58 @@ final class FeedSessionState {
     return try FeedComposition(news: news, chessPuzzles: puzzles)
   }
 
+  /// Activation owns the request; news adoption never replaces the game session.
+  func setNewsSceneActive(_ active: Bool, newsModel: NewsImportModel) {
+    let becameActive = active && !newsSceneIsActive
+    newsSceneIsActive = active
+    if !active { stopLiveNews() }
+    if becameActive { refreshLiveNews(newsModel: newsModel) }
+  }
+
+  @discardableResult
+  func refreshLiveNews(newsModel: NewsImportModel) -> Task<Void, Never>? {
+    if let liveNewsTask { return liveNewsTask }
+    guard liveNewsEnabled, newsSceneIsActive, liveNewsTask == nil,
+      replacementLease == nil, let loadLiveNews, case .ready(let origin) = state
+    else { return nil }
+    let identity = UUID()
+    liveNewsRequest = identity
+    liveNewsTask = Task { [weak self] in
+      defer {
+        if let self, liveNewsRequest == identity {
+          liveNewsTask = nil
+          liveNewsRequest = nil
+        }
+      }
+      do {
+        let snapshots = try await loadLiveNews()
+        try Task.checkCancellation()
+        guard let self, liveNewsRequest == identity, liveNewsEnabled,
+          newsSceneIsActive, replacementLease == nil,
+          case .ready(let current) = state, current === origin
+        else { return }
+        if origin.refreshNews(snapshots) {
+          newsModel.adoptRestored(snapshots)
+        }
+      } catch is CancellationError {
+        // Cancellation preserves the last valid feed.
+      } catch {
+        guard let self, !Task.isCancelled, liveNewsRequest == identity,
+          liveNewsEnabled, newsSceneIsActive, replacementLease == nil,
+          case .ready(let current) = state, current === origin
+        else { return }
+        newsModel.showLiveRefreshError()
+      }
+    }
+    return liveNewsTask
+  }
+
+  private func stopLiveNews() {
+    liveNewsRequest = nil
+    liveNewsTask?.cancel()
+    liveNewsTask = nil
+  }
+
   /// Capture the origin before readImport/load can suspend. One lease spans save and adoption.
   func beginReplacement() throws -> NewsReplacementRequest {
     guard case .ready(let origin) = state, replacementLease == nil else {
@@ -155,6 +217,8 @@ final class FeedSessionState {
         },
         commit: { [self] in
           // acquire has reserved this boundary; durable success must be adopted even after cancellation.
+          stopLiveNews()
+          liveNewsEnabled = false
           origin.controller?.retire()
           candidate.controller?.setHostAvailable(!libraryIsPresented)
           state = .ready(candidate)

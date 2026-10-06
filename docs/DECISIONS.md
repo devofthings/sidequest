@@ -159,3 +159,7 @@ Readiness evidence: GeneratedGameBatch preserves legacy RNG; MemoryController's 
 ## Memory card-back refinement #195
 
 Accepted October 5, 2026 in the side conversation: the owner reported confusing Memory arrows and approved replacing them in a PR. Select an identical original rounded-dot cluster on every hidden card, using the existing dark-ink/cyan palette on coral. Preserve hidden answers, fixed geometry, semantic tile labels, and all existing rules/lifecycle. See [Memory guidance](../Sidequest/Games/Memory/AGENTS.md#rounded-dot-card-back-195) and [artwork provenance](design/NATIVE_GAME_ART.md#memory-card-back-refinement-195). Delivery remains pending verification and independent review in the owning PR.
+
+## Private live Tagesschau feed #213 — October 6
+
+The owner authorized replacing normal fictional news with official Tagesschau RSS articles/images and refreshing when opening or reopening the app. German news is a scoped personal test. Use source excerpts, original links and complete image credits; public distribution/commercial reuse remain unselected. Selected technical decisions: memory-only latest feed, ephemeral bounded HTTPS transport, no private-import overwrite, games start independently of network, same-composition news refresh, and manual imports select the session source until next launch. See [readiness and cache decisions](TAGESSCHAU.md). This supersedes #106's normal nil-only demo fallback, retaining historical deterministic fixture routes and five-game generation cadence.
