@@ -17,6 +17,18 @@ struct FeedSelection {
     if index == nil, !cards.isEmpty { index = 0 }
   }
 
+  /// Refresh story values without moving cards or changing appearance identity.
+  mutating func refreshNews(_ snapshots: [NewsSnapshot]) {
+    guard !snapshots.isEmpty else { return }
+    var cursor = 0
+    cards = cards.map { card in
+      guard case .news(let appearance) = card else { return card }
+      let snapshot = snapshots[cursor % snapshots.count]
+      cursor += 1
+      return .news(FeedNewsCard(snapshot: snapshot, id: appearance.id))
+    }
+  }
+
   @discardableResult
   mutating func move(by offset: Int) -> Bool {
     guard let index, cards.indices.contains(index + offset), offset != 0 else { return false }

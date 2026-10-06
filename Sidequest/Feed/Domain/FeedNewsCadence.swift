@@ -2,11 +2,18 @@ import Foundation
 
 /// Pure prepared cadence state; the composition commits it only with accepted additions.
 struct FeedNewsCadence: Equatable, Sendable {
-  let pool: [NewsSnapshot]
+  private(set) var pool: [NewsSnapshot]
   let sessionID: UUID
   private(set) var gameCount = 0
   private(set) var newsCursor = 0
   private(set) var appearanceOrdinal = 0
+
+  /// New stories restart the pool cursor, while accepted game/appearance counts stay intact.
+  mutating func refreshNews(_ snapshots: [NewsSnapshot]) {
+    guard !snapshots.isEmpty else { return }
+    pool = snapshots
+    newsCursor = 0
+  }
 
   func preparing(_ games: [GameCard]) throws -> (cards: [FeedCard], next: Self) {
     var next = self

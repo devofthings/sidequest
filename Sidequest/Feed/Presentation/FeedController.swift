@@ -67,6 +67,14 @@ final class FeedController {
     return true
   }
 
+  /// News-only updates do not reconcile owners or deliver visibility/reset effects.
+  @discardableResult
+  func refreshNews(_ snapshots: [NewsSnapshot]) -> Bool {
+    guard !isRetired, !snapshots.isEmpty else { return false }
+    selection.refreshNews(snapshots)
+    return true
+  }
+
   @discardableResult
   func reconcileWindow() -> Bool { adoptWindow(selection) }
 
