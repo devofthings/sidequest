@@ -14,6 +14,6 @@ Keep only original assets and fictional, redistributable samples here. `sample-n
 
 StartupLogo remains byte-identical to the selected AppIcon. LaunchScreen.storyboard centers it at 120 points on LaunchCanvas, neutral light #F7F7F8/dark #111114. This supersedes the #91 decorative introduction and #181 tinted canvas; no shared game-palette change is implied. The storyboard belongs only to the app synchronized resources. Preserve logo bytes and follow [launch guidance](../../docs/design/LAUNCH.md) for compiled/native proof.
 
-## Launch canvas #181
+## Historical launch canvas #181
 
-`LaunchCanvas.colorset` supplies the static system launch and SwiftUI root background: Any `#F5F3FF`, Dark `#101427`, matching the current shared palette. Update both appearances and the shared palette together if that design decision changes. Preserve selected AppIcon/StartupLogo bytes. [Launch guidance](../../docs/design/LAUNCH.md) owns rationale and compiled-resource checks.
+#181 used light #F5F3FF/dark #101427 to match the earlier shared palette. #215 supersedes that launch treatment with the neutral adaptive canvas above; game palette values remain independent and unchanged. Preserve historical release/source evidence without applying the old colors or shared-palette coupling to current launch resources.
