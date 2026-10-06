@@ -199,3 +199,7 @@ Accepted October 6, 2026: remove every GitHub release and asset, preserving Git 
 ## Largest-text header correction #201
 
 Lead-selected necessary accessibility correction from actual native failure: at accessibility Dynamic Type sizes, use the full-width stable game heading above the same streak/timer/menu action row. Normal horizontal layout remains. Preserve measured title/tier reservations, full readable text and phase-stable viewport geometry; no new action or smaller font is selected. Actual native evidence belongs to the final #201 PR.
+
+## Bubble tap targeting #234
+
+Accepted October6: tap a valid board location to aim from the launcher and shoot once, alongside existing horizontal drag/release. The target is an aiming ray, not a promised landing through obstacles. Readiness selected a non-pan-excluding upper tap recognizer that yields to native scrolling, lower-only pan exclusion and a10-point drag threshold; capture originating visibility and retain existing attempt leases. Physics, frozen difficulty and centered layout are unchanged. No dynamic descending-board Idea is selected.

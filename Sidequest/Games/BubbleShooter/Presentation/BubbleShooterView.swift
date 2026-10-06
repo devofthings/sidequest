@@ -64,7 +64,7 @@ struct BubbleShooterView: View {
   }
 
   private var instructions: some View {
-    Text("Drag to aim · Release to shoot")
+    Text("Tap to shoot · Drag to aim")
       .font(.callout).fixedSize(horizontal: false, vertical: true)
   }
 
@@ -173,7 +173,8 @@ struct BubbleShooterView: View {
           }
         }
       BubbleAimControl(controller: controller)
-        .frame(height: boardWidth / 10 * BubbleAimMapping.regionHeight)
+        .disabled(!controller.canAimOrFire)
+        .frame(height: boardWidth / 10 * 12)
         .accessibilityHidden(!isPlaying)
     }
   }
